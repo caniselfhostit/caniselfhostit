@@ -1,0 +1,35 @@
+# public/_redirects — old project-keyed URLs -> new SaaS-keyed URLs.
+# Cloudflare Workers static assets honor this file (same as public/_headers).
+# GENERATED: node scripts/generate-redirects.mjs . > public/_redirects
+# The validator fails CI when this file drifts from what data/ implies.
+# 10 pairs, 3 rules each (slashed, bare, .md mirror), all 301.
+/self-host/vaultwarden/      /self-host/1password/  301
+/self-host/vaultwarden       /self-host/1password/  301
+/self-host/vaultwarden.md    /self-host/1password.md  301
+/self-host/stirling-pdf/     /self-host/adobe-acrobat/  301
+/self-host/stirling-pdf      /self-host/adobe-acrobat/  301
+/self-host/stirling-pdf.md   /self-host/adobe-acrobat.md  301
+/self-host/excalidraw/       /self-host/miro/  301
+/self-host/excalidraw        /self-host/miro/  301
+/self-host/excalidraw.md     /self-host/miro.md  301
+/self-host/healthchecks/     /self-host/cronitor/  301
+/self-host/healthchecks      /self-host/cronitor/  301
+/self-host/healthchecks.md   /self-host/cronitor.md  301
+/self-host/docuseal/         /self-host/docusign/  301
+/self-host/docuseal          /self-host/docusign/  301
+/self-host/docuseal.md       /self-host/docusign.md  301
+/self-host/freshrss/         /self-host/feedly/  301
+/self-host/freshrss          /self-host/feedly/  301
+/self-host/freshrss.md       /self-host/feedly.md  301
+/self-host/linkwarden/       /self-host/raindrop/  301
+/self-host/linkwarden        /self-host/raindrop/  301
+/self-host/linkwarden.md     /self-host/raindrop.md  301
+/self-host/uptime-kuma/      /self-host/uptimerobot/  301
+/self-host/uptime-kuma       /self-host/uptimerobot/  301
+/self-host/uptime-kuma.md    /self-host/uptimerobot.md  301
+/self-host/actual-budget/    /self-host/ynab/  301
+/self-host/actual-budget     /self-host/ynab/  301
+/self-host/actual-budget.md  /self-host/ynab.md  301
+/self-host/shlink/           /self-host/bitly/  301
+/self-host/shlink            /self-host/bitly/  301
+/self-host/shlink.md         /self-host/bitly.md  301

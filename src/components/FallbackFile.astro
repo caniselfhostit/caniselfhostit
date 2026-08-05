@@ -1,0 +1,45 @@
+---
+// One deterministic-fallback artifact: the file, a copy button, and the URL it
+// was authored from. Every one of these was written from the upstream docs and
+// never pasted out of a repository (PRD §4.3, /methodology) — the link says which
+// docs, so the claim is checkable rather than reassuring.
+import CopyButton from './CopyButton.astro';
+
+const { filename, text, sourceUrl, id, summary } = Astro.props;
+
+const bytes = text ? new TextEncoder().encode(text).length : 0;
+const lines = text ? text.trimEnd().split('\n').length : 0;
+---
+
+<details class="ff">
+  <summary>
+    <span class="ff-name mono">{filename}</span>
+    <span class="ff-what">{summary}</span>
+    <span class="ff-size mono">{lines} lines</span>
+  </summary>
+
+  <div class="ff-body">
+    <div class="ff-bar">
+      <CopyButton
+        target={`#${id}`}
+        label={`Copy ${filename}`}
+        copiedLabel="Copied"
+        announce={filename}
+        small={true}
+      />
+      <p class="provenance">
+        {
+          sourceUrl ? (
+            <>
+              authored from <a href={sourceUrl} rel="noopener">upstream docs</a>, never pasted ·{' '}
+              {bytes.toLocaleString('en-US')} bytes
+            </>
+          ) : (
+            <>authored from the upstream docs, never pasted · {bytes.toLocaleString('en-US')} bytes</>
+          )
+        }
+      </p>
+    </div>
+    <pre id={id} class="ff-pre" tabindex="0" aria-label={filename}>{text.trimEnd()}</pre>
+  </div>
+</details>

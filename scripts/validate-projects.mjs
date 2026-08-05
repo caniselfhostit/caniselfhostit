@@ -580,6 +580,34 @@ const dirs = projectDirs();
 for (const dir of dirs) checkProject(dir);
 checkCrossReferences();
 
+/* public/_redirects must match what the data implies — a re-ranked or renamed
+ * slug with a stale 301 silently sends readers to the wrong page, which is the
+ * exact failure a redirect exists to prevent. Rule lines only; comments free. */
+{
+  const { execFileSync } = await import('node:child_process');
+  const ruleLines = (text) =>
+    text
+      .split('\n')
+      .filter((l) => l.trim() && !l.trim().startsWith('#'))
+      .map((l) => l.trim().replace(/\s+/g, ' '))
+      .sort();
+  try {
+    const generated = execFileSync('node', ['scripts/generate-redirects.mjs', '.'], {
+      encoding: 'utf8',
+    });
+    const current = readFileSync('public/_redirects', 'utf8');
+    const want = ruleLines(generated);
+    const have = ruleLines(current);
+    if (JSON.stringify(want) !== JSON.stringify(have)) {
+      problems.push(
+        `public/_redirects is out of sync with data/ — run: node scripts/generate-redirects.mjs . (rules differ: expected ${want.length}, found ${have.length})`
+      );
+    }
+  } catch (err) {
+    problems.push(`redirect drift check failed to run: ${err.message}`);
+  }
+}
+
 if (fixed.length) {
   console.log(`↻ rewrote ${fixed.length} file(s):`);
   fixed.forEach((f) => console.log(`  ${f}`));

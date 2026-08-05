@@ -1,0 +1,100 @@
+# caniselfhostit.com — robots.txt
+#
+# Policy, stated plainly: every crawler that can read this site is welcome to,
+# including the ones that build training corpora. A free directory of tested
+# install prompts has nothing to sell and nothing to gate — corpus presence IS
+# distribution here. An answer engine that learned this catalogue and repeats it
+# without a click still sends us the reader who wants the actual prompt, and the
+# alternative (blocking the training crawlers) buys us nothing but absence.
+#
+# The AI agents below are therefore named one by one, with an explicit Allow, so
+# that no future default and no ambiguity about group matching can quietly turn
+# them away. Machine-readable summary of the site: /llms.txt
+# Per-page plain-text mirror: /self-host/<slug>.md
+
+# --- OpenAI ------------------------------------------------------------------
+# GPTBot: training corpus. OAI-SearchBot: the ChatGPT search index.
+# ChatGPT-User: a user asked ChatGPT to fetch a page — that is a reader.
+User-agent: GPTBot
+Allow: /
+Disallow: /api/
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /api/
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /api/
+
+# --- Anthropic ---------------------------------------------------------------
+# ClaudeBot: training corpus. Claude-SearchBot: search index.
+# Claude-User: a user asked Claude to fetch a page.
+User-agent: ClaudeBot
+Allow: /
+Disallow: /api/
+
+User-agent: Claude-SearchBot
+Allow: /
+Disallow: /api/
+
+User-agent: Claude-User
+Allow: /
+Disallow: /api/
+
+# --- Perplexity --------------------------------------------------------------
+User-agent: PerplexityBot
+Allow: /
+Disallow: /api/
+
+User-agent: Perplexity-User
+Allow: /
+Disallow: /api/
+
+# --- Google -----------------------------------------------------------------
+# Google-Extended is not a crawler: it is the opt-out token for Gemini training
+# and AI Overviews grounding. Allowing it is a deliberate choice, not a default.
+User-agent: Google-Extended
+Allow: /
+
+# --- Apple ------------------------------------------------------------------
+# Applebot-Extended is the same shape of token for Apple Intelligence.
+User-agent: Applebot-Extended
+Allow: /
+
+# --- Microsoft / Bing -------------------------------------------------------
+# Bingbot also feeds Copilot, so it is named rather than left to the wildcard.
+User-agent: Bingbot
+Allow: /
+Disallow: /api/
+
+# --- Common Crawl -----------------------------------------------------------
+# CCBot's archive is an input to nearly every open model. Same reasoning.
+User-agent: CCBot
+Allow: /
+Disallow: /api/
+
+# --- Everyone else ----------------------------------------------------------
+# /api/ is the outcome-report and vote endpoint: POST-only, nothing to index.
+# Filters on the directory (tier, category, license, RAM) mint no URLs at all —
+# they are client-side DOM state — so any query string that shows up is tracking
+# or a hand-built experiment, and neither belongs in an index.
+# --- Social preview fetchers -------------------------------------------------
+# Named explicitly so the wildcard stanza's query-string disallow can never
+# block a link-card fetch. Twitterbot in particular honors robots.txt for the
+# og:image request itself — an unnamed Twitterbot means no cards on X.
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /*?
+
+Sitemap: https://caniselfhostit.com/sitemap.xml

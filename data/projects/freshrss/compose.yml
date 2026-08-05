@@ -1,0 +1,29 @@
+# FreshRSS · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   image and env vars . https://github.com/FreshRSS/FreshRSS/blob/edge/Docker/README.md
+#   built-in cron ...... https://freshrss.github.io/FreshRSS/en/admins/08_FeedUpdates.html
+#   what to back up .... https://freshrss.github.io/FreshRSS/en/admins/05_Backup.html
+#   reverse proxy ...... https://freshrss.github.io/FreshRSS/en/admins/Caddy.html
+#
+# One container. FreshRSS ships with SQLite, so the database, the user record and
+# the favicons live under /var/www/FreshRSS/data, and that one directory is what a
+# backup has to contain. CRON_MIN is the image's own cron daemon, and leaving it
+# unset means nothing refreshes. Tag and digest are the 1.29.1 release read from
+# Docker Hub on 2026-08-05, covering linux/amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  freshrss:
+    image: freshrss/freshrss:1.29.1@sha256:ab6b363102ccdbc39f6a62db926f567c61a5289bf25ba460f1c34423d8cc1a4d
+    container_name: freshrss
+    restart: unless-stopped
+    env_file: /srv/freshrss/.env
+    volumes:
+      # uid 33 (www-data) in the image writes here, hence the ownership in step 2.
+      # Local disk only: SQLite needs real POSIX file locks to stay intact.
+      - /srv/freshrss/data:/var/www/FreshRSS/data
+    ports:
+      # Loopback only. The Caddy that Prompt Zero installed on the host is the
+      # only thing that can reach this port, and 8084 never enters the firewall.
+      - "127.0.0.1:8084:80"

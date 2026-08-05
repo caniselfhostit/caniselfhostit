@@ -1,0 +1,50 @@
+---
+// One copy control, used by every pasteable block on the site.
+//
+// The button carries no payload: it names a target element with `data-copy` and
+// the handler in public/js/app.js reads that element's textContent. The bytes
+// therefore exist exactly once in the HTML — a 13 kB prompt duplicated into a
+// data attribute would be 13 kB of unread markup on the critical path.
+const {
+  target,
+  label = 'Copy',
+  copiedLabel = 'Copied',
+  announce = null,
+  primary = false,
+  small = false,
+} = Astro.props;
+
+const classes = [
+  'copy-btn',
+  primary ? 'is-primary' : '',
+  small ? 'is-small' : '',
+]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<button
+  type="button"
+  class={classes}
+  data-copy={target}
+  data-copy-label={label}
+  data-copied-label={copiedLabel}
+  data-copy-announce={announce ?? label}
+>
+  <svg
+    class="copy-ico"
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <rect x="9" y="9" width="11" height="11" rx="2"></rect>
+    <path d="M5 15V5a2 2 0 0 1 2-2h8"></path>
+  </svg>
+  <span class="copy-text">{label}</span>
+</button>

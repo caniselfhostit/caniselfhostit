@@ -1,0 +1,82 @@
+{
+  "slug": "stirling-pdf",
+  "name": "Stirling-PDF",
+  "tagline": "Sixty-odd PDF tools in one container, running on your machine, with nothing uploaded to anybody else's.",
+  "repo": "Stirling-Tools/Stirling-PDF",
+  "site": "https://www.stirlingpdf.com",
+  "category": "files-docs",
+  "replaces": [
+    {
+      "saas": "adobe-acrobat",
+      "plan": "Acrobat Standard",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "MIT",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/Stirling-Tools/Stirling-PDF/blob/main/docker/compose/docker-compose.yml",
+  "localVariant": false,
+  "quote": {
+    "text": "Users will be forced to change their password on first login.",
+    "source": "Stirling PDF documentation, Login, System and Security",
+    "url": "https://docs.stirlingpdf.com/Configuration/System%20and%20Security/",
+    "checkedOn": "2026-08-05"
+  },
+  "citations": [
+    {
+      "claim": "Login is on by default in the Docker images, the shipped account is admin with the password stirling, and both halves can be replaced before first boot with SECURITY_INITIALLOGIN_USERNAME and SECURITY_INITIALLOGIN_PASSWORD.",
+      "url": "https://docs.stirlingpdf.com/Configuration/System%20and%20Security/"
+    },
+    {
+      "claim": "The image serves on container port 8080 and keeps the user database and the generated server certificate under /configs, which is the directory that has to be mounted to survive an upgrade.",
+      "url": "https://docs.stirlingpdf.com/Installation/Docker%20Install"
+    },
+    {
+      "claim": "The image carries its own health check, which polls /api/v1/info/status and expects the response to contain UP, and allows a two-minute start period before counting failures.",
+      "url": "https://github.com/Stirling-Tools/Stirling-PDF/blob/main/docker/compose/docker-compose.yml"
+    },
+    {
+      "claim": "Caddy obtains and renews TLS certificates automatically for any public hostname named in the Caddyfile.",
+      "url": "https://caddyserver.com/docs/automatic-https"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Nothing you send it is kept. Files are processed and handed back, and the working copy is discarded, so the only state on disk is the account database under /srv/stirling-pdf/config. That makes the backup trivial and it also means this is a workshop, not a document store: it will not replace the folder your invoices live in.",
+    "It is a toolbox, not an editor. Splitting, merging, rotating, compressing, converting, OCR, watermarks and form flattening are all here. Retyping a paragraph inside an existing page, the thing Acrobat Pro is bought for, is not.",
+    "The heaviest install in this catalogue. The image carries a JVM, LibreOffice, Calibre and Tesseract, it wants 2 GB of RAM available before you start, and the first boot takes a couple of minutes during which the container reports itself unhealthy.",
+    "The licence is MIT with carve-outs. The top-level LICENSE is MIT, but directories named proprietary, saas and engine carry their own terms, so the repository as a whole is not uniformly open source and GitHub reports no single licence for it. What this compose file runs is the published community image.",
+    "You own the login decision. This install turns login on and replaces the shipped default before the container starts, because the instance answers on a public hostname. If you later turn login off, anyone who finds the hostname can push documents through your server."
+  ],
+  "sources": {
+    "compose": "https://docs.stirlingpdf.com/Installation/Docker%20Install",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://docs.stirlingpdf.com/Configuration/System%20and%20Security/",
+    "health": "https://github.com/Stirling-Tools/Stirling-PDF/blob/main/docker/compose/docker-compose.yml",
+    "license": "https://github.com/Stirling-Tools/Stirling-PDF/blob/main/LICENSE"
+  },
+  "related": [
+    "docuseal",
+    "linkwarden",
+    "excalidraw"
+  ],
+  "pagePriority": 1,
+  "contentUpdatedAt": "2026-08-05",
+  "contentHash": "6b3ae8db0fa6506cea3bd06f58ee46e2a6e416010b63368ce30d443cb37d04d8"
+}

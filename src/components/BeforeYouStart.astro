@@ -1,0 +1,50 @@
+---
+// BEFORE YOU START — the four numbers that decide whether you can start at all,
+// before the reader scrolls into a prompt they cannot run. Every value is a
+// typed field from index.json; nothing here is prose someone typed twice.
+//
+// A description list, not a grid of divs: each tile is genuinely a term and its
+// value, so a screen reader reads "RAM floor, 512 MB" without any aria patching.
+const { ramMinMB, ramMeasuredMB, diskGB, needsDns, timeToRunningMin, bandLabel } = Astro.props;
+
+const tiles = [
+  {
+    term: 'RAM floor',
+    value: ramMinMB ? `${ramMinMB} MB` : 'not stated',
+    note: ramMeasuredMB
+      ? `${ramMeasuredMB} MB measured idle on our harness run`
+      : 'floor from upstream docs — not measured by us yet',
+  },
+  {
+    term: 'Disk',
+    value: diskGB ? `${diskGB} GB` : 'not stated',
+    note: 'the app, its data, and room for one backup',
+  },
+  {
+    term: 'Domain needed',
+    value: needsDns ? 'yes, one A record' : 'no',
+    note: needsDns
+      ? 'a hostname pointed at the box before you start — TLS needs it'
+      : 'nothing public to point anywhere',
+  },
+  {
+    term: 'Time budget',
+    value: timeToRunningMin ? `~${timeToRunningMin} min` : 'not stated',
+    note: bandLabel ? `${bandLabel}, through the first backup` : 'through the first backup',
+  },
+];
+---
+
+<dl class="bys" aria-label="Before you start">
+  {
+    tiles.map((t) => (
+      <div class="bys-tile">
+        <dt class="microlabel">{t.term}</dt>
+        <dd>
+          <span class="bys-figure">{t.value}</span>
+          <span class="bys-note">{t.note}</span>
+        </dd>
+      </div>
+    ))
+  }
+</dl>

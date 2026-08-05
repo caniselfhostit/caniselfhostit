@@ -14,9 +14,9 @@ import { SITE } from '../lib/site.js';
 const {
   title,
   description,
-  // No default: until the Phase-1 satori pipeline commits public/og/, a default
-  // here would point every social preview at a 404. Pages pass ogImage when the
-  // file actually exists.
+  // No default. scripts/generate-og.mjs renders a card for the home page and one
+  // per project, and nothing else — so a default here would point /privacy and
+  // friends at a 404. Pages pass ogImage when the file actually exists.
   ogImage = null,
   jsonld = [],
   // Pending pages (PRD §9) stay out of the index while keeping inbound links.
@@ -24,9 +24,12 @@ const {
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, SITE.origin).href;
-// Version query = cache-buster. OG images are regenerated in place, so a stale
-// card at any edge must never outlive a deploy.
-const ogUrl = ogImage ? new URL(`${ogImage}?v=${__BUILD_ID__}`, SITE.origin).href : null;
+// OG URLs are deliberately query-free: Twitterbot honors robots.txt (whose
+// wildcard stanza disallows /*?) when fetching card images, and social
+// scrapers cache cards by exact URL — a build-id buster would force a
+// re-scrape every deploy. Freshness comes from the 1h edge TTL on /og/*
+// in public/_headers instead.
+const ogUrl = ogImage ? new URL(ogImage, SITE.origin).href : null;
 
 // Analytics: one script, no cookie banner, because there is nothing to consent
 // to (/privacy names what DataFast collects). The campaign domain reports into
@@ -64,7 +67,19 @@ const blocks = [orgLd, ...jsonld];
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    {ogUrl && <meta property="og:image" content={ogUrl} />}
+    {
+      ogUrl && (
+        <>
+          <meta property="og:image" content={ogUrl} />
+          {/* Declared dimensions let a crawler reserve the large-summary card
+              before it has fetched the bytes; without them some scrapers fall
+              back to the small layout. Both must match the satori canvas. */}
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta property="og:image:alt" content={title} />
+        </>
+      )
+    }
     <meta name="twitter:card" content={ogUrl ? 'summary_large_image' : 'summary'} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />

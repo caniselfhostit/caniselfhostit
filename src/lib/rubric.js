@@ -29,6 +29,7 @@ export const CATEGORIES = {
   'marketing-content': { label: 'Marketing & content' },
   'work-pm': { label: 'Work & PM' },
   'design-whiteboard': { label: 'Design & whiteboard' },
+  'reading-bookmarks': { label: 'Reading & bookmarks' },
   'money-home': { label: 'Money & home' },
   'ai-tools': { label: 'AI tools' },
 };

@@ -1,0 +1,82 @@
+{
+  "slug": "actual-budget",
+  "name": "Actual Budget",
+  "tagline": "Zero-based envelope budgeting in one container, with the budget file on your disk and no subscription attached to your money.",
+  "repo": "actualbudget/actual",
+  "site": "https://actualbudget.org",
+  "category": "money-home",
+  "replaces": [
+    {
+      "saas": "ynab",
+      "plan": "Monthly",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 0
+  },
+  "resources": {
+    "ramMinMB": 512,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "MIT",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/actualbudget/actual/blob/master/packages/sync-server/docker-compose.yml",
+  "quote": {
+    "text": "'/data' is the path Actual will look for its files in by default, so leave that as-is.",
+    "source": "Actual sync server docker-compose.yml",
+    "url": "https://github.com/actualbudget/actual/blob/master/packages/sync-server/docker-compose.yml",
+    "checkedOn": "2026-08-05"
+  },
+  "localVariant": false,
+  "citations": [
+    {
+      "claim": "ACTUAL_DATA_DIR defaults to /data, with server-files holding account.sqlite and session data and user-files holding the budget files as binary blobs.",
+      "url": "https://actualbudget.org/docs/config/"
+    },
+    {
+      "claim": "The published image creates a non-root actual account with uid 1001, gives it /data, and exposes port 5006.",
+      "url": "https://github.com/actualbudget/actual/blob/master/packages/sync-server/docker/ubuntu.Dockerfile"
+    },
+    {
+      "claim": "The container's health check calls /health and expects a JSON status of UP.",
+      "url": "https://github.com/actualbudget/actual/blob/master/packages/sync-server/src/scripts/health-check.js"
+    },
+    {
+      "claim": "/account/needs-bootstrap is an unauthenticated endpoint that reports whether the server password has been set yet, and /bootstrap can only be called once.",
+      "url": "https://github.com/actualbudget/actual/blob/master/packages/sync-server/src/app-account.js"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Bank sync is not included and is not free everywhere. Actual reaches banks through GoCardless or SimpleFIN, each a separate signup with its own credentials, and in the United States the usable one costs money. YNAB's connections are in the subscription; this trade is the main one you are making.",
+    "One password guards the whole server. There is nothing else to log in with, no per-user accounts by default, and no password reset email, because this install sends no mail at all. Put it in a password manager the minute you choose it.",
+    "End-to-end encryption is off by default and is set per budget file. Turn it on and the data on the disk is opaque even to you; lose that key and the budget is gone, because nobody can reset it. Leave it off and anyone who can read the disk can read the budget.",
+    "You own the backups. Everything is /srv/actual-budget/data, copied with the container stopped. Actual also exports a plain zip of any budget from inside the interface, and a monthly one of those kept elsewhere is worth more than any archive on the box, because it opens without a server.",
+    "The server is for syncing, not for running the app. The desktop build works with no server at all; this container exists so a phone and a second browser see the same budget. If only one machine ever touches it, you did not need this."
+  ],
+  "sources": {
+    "compose": "https://actualbudget.org/docs/install/docker",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://actualbudget.org/docs/config/",
+    "health": "https://github.com/actualbudget/actual/blob/master/packages/sync-server/src/scripts/health-check.js",
+    "bootstrap": "https://github.com/actualbudget/actual/blob/master/packages/sync-server/src/app-account.js"
+  },
+  "related": [
+    "freshrss",
+    "vaultwarden",
+    "uptime-kuma"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-05",
+  "contentHash": "5bc795d7359859856357d2784eaae126d82fac99a7af20ef8a41a7b7603c2eb7"
+}

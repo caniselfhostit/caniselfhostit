@@ -1,0 +1,50 @@
+{
+  "slug": "miro",
+  "name": "Miro",
+  "domain": "miro.com",
+  "whyPeoplePay": "Miro sells the thing a whiteboard is actually for: several people on the same board at the same time, from wherever they are, with the board still there next week. The paid tiers buy unlimited boards, the templates a facilitator reaches for during a live workshop, and an admin who can hand a board back after somebody leaves the company.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Three editable boards."
+    },
+    {
+      "name": "Starter",
+      "priceMonthly": 8,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Listed as $8/month per member, billed yearly. The monthly-billed rate was not shown on the page we read."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": 20,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Listed as $20/month per member, billed yearly. The monthly-billed rate was not shown on the page we read."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only, and the page says it starts from 30 members."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-05",
+    "source": "https://miro.com/pricing/",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The two per-member figures are the annual-billed rates as the pricing page displays them; that page did not show a monthly-billed rate for either plan, so we did not record one. Anyone paying month to month is paying more than the number here, which means the savings figure on the project page is the conservative one. Re-read the page before quoting a monthly-billed comparison."
+  },
+  "ranked": [
+    {
+      "project": "excalidraw",
+      "rationale": "Matches the part of Miro most people use on their own: fast hand-drawn diagrams, arrows that stay attached, and a file you can export and keep. It matches none of the collaboration, because the image upstream publishes has no realtime server, so a team that bought Miro to run workshops together is not the reader this replaces anything for."
+    }
+  ],
+  "evaluatedNotTested": []
+}

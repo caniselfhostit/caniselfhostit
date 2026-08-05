@@ -11,9 +11,11 @@
 
 **Canonical: `caniselfhostit.com`.** `dontvibecodeit.com` 301-redirects as the campaign domain (keeps the viral-thread origin story alive; never two live twins). All brand strings live in `src/lib/site.js`.
 
+**Protagonist: the PAID app — DECIDED 2026-08-05 (owner).** The question is asked about the thing that sends an invoice; the open-source project is the *answer*, not the subject. The directory row is Miro; Excalidraw is what the row resolves to. Canonical pages are keyed by the SaaS slug (§5.1), and the sentence is built in exactly one place — `pageTitle(saasName, tier, replacementName)` in `src/lib/site.js`. Nothing about the rubric changed: the verdict word still comes from the setup tier, now the tier of the top-ranked replacement.
+
 The question-brand does real work:
 
-- **Title formula, derived from the setup tier — never hand-written:** "Can I self-host Plausible? **YES** — one prompt, ~10 minutes (2026)". Tier→verdict-word mapping: one-command / one-evening → **YES** · one-weekend → **YES, BUT** plan a weekend · ongoing-ops → **YES, IF** you'll run real ops · editorial stay-on-SaaS calls (Mailcow-class) → **NOT WORTH IT (yet)**. The domain asks; every page answers — question-shaped pages are exactly what AI assistants extract.
+- **Title formula, derived from the setup tier — never hand-written:** "Can I self-host Miro? **YES** — it's called Excalidraw (2026)". Tier→verdict-word mapping: one-command / one-evening → **YES** · one-weekend → **YES, BUT** plan a weekend · ongoing-ops → **YES, IF** you'll run real ops · editorial stay-on-SaaS calls (Mailcow-class) → **NOT WORTH IT (yet)**. The domain asks; every page answers — question-shaped pages are exactly what AI assistants extract, and the entity they extract is now the one the reader is already paying.
 - Hero: "Can I self-host ___?" with the promise line beneath: **"One prompt to get ready. One prompt per app. Every prompt assumes nothing is installed."**
 - Mirrors the proven canivibecodeit formula while our design system (§11) keeps the sites visually distinct.
 
@@ -42,7 +44,7 @@ Every competitor is a *list* (awesome-selfhosted: 1,341 entries, zero install in
 |---|---|
 | Domain | **caniselfhostit.com** canonical; dontvibecodeit.com 301 |
 | Prompt target | **Claude Code first**; tool-agnostic chat fallback secondary |
-| Page model | **Both**: project pages + alternatives pages (thin-page rule §5.2) |
+| Page model | **One canonical page per paid app**, keyed by the SaaS slug; project-keyed URLs 301 into it; the alternatives archetype is absorbed (§5.1–5.2) |
 | Launch catalog | **~50 flagship projects, every published prompt verified** |
 | Launch features | GitHub stats + charts · outcome reports · PR contributions |
 | Stack | **Astro on Cloudflare + Supabase** — prerendered content, nightly rebuilds (§12) |
@@ -57,7 +59,7 @@ Every competitor is a *list* (awesome-selfhosted: 1,341 entries, zero install in
 
 ### 4.1 Prompt Zero — from nothing to ready
 
-One flagship page; every project page links it as step 0. Delivers the real end-to-end promise:
+One flagship page; every canonical page links it as step 0. Delivers the real end-to-end promise:
 
 1. **Per-OS branches** — Windows (WSL2: BIOS virtualization + reboots, stated honestly), macOS Apple Silicon (arm64 caveats), macOS Intel, Linux. Installs the basics: git, package manager, a terminal the user can find again.
 2. **Install Claude Code — with the honest bill.** Anthropic account + paid plan/API billing, floor price stated next to the VPS price: "what this hobby costs per month" is one honest table (agent plan + ~$5 VPS + domain).
@@ -89,35 +91,49 @@ Per project: `Claude Code — verified <date>` / `works, degraded` / `copy-paste
 
 | Route | Archetype | Launch? |
 |---|---|---|
-| `/` | Directory ("The Rack") | ✅ |
-| `/self-host/[project]/` | Project page — all paths as sections on ONE URL | ✅ |
-| `/alternatives/[saas]/` | Money page — **only where a real field exists** (§5.2) | ✅ (~12–20) |
+| `/` | Directory ("The Rack") — one row per paid app | ✅ |
+| `/self-host/[saas]/` | **The canonical page.** "Can I self-host Miro?" — the money case, then the ranked replacement(s), all paths as sections on ONE URL | ✅ |
+| `/self-host/[project]/` | Legacy project-keyed URL — **301 to the SaaS page that ranks it** | ✅ (redirect only) |
+| `/alternatives/[saas]/` | **Absorbed into the canonical page** — no separate archetype (§5.2) | ❌ |
 | `/category/[category]/` | Hubs (12) | ✅ |
 | `/prompt-zero/` | Zero-setup primer | ✅ |
 | `/methodology/` | Rubrics, provenance, AI-authorship policy, verification semantics | ✅ |
 | `/weekly/[date]/` | Manual weekly digest (freshness engine) | ✅ wk 1 |
 | `/contribute/` | Contribution kit entry | ✅ |
 | `/about/`, `/colophon/`, `/terms/`, `/privacy/`, `/security/` | Trust & legal (launch-blocking) | ✅ |
-| `/self-host/caniselfhostit/` | Entry #1: this site (excluded from counts/health aggregation) | ✅ |
+| `/self-host/caniselfhostit/` | Entry #1: this site (excluded from counts/health aggregation). Named exception to the SaaS keying — nobody sells this, so the project keeps the slug | ✅ |
 | `/compare/[a]-vs-[b]/`, `/stack/[use-case]/`, `/migrate/[saas]-to-[project]/` | Post-launch, promotion-gated | ❌ |
 
-Trailing-slash canonical, 301 enforced. **No per-path sub-routes** (`/self-host/outline/vps` would cannibalize its parent and fail the overlap gate; paths are server-rendered tabs — the whole prompt corpus on one URL is also better AEO). Variant-URL promotion rule: distinct GSC query cluster + ≥400 unique words + ≥3 unique numeric facts not on the parent (plausible future: `/raspberry-pi`, not `/vps`).
+Trailing-slash canonical, 301 enforced — including every project-keyed URL, which redirects to the SaaS page whose `ranked[]` names it (a project no entity ranks has no URL; the fix is to rank it, not to mint a route). Both keys share the `/self-host/` namespace, so **project slugs and SaaS slugs must stay disjoint** — a collision is a build error, not a redirect. **No per-path sub-routes** (`/self-host/notion/vps` would cannibalize its parent and fail the overlap gate; paths are server-rendered tabs — the whole prompt corpus on one URL is also better AEO). Variant-URL promotion rule: distinct GSC query cluster + ≥400 unique words + ≥3 unique numeric facts not on the parent (plausible future: `/raspberry-pi`, not `/vps`).
 
-### 5.2 The alternatives-page rule
+### 5.2 The ≥3 rule — now about what a page *shows*, not whether it exists
 
-~30 of 50 pairs are 1:1, and a one-item "ranked list" is a doorway page. Hard validator rule: **an alternatives page exists only with ≥3 genuinely evaluated options + comparison table + distinct verdicts** — options 2–3 may be honest "evaluated, not yet tested by us" rows (that survey content is what makes the page non-thin and unserved). No real field → no page; the project page takes the query ("Self-host Audiobookshelf: the open-source Audible alternative (2026)"). Launch: **~12–20 alternatives pages**.
+The rule survived the inversion; its object changed. There is one page per paid app either way, so ≥3 no longer gates a URL into existence — it gates the **ranked list**. ~30 of 50 pairs are 1:1, and a one-item "ranked list" is doorway furniture whether it sits on its own URL or halfway down someone else's.
 
-### 5.3 Project page anatomy
+- **≥3 genuinely evaluated options + comparison table + distinct verdicts** → the page renders the ranked list. Options 2–3 may be honest "evaluated, not yet tested by us" rows (`evaluatedNotTested[]`); that survey content is what makes the section non-thin and unserved.
+- **One or two options** → the page **commits to a single pick** and says so in a sentence, rather than dressing one row up as a ranking. The reader gets an answer, not a shortlist of one.
 
-breadcrumbs → head (logo, H1 "Can I self-host Outline?", big tier badge answering it) → **The Swap band** → **Before You Start strip** (RAM · disk · domain? · ~minutes) → paths as tabs (VPS default · local if `localVariant` · chat) → **Prompt box** (`~3,400 tokens · verified <date> · Claude Code`; copy · open in Claude Code · download install.md; collapsed **"What this prompt will do"** 8-step outline — the top AEO block, and why a beginner isn't pasting blind) → deterministic fallback files → **first-screen screenshot from the verification run** → health card → day-2 (backup/restore/TLS-renewal + basic upgrade command — free forever) → **what you're signing up for** (candor; includes a one-line honest note where enterprise editions withhold features — the formal grading system is deferred) → alternatives 3-up → FAQ.
+Launch shape: **~12–20** canonical pages carry the ranked list; the rest commit to one pick. Rendering is generic — the template reads `options[]` and branches on its length, so a second option arriving in `data/saas/` changes the page without touching the template.
 
-**Direct answer under every H1, generated from JSON at build — never hand-written**, distinct templates per archetype (project = running facts; alternatives = ranking sentence). Validator: no two archetypes emit the same first sentence for the same entity pair.
+### 5.3 Canonical page anatomy — SaaS first, then the install
 
-**Internal linking as data:** hub ↔ children; project ↔ its alternatives page + siblings ("3 preferred, 1 minimum"); ≤40 template links/page; descriptive anchors; orphan check scoped to published pages (`pending` pages keep inbound links, are noindexed + unsitemapped, exempt from the check).
+The order is the argument: establish the bill before proposing the work. As built:
+
+breadcrumbs → head (H1 "Can I self-host Miro?", big tier badge answering it, direct answer naming the replacement) → **The Swap band** (pay → run) → **why people pay** (`whyPeoplePay` — one honest paragraph, not a takedown) → **the plan ladder** (`plans[]` as the vendor actually sells it, each row with `checkedOn` + source) → **the answer**: ranked options table (§5.2) or the single pick, each option carrying its rationale → *then the replacement's install content* → **Before You Start strip** (RAM · disk · domain? · ~minutes) → paths as tabs (VPS default · local if `localVariant` · chat) → **Prompt box** (`~3,400 tokens · verified <date> · Claude Code`; copy · open in Claude Code · download install.md; collapsed **"What this prompt will do"** 8-step outline — the top AEO block, and why a beginner isn't pasting blind) → deterministic fallback files → **first-screen screenshot from the verification run** → health card → day-2 (backup/restore/TLS-renewal + basic upgrade command — free forever) → **what you're signing up for** (candor; includes a one-line honest note where enterprise editions withhold features — the formal grading system is deferred) → sibling SaaS pages 3-up → FAQ.
+
+Install content belongs to the **primary** option. Where a page ranks several, the runners-up get their row, their rationale, and a link — not a second prompt box; one page, one recommended path.
+
+**Direct answer under every H1, generated from JSON at build — never hand-written.** One archetype now, two templates: single-pick pages emit running facts about the replacement; ranked pages emit the ranking sentence first. Validator: no two pages emit the same first sentence for the same entity pair.
+
+**Internal linking as data:** hub ↔ children; SaaS page ↔ sibling SaaS pages (`relatedSaasPages()` — "3 preferred, 1 minimum"); ≤40 template links/page; descriptive anchors; orphan check scoped to published pages (`pending` pages keep inbound links, are noindexed + unsitemapped, exempt from the check).
+
+**The trade-off we accepted.** "How to self-host Excalidraw" queries now land on `/self-host/miro/` — through the 301 and through the page's own content, which names Excalidraw in the title, the direct answer, the answer block, and every install section. We are betting that one page carrying both the money case and the install beats two pages splitting them, and that the paid-app query has the higher commercial intent and the larger volume. The cost is real and worth stating: a reader who searched the project by name arrives at a page framed around a product they may not pay for, and the project's own name is no longer carrying a URL. That is reversible. Projects remain first-class entities in the data (§6), so dedicated project pages can come back later **if GSC shows the split earning it** — a distinct query cluster on the project name, judged by the same variant-URL promotion rule in §5.1. Until that evidence exists, adding them back would be two thin pages on a hunch.
 
 ## 6. Data model
 
 ### 6.1 Repo data (the admin panel)
+
+**Which entity owns a page.** Pages are keyed by the **SaaS entity** (`data/saas/<slug>.json`) — that is the URL, the H1, and the row in the directory. Projects remain the **contribution unit**: a `data/projects/<slug>/` directory is what a PR adds, and it carries the prompts, the deterministic fallback files, the tier factors, and the measured resources. Neither shape changed in the inversion; only which one is the subject of a page did. `getAllSaasPages()` in `src/lib/projects.js` is the join: it hydrates each entity's `ranked[]` into full project objects, takes the top-ranked one as `primary`, resolves the priced `swap` for that pairing, and inherits the page's verdict, tier, category, and `contentUpdatedAt` from `primary`. An entity with an empty `ranked[]` has no page; a project no entity ranks has no page either — the fix is to rank it.
 
 Per-project **directory** (compose files as real reviewable files, not JSON strings):
 
@@ -135,9 +151,11 @@ data/saas/<slug>.json    # SaaS entity: name, domain, plan ladder + checkedOn + 
 ```jsonc
 {
   "slug": "outline", "name": "Outline", "repo": "outline/outline", "site": "https://…",
-  "category": "notes-wikis",   // enum, exactly 12: photos-media | files-docs | notes-wikis |
+  "category": "notes-wikis",   // closed enum, 14 slugs — src/lib/rubric.js CATEGORIES is the
+                               // source of truth: photos-media | files-docs | notes-wikis |
                                // passwords-security | analytics | automation-dev | monitoring |
-                               // comms-scheduling | marketing-content | work-pm | money-home | ai-tools
+                               // comms-scheduling | marketing-content | work-pm |
+                               // design-whiteboard | reading-bookmarks | money-home | ai-tools
   "replaces": [{ "saas": "notion", "plan": "Team", "seatsAssumed": 5 }],  // prices in data/saas
   "tierFactors": { "containers": 3, "externalDb": true, "needsSmtp": true, "needsOauth": false,
                    "needsDns": true, "needsGpu": false, "secretsToGenerate": 4 },
@@ -196,17 +214,17 @@ The sibling's cautionary number: `verifiedOneShot` false in all 976 entries. Our
 
 The per-page defensible asset — tested prompt + verified date + measured RAM + real savings math — survives 2026 scaled-content enforcement *and* gets cited (Princeton GEO: statistics, quotations, cited sources — all three gated below; honest caveat: measured lift was biggest for pages already near position 5, so this compounds ranking, it doesn't replace it).
 
-1. **Phased publishing:** ~50 project + ~12–20 alternatives + 12 hubs + core ≈ **80–90 URLs**; long tail waits for >80% cohort indexing.
+1. **Phased publishing:** ~50 canonical pages + 12 hubs + core. The ~12–20 ranked-list pages are no longer separate URLs (§5.2), so the launch count lands nearer **70** than the **80–90** planned before the inversion — fewer URLs, each denser. Long tail waits for >80% cohort indexing.
 2. **Publish gate v2 (validator-defined):** `uniqueProse` (prompts/code/template chrome stripped) ≥600 words, ≤25% sibling overlap · `promptDelta` ≥N substantive project-specific lines (mandated scaffolding ignored) · ≥4 numeric facts **from typed JSON fields** · ≥1 attributed quote with URL · ≥2 inline outbound citations · ≥1 harness screenshot · first-party tested-on block. Fail → `pending` (unsitemapped, labeled), CI fails only on *silent* inclusion.
 3. **Everything in initial HTML** — no AI crawler executes JS (GPTBot at 500M-fetch scale; cross-engine per Vercel/MERJ; Googlebot *does* render JS, so SSR is the AEO requirement and SEO rides along). Prerendering makes this trivially true.
 4. **robots.txt:** explicit Allow for GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, Claude-SearchBot, Claude-User, PerplexityBot, Perplexity-User, Google-Extended, Applebot-Extended, Bingbot, CCBot; Disallow `/api/` + param patterns; `Sitemap:` + llms.txt refs. Training crawlers allowed on purpose: corpus presence is distribution for a free directory.
 5. **Cloudflare traps, both:** (a) AI-crawler default block from **2026-09-15** — launch before it; opt out at the zone; weekly log verification that AI crawlers get 200s; (b) **Bot Fight Mode / managed challenges off on HTML paths** — a JS challenge is a second silent kill switch.
 6. **Structured data, 2026-honest:** BreadcrumbList (earns features) · Article + `dateModified` from `contentUpdatedAt` (substantive changes only) · SoftwareApplication + ItemList + FAQPage + HowTo as **pure AEO plumbing** (SoftwareApplication can't earn its rich result without rating/review; FAQ rich results ended 2026-05; HowTo died 2023) · **no aggregateRating** until real crawlable on-page reviews exist (July 2026 enforcement = domain-level risk); the outcome form's optional rating is that future unlock.
 7. **Facet policy:** filters mint **no crawlable URLs** (client state / `#fragment`); 2–4 evidenced combos promoted to real pages ("self-hosted apps that run in 1 GB of RAM"); param patterns Disallowed; never `noindex` + `Disallow` together.
-8. **Sitemap index by archetype** with real `lastmod` (GSC coverage per archetype = which template Google rejects, as a chart) · llms.txt + per-page `.md` mirrors (also the deeplink payload) · IndexNow for Bing/Copilot · rolling year in titles · refresh cadence in CI (alternatives monthly; install pages quarterly or on upstream major release).
+8. **Sitemap index by archetype** with real `lastmod` (GSC coverage per archetype = which template Google rejects, as a chart) · llms.txt + per-page `.md` mirrors (also the deeplink payload) · IndexNow for Bing/Copilot · rolling year in titles · refresh cadence in CI, now two clocks on one page (the money half — plans, prices, `checkedOn` — monthly; the install half quarterly or on upstream major release).
 9. **E-E-A-T, honestly attributed:** **"Verified by the caniselfhostit harness · <date> · <host>"** (machine work, linked to methodology) + **"Reviewed by Jashanpreet Singh"** (human, real author page). `/methodology` states the AI policy plainly: drafts are AI-assisted; every published prompt ran end-to-end on a clean machine before the stamp; unverified pages are labeled. The candor *is* the strategy.
 10. **Flywheel** (selfh.st's three legs — directory + newsletter + embeddable giveaway): **manual `/weekly/` from week 1** (an hour a week; the legitimate freshness engine) + **README badge at launch** (SVG endpoint + snippet; **opt-in maintainer outreach only** — trademark-safe; every embed is a backlink). Distribution: Rob's thread → Show HN → r/selfhosted + r/homelab (open data, open repo, methodology, no ads) → IndieHackers → Product Hunt. Reddit ≈40% of multi-engine AI citations — genuine answers linking specific pages are the AEO channel.
-11. **Sibling relationship:** different operators — not a doorway network. Residual template-similarity risk: materially different page structure (§11), credit links on `/about`/`/methodology` only, never duplicate title/H1 patterns for the same entity, never share screenshots/body copy. Our two own domains: one canonical, one 301.
+11. **Sibling relationship:** different operators — not a doorway network. Residual template-similarity risk: materially different page structure (§11), credit links on `/about`/`/methodology` only, never duplicate title/H1 patterns for the same entity, never share screenshots/body copy. Our two own domains: one canonical, one 301. **The inversion tightens this rule rather than relaxing it:** keying pages to the paid app points our H1 at the same entity the sibling's entries are named for, so the separation now rests entirely on the other differentiators — a different question, the tier-derived verdict vocabulary (§0), a materially different page structure (§5.3), and the ≥600-word unique-prose gate (§10.2). Worth re-checking against live sibling pages at Phase 3, not assumed.
 
 ## 11. Design — "The Rack"
 
@@ -216,13 +234,13 @@ Light-first **warm paper + copper**, deliberate inverse of canivibecodeit's dark
 
 **From canivibecodeit:** candor as trust, data-dense flex rows on hairlines, two-theme token structure, the grid-collapse mobile pattern.
 
-**Ours:** light `#FBFAF7` paper / `#1A1917` ink / `#A8420B` copper (≈6:1, link-safe) / `#0D4F4C` teal; dark "rack room at night" (`#121110` / `#F2955A`). Copper never a verdict color. **Mono is semantic**: Newsreader serif headings (no directory has a serif), Inter prose 16px/1.7, IBM Plex Mono *only for pasteable literals*. Squarer geometry (2/4/6/10 radius), 1px hairlines, 2px copper rule on machine content, 8px blueprint dot grid, calm easing. Signatures: **The Swap** (pay → run, four scales incl. OG), **Rack Rail** (LED-dot progress gutter; anchor list with JS off), **ports diagram** (browser → :443 caddy → :8080 app → :5432 db → /data — teaches what you're about to run), **TESTED ON A CLEAN MACHINE stamp** (only where earned). Directory: rank (editorial `pagePriority`, disclosed) · project · **replaces** (text names; favicons only where brand policy permits) · you'd stop paying (seat assumption inline) · setup badge + dots · health sparkbar + ★. Filters (no URLs): tier, category, license, official compose, **RAM slider on `ramMinMB`**. Accessibility build-checked: AA both themes, focus states, keyboard paths, chart text alternatives, reduced-motion.
+**Ours:** light `#FBFAF7` paper / `#1A1917` ink / `#A8420B` copper (≈6:1, link-safe) / `#0D4F4C` teal; dark "rack room at night" (`#121110` / `#F2955A`). Copper never a verdict color. **Mono is semantic**: Newsreader serif headings (no directory has a serif), Inter prose 16px/1.7, IBM Plex Mono *only for pasteable literals*. Squarer geometry (2/4/6/10 radius), 1px hairlines, 2px copper rule on machine content, 8px blueprint dot grid, calm easing. Signatures: **The Swap** (pay → run, four scales incl. OG), **Rack Rail** (LED-dot progress gutter; anchor list with JS off), **ports diagram** (browser → :443 caddy → :8080 app → :5432 db → /data — teaches what you're about to run), **TESTED ON A CLEAN MACHINE stamp** (only where earned). Directory columns, paid app first: **#** (editorial `pagePriority`, disclosed) · **App** (the product with the invoice — the row is Miro) · **Replaced by** (the top-ranked project; text names, favicons only where brand policy permits) · **You'd stop paying** (seat assumption inline) · **Setup** (badge + dots). Health sparkbar + ★ moved to the page — they describe the replacement, and a row that leads with the paid app shouldn't rank it on the project's GitHub stars. Filters (no URLs): tier, category, license, official compose, **RAM slider on `ramMinMB`** — all read from the row's top-ranked replacement, which is what the row would install. Accessibility build-checked: AA both themes, focus states, keyboard paths, chart text alternatives, reduced-motion.
 
 ## 12. Architecture — prerender + nightly rebuild
 
 The sibling needed SSR for per-second vote counts; our data moves **once a night on a schedule we control**. SSR-on-Workers would have bought 400–700 ms cross-region TTFB, hand-rolled per-colo caching, CPU-limit risk, and a bundle-size cliff — all dissolved by prerendering:
 
-- **Content routes prerendered at build** (project/alternatives/hubs/sitemaps/`.md` mirrors/llms.txt). Build reads `data/projects/` via `import.meta.glob` (no fs on Workers — the sibling's `readdirSync` data layer is a Phase-0 rewrite) and Supabase at build time.
+- **Content routes prerendered at build** (canonical SaaS pages/hubs/sitemaps/`.md` mirrors/llms.txt). Build reads `data/saas/` and `data/projects/` via `import.meta.glob` and joins them in `src/lib/projects.js` (no fs on Workers — the sibling's `readdirSync` data layer is a Phase-0 rewrite), plus Supabase at build time.
 - **Nightly GitHub Actions cron** (03:15 UTC; drift tolerated; **auto-disables after 60 idle days — monitored**): refresh `github_stats` (GraphQL batched 50/query for scalars; REST only for commit-activity with prime-then-collect 202 handling + contributor tricks; authed ETags; deps.dev fallback + OpenSSF; Docker Hub weekly), snapshot stars, then `repository_dispatch` → Cloudflare deploy hook → fresh build. Numbers ≤24h stale, in plain HTML, provenance line says so.
 - **Workers handle only the live:** `/api/outcome` + vote POST, rate-limited via **Cloudflare's rate-limiting binding** (in-colo, atomic — the sibling's SELECT-then-UPDATE limiter is racy over PostgREST). Displayed counts build-baked (crawlers see real numbers); progressive-enhancement fetch freshens client-side.
 - **Infra floor stated:** Workers Paid $5/mo + Supabase Free (nightly export of `github_stars_daily` to repo — the one unrebuildable table; the cron doubles as the free-tier keep-alive; Pro $25 later) + domains + DataFast.
@@ -232,7 +250,9 @@ The sibling needed SSR for per-second vote counts; our data moves **once a night
 
 ## 13. Launch catalog (~50)
 
-Seeded from the sibling's priorArt graph (~950/976 SaaS→OSS pairs — self-authored, no CC-BY-SA taint), honesty- and verifiability-corrected:
+Seeded from the sibling's priorArt graph (~950/976 SaaS→OSS pairs — self-authored, no CC-BY-SA taint), honesty- and verifiability-corrected.
+
+**The table stays project-organized; the presentation inverts.** A project is what gets authored, verified, and maintained, so the build plan counts projects. What ships is the other side of each arrow: the pair "Excalidraw (→ Miro)" below is published as `/self-host/miro/`, titled "Can I self-host Miro?", answered with Excalidraw. Read every row right-to-left to see the URL list. Entries with no paid product to name keep the project as the subject and say why — Navidrome ("for music you own", null savings), Open WebUI + Ollama (editorial, no savings figure), and this site's own entry #1.
 
 | Category | Entries |
 |---|---|
@@ -257,8 +277,8 @@ Deferred with reasons on `/methodology`: Mailcow (email = the #1 self-hosting fa
 Fable plans and verifies every phase; Opus fleets execute. **Target launch: before 2026-09-15** (Cloudflare AI-crawler flag day).
 
 - **Phase 0 — Foundation (~days 1–2):** scaffold (Astro + `@astrojs/cloudflare` + Supabase + wrangler per §12 checklist) · `site.js` (caniselfhostit brand + dontvibecodeit 301) · tokens + Base + core components · schema + validator + CI + **contribution kit** (CONTRIBUTING, PR/issue templates, `/contribute`) · prompt style guide · **agent execution spike** (§4.5) · **Hetzner SMTP unblock request + harness test-domain DNS** (multi-day lead times — start now).
-- **Phase 1 — Product core (~days 3–6):** directory + project + alternatives + hubs (prerendered) · nightly cron + Supabase schema (RLS posture CI-asserted) · health SVGs · OG pipeline with CI cache · Prompt Zero + methodology · outcome API on the rate-limit binding · **10-project pilot end-to-end** (data → prompt → harness → screenshot → gate). Pilot calibrates hours-per-project and hard-gates cohort size.
-- **Phase 2 — Content at scale (~days 7–12):** remaining ~40 projects via Opus fleet (research → draft per style guide → validator → harness → Fable review) · alternatives pages (§5.2) · gates live · sitemaps, llms.txt, `.md` mirrors, robots.
+- **Phase 1 — Product core (~days 3–6):** directory + canonical SaaS pages + hubs (prerendered) · nightly cron + Supabase schema (RLS posture CI-asserted) · health SVGs · OG pipeline with CI cache · Prompt Zero + methodology · outcome API on the rate-limit binding · **10-project pilot end-to-end** (data → prompt → harness → screenshot → gate). Pilot calibrates hours-per-project and hard-gates cohort size.
+- **Phase 2 — Content at scale (~days 7–12):** remaining ~40 projects via Opus fleet (research → draft per style guide → validator → harness → Fable review) · SaaS entities + ranked lists where the field is real (§5.2) · project-keyed 301s · gates live · sitemaps, llms.txt, `.md` mirrors, robots.
 - **Phase 3 — Launch (~days 13–14):** **add caniselfhostit.com zone to Cloudflare + move nameservers; dontvibecodeit.com 301** (opt-outs are zone settings — they can't precede the zone) · AI-crawler opt-out + **Bot Fight Mode off** + log verification · legal pages · Search Console + DataFast · `/colophon` + `/self-host/caniselfhostit` · first `/weekly/` · badge endpoint + first maintainer outreach · launch (Rob Hallam thread → Show HN → r/selfhosted).
 - **Post-launch:** verification-cron automation · migration axis (§7) · openness grades · compare/stack/migrate pages (GSC-gated) · digest automation · paid skills tier, gated on outcome-report data. **Free/paid line:** backup, restore, TLS renewal, basic upgrade command — free forever; paid = guided major-version upgrades with pre-flight checks, host-to-host migrations, troubleshooting. (No "freshness subscription" — it would cannibalize the public trust engine.)
 
@@ -273,7 +293,7 @@ Fable plans and verifies every phase; Opus fleets execute. **Target launch: befo
 | Reach | Organic sessions/mo | **300–500** (calibrated: OpenAlternative does ~133 visits/project/mo *at maturity*) | 3,000–6,000 |
 | AEO | **Citation panel:** 25 fixed queries monthly vs ChatGPT/Perplexity/Claude — are we named/linked? | ≥3 | ≥12 |
 | Growth | Referring domains | 30 | 150 |
-| Engagement | Prompt copies + deeplink opens / project pageview | >12% | >15% |
+| Engagement | Prompt copies + deeplink opens / canonical pageview | >12% | >15% |
 | Engagement | Outcome reports | 15–30 | 500 |
 | Milestone | Self-reported installs (funnel instrumented per step) | first 10 | 100 |
 | Ops | **Hours per verified project** (the survival metric) | trending ↓ | — |

@@ -1,5 +1,115 @@
 ---
-import StubPage from '../components/StubPage.astro';
+import Base from '../layouts/Base.astro';
+import { SITE } from '../lib/site.js';
+
+const title = `Terms · ${SITE.name}`;
+const description =
+  'MIT-licensed site and data. The prompts and configs are provided as-is: you run them on infrastructure you control, and you own the results, including the bills.';
+
+// Hand-set, because it means "a human read this page on this date" — the same
+// rule the data files use for `checkedOn`.
+const UPDATED = '2026-08-05';
 ---
 
-<StubPage heading="Terms" note="Terms of use for the site and its data." launchPhase="launch — these pages block it" />
+<Base {title} {description}>
+  <article class="wrap prose">
+    <h1>Terms</h1>
+    <p class="lede">
+      The site and its data are MIT-licensed. The prompts come with no warranty. The server is
+      yours, and so is the bill. The rest of this page is that sentence with the edges filled in.
+    </p>
+
+    <h2>The site and the data</h2>
+    <p>
+      Code, page content, and the project data are released under the{' '}
+      <a href={`${SITE.repoUrl}/blob/main/LICENSE`} rel="noopener">MIT licence</a>. Copy it, run
+      your own instance, build something else on top of it, keep the licence text with it. There is
+      no scraping clause and no API key, because the whole dataset is in a public repository.
+    </p>
+    <p>
+      What we cannot relicense is somebody else's work. awesome-selfhosted's catalogue is CC-BY-SA
+      and is used here as a lead list — a pointer to look at a project — never as a source of
+      copied text. The provenance rules are on <a href="/methodology/">/methodology</a>.
+    </p>
+
+    <h2>The prompts and the configs</h2>
+    <p>
+      Provided as-is, without warranty of any kind. A prompt marked as tested is a claim about one
+      run, on one clean server, on a stated date, at a stated version. It is evidence, not a
+      guarantee about your machine, your provider, or the version that shipped this morning.
+    </p>
+    <p>
+      You run these on infrastructure you control, under your own accounts, and you own the results.
+      That includes the bills. A server nobody destroyed keeps charging. A service exposed to the
+      internet is yours to close. A backup you did not take does not exist. Nobody here can see your
+      server, and nobody here is on call for it.
+    </p>
+    <p>
+      To the fullest extent the law allows, there is no liability for any loss or damage arising out
+      of using this site, its prompts, or its configuration files — including data loss, downtime,
+      and hosting charges. If that trade is not acceptable for what you are about to run, do not
+      run it. Read the prompt before you paste it; every one of them is printed in full on the page
+      for exactly that reason.
+    </p>
+
+    <h2>Other people's names</h2>
+    <p>
+      Nothing on this site is affiliated with, sponsored by, or endorsed by any project, company, or
+      hosting provider named on it. Product names, logos, and marks belong to their owners and are
+      used here to identify software, which is the only thing they are used for. No affiliate links,
+      no sponsorships, no paid placement.
+    </p>
+    <p>
+      Prices are read from the vendor's own page on a stated date and go stale between readings. The
+      vendor's page wins, always. If you own a mark and want its use here changed, open an issue and
+      it gets handled like any other correction.
+    </p>
+
+    <h2>Corrections</h2>
+    <p>
+      Every page is a file in a public repository, so a wrong fact is a diff. Use the{' '}
+      <a href={`${SITE.repoUrl}/issues/new/choose`} rel="noopener">issue templates</a> for a
+      correction, a broken prompt, or a project worth adding. There is no other channel and no queue
+      behind this one.
+    </p>
+    <p>
+      One exception: if a prompt or config is <em>dangerous</em> rather than wrong, do not open a
+      public issue. Use the private path on <a href="/security/">/security</a>.
+    </p>
+
+    <h2>What this is not</h2>
+    <ul>
+      <li>Not legal, security, tax, or financial advice.</li>
+      <li>Not a managed service, and not support. There is no ticket queue.</li>
+      <li>
+        Not a quote. Savings figures are arithmetic on published list prices with the seat
+        assumption stated next to them.
+      </li>
+    </ul>
+
+    <p class="provenance">
+      Last updated {UPDATED}. Changes to this page are commits, and the{' '}
+      <a href={`${SITE.repoUrl}/commits/main/src/pages/terms.astro`} rel="noopener">file history</a>{' '}
+      is the changelog.
+    </p>
+  </article>
+</Base>
+
+<style>
+  .prose {
+    max-width: 68ch;
+    padding-block: 3rem 4rem;
+  }
+  .prose h2 {
+    margin-top: 2.5em;
+  }
+  .lede {
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+  .provenance {
+    border-top: 1px solid var(--border);
+    padding-top: 1.25rem;
+    margin-top: 3rem;
+  }
+</style>

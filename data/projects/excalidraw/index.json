@@ -1,0 +1,81 @@
+{
+  "slug": "excalidraw",
+  "name": "Excalidraw",
+  "tagline": "A hand-drawn-style whiteboard that runs as one static container and keeps every drawing in the browser that drew it.",
+  "repo": "excalidraw/excalidraw",
+  "site": "https://excalidraw.com",
+  "category": "design-whiteboard",
+  "replaces": [
+    {
+      "saas": "miro",
+      "plan": "Starter",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 0
+  },
+  "resources": {
+    "ramMinMB": 256,
+    "ramMeasuredMB": null,
+    "diskGB": 2,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 6,
+  "license": "MIT",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/excalidraw/excalidraw/blob/master/docker-compose.yml",
+  "localVariant": false,
+  "quote": {
+    "text": "At the moment, self-hosting your own instance doesn't support sharing or collaboration features.",
+    "source": "Excalidraw developer documentation, Development",
+    "url": "https://docs.excalidraw.com/docs/introduction/development",
+    "checkedOn": "2026-08-05"
+  },
+  "citations": [
+    {
+      "claim": "Upstream states plainly that a self-hosted instance does not support sharing or collaboration, and points at a separate collab server for that.",
+      "url": "https://docs.excalidraw.com/docs/introduction/development"
+    },
+    {
+      "claim": "The published image is an nginx serving the compiled frontend on container port 80, and it carries no analytics or tracking libraries.",
+      "url": "https://hub.docker.com/r/excalidraw/excalidraw"
+    },
+    {
+      "claim": "Live collaboration is a second service, excalidraw-room, which this install deliberately does not run.",
+      "url": "https://github.com/excalidraw/excalidraw-room"
+    },
+    {
+      "claim": "Caddy obtains and renews TLS certificates automatically for any public hostname named in the Caddyfile.",
+      "url": "https://caddyserver.com/docs/automatic-https"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "No realtime collaboration. Upstream says so themselves: the self-hosted image has no sharing and no collab. Two people on one board needs a second service, excalidraw-room, and this install does not run it.",
+    "Your drawings are not on the server. They live in the browser that drew them, so there is no sync between your laptop and your phone, and clearing site data loses work no backup on the box could have saved. Exporting a scene file is the backup, and it is a habit rather than a step.",
+    "There are no accounts, which cuts both ways. Nobody can log in, so there is no password to lose and no sign-up page to close, but anyone who finds the hostname can open a blank canvas of their own. They cannot see yours.",
+    "Upstream publishes no versioned tag for this image, only a rolling one, so the install pins a digest and you read the new digest yourself when you update. There is no changelog attached to it.",
+    "No Miro templates, no facilitation tools, no shared board history. Those are what the paid tiers are actually selling, and none of them arrive with this container."
+  ],
+  "sources": {
+    "compose": "https://hub.docker.com/r/excalidraw/excalidraw",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://docs.excalidraw.com/docs/introduction/development",
+    "digest": "https://hub.docker.com/v2/repositories/excalidraw/excalidraw/tags/"
+  },
+  "related": [
+    "uptime-kuma",
+    "freshrss",
+    "vaultwarden"
+  ],
+  "pagePriority": 1,
+  "contentUpdatedAt": "2026-08-05",
+  "contentHash": "5c6d2d2004da92313ad6ad8d6d82cdd8ca218003d90032fbae2d1e616a7d11c8"
+}

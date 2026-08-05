@@ -12,6 +12,19 @@ git config core.hooksPath .githooks
 Then `npm run validate` before you push. It runs the same checks CI runs, and it tells you
 exactly what is off rather than making you guess.
 
+## How pages work
+
+**A page is named after the paid app, not the project.** `/self-host/miro/` asks "Can I self-host
+Miro?" and answers "yes, it's called Excalidraw" — the reader arrives with a subscription, not
+with a repo. The two data shapes below do different jobs: `data/projects/<slug>/` is the
+**contribution unit**, carrying the prompts, the configs, and the measured facts;
+`data/saas/<slug>.json` is the **page**, carrying the money, the reason people pay, and the ranked
+list of projects that replace it. So adding a project usually means adding or updating a SaaS
+entity as well — one file says what you built, the other says what it gets you out of. The
+validator enforces the references both ways: a `replaces` entry pointing at a SaaS file that
+doesn't exist fails, and so does a `ranked` entry naming a project directory that doesn't exist. A
+project no SaaS entity ranks has no page; the fix is to rank it, not to add a route.
+
 ## The directory
 
 ```
@@ -44,12 +57,12 @@ genuinely don't have and `[]` for an empty list, rather than dropping the key.
   "repo": "outline/outline",            // owner/name only — the stats job builds the URL
   "site": "https://www.getoutline.com", // upstream project homepage or docs root
 
-  // Exactly one of the 13 category slugs. The enum is closed: if your project doesn't
+  // Exactly one of the 14 category slugs. The enum is closed: if your project doesn't
   // fit, say so in the PR rather than stretching a slug — adding a category means adding
   // a hub page, which is an editorial decision.
   //   photos-media | files-docs | notes-wikis | passwords-security | analytics |
   //   automation-dev | monitoring | comms-scheduling | marketing-content | work-pm |
-  //   design-whiteboard | money-home | ai-tools
+  //   design-whiteboard | reading-bookmarks | money-home | ai-tools
   "category": "notes-wikis",
 
   // What people stop paying for. Every "saas" value must have data/saas/<slug>.json —
@@ -147,7 +160,10 @@ the honest one-liner in `whatYouSignUpFor` instead.
 
 ## data/saas/<slug>.json
 
-The paid product a project replaces. One file per SaaS, shared by every project that replaces it.
+The paid product a project replaces, and the page it publishes at (`/self-host/<slug>/`). One file
+per SaaS, shared by every project that replaces it. `whyPeoplePay` and the plan ladder are read
+copy, not metadata — they open the page, above anything about installing the replacement, because
+a reader who doesn't recognise their own bill has no reason to keep reading.
 
 ```jsonc
 {
@@ -163,15 +179,16 @@ The paid product a project replaces. One file per SaaS, shared by every project 
     { "project": "outline", "rationale": "…" }
   ],
   "evaluatedNotTested": [                // honest survey rows; these are what make an
-    { "name": "…", "repo": "https://github.com/…", "note": "…" }   // alternatives page real
+    { "name": "…", "repo": "https://github.com/…", "note": "…" }   // ranked list real
   ]
 }
 ```
 
-An `/alternatives/<saas>/` page is generated only where there are **three or more genuinely
-evaluated options** with distinct verdicts. Two options is not a ranking, it's a doorway page.
-Fewer than three and the project page takes the query instead — that's a validator rule, not a
-preference.
+The number of evaluated options decides what the page *shows*. **Three or more genuinely evaluated
+options** with distinct verdicts (`ranked[]` plus `evaluatedNotTested[]`) and the page renders the
+ranked comparison. Fewer than three and it commits to the single best pick and says so — two
+options is not a ranking, it's a doorway list with one row of filler. The validator counts them
+and tells you which shape your entity will get.
 
 ## The provenance rule
 
@@ -260,6 +277,6 @@ Do not add or remove a DRAFT marker on a prompt you haven't run end to end on a 
 - **Prompt failure reports.** A prompt broke on your machine: which project, which agent, which
   OS, which VPS provider, and where exactly it stopped. This is the most useful bug report the
   project gets, because it's the difference between "works on the harness" and "works."
-- **Outcome reports** go through the form on each project page, not through the repo.
+- **Outcome reports** go through the form on the app's page, not through the repo.
 
 Security issues: don't open a public issue. See `/security` on the site for the contact path.

@@ -1,0 +1,24 @@
+# Actual Budget · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from https://caddyserver.com/docs/automatic-https
+# and https://actualbudget.org/docs/install/docker
+#
+# Append this to /etc/caddy/Caddyfile, with <DOMAIN> replaced by the hostname
+# pointed at this box. Caddy runs under systemd. No Caddy container here.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8090 is the loopback port compose publishes; it is never in the firewall.
+	# A full budget upload arrives as one request, so no body limit is set here
+	# and ACTUAL_UPLOAD_FILE_SYNC_SIZE_LIMIT_MB stays at the upstream default.
+	reverse_proxy 127.0.0.1:8090
+}

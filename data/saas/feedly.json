@@ -1,0 +1,50 @@
+{
+  "slug": "feedly",
+  "name": "Feedly",
+  "domain": "feedly.com",
+  "whyPeoplePay": "Feedly is a reader that keeps working while you are not looking at it. It fetches on their schedule rather than yours, it has apps on both phone platforms that sync without you thinking about it, and the paid tiers add the AI filtering that turns two hundred sources into a short list. You are paying for somebody else to run the polling.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Capped source and feed counts, and no AI features."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 6.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Monthly-billed figure. Around $6/month when paid annually."
+    },
+    {
+      "name": "Pro+",
+      "priceMonthly": 12.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Monthly-billed figure, and the tier that carries the AI assistant. Around $8.25/month when paid annually."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only, and reported to start far above the personal tiers."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-05",
+    "source": "https://feedly.com/i/pricing",
+    "currency": "USD",
+    "confidence": "low",
+    "note": "TODO: re-read the vendor page and raise this to high. Feedly's own pricing page returned its \"Feedly failed to load\" error for us on 2026-08-05, on three separate URLs, so these figures come from secondary reporting from 2026 rather than from the vendor. They agree with each other, which is why they are here at all, but nobody on this project has seen them on feedly.com. Do not build a headline savings claim on them until somebody has."
+  },
+  "ranked": [
+    {
+      "project": "freshrss",
+      "rationale": "Covers the part of Feedly Pro that most subscribers actually use: unlimited sources, folders, full article fetching, and mobile access through an API the third-party reader apps already speak. It does not cover the AI filtering that Pro+ sells, and the refresh schedule becomes yours to understand rather than somebody else's problem."
+    }
+  ],
+  "evaluatedNotTested": []
+}

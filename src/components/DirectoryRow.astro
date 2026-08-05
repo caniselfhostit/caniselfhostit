@@ -1,56 +1,77 @@
 ---
 import TierBadge from './TierBadge.astro';
 
-// One row of The Rack. Data contract: src/lib/projects.js.
+// One row of The Rack — keyed by the PAID app, because that is the thing a
+// reader is looking for. Data contract: getAllSaasPages() in src/lib/projects.js.
+//
+// The money in this row is `page.swap`: the primary project's resolved swap for
+// THIS SaaS, already seat-multiplied and already dated by the data layer. The
+// row therefore cannot quote a different figure from the page it links to — the
+// two read the same object. No swap, or a swap with no honest price, prints no
+// number rather than a zero.
+//
 // Data attributes are here for the Phase-1 client-side filters (tier, category,
 // RAM slider). Filters mint no URLs, so they can stay pure DOM state.
-const { project, rank } = Astro.props;
-const p = project ?? {};
+const { page, rank } = Astro.props;
+const s = page ?? {};
+const primary = s.primary ?? {};
+const swap = s.swap ?? null;
 
-const replaces = Array.isArray(p.replaces) ? p.replaces.filter(Boolean) : [];
-const names = replaces.map((r) => r.name ?? r.saas).filter(Boolean);
+const priced = !!swap && typeof swap.monthlyCost === 'number' && swap.monthlyCost > 0;
+const money = (n) =>
+  `$${n.toLocaleString('en-US', {
+    minimumFractionDigits: Number.isInteger(n) ? 0 : 2,
+    maximumFractionDigits: 2,
+  })}`;
 
-// The headline figure is the LARGEST single subscription this replaces — never
-// the sum of the list. Nobody pays for Dropbox and Drive and iCloud at once,
-// and adding them up would be an invented savings number.
-const priced = replaces.filter((r) => typeof r.priceMonthly === 'number' && r.priceMonthly > 0);
-const top = priced.sort((a, b) => b.priceMonthly - a.priceMonthly)[0];
-const money = (n) => `$${Math.round(n).toLocaleString('en-US')}`;
-const perSeat = top?.unit === 'seat';
+// The tagline is the replacement's own sentence, clipped to keep the row one
+// line tall at every width. The whole of it is on the page this row links to.
+function clip(text, max = 46) {
+  if (typeof text !== 'string' || text.length <= max) return text ?? null;
+  return `${text.slice(0, max - 1).trimEnd()}…`;
+}
+const tagline = clip(primary.tagline);
 ---
 
 <a
   class="rack-row"
-  href={`/self-host/${p.slug}/`}
-  data-tier={p.tier}
-  data-category={p.category}
-  data-ram={p.ramMinMB}
+  href={`/self-host/${s.slug}/`}
+  data-tier={s.tier}
+  data-category={s.category}
+  data-ram={primary.ramMinMB}
 >
   <span class="c-rank mono" aria-hidden="true">{String(rank).padStart(2, '0')}</span>
 
   <span class="c-project">
-    <span class="name">{p.name}</span>
-    {p.tagline && <span class="tagline">{p.tagline}</span>}
+    <span class="name">{s.name}</span>
+    {s.domain && <span class="domain mono">{s.domain}</span>}
   </span>
 
   <span class="c-replaces">
-    {names.length ? names.join(' · ') : <span aria-hidden="true">—</span>}
-  </span>
-
-  <span class="c-price">
     {
-      top ? (
+      primary.name ? (
         <>
-          <span class="mo">{money(top.priceMonthly)}/mo</span>
-          <span class="yr">
-            {money(top.priceMonthly * 12)}/yr{perSeat ? ' · per seat' : ''}
-          </span>
+          <span class="repl">{primary.name}</span>
+          {tagline && <span class="repl-tag"> — {tagline}</span>}
         </>
       ) : (
-        <span class="yr">no fixed price</span>
+        <span aria-hidden="true">—</span>
       )
     }
   </span>
 
-  <span class="c-tier"><TierBadge tier={p.tier} label={p.tierLabel} /></span>
+  <span class="c-price">
+    {
+      priced ? (
+        <>
+          <span class="mo">{money(swap.monthlyCost)}/mo</span>
+          <span class="yr">{money(swap.yearlyCost)}/yr</span>
+        </>
+      ) : (
+        <span class="yr">no list price</span>
+      )
+    }
+  </span>
+
+  <span class="c-tier"><TierBadge tier={s.tier} label={s.tierLabel} /></span>
 </a>

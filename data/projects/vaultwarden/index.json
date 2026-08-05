@@ -45,8 +45,12 @@
       "url": "https://github.com/dani-garcia/vaultwarden/wiki/Using-Docker-Compose"
     },
     {
-      "claim": "Upstream's Caddy example puts a reverse proxy in front of Vaultwarden and forwards the real client IP with header_up X-Real-IP.",
+      "claim": "Upstream's Caddy example reverse-proxies to Vaultwarden on a loopback port and forwards the real client IP with header_up X-Real-IP.",
       "url": "https://github.com/dani-garcia/vaultwarden/wiki/Proxy-examples"
+    },
+    {
+      "claim": "Support for WebSocket traffic on port 3012 was removed in 1.31.0 and integrated on the main HTTP port, so a reverse proxy needs no second route.",
+      "url": "https://github.com/dani-garcia/vaultwarden/wiki/Enabling-WebSocket-notifications"
     },
     {
       "claim": "The admin page token is an Argon2 PHC string produced by the vaultwarden binary itself, not a password you invent.",
@@ -67,10 +71,15 @@
   "sources": {
     "compose": "https://github.com/dani-garcia/vaultwarden/wiki/Using-Docker-Compose",
     "caddy": "https://github.com/dani-garcia/vaultwarden/wiki/Proxy-examples",
-    "adminToken": "https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page"
+    "install": "https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page",
+    "adminToken": "https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page",
+    "websocket": "https://github.com/dani-garcia/vaultwarden/wiki/Enabling-WebSocket-notifications",
+    "caddyTls": "https://caddyserver.com/docs/automatic-https",
+    "image": "https://hub.docker.com/r/vaultwarden/server/tags",
+    "releases": "https://github.com/dani-garcia/vaultwarden/releases"
   },
   "related": [],
   "pagePriority": 1,
   "contentUpdatedAt": "2026-08-05",
-  "contentHash": "104c9c1ebfcdf4b4ff90ab20ca7f9de7875ba7426e0e638816fb08f7786eabfe"
+  "contentHash": "7c840ed7b9442b1209dec3a8fed12aba9c237de9fcf22bf8b012a42439e58faf"
 }

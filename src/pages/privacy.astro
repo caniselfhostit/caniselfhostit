@@ -1,40 +1,51 @@
 ---
-// Written against SITE.datafastScriptUrl, which is rendered verbatim below. If
-// the script ever changes, this page changes in the same commit — that is the
-// rule in docs/phase0-todos.md item D, and rendering the real URL is what keeps
-// it enforceable instead of aspirational.
+// The analytics section is written against SITE.datafastScriptUrl and renders it
+// verbatim. If the script is ever swapped, this page contradicts itself on sight
+// rather than going quietly stale — which is the rule in phase0-todos.md item D,
+// made enforceable instead of aspirational.
 import Base from '../layouts/Base.astro';
 import { SITE } from '../lib/site.js';
 
-const title = `Privacy — what this site collects · ${SITE.name}`;
+const title = `Privacy · ${SITE.name}`;
 const description =
-  'One third-party script, no cookies, no accounts, no ad tech. What DataFast records, what stays in your browser, and why there is no cookie banner.';
+  'No accounts, no cookies, no consent banner. One cookieless analytics script named in full, edge request logs, and nothing else — the whole list.';
+
+const UPDATED = '2026-08-05';
 ---
 
 <Base {title} {description}>
   <article class="wrap prose">
     <h1>Privacy</h1>
-    <p>
-      The short version: this site loads one third-party script, sets no cookies, and has no
-      accounts to attach anything to. There is no banner because there is nothing to ask you about.
+    <p class="lede">
+      There is nothing to sign up for here, so there is not much to tell. This page is the whole
+      list, including the parts that are true of any website.
     </p>
 
-    <h2>What this site loads</h2>
+    <h2>What the site stores on your device</h2>
+    <p>
+      One thing of ours: your light or dark theme choice, in <code>localStorage</code> under the
+      key <code>theme</code>. It stays in your browser, it is not a cookie, and it is never sent
+      anywhere. Analytics adds three <code>sessionStorage</code> keys, described below, which die
+      with the tab.
+    </p>
+    <p>
+      No tracking cookie, no consent banner to dismiss, and nothing stored about what you read or
+      expand. The copy buttons on prompt pages hand text to your clipboard and nowhere else — the
+      whole point of this site is that you take the prompt and leave.
+    </p>
+
+    <h2>Analytics</h2>
     <p>Exactly one request leaves your browser for a domain that isn't this one:</p>
     <p><code class="url">{SITE.datafastScriptUrl}</code></p>
     <p>
-      That is <a href="https://datafa.st" rel="noopener">DataFast</a>, the analytics that tell us
-      which pages people actually read. Everything else is served from this domain — the fonts are
-      bundled at build time rather than fetched from Google, and the only other script is the few
-      lines that run the theme toggle. No tag manager, no ad network, no embedded video, no comment
-      widget, no session recorder, no affiliate tracker.
+      That is <a href="https://datafa.st" rel="noopener">DataFast</a>, and that URL is their
+      <strong>cookieless</strong> build rather than the default one, which sets a cookie. The
+      difference is the reason this page can promise what it promises, so the URL above is printed
+      straight from the site's configuration — swap the script and this page changes with it.
     </p>
-
-    <h2>What DataFast collects</h2>
     <p>
-      That URL is DataFast's <strong>cookieless</strong> build, not their default one. Rather than
-      describe it in the abstract, here is every field the script puts in the request, read off the
-      script itself:
+      Rather than describe the payload in the abstract, here is every field the script sends, read
+      off the script itself:
     </p>
     <ul>
       <li>
@@ -51,44 +62,26 @@ const description =
         (<code>gclid</code>, <code>fbclid</code>, <code>msclkid</code> and five others). This site
         buys no ads, so in practice it is empty.
       </li>
-      <li><code>visitorId</code>, <code>sessionId</code> — the pseudonymous ids described below.</li>
+      <li>
+        <code>visitorId</code>, <code>sessionId</code> — pseudonymous, and stored only in
+        <code>sessionStorage</code> as <code>datafast_visitor_id</code> and
+        <code>datafast_session_id</code>, alongside <code>datafast_pageview_state</code>.
+      </li>
       <li><code>cookieless: true</code> — the script telling the server which build it is.</li>
     </ul>
     <p>
       Your IP address and user-agent aren't in that list because every HTTP request carries them
-      regardless. DataFast's documentation says both are used as inputs to the visitor hash, and
-      country-level location is derived from the address at their end rather than asked of your
-      browser. There is no geolocation prompt here and never will be.
+      regardless. DataFast's documentation says both are inputs to the visitor hash, along with this
+      site's domain and a salt that rotates roughly every 24 hours — so yesterday's identifier
+      cannot be matched to today's. Country-level location is derived from the address at their end
+      rather than asked of your browser. There is no geolocation prompt here and never will be.
     </p>
     <p>
-      To count you as one visitor rather than six, it derives a pseudonymous identifier on their
-      server: a hash of signals including your IP address, your browser's user-agent, this site's
-      domain, and a salt that rotates roughly every 24 hours (UTC). When that salt rotates,
-      yesterday's identifier can no longer be matched to today's. This is a trade we made
-      knowingly — it makes returning-visitor numbers fuzzier, and it means nothing durable follows
-      you.
-    </p>
-
-    <h2>What is kept in your browser</h2>
-    <p>Two things, both first-party, both strictly functional:</p>
-    <ul>
-      <li>
-        Three <code>sessionStorage</code> keys from DataFast —
-        <code>datafast_visitor_id</code>, <code>datafast_session_id</code> and
-        <code>datafast_pageview_state</code> — so that one visit isn't counted as several. Session
-        storage dies with the tab; close it and they are gone.
-      </li>
-      <li>
-        The light or dark theme you picked, if you touched the toggle. That is the only
-        <code>localStorage</code> key this site writes. It stays until you clear it and never
-        leaves your device.
-      </li>
-    </ul>
-    <p>
-      No cookies, from us or from DataFast. We read the script rather than taking a vendor's word
-      for it: the cookieless build contains no reference to <code>document.cookie</code> anywhere,
-      and writes to <code>localStorage</code> exactly never. Their default build, which we do not
-      use, references it twice.
+      We read the script rather than taking a vendor's word for it: the cookieless build contains no
+      reference to <code>document.cookie</code> anywhere, and writes to <code>localStorage</code>
+      exactly never. The default build, which this site does not load, references cookies twice.
+      Fonts and scripts are served from this domain, so no CDN learns you were here by handing you a
+      typeface.
     </p>
 
     <h2>Why there is no cookie banner</h2>
@@ -101,47 +94,66 @@ const description =
 
     <h2>Opting out</h2>
     <p>
-      Before it sends anything, DataFast's script checks one flag. Set it from your browser's
-      console on this site and the script stays quiet permanently — no account, no request to us,
-      nothing for us to honour or quietly ignore:
+      Before it sends anything, the script checks one flag. Set it from your browser's console on
+      this site and it stays quiet permanently — no account, no request to us, nothing for us to
+      honour or quietly ignore:
     </p>
     <pre><code>localStorage.setItem('datafast_ignore', 'true')</code></pre>
     <p>
       Blocking <code>datafa.st</code> in a content blocker works just as well. Every page here is
-      plain HTML that renders without any of this: nothing on this site is gated behind analytics
-      loading, and nothing breaks when it doesn't.
+      prerendered HTML: nothing is gated behind analytics loading, and nothing breaks when it
+      doesn't.
+    </p>
+
+    <h2>Server logs</h2>
+    <p>
+      Cloudflare serves these pages and keeps request logs — IP address, user agent, timestamp, URL
+      — for delivery, caching, and abuse handling. That is inherent to being served by anyone over
+      the internet rather than a choice this site makes on top. We take no per-visitor log out of it
+      and do not want one.
+    </p>
+    <p>
+      This site is prerendered static pages. There is no login, no session, no user record, and no
+      database of readers to leak.
     </p>
 
     <h2>What we can't tell you</h2>
     <p>
       DataFast is someone else's service, and this page won't claim more certainty than we have.
       Their documentation describes the cookieless identifier as derived from your IP address; it
-      does not publish whether the raw address is discarded after hashing, or which jurisdiction
-      the data is processed in. We asked the documentation, not a salesperson, and that is where it
-      stops. If the answer matters to you, their
+      does not publish whether the raw address is discarded after hashing, or which jurisdiction the
+      data is processed in. If the answer matters to you, their
       <a href="https://datafa.st/gdpr" rel="noopener">GDPR page</a> is the primary source and you
-      should read it rather than our paraphrase.
-    </p>
-    <p>
-      The site is static and served by Cloudflare. Like every web host, Cloudflare sees the
-      requests that reach it — address, user-agent, and URL — and handles them under its own terms.
-      Self-hosting this site is on the roadmap, for the same reason you're reading a directory
-      about self-hosting.
+      should read it rather than our paraphrase. A directory about running your own software should
+      be the last place to pretend a third party is transparent when it isn't.
     </p>
 
-    <h2>What this site never does</h2>
+    <h2>What ships next, and what it will store</h2>
     <p>
-      No accounts, no logins, no newsletter, no comment box, no ads, no affiliate links, and no
-      selling or sharing of anything with anyone. There is nothing here to sell, which is the only
-      privacy promise that has ever been worth much.
+      Outcome reports — worked, partly, failed — are planned on project pages, so that "reported
+      working by readers" can mean something countable. When that form ships, a report row stores the
+      project, the version, your OS, the agent you used, and your note. It stores nothing about your
+      host: no IP address, no domain, no hostname, no credential, and no output from your install.
+      Rate limiting happens at the edge and is not kept with the report. There is no email field,
+      because there is no mailing list.
+    </p>
+    <p>
+      When that ships, this page changes first. If this page and the code ever disagree, that is a
+      bug worth reporting.
     </p>
 
-    <h2>When this page changes</h2>
+    <h2>Questions</h2>
     <p>
-      Before the site does, not after. If the tracking script is ever swapped for one that sets
-      cookies, this page is wrong the moment it happens — so the rule is that the copy changes in
-      the same commit as the script, or the script doesn't change. The URL above is rendered
-      straight from the site's configuration, so it cannot quietly drift out of date.
+      No accounts means there is no profile to export or delete. There are no ads, no affiliate
+      links, and nothing sold or shared with anyone. For anything else, open an{' '}
+      <a href={`${SITE.repoUrl}/issues/new/choose`} rel="noopener">issue</a> — including "your
+      privacy page is wrong about your own stack", which would be a correction like any other.
+    </p>
+
+    <p class="provenance">
+      Last updated {UPDATED}. Changes to this page are commits, and the{' '}
+      <a href={`${SITE.repoUrl}/commits/main/src/pages/privacy.astro`} rel="noopener">file
+      history</a> is the changelog.
     </p>
   </article>
 </Base>
@@ -151,17 +163,23 @@ const description =
     max-width: 68ch;
     padding-block: 3rem 4rem;
   }
-  .prose h1 {
-    margin-bottom: 0.5em;
-  }
   .prose h2 {
-    margin-top: 2em;
+    margin-top: 2.5em;
   }
   .prose ul {
     display: grid;
     gap: 0.5rem;
   }
+  .lede {
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
   .url {
     overflow-wrap: anywhere;
+  }
+  .provenance {
+    border-top: 1px solid var(--border);
+    padding-top: 1.25rem;
+    margin-top: 3rem;
   }
 </style>

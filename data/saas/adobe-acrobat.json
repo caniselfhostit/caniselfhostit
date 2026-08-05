@@ -1,0 +1,43 @@
+{
+  "slug": "adobe-acrobat",
+  "name": "Adobe Acrobat",
+  "domain": "adobe.com",
+  "whyPeoplePay": "Acrobat is the reference implementation of the PDF specification, written by the company that wrote the specification, and that shows up in the boring places: a form that fills correctly on a phone, an OCR pass that gets a scanned invoice right the first time, and a signature a bank's compliance desk has seen before. You are paying for the file opening the same way on somebody else's machine.",
+  "plans": [
+    {
+      "name": "Acrobat Reader",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Free. Reads, prints and comments. It does not edit, combine, compress, OCR or redact, which is the boundary the paid tiers sell."
+    },
+    {
+      "name": "Acrobat Standard",
+      "priceMonthly": 24.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Month-to-month, one person. About $14.99/mo on an annual plan paid monthly, which locks you in for a year."
+    },
+    {
+      "name": "Acrobat Pro",
+      "priceMonthly": 29.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Month-to-month, one person. About $19.99/mo on an annual plan paid monthly. Adds redaction, PDF comparison and the advanced form and accessibility tooling."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-05",
+    "source": "https://www.adobe.com/acrobat/pricing.html",
+    "currency": "USD",
+    "confidence": "low",
+    "note": "TODO: re-read the vendor page and raise this confidence. Adobe's own pricing page timed out twice on 2026-08-05, so these figures come from our own recent knowledge of the US list price and were only cross-checked against secondary price trackers, not read off adobe.com. We record the month-to-month figure rather than the annual-paid-monthly one because the cheaper number is a twelve-month commitment with an early-cancellation fee, and savings math built on it overstates what someone on a rolling plan is actually giving up. Regional prices differ; this row is USD only."
+  },
+  "ranked": [
+    {
+      "project": "stirling-pdf",
+      "rationale": "The only one here that covers the whole boring middle of Acrobat, splitting, merging, rotating, compressing, OCR and form flattening, from a single container with no database behind it. It is a toolbox rather than an editor: it will not let you retype a paragraph inside a page the way Acrobat Pro does, and the page says so before you install it."
+    }
+  ],
+  "evaluatedNotTested": []
+}

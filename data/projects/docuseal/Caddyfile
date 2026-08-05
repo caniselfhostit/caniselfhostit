@@ -1,0 +1,26 @@
+# DocuSeal · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from https://caddyserver.com/docs/automatic-https
+# and https://github.com/docusealco/docuseal/blob/master/README.md
+#
+# Append this to /etc/caddy/Caddyfile, with <DOMAIN> replaced by the hostname
+# pointed at this box. Caddy runs under systemd. No Caddy container here.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# No X-Frame-Options here: DocuSeal publishes an embeddable signing form,
+	# and a blanket SAMEORIGIN would break it for anyone who uses that later.
+	#
+	# 8089 is the loopback port compose publishes; it is never in the firewall.
+	# FORCE_SSL in .env makes Rails trust the X-Forwarded-Proto Caddy sets, so
+	# the signing links it emails come out as https.
+	reverse_proxy 127.0.0.1:8089
+}

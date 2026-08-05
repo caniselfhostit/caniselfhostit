@@ -1,0 +1,36 @@
+{
+  "slug": "ynab",
+  "name": "YNAB",
+  "domain": "ynab.com",
+  "whyPeoplePay": "YNAB sells a method more than software. Give every dollar a job, and the app is the thing that keeps nagging you until you have. The bank sync, the apps on every phone in the house and the teaching material around it are what make the method survive contact with a bad month, and that is the part a subscription pays for.",
+  "plans": [
+    {
+      "name": "Monthly",
+      "priceMonthly": 14.99,
+      "unit": "flat",
+      "seatsIncluded": 6,
+      "note": "Billed monthly, USD, before tax. One subscription is shared with up to six people."
+    },
+    {
+      "name": "Annual",
+      "priceMonthly": 9.08,
+      "unit": "flat",
+      "seatsIncluded": 6,
+      "note": "$109 USD paid annually, which the page states as $9.08 a month. Same product, twelve months up front."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-05",
+    "source": "https://www.ynab.com/pricing",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "Read from ynab.com/pricing on 2026-08-05. Prices exclude tax. We treat the monthly figure as the headline because it is what someone cancelling actually stops paying; the annual figure is on the ladder next to it rather than hidden. A 34-day free trial and a free 365-day student year both exist and are not plans, so they are not priced here."
+  },
+  "ranked": [
+    {
+      "project": "actual-budget",
+      "rationale": "It is a direct descendant of the same envelope method, down to the rule that every dollar gets assigned before it can be spent, and it keeps the whole budget in a local-first file that syncs through a server you run. The gap is bank sync: YNAB's connections are included, and Actual reaches banks only through a third-party aggregator you set up and, in most regions, pay for separately."
+    }
+  ],
+  "evaluatedNotTested": []
+}

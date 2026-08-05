@@ -1,0 +1,57 @@
+{
+  "slug": "bitly",
+  "name": "Bitly",
+  "domain": "bitly.com",
+  "whyPeoplePay": "Bitly's real product is a promise about the future: links shortened on their domain in 2012 still resolve today. You are renting somebody else's commitment to keep a redirect alive, plus the click analytics, the QR codes and the branded domain handling that a marketing team wants in one place.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "A small monthly allowance of links and QR codes."
+    },
+    {
+      "name": "Core",
+      "priceMonthly": 10,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$120 a year on the annual plan, which is how the page presents it."
+    },
+    {
+      "name": "Growth",
+      "priceMonthly": 35,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$348 a year on the annual plan, shown as $29/month billed annually."
+    },
+    {
+      "name": "Premium",
+      "priceMonthly": 300,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$2,388 a year on the annual plan, shown as $199/month billed annually."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-05",
+    "source": "https://bitly.com/pages/pricing",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "Monthly-billed figures recorded, with the annual-billed equivalents in each plan note, because the page advertises savings of up to 34% on annual billing and quoting only the annual rate would understate what a month-to-month subscriber actually pays."
+  },
+  "ranked": [
+    {
+      "project": "shlink",
+      "rationale": "Gives you the two things that matter and takes on the one that is hard. You get your own short domain, real redirects and per-link visit counts through a documented REST API that the third-party apps already speak. What you take on is the promise: the domain registration, the certificate and the database row are now yours to keep alive, and Bitly's entire pitch is that they do that part for you."
+    }
+  ],
+  "evaluatedNotTested": []
+}

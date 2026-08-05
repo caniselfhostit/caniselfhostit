@@ -1,57 +1,29 @@
-# Uptime Kuma — the deterministic fallback.
-#
-# Authored by caniselfhostit from the upstream documentation, not copied from a
-# repository:
+# Uptime Kuma · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
 #   compose shape ...... https://github.com/louislam/uptime-kuma/blob/master/compose.yaml
 #   install notes ...... https://github.com/louislam/uptime-kuma/wiki/%F0%9F%94%A7-How-to-Install
 #   reverse proxy ...... https://github.com/louislam/uptime-kuma/wiki/Reverse-Proxy
 #
-# Two containers: the app, and Caddy in front of it doing TLS. Upstream pins the
-# floating `2` tag; we pin the exact release instead, so you run the version that
-# was tested and upgrade when you decide to. Bump the tag and `docker compose
-# up -d` to update.
+# One container. There is no Caddy service here: Prompt Zero already runs Caddy
+# under systemd on the host, and a second one in a container would fight it for
+# 80 and 443. Upstream pins the floating `2` tag and publishes 3001 on every
+# interface; this file pins the exact release and binds to loopback instead. The
+# image runs as the node user (uid 1000), hence the ownership in step 2. Tag and
+# digest are the 2.5.0 release read from Docker Hub on 2026-08-05, for
+# linux/amd64 and linux/arm64.
 #
 # NOT YET VERIFIED: no harness run has been recorded against this file.
 
 services:
   uptime-kuma:
-    image: louislam/uptime-kuma:2.5.0
+    image: louislam/uptime-kuma:2.5.0@sha256:a8610b3b4c38077922ba51b036691e06887d7cefd91fe620fd3d6d23d03dc240
     container_name: uptime-kuma
     restart: unless-stopped
     volumes:
-      # A bind mount to local disk, on purpose. Uptime Kuma stores its history in
-      # SQLite and needs real POSIX file locks — an NFS or SMB mount here
-      # corrupts the database, quietly, weeks later.
-      - ./data:/app/data
-    networks:
-      - edge
-    # No `ports:` — nothing reaches the app except Caddy, over the internal
-    # network. Upstream's example publishes 3001 on the host; that is convenient
-    # for a laptop and wrong for a machine with a public IP.
-
-  caddy:
-    image: caddy:2.11.4-alpine
-    container_name: uptime-kuma-caddy
-    restart: unless-stopped
-    environment:
-      DOMAIN_HOST: ${DOMAIN_HOST}
-      ACME_EMAIL: ${ACME_EMAIL}
+      # kuma.db and db-config.json both live here. Local disk only: SQLite
+      # needs real POSIX file locks, and a network mount corrupts it quietly.
+      - /srv/uptime-kuma/data:/app/data
     ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
-    depends_on:
-      - uptime-kuma
-    networks:
-      - edge
-
-volumes:
-  caddy_data:
-  caddy_config:
-
-networks:
-  edge:
+      # Loopback only. The Caddy that Prompt Zero installed on the host is the
+      # only thing that can reach this port, and 8091 never enters the firewall.
+      - "127.0.0.1:8091:3001"

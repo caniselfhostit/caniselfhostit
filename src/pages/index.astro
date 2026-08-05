@@ -3,12 +3,14 @@ import Base from '../layouts/Base.astro';
 import DirectoryRow from '../components/DirectoryRow.astro';
 import SwapBand from '../components/SwapBand.astro';
 import { SITE } from '../lib/site.js';
-import { getAllProjects, CATEGORY_LIST } from '../lib/projects.js';
+import { getAllSaasPages, CATEGORY_LIST } from '../lib/projects.js';
 
-// Source order is the ranking. The data layer owns editorial `pagePriority`
-// (disclosed on /methodology); re-sorting here would silently override it.
-const projects = getAllProjects() ?? [];
-const count = projects.length;
+// The directory is keyed by the PAID app: the row is Miro, and Excalidraw is
+// what answers it. Source order is the ranking — the data layer owns editorial
+// `pagePriority` (disclosed on /methodology), and re-sorting here would silently
+// override it.
+const pages = getAllSaasPages() ?? [];
+const count = pages.length;
 
 // The closed category enum, from the one source of truth (rubric.js). Rendered
 // as plain chips, not links: the hub pages ship with the first cohort, and a
@@ -16,20 +18,25 @@ const count = projects.length;
 // exists to complain about.
 const CATEGORIES = CATEGORY_LIST.map((c) => c.label);
 
-// The featured Swap is data-driven or absent — no invented example prices.
-const featured = projects.find((p) =>
-  (p.replaces ?? []).some((r) => typeof r?.priceMonthly === 'number' && r.priceMonthly > 0)
+const money = (n) =>
+  `$${n.toLocaleString('en-US', {
+    minimumFractionDigits: Number.isInteger(n) ? 0 : 2,
+    maximumFractionDigits: 2,
+  })}`;
+
+// The featured Swap is data-driven or absent — no invented example prices. It is
+// the highest-ranked page that has an honest figure, and it quotes `page.swap`,
+// the same object its row and its page quote.
+const featured = pages.find(
+  (s) => s.swap && typeof s.swap.monthlyCost === 'number' && s.swap.monthlyCost > 0
 );
-const featuredSaas = featured
-  ? [...(featured.replaces ?? [])]
-      .filter((r) => typeof r?.priceMonthly === 'number' && r.priceMonthly > 0)
-      .sort((a, b) => b.priceMonthly - a.priceMonthly)[0]
-  : null;
 const featuredMeta = featured
   ? [
-      featured.tierLabel,
-      featured.timeToRunningMin ? `~${featured.timeToRunningMin} min to running` : null,
-      featured.ramMinMB ? `${featured.ramMinMB} MB RAM` : null,
+      featured.primary.tierLabel,
+      featured.primary.timeToRunningMin
+        ? `~${featured.primary.timeToRunningMin} min to running`
+        : null,
+      featured.primary.ramMinMB ? `${featured.primary.ramMinMB} MB RAM` : null,
     ]
       .filter(Boolean)
       .join(' · ')
@@ -55,22 +62,23 @@ if (count > 0) {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: 'The Rack',
-    description: 'Self-hostable open-source replacements for paid SaaS, ranked.',
+    description: 'Paid SaaS, and the self-hostable open-source replacement for each one.',
     numberOfItems: count,
-    itemListElement: projects.map((p, i) => ({
+    // The list is the paid apps, and each URL is that app's answer page.
+    itemListElement: pages.map((s, i) => ({
       '@type': 'ListItem',
       position: i + 1,
-      name: p.name,
-      url: `${SITE.origin}/self-host/${p.slug}/`,
+      name: s.name,
+      url: `${SITE.origin}/self-host/${s.slug}/`,
     })),
   });
 }
 ---
 
-<Base {title} {description} {jsonld}>
+<Base {title} {description} {jsonld} ogImage="/og/home.png">
   <section class="hero blueprint">
     <div class="wrap hero-inner">
-      {count > 0 && <p class="microlabel hero-eyebrow">The Rack · {count} projects</p>}
+      {count > 0 && <p class="microlabel hero-eyebrow">The Rack · {count} paid apps answered</p>}
       <h1>Can I self-host <span class="blank">___</span>?</h1>
       <p class="hero-sub">{SITE.tagline}</p>
       <p class="promise machine">{SITE.promise}</p>
@@ -78,13 +86,13 @@ if (count > 0) {
   </section>
 
   {
-    featured && featuredSaas && (
+    featured && (
       <section class="wrap swap-feature">
         <p class="microlabel swap-feature-label">The swap</p>
         <SwapBand
-          payingName={featuredSaas.name ?? featuredSaas.saas}
-          payingPrice={`$${Math.round(featuredSaas.priceMonthly).toLocaleString('en-US')}/mo`}
-          runningName={featured.name}
+          payingName={featured.name}
+          payingPrice={`${money(featured.swap.monthlyCost)}/mo`}
+          runningName={featured.primary.name}
           runningMeta={featuredMeta}
         />
       </section>
@@ -113,15 +121,15 @@ if (count > 0) {
       <div class="rack">
         <div class="rack-head" aria-hidden="true">
           <span class="c-rank microlabel">#</span>
-          <span class="c-project microlabel">Project</span>
-          <span class="c-replaces microlabel">Replaces</span>
+          <span class="c-project microlabel">App</span>
+          <span class="c-replaces microlabel">Replaced by</span>
           <span class="c-price microlabel">You'd stop paying</span>
           <span class="c-tier microlabel">Setup</span>
         </div>
 
         {
           count > 0 ? (
-            projects.map((p, i) => <DirectoryRow project={p} rank={i + 1} />)
+            pages.map((s, i) => <DirectoryRow page={s} rank={i + 1} />)
           ) : (
             <div class="rack-empty">
               <p>The Rack is being stocked — 50 verified projects landing soon.</p>
@@ -136,13 +144,13 @@ if (count > 0) {
             <p class="provenance">
               Rank is editorial, and the basis is written down on{' '}
               <a href="/methodology/">/methodology</a>. Prices are vendor list prices in USD; the
-              seat assumption behind each figure is on the project page.
+              plan and the seat assumption behind each figure are on the app's own page.
             </p>
           )
         }
         <p class="section-note rack-cta">
-          Running something that belongs here? <a href="/contribute/">Send it in</a> — the data, the
-          prompts, and the harness are all open.
+          Paying for something that belongs here? <a href="/contribute/">Send it in</a> — the data,
+          the prompts, and the harness are all open.
         </p>
       </div>
     </div>

@@ -1,0 +1,54 @@
+# Shlink · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker install ..... https://shlink.io/documentation/install-docker-image/
+#   variable reference . https://shlink.io/documentation/environment-variables/
+#   database engines ... https://shlink.io/documentation/supported-db-engines/
+#   api health check ... https://shlink.io/documentation/api-docs/
+#
+# Two services: Shlink and the PostgreSQL it stores links and visits in. The image
+# ships a working SQLite database, and this file ignores it, because upstream says
+# SQLite is for testing and closed the request to make its file mountable as a
+# volume. A database you cannot persist is not a database. Tags and digests were
+# read from the registries on 2026-08-05; both images publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: postgres:16.14-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
+    container_name: shlink-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: shlink
+      POSTGRES_USER: shlink
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - /srv/shlink/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shlink -d shlink"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other container.
+
+  shlink:
+    image: shlinkio/shlink:5.1.5@sha256:77b8eb87bcb1a56bd0ecc590398d415545e5ba83414f28d37dc565a91c3c50b2
+    container_name: shlink
+    restart: unless-stopped
+    env_file: /srv/shlink/.env
+    environment:
+      DB_DRIVER: postgres
+      DB_HOST: postgres
+      DB_NAME: shlink
+      DB_USER: shlink
+      # Shlink is behind Caddy, which terminates TLS, so it has to be told that
+      # the links it generates are https even though it speaks plain http here.
+      IS_HTTPS_ENABLED: "true"
+      # No IP tracking, therefore no GeoLite2 download and no MaxMind account.
+      # Visits are still counted; they are not placed on a map.
+      DISABLE_IP_TRACKING: "true"
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8086.
+      - "127.0.0.1:8086:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy

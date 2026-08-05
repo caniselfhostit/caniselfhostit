@@ -1,5 +1,140 @@
 ---
-import StubPage from '../components/StubPage.astro';
+import Base from '../layouts/Base.astro';
+import { SITE } from '../lib/site.js';
+
+const title = `Security — reporting a dangerous prompt · ${SITE.name}`;
+const description =
+  'How to report a prompt or config on this site that is dangerous rather than broken: a private GitHub advisory, what happens next, and what is in scope.';
+
+const ADVISORY_URL = `${SITE.repoUrl}/security/advisories/new`;
+const ISSUE_URL = `${SITE.repoUrl}/issues/new/choose`;
+const UPDATED = '2026-08-05';
 ---
 
-<StubPage heading="Security" note="How to report a problem with a prompt or config on this site, and how corrections ship." launchPhase="launch — these pages block it" />
+<Base {title} {description}>
+  <article class="wrap prose">
+    <h1>Security</h1>
+    <p class="lede">
+      The prompts here tell an agent what to run as root on a server somebody bought an hour ago. A
+      dangerous one is the most urgent bug this project can have. This page is how to report it and
+      what happens after you do.
+    </p>
+
+    <h2>Report it</h2>
+    <p>
+      <strong>Private, and preferred for anything dangerous:</strong>{' '}
+      <a href={ADVISORY_URL} rel="noopener">open a private security advisory</a>. It stays between us
+      until there is a fix, which matters because readers have already pasted the current version.
+    </p>
+    <p>
+      <strong>Public, for something merely broken:</strong> the{' '}
+      <a href={ISSUE_URL} rel="noopener">prompt-failure issue template</a>. A prompt that fails
+      halfway and leaves nothing exposed is a normal bug and belongs in the open, where the next
+      reader can find it.
+    </p>
+    <p>Useful in either case, in whatever order it comes out:</p>
+    <ul>
+      <li>The page, and the file — <code>prompt.md</code>, <code>compose.yml</code>, the Caddy block.</li>
+      <li>The line, or the step number.</li>
+      <li>What an attacker gets, or what an unlucky reader loses.</li>
+      <li>If you ran it: the OS, the agent and version, the provider, and how far it got.</li>
+    </ul>
+    <p>
+      Please do not publish a working exploit against a live install before the correction ships.
+      Beyond that there is no embargo ceremony and no paperwork.
+    </p>
+
+    <h2>What is in scope</h2>
+    <p>
+      This site's content and code: the prompts, the compose files, the Caddy blocks, the install
+      scripts, the site itself, and the deployment. Anything that breaks the{' '}
+      <a href={`${SITE.repoUrl}/blob/main/CONTRIBUTING.md`} rel="noopener">security standard</a> the
+      validator is supposed to enforce is in scope by definition, including:
+    </p>
+    <ul>
+      <li>a port published to the internet that should have been bound to <code>127.0.0.1</code>;</li>
+      <li>a default credential, or open registration, that survives the install;</li>
+      <li>a secret written into a prompt, or a prompt that prints a secret into a transcript;</li>
+      <li>an unpinned image, a floating tag, or a script fetched and run without a checksum;</li>
+      <li>
+        an instruction that tells the agent to read upstream text and act on it — the
+        prompt-injection hole, pointed at a machine with root;
+      </li>
+      <li>
+        an SSH, sudo, or firewall step that leaves a server weaker than the{' '}
+        <a href="/prompt-zero/">Prompt Zero</a> baseline claims it is.
+      </li>
+    </ul>
+
+    <h3>What is not</h3>
+    <p>
+      Vulnerabilities in the upstream projects themselves. If the flaw is in Immich, Caddy, or
+      Postgres rather than in how we install it, report it to that project — they can fix it and we
+      cannot. Tell us as well, and the prompt gets amended or pulled while the hole is open. Also out
+      of scope: scanner output with no exploit path, missing response headers on static pages with no
+      accounts and no user data, and self-XSS.
+    </p>
+
+    <h2>What happens next</h2>
+    <ul>
+      <li>
+        <strong>Acknowledged</strong> as fast as one person can manage — hours, sometimes a couple of
+        days. This is a solo operator, and saying so is more useful than an SLA nobody is on call
+        for.
+      </li>
+      <li>
+        <strong>Confirmed, then corrected in hours, not a release cycle.</strong> The site is static
+        and rebuilds on merge, so a fixed prompt is live as soon as it is reviewed.
+      </li>
+      <li>
+        <strong>The page carries a visible note</strong> saying what was wrong, what changed, and
+        when. A silent edit is not on the table: somebody already ran the old version and needs to
+        know whether to go back and check their server.
+      </li>
+      <li>
+        <strong>A prompt that cannot be made safe is pulled</strong> and its page says so, rather
+        than quietly disappearing. Where a stamp is affected, the page drops to{' '}
+        <em>pending</em> at the next build under the rules on{' '}
+        <a href="/methodology/">/methodology</a>.
+      </li>
+      <li>
+        <strong>No bounty, no swag, no NDA.</strong> Credit in the commit and the page note if you
+        want it, silence if you would rather.
+      </li>
+    </ul>
+
+    <h2>Our own surface</h2>
+    <p>
+      Worth stating plainly so you know where to look: this site has no accounts, no sessions, and no
+      reader data, and it serves prerendered pages from an edge cache. The interesting attack surface
+      is not the website. It is the text the website tells you to paste into a root shell.
+    </p>
+
+    <p class="provenance">
+      Last updated {UPDATED}. Private advisory: <a href={ADVISORY_URL} rel="noopener">{ADVISORY_URL}</a>
+    </p>
+  </article>
+</Base>
+
+<style>
+  .prose {
+    max-width: 68ch;
+    padding-block: 3rem 4rem;
+  }
+  .prose h2 {
+    margin-top: 2.5em;
+  }
+  .prose h3 {
+    margin-top: 1.75em;
+  }
+  .lede {
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+  .provenance {
+    border-top: 1px solid var(--border);
+    padding-top: 1.25rem;
+    margin-top: 3rem;
+    overflow-wrap: anywhere;
+  }
+</style>
