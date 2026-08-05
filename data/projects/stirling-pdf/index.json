@@ -32,7 +32,10 @@
   "license": "MIT",
   "officialCompose": "upstream-example",
   "officialComposeUrl": "https://github.com/Stirling-Tools/Stirling-PDF/blob/main/docker/compose/docker-compose.yml",
-  "localVariant": false,
+  "local": {
+    "fit": "good",
+    "note": "Documents are processed on this computer and no copy is kept anywhere, which is the whole reason people want this one; the cost is that the toolbox is only there when the machine is awake."
+  },
   "quote": {
     "text": "Users will be forced to change their password on first login.",
     "source": "Stirling PDF documentation, Login, System and Security",
@@ -49,8 +52,8 @@
       "url": "https://docs.stirlingpdf.com/Installation/Docker%20Install"
     },
     {
-      "claim": "The image carries its own health check, which polls /api/v1/info/status and expects the response to contain UP, and allows a two-minute start period before counting failures.",
-      "url": "https://github.com/Stirling-Tools/Stirling-PDF/blob/main/docker/compose/docker-compose.yml"
+      "claim": "The image carries its own health check, which calls /api/v1/info/status and treats any HTTP success as healthy, with a two-minute start period and five retries before it counts a failure.",
+      "url": "https://github.com/Stirling-Tools/Stirling-PDF/blob/main/docker/embedded/Dockerfile"
     },
     {
       "claim": "Caddy obtains and renews TLS certificates automatically for any public hostname named in the Caddyfile.",
@@ -58,17 +61,17 @@
     }
   ],
   "whatYouSignUpFor": [
-    "Nothing you send it is kept. Files are processed and handed back, and the working copy is discarded, so the only state on disk is the account database under /srv/stirling-pdf/config. That makes the backup trivial and it also means this is a workshop, not a document store: it will not replace the folder your invoices live in.",
+    "Nothing you send it is kept. Files are processed and handed back, and the working copy is discarded, so the only state on disk is the account database sitting next to the compose file, wherever you install it. That makes the backup trivial and it also means this is a workshop, not a document store: it will not replace the folder your invoices live in.",
     "It is a toolbox, not an editor. Splitting, merging, rotating, compressing, converting, OCR, watermarks and form flattening are all here. Retyping a paragraph inside an existing page, the thing Acrobat Pro is bought for, is not.",
     "The heaviest install in this catalogue. The image carries a JVM, LibreOffice, Calibre and Tesseract, it wants 2 GB of RAM available before you start, and the first boot takes a couple of minutes during which the container reports itself unhealthy.",
     "The licence is MIT with carve-outs. The top-level LICENSE is MIT, but directories named proprietary, saas and engine carry their own terms, so the repository as a whole is not uniformly open source and GitHub reports no single licence for it. What this compose file runs is the published community image.",
-    "You own the login decision. This install turns login on and replaces the shipped default before the container starts, because the instance answers on a public hostname. If you later turn login off, anyone who finds the hostname can push documents through your server."
+    "You own the login decision. Both paths turn login on and replace the shipped default account before the container starts. On a server that is what keeps anyone who finds the hostname out; on your own computer it is what keeps the other accounts on that computer out. Turn login off later and the shipped default comes back with it."
   ],
   "sources": {
     "compose": "https://docs.stirlingpdf.com/Installation/Docker%20Install",
     "caddy": "https://caddyserver.com/docs/automatic-https",
     "install": "https://docs.stirlingpdf.com/Configuration/System%20and%20Security/",
-    "health": "https://github.com/Stirling-Tools/Stirling-PDF/blob/main/docker/compose/docker-compose.yml",
+    "health": "https://github.com/Stirling-Tools/Stirling-PDF/blob/main/docker/embedded/Dockerfile",
     "license": "https://github.com/Stirling-Tools/Stirling-PDF/blob/main/LICENSE"
   },
   "related": [
@@ -78,5 +81,5 @@
   ],
   "pagePriority": 1,
   "contentUpdatedAt": "2026-08-05",
-  "contentHash": "6b3ae8db0fa6506cea3bd06f58ee46e2a6e416010b63368ce30d443cb37d04d8"
+  "contentHash": "ef561cb1f6aff986fd6dc73a1423c56059117e8a847ebce9bb950a2f6d1eb185"
 }

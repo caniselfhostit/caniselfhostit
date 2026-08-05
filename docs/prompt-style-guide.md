@@ -2,7 +2,9 @@
 
 How to write `data/projects/<slug>/prompt.md`, the file a reader pastes into Claude Code to
 get a pinned, TLS-terminated, backed-up service running on their own VPS. Also how to write
-`prompt-chat.md`, the slower fallback for people who only have a chat window.
+`prompt-chat.md`, the slower fallback for people who only have a chat window, and
+`prompt-local.md`, the local path for the reader who does not want a server at all. All three
+ship for every project; the local path has its own section near the end of this guide.
 
 This guide is written before any prompt is. All 50 launch prompts are drafted against it and
 reviewed against it. A prompt that fails the checklist in the last section does not go to the
@@ -311,9 +313,158 @@ version string, the digest, the published ports, the verification URL and string
 path, and the out-of-scope list. The reviewer diffs those. Same banned words, same honest
 warning, same backup step, and the backup step is not softened because a human is running it.
 
-`prompt-local.md`, where `localVariant` is true, follows the same rules with the Caddy, TLS,
-firewall and DNS blocks replaced by a `127.0.0.1` binding and one line explaining that nothing
-is reachable from the internet. It keeps blocks 8, 9, 10 and 11 unchanged.
+## The local path · `prompt-local.md`
+
+Every project ships `prompt-local.md`: the same software, installed on the computer the reader
+is sitting at, for the reader who never wants to rent a server. No VPS, no domain, no DNS, no
+Prompt Zero. This is the path for someone whose whole relationship with a terminal is pasting
+this one prompt.
+
+The frame is different and the discipline is not. Pinned digests, secrets generated on the
+machine, concrete acceptance criteria, a first backup, one honest warning: all of it applies.
+A local prompt that relaxes a rule because "it is only a laptop" treats the reader's passwords
+and invoices with less care than a rented server would have gotten. The thirteen numbered rules
+above bind this file too, except where this section explicitly replaces one.
+
+`index.json` carries a `local` object next to the prompt:
+
+```jsonc
+"local": {
+  "fit": "good",   // "good" — works as well on a laptop as on a server
+                   // "caveat" — works, but a machine that sleeps changes what you get
+  "note": "…"      // one plain-language sentence; the page prints it on the local path
+                   // and block 1 says it to the user before anything installs
+}
+```
+
+`fit` is "caveat" whenever the app's value depends on being reachable while the machine is
+closed: a monitor cannot watch your sites from a sleeping laptop, a password manager cannot
+sync to your phone from a machine your phone cannot reach, a link shortener whose links only
+resolve on one computer is a notebook. The note states the consequence in one sentence, in the
+candor voice, without talking the reader out of it. "good" still gets a note: there is always
+one thing worth saying about where the data now lives.
+
+### Frame lines, byte-identical across all local prompts
+
+CI greps for both. Do not reword them.
+
+```
+You are Claude Code on the user's own computer. There is no server and no Prompt Zero:
+everything in this prompt runs on this machine and stays on it.
+```
+
+```
+Run every command on this computer, in the shell you are already in. Nothing in this prompt
+uses ssh.
+```
+
+The goal line names the software, the pinned version, `http://localhost:<PORT>` with the real
+port digits, and the folder under the home directory that will hold everything. There are no
+placeholders in a local prompt: no `<DOMAIN>`, no hostname to ask for, nothing for step 1 to
+stop on. The port is written literally everywhere it appears.
+
+### The eleven blocks, local edition
+
+Same skeleton, same numbers, same never-merge rule. What each block does where the machine is
+the reader's own:
+
+| # | Block | What changes from the VPS prompt |
+|---|---|---|
+| 1 | Preflight | OS detection first: `uname -s` prints `Darwin`, `Linux`, or `MINGW`/`MSYS` (Windows, Git Bash). RAM and disk measured with per-OS commands. If `local.fit` is "caveat", say the note to the user here, before anything installs. |
+| 2 | Docker | New block, canonical text below, near-verbatim across all local prompts. Ends with `docker info` and `docker compose version` both succeeding. |
+| 3 | Layout | `~/selfhost/<app>/` with `data/` and `backups/` under it. Bind mounts in the compose file are relative (`./data`), which is what lets one file work on all three OSes. Ownership fixes (`chown` to a uid the image runs as) are Linux-only; on macOS and Windows, Docker Desktop's file sharing owns that problem, and the prompt says so in one line rather than running a no-op. |
+| 4 | Secrets | Same rules: `openssl rand` (Git Bash ships openssl), straight into `.env`, `chmod 600`, never printed. One honest line on Windows: mode bits on NTFS are advisory, the file is still protected by the user's own account, and that is the real boundary on a single-user machine. |
+| 5 | compose.yml | Full heredoc, byte-identical to `compose.local.yml` (CI diffs them). Image lines carry the same tag and digest as the VPS `compose.yml` — the validator compares the pins, so a version bump lands in both files or fails CI. Ports bind `127.0.0.1:<PORT>` with the same host port the VPS file uses. |
+| 6 | Nothing is public | Replaces Caddy, TLS and firewall, and keeps the number so a reader can move between paths without losing their place. States, plainly: everything binds to loopback, there is no domain and no certificate because there is nothing to certify, other devices — including the reader's own phone — cannot reach this, and that is the point of this path, not a defect in it. Browsers treat `http://localhost` as a secure context, so apps that need crypto in the page still work without TLS. |
+| 7 | Start and verify | `curl -sS http://localhost:<PORT>` and the exact first-screen string, same asserts, same stop-on-mismatch, same `STOP:` convention for the first account. |
+| 8 | First backup and restore | Archive under `~/selfhost/<app>/backups/`, non-empty proof, size printed. The off-box copy becomes an off-machine copy: tell the user to put the archive somewhere that leaves this computer — a folder a sync service watches, or a USB stick — because a backup on the same disk is still not a backup, and on a laptop the disk and the machine fail together. Restore steps unchanged in shape. |
+| 9 | Updating later | Unchanged in shape. Same release page, same three commands, back-up-first reminder. |
+| 10 | What will probably go wrong | Local-specific and first person. The honest candidates: Docker Desktop not running after a reboot, the machine asleep when the reader expected the app to be doing something, a port already claimed by something else on a machine that has a life outside this install. |
+| 11 | Out of scope | The first three imperatives are fixed, in this order, in every local prompt: "Do not expose this to the internet." "Do not configure port forwarding on the router." "Do not add a reverse proxy or TLS." Then the app-specific items, same rules as the VPS block 11. |
+
+### Block 2 · Docker, canonical text
+
+The one genuinely new block. Near-verbatim across all local prompts: copy it, keep the
+structure and the STOP lines, adjust nothing but formatting. The runtime rides the package
+manager unpinned — the same trust decision Prompt Zero makes for the distro's docker packages —
+and the app images stay pinned by digest, which is where the pinning actually protects the
+reader.
+
+````
+## 2. Docker
+
+Check before installing anything:
+
+```bash
+docker info >/dev/null 2>&1 && echo "docker OK" || echo "docker MISSING"
+docker compose version 2>/dev/null || true
+```
+
+If that printed `docker OK` and a compose version, skip to step 3.
+
+Otherwise, install Docker for the OS step 1 detected:
+
+- macOS: if `command -v brew` succeeds, run `brew install --cask docker`. If there is no
+  Homebrew, STOP: tell the user to download Docker Desktop from
+  https://www.docker.com/products/docker-desktop/ and install it, and wait until they confirm.
+  Either way, then STOP: tell the user to open Docker Desktop once, accept its terms, and wait
+  for the whale icon to say it is running. Do not continue until they confirm.
+- Windows: run `winget install -e --id Docker.DockerDesktop`. If winget is missing or the
+  install fails, STOP: tell the user to download Docker Desktop from the URL above and install
+  it, and wait until they confirm. Docker Desktop configures WSL 2 itself and may ask for a
+  reboot; if it does, STOP and tell the user to reboot and come back, this prompt resumes at
+  this step. Then STOP: have the user open Docker Desktop, accept its terms, and confirm it
+  says running.
+- Linux, Debian or Ubuntu: install Docker Engine from download.docker.com's apt repository,
+  with its signing key saved to a file first, never piped into a shell. Adding the user to the
+  docker group is root-equivalent on this machine; say that to the user in one sentence, and
+  tell them the group change lands at their next login. Where the install continues past this
+  step in the same session, the correct form is a STOP telling the user to log out, log back
+  in, and run the prompt again from this step.
+- Linux, anything else: STOP. Tell the user to install Docker Engine and the compose plugin
+  with their distribution's package manager, and to run this prompt again once
+  `docker info` works.
+
+Assert: `docker info` exits 0 and `docker compose version` prints a version. Do not continue
+without both.
+````
+
+The Debian/Ubuntu branch carries the standard four commands (keyring directory, key to file,
+apt source line, `apt-get install docker-ce docker-ce-cli containerd.io
+docker-compose-plugin`) written out in full in the actual prompt; they are elided here only to
+keep this guide readable. That fence is guarded, byte-for-byte in every local prompt, so an
+agent running fences top-down on macOS or Windows executes a no-op instead of `sudo apt-get`:
+
+```bash
+if [ "$(uname -s)" = "Linux" ] && command -v apt-get >/dev/null 2>&1; then
+  # ... the four commands ...
+fi
+```
+
+### `compose.local.yml`
+
+The deterministic fallback for this path, next to the VPS `compose.yml`, same authorship rules,
+same comment-header provenance. Differences from the VPS file, and only these:
+
+- Bind mounts are relative (`./data:…`), because the file lives in `~/selfhost/<app>/` and a
+  home-directory path spelled absolute would be wrong on two of the three OSes.
+- No `/srv` anywhere.
+- One bind mount may become a named volume, and only where the image chowns its own data
+  directory to a uid of its choosing: PostgreSQL, MySQL and MariaDB all do. Docker Desktop's
+  Windows file sharing cannot grant that chown on a home-directory bind mount, so the
+  container fails at first boot. Declare the volume at the top level, keep the mount path
+  inside the container identical to the VPS file, and say in the header comment which image
+  forces it. Every other mount stays a relative bind mount, so the reader can still see their
+  own data in Finder or Explorer.
+- Everything else — image pins, loopback port, service names, healthchecks — matches the VPS
+  file. The validator enforces the image pins; a reviewer diffs the rest.
+
+### Size and voice
+
+9,000 to 15,000 bytes, hard ceiling 16,500. The Docker block and the OS branching buy back
+roughly what Caddy, TLS and the firewall gave up. Same banned words, same two registers, same
+one first-person warning. The reader on this path is the least technical reader the site has;
+that is a reason for shorter sentences, not for softer asserts.
 
 ## Worked example · Vaultwarden
 
@@ -573,8 +724,8 @@ returns anything other than 200, run `dig +short <DOMAIN>` before touching anyth
 
 ## Verification checklist
 
-Ten checks. A reviewer runs all of them before a prompt is eligible for a harness run. Any miss
-sends the prompt back; there is no partial pass.
+Eleven checks. A reviewer runs all of them before a prompt is eligible for a harness run. Any
+miss sends the prompt back; there is no partial pass.
 
 1. **Shape.** Frame line and command-convention line byte-identical to this guide. Goal line
    names the software, the pinned version and `<DOMAIN>`. All eleven blocks present, in order,
@@ -613,6 +764,14 @@ sends the prompt back; there is no partial pass.
     `You should see:` / `If you do not:` triplets; and carries the do-not-paste-secrets line in
     block 3. The embedded compose and Caddy blocks are byte-identical to `compose.yml` and
     `Caddyfile`.
+11. **Local parity.** `prompt-local.md` exists, opens with both local frame lines
+    byte-identical to this guide, and contains no `<DOMAIN>`, no ssh, and no `https://` URL the
+    reader is told to serve (upstream links are fine). Same version and digest as `prompt.md`;
+    the embedded compose block is byte-identical to `compose.local.yml`; the host port matches
+    the VPS file's loopback port; block 2 follows the canonical Docker text including its STOP
+    lines; block 6 states the loopback-only posture; block 11 opens with the three fixed
+    imperatives. `index.json` carries `local.fit` and `local.note`, and a "caveat" fit is said
+    to the user in block 1.
 
 ## After the checklist: where "verified" lives
 

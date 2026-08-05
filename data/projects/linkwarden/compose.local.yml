@@ -1,0 +1,49 @@
+# Linkwarden · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   setup and env vars . https://docs.linkwarden.app/self-hosting/setup
+#   variable reference . https://docs.linkwarden.app/self-hosting/environment-variables
+#
+# Lives in ~/selfhost/linkwarden/; paths are relative to that folder, which lets
+# one file work on macOS, Linux and Windows. MeiliSearch is absent on purpose:
+# the search client starts only when MEILI_MASTER_KEY is set. Digests match
+# compose.yml, read 2026-08-05. The database is a named volume, not a bind mount:
+# PostgreSQL chowns its data directory to a uid Windows bind mounts cannot grant.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: postgres:16.14-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
+    container_name: linkwarden-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - linkwarden-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      retries: 12
+    # No `ports:`: 5432 is reachable only from the other container.
+
+  linkwarden:
+    image: ghcr.io/linkwarden/linkwarden:v2.16.0@sha256:d805877fb707d160b809027c302f84cfba11a248d7fdc12de90b4791f98e6b55
+    container_name: linkwarden
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      # Built here, not in .env: compose expands ${...} in this file.
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
+    volumes:
+      # Archives, screenshots, PDFs, uploads. STORAGE_FOLDER defaults to `data`
+      # under the working directory /data, hence /data/data.
+      - ./data:/data/data
+    ports:
+      # Loopback only. Nothing outside this computer can reach 8085.
+      - "127.0.0.1:8085:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  linkwarden-pgdata:

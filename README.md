@@ -1,18 +1,22 @@
 # Can I Self-Host It?
 
 **[caniselfhostit.com](https://caniselfhostit.com)** — for every app you pay for: the open-source
-replacement, and the prompts that install it on your own server.
+replacement, and the prompts that install it on your own server or your own computer.
 
 Most directories hand you a list and wish you luck. This one is built around the verb, and around
 the invoice. The page is named after the thing you're paying for — "Can I self-host Miro?" — and
 the answer names the project: yes, it's called Excalidraw. Under it: why people pay, the plan
 ladder with the price we checked and when, the measured cost of running the replacement yourself
 (RAM floor, disk, minutes to first screen), and prompts that a coding agent executes end to end.
-Honestly framed, it is **two prompts, not one**:
-[Prompt Zero](https://caniselfhostit.com/prompt-zero/) takes a machine with nothing installed to
-a machine that can deploy — terminal, git, agent, VPS, SSH key, hardening baseline — and then one
-prompt per app does the install. Every published prompt ran on a clean server before it earned
-its date stamp; the ones that haven't are labeled, not hidden.
+Every page offers two paths, and the toggle on the page picks one. **On a server, it is honestly
+two prompts, not one**: [Prompt Zero](https://caniselfhostit.com/prompt-zero/) takes a machine
+with nothing installed to a machine that can deploy — terminal, git, agent, VPS, SSH key,
+hardening baseline — and then one prompt per app does the install, on a domain, behind automatic
+TLS. **On your own computer, it is one prompt.** Docker Desktop, `http://localhost:<port>`, no
+server to rent, no domain to buy, no Prompt Zero, nothing reachable from outside the machine —
+and the page says in one sentence what that costs you for that particular app, because for a
+monitor or a password manager it costs something real. Every published prompt ran on a clean
+server before it earned its date stamp; the ones that haven't are labeled, not hidden.
 
 ## The verdict
 
@@ -33,8 +37,11 @@ Excalidraw.
 ## Add a project
 
 Projects are directories in [`data/projects/`](data/projects) — one per project, holding
-`index.json` plus the real reviewable files (`compose.yml`, `Caddyfile`, `install.sh`) and the
-prompts. Added by PR. No web form, no account: the repo is the admin panel.
+`index.json`, the real reviewable files (`compose.yml`, `compose.local.yml`, `Caddyfile`,
+`install.sh`), and three prompts (`prompt.md` for the server, `prompt-local.md` for your own
+computer, `prompt-chat.md` for people with only a chat window). All eight files are required, and
+the validator checks that the local path and the server path agree on pins and ports rather than
+drifting apart. Added by PR. No web form, no account: the repo is the admin panel.
 
 **Two shapes, one join.** The project is the *contribution unit* — it carries the prompts, the
 configs, the tier factors, and the measured resources. The SaaS entity in

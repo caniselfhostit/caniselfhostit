@@ -1,18 +1,34 @@
 ---
 // THE PROMPT — the payload the whole page exists to hand over.
 //
-// Three rules encoded here:
+// Four rules encoded here:
 //   1. The prompt renders verbatim, in the initial HTML. No AI crawler executes
 //      JavaScript (PRD §10.3), and a reader who cannot read it before pasting it
 //      has no reason to trust it.
-//   2. The "what this will do" outline is DERIVED from the prompt's own step
+//   2. There are TWO install paths — a rented server and the reader's own
+//      computer — and BOTH prompts ship in that initial HTML. The switch between
+//      them is a pair of radios and a `:checked` selector, so the panel a reader
+//      is not looking at is still on the page for the crawler that reads it and
+//      for the reader who has JavaScript off.
+//   3. The "what this will do" outline is DERIVED from the prompt's own step
 //      headings — never a second hand-written summary that can drift from the
-//      thing it summarises.
-//   3. Nothing here claims the prompt was tested. The stamp is earned by a
+//      thing it summarises. Each path outlines its own prompt.
+//   4. Nothing here claims the prompt was tested. The stamp is earned by a
 //      harness run (PRD §9) or it is absent.
 import CopyButton from './CopyButton.astro';
+import FallbackFile from './FallbackFile.astro';
 
-const { name, slug, prompt, promptChat, promptLocal, mirrorHref } = Astro.props;
+const {
+  name,
+  slug,
+  prompt,
+  promptChat,
+  promptLocal,
+  local = null,
+  composeLocal = null,
+  composeSource = null,
+  mirrorHref,
+} = Astro.props;
 
 /* ---- the outline, parsed out of the prompt text ---- */
 
@@ -76,125 +92,218 @@ function outlineOf(text) {
 }
 
 const outline = outlineOf(prompt);
+const outlineLocal = outlineOf(promptLocal);
 
-/* ---- the honest size of the thing ---- */
-const bytes = prompt ? new TextEncoder().encode(prompt).length : 0;
-const lines = prompt ? prompt.trimEnd().split('\n').length : 0;
-const sizeLine = prompt
-  ? `${lines.toLocaleString('en-US')} lines · ${bytes.toLocaleString('en-US')} bytes`
-  : null;
+/* ---- the honest size of the thing, per path ---- */
+function sizeOf(text) {
+  if (!text) return null;
+  const bytes = new TextEncoder().encode(text).length;
+  const lines = text.trimEnd().split('\n').length;
+  return `${lines.toLocaleString('en-US')} lines · ${bytes.toLocaleString('en-US')} bytes`;
+}
+
+const sizeLine = sizeOf(prompt);
+const sizeLineLocal = sizeOf(promptLocal);
+
+// `local` arrives from index.json and may not exist yet while the local prompts
+// are being authored. A missing fit is not "good" — it is nothing, and prints
+// nothing, rather than a reassurance nobody wrote.
+const localFit = local?.fit ?? null;
+const localNote = local?.note ?? null;
 
 const promptId = `prompt-${slug}`;
 const chatId = `prompt-chat-${slug}`;
 const localId = `prompt-local-${slug}`;
+// Per-instance radio group: two PromptBoxes on one document would otherwise
+// share a name and switch each other.
+const pathName = `path-${slug}`;
+const cloudPathId = `path-cloud-${slug}`;
+const localPathId = `path-local-${slug}`;
 ---
 
 <div class="promptbox">
   <div class="pb-head">
     <p class="pb-meta mono">authored from upstream docs · not yet machine-verified · Claude Code</p>
-    {sizeLine && <p class="pb-size mono">{sizeLine}</p>}
   </div>
 
-  {
-    prompt ? (
-      <>
-        {outline.steps.length > 0 && (
-          <details class="pb-outline">
-            <summary>What this prompt will do</summary>
-            <div class="pb-outline-body">
-              <ol>
-                {outline.steps.map((s) => (
-                  <li>{s}</li>
-                ))}
-              </ol>
-              <p class="provenance">
-                {outline.from === 'headings'
-                  ? 'Read out of the prompt’s own step headings at build time — if the prompt changes, this list changes with it.'
-                  : 'Read out of the prompt’s own numbered steps at build time — abridged to the first sentence of each. The prompt below is the whole of it.'}
+  <div class="pb-paths">
+    <p class="pb-paths-label microlabel">Where it runs</p>
+
+    <input
+      class="pb-path-input"
+      type="radio"
+      name={pathName}
+      id={cloudPathId}
+      data-path="cloud"
+      checked
+    />
+    <label class="pb-path" for={cloudPathId}>
+      <span class="pb-path-name">On a cloud server</span>
+      <span class="pb-path-sub mono">a VPS you rent · Prompt Zero already done</span>
+    </label>
+
+    <input class="pb-path-input" type="radio" name={pathName} id={localPathId} data-path="local" />
+    <label class="pb-path" for={localPathId}>
+      <span class="pb-path-name">On my computer</span>
+      <span class="pb-path-sub mono">Docker Desktop · no server, no domain</span>
+    </label>
+
+    <!-- ── the cloud path ────────────────────────────────────────────── -->
+    <div class="pb-panel" data-path="cloud">
+      {
+        prompt ? (
+          <>
+            {sizeLine && <p class="pb-size mono">{sizeLine}</p>}
+
+            {outline.steps.length > 0 && (
+              <details class="pb-outline">
+                <summary>What this prompt will do</summary>
+                <div class="pb-outline-body">
+                  <ol>
+                    {outline.steps.map((s) => (
+                      <li>{s}</li>
+                    ))}
+                  </ol>
+                  <p class="provenance">
+                    {outline.from === 'headings'
+                      ? 'Read out of the prompt’s own step headings at build time — if the prompt changes, this list changes with it.'
+                      : 'Read out of the prompt’s own numbered steps at build time — abridged to the first sentence of each. The prompt below is the whole of it.'}
+                  </p>
+                </div>
+              </details>
+            )}
+
+            <div class="pb-bar">
+              <CopyButton
+                target={`#${promptId}`}
+                label="Copy the prompt"
+                copiedLabel="Copied"
+                announce={`Install prompt for ${name}`}
+                primary={true}
+              />
+              <p class="pb-hint mono">
+                paste it into Claude Code in a terminal on your own machine · it runs the install
+                over <code>ssh vps</code>
               </p>
             </div>
-          </details>
-        )}
 
-        <div class="pb-bar">
-          <CopyButton
-            target={`#${promptId}`}
-            label="Copy the prompt"
-            copiedLabel="Copied"
-            announce={`Install prompt for ${name}`}
-            primary={true}
-          />
-          <p class="pb-hint mono">
-            paste it into Claude Code in a terminal on your own machine · it runs the install over{' '}
-            <code>ssh vps</code>
+            <pre
+              id={promptId}
+              class="pb-pre"
+              tabindex="0"
+              aria-label={`Install prompt for ${name}`}>{prompt.trimEnd()}</pre>
+
+            {promptChat && (
+              <details class="pb-alt">
+                <summary>
+                  No terminal agent? Use the chat fallback — slower, you paste the commands
+                </summary>
+                <div class="pb-alt-body">
+                  <p class="pb-alt-note">
+                    For ChatGPT or Claude in a browser. The model cannot touch your server, so it
+                    hands you one command at a time and you run each one. Same install, more of your
+                    evening.
+                  </p>
+                  <div class="pb-bar">
+                    <CopyButton
+                      target={`#${chatId}`}
+                      label="Copy the chat prompt"
+                      copiedLabel="Copied"
+                      announce={`Chat prompt for ${name}`}
+                      small={true}
+                    />
+                  </div>
+                  <pre
+                    id={chatId}
+                    class="pb-pre is-alt"
+                    tabindex="0"
+                    aria-label={`Chat fallback prompt for ${name}`}>{promptChat.trimEnd()}</pre>
+                </div>
+              </details>
+            )}
+          </>
+        ) : (
+          <p class="pb-missing">
+            The install prompt for {name} is not written yet. That is the honest state of this page —
+            the fallback files below are real, the prompt is not.
           </p>
-        </div>
+        )
+      }
+    </div>
 
-        <pre
-          id={promptId}
-          class="pb-pre"
-          tabindex="0"
-          aria-label={`Install prompt for ${name}`}>{prompt.trimEnd()}</pre>
+    <!-- ── the local path ────────────────────────────────────────────── -->
+    <div class="pb-panel" data-path="local">
+      {
+        promptLocal ? (
+          <>
+            {sizeLineLocal && <p class="pb-size mono">{sizeLineLocal}</p>}
 
-        {promptChat && (
-          <details class="pb-alt">
-            <summary>No terminal agent? Use the chat fallback — slower, you paste the commands</summary>
-            <div class="pb-alt-body">
-              <p class="pb-alt-note">
-                For ChatGPT or Claude in a browser. The model cannot touch your server, so it hands
-                you one command at a time and you run each one. Same install, more of your evening.
+            {outlineLocal.steps.length > 0 && (
+              <details class="pb-outline">
+                <summary>What this prompt will do</summary>
+                <div class="pb-outline-body">
+                  <ol>
+                    {outlineLocal.steps.map((s) => (
+                      <li>{s}</li>
+                    ))}
+                  </ol>
+                  <p class="provenance">
+                    {outlineLocal.from === 'headings'
+                      ? 'Read out of the prompt’s own step headings at build time — if the prompt changes, this list changes with it.'
+                      : 'Read out of the prompt’s own numbered steps at build time — abridged to the first sentence of each. The prompt below is the whole of it.'}
+                  </p>
+                </div>
+              </details>
+            )}
+
+            {localNote && (
+              <aside class={localFit === 'caveat' ? 'pb-fit is-caveat' : 'pb-fit'}>
+                <p class="microlabel">Running it here means</p>
+                <p>{localNote}</p>
+              </aside>
+            )}
+
+            <div class="pb-bar">
+              <CopyButton
+                target={`#${localId}`}
+                label="Copy the local prompt"
+                copiedLabel="Copied"
+                announce={`Local install prompt for ${name}`}
+                primary={true}
+              />
+              <p class="pb-hint mono">
+                paste it into Claude Code in a terminal on this computer · installs Docker Desktop
+                if it is missing · no server, no domain
               </p>
-              <div class="pb-bar">
-                <CopyButton
-                  target={`#${chatId}`}
-                  label="Copy the chat prompt"
-                  copiedLabel="Copied"
-                  announce={`Chat prompt for ${name}`}
-                  small={true}
+            </div>
+
+            <pre
+              id={localId}
+              class="pb-pre"
+              tabindex="0"
+              aria-label={`Local install prompt for ${name}`}>{promptLocal.trimEnd()}</pre>
+
+            {composeLocal && (
+              <div class="pb-panel-file">
+                <FallbackFile
+                  filename="compose.local.yml"
+                  text={composeLocal}
+                  id={`f-compose-local-${slug}`}
+                  summary="the services, pinned · local layout"
+                  sourceUrl={composeSource}
                 />
               </div>
-              <pre
-                id={chatId}
-                class="pb-pre is-alt"
-                tabindex="0"
-                aria-label={`Chat fallback prompt for ${name}`}>{promptChat.trimEnd()}</pre>
-            </div>
-          </details>
-        )}
-
-        {promptLocal && (
-          <details class="pb-alt">
-            <summary>Run it on your own machine instead</summary>
-            <div class="pb-alt-body">
-              <p class="pb-alt-note">
-                The same install with no public hostname and no certificate — reachable on your own
-                network only. Nothing here is exposed to the internet, and nothing renews.
-              </p>
-              <div class="pb-bar">
-                <CopyButton
-                  target={`#${localId}`}
-                  label="Copy the local prompt"
-                  copiedLabel="Copied"
-                  announce={`Local prompt for ${name}`}
-                  small={true}
-                />
-              </div>
-              <pre
-                id={localId}
-                class="pb-pre is-alt"
-                tabindex="0"
-                aria-label={`Local install prompt for ${name}`}>{promptLocal.trimEnd()}</pre>
-            </div>
-          </details>
-        )}
-      </>
-    ) : (
-      <p class="pb-missing">
-        The install prompt for {name} is not written yet. That is the honest state of this page —
-        the fallback files below are real, the prompt is not.
-      </p>
-    )
-  }
+            )}
+          </>
+        ) : (
+          <p class="pb-missing">
+            The local install prompt for {name} is not written yet. That is the honest state of this
+            page — this panel carries a real prompt or nothing at all, never a guess at one.
+          </p>
+        )
+      }
+    </div>
+  </div>
 
   <p class="pb-foot provenance">
     agent-readable mirror: <a href={mirrorHref}>{mirrorHref}</a>

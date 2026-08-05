@@ -1,0 +1,25 @@
+# Healthchecks · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   image and runtime notes . https://github.com/healthchecks/healthchecks/blob/master/docker/README.md
+#   configuration ........... https://healthchecks.io/docs/self_hosted_configuration/
+#
+# One container, no database process: the instance is one file at /data/hc.sqlite
+# and uWSGI migrates on boot and keeps sendalerts alive, so there is no cron job.
+# Tag and digest are the v4.3 release read from Docker Hub on 2026-08-05, amd64
+# and arm64. Paths are relative to this file.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  healthchecks:
+    image: healthchecks/healthchecks:v4.3@sha256:cd7bcd94350818b3944f82eb5995f48bdeab8c8627977578a569ffa73f56f56f
+    container_name: healthchecks
+    restart: unless-stopped
+    env_file: ./.env
+    volumes:
+      # Owned by the hc uid on Linux, hence step 3. SQLite needs real POSIX locks,
+      # so this is a bind mount on a local Linux, macOS or WSL 2 filesystem only.
+      - ./data:/data
+    ports:
+      # Loopback only: nothing outside this computer can reach 8088.
+      - "127.0.0.1:8088:8000"

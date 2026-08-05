@@ -25,7 +25,7 @@ const CORE_LINKS = [
   {
     title: 'Prompt Zero',
     path: '/prompt-zero/',
-    note: 'The one-time server setup every install prompt on this site assumes: a fresh VPS to a hardened box with Docker, a firewall, and SSH that works. Run this first.',
+    note: "The one-time server setup the cloud path assumes: a fresh VPS to a hardened box with Docker, a firewall, and SSH that works. Run this first if the install is going on a rented server. Every product also ships a local prompt, in the same .md mirror as the server one, that installs on the reader's own computer at http://localhost and needs none of this page.",
   },
   {
     title: 'Methodology',

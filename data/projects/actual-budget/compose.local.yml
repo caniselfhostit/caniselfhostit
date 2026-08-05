@@ -1,0 +1,35 @@
+# Actual Budget · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   image, port, /data .. https://actualbudget.org/docs/install/docker
+#   configuration ....... https://actualbudget.org/docs/config/
+#   health route ........ https://github.com/actualbudget/actual/blob/master/packages/sync-server/src/scripts/health-check.js
+#
+# Every path here is relative to ~/selfhost/actual-budget/, which lets one file
+# work on macOS, Linux and Windows. One container, no database process and no
+# secret to generate: the sync server keeps account.sqlite and the budget blobs
+# under /data, and the only credential is the server password you set in a
+# browser at step 7. The image runs as uid 1001, which matters on Linux and
+# which Docker Desktop handles elsewhere. Tag and digest are the 26.8.0 release
+# read from Docker Hub on 2026-08-05, for linux/amd64 and linux/arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  actual:
+    image: actualbudget/actual-server:26.8.0@sha256:0b300f370dba85a74998a953736a831bd931cc8cb76c0d8ceac3d3fd288dfd4d
+    container_name: actual
+    restart: unless-stopped
+    environment:
+      # Carried over so this file matches the server file line for line.
+      # Nothing proxies to this container here and nothing sets an
+      # X-Forwarded-For header, so on this path the setting does nothing.
+      ACTUAL_TRUSTED_PROXIES: 172.16.0.0/12
+    volumes:
+      # server-files holds account.sqlite, user-files holds the budget blobs.
+      # Local disk only: SQLite needs real POSIX file locks to stay intact.
+      # Relative to this file, so the whole install is one folder to copy.
+      - ./data:/data
+    ports:
+      # Loopback only. Nothing outside this computer reaches 8090, including
+      # the phone on the same wifi. Step 6 says why that is the point.
+      - "127.0.0.1:8090:5006"

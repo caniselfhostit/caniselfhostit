@@ -291,6 +291,7 @@ const rawFileModules = () =>
           '/data/projects/*/prompt-chat.md',
           '/data/projects/*/prompt-local.md',
           '/data/projects/*/compose.yml',
+          '/data/projects/*/compose.local.yml',
           '/data/projects/*/Caddyfile',
           '/data/projects/*/install.sh',
         ],
@@ -313,6 +314,7 @@ export function getProjectFiles(slug) {
     promptChat: pick('prompt-chat.md'),
     promptLocal: pick('prompt-local.md'),
     compose: pick('compose.yml'),
+    composeLocal: pick('compose.local.yml'),
     caddyfile: pick('Caddyfile'),
     installSh: pick('install.sh'),
   };

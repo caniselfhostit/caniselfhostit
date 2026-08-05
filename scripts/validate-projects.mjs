@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* The reviewer that never gets tired.
  *
- * Every project arrives as a directory of six files, and every field on a page
+ * Every project arrives as a directory of eight files, and every field on a page
  * is a claim someone can check. This script checks the ones a machine can:
  * shape, closed vocabularies, cross-references that must resolve, the derived
  * setup tier agreeing with the stated time, the content hash agreeing with the
@@ -25,6 +25,7 @@ import {
   CATEGORIES,
   CONFIDENCE_LEVELS,
   CONTENT_HASH_FILES,
+  LOCAL_FITS,
   OFFICIAL_COMPOSE,
   PRICE_UNITS,
   SOURCE_AVAILABLE_LICENSES,
@@ -80,7 +81,7 @@ const REQUIRED = {
   timeToRunningMin: isPosInt,
   license: isStr,
   officialCompose: isStr,
-  localVariant: isBool,
+  local: isObj,
   quote: isObj,
   citations: (v) => Array.isArray(v),
   whatYouSignUpFor: isStrArray,
@@ -100,9 +101,51 @@ const FORBIDDEN = {
   verificationStatus: 'verification state lives in Supabase (PRD §6.2), not in repo JSON',
   verifiedOneShot: 'this site does not carry an unearned verification flag; see /methodology',
   priceMonthly: 'prices live in data/saas/<slug>.json and are joined at build time',
+  localVariant:
+    'replaced by the "local" object — every project ships prompt-local.md now (docs/prompt-style-guide.md, "The local path")',
 };
 
-const REQUIRED_FILES = ['index.json', 'prompt.md', 'prompt-chat.md', 'compose.yml', 'Caddyfile', 'install.sh'];
+const REQUIRED_FILES = [
+  'index.json',
+  'prompt.md',
+  'prompt-chat.md',
+  'prompt-local.md',
+  'compose.yml',
+  'compose.local.yml',
+  'Caddyfile',
+  'install.sh',
+];
+
+/* ------------------------------------------------------------------ *
+ * Prompt shape (docs/prompt-style-guide.md)
+ * ------------------------------------------------------------------ */
+
+// The style guide fixes these byte-for-byte ("CI greps for it" — this is that
+// grep). A reworded frame line is a prompt that drifted from the contract the
+// pages and the reviewers assume.
+const VPS_FRAME =
+  "You are Claude Code on the user's machine. The user has completed Prompt Zero: `ssh vps` works,\n" +
+  'Docker and Caddy are installed, the firewall is default-deny.';
+
+const LOCAL_FRAME =
+  "You are Claude Code on the user's own computer. There is no server and no Prompt Zero:\n" +
+  'everything in this prompt runs on this machine and stays on it.';
+
+const LOCAL_CONVENTION =
+  'Run every command on this computer, in the shell you are already in. Nothing in this prompt\n' +
+  'uses ssh.';
+
+// The compose block a prompt writes over a heredoc must be byte-identical to
+// the sibling compose file — the page promises "the files are the ones CI
+// diffs", and this is that diff.
+function composeHeredoc(md) {
+  const m = md.match(/cat > \S*compose\.yml <<'EOF'\n([\s\S]*?)\nEOF\n/);
+  return m ? `${m[1]}\n` : null;
+}
+
+const imageLines = (yml) =>
+  [...yml.matchAll(/^\s*image:\s*["']?([^\s"'#]+)/gm)].map((m) => m[1]).sort();
+const loopbackPorts = (yml) => [...yml.matchAll(/127\.0\.0\.1:(\d+):/g)].map((m) => m[1]).sort();
 
 /* ------------------------------------------------------------------ *
  * Security scan (PRD §4.2)
@@ -355,13 +398,75 @@ function checkProject(dir) {
     bad(`category "${entry.category}" is not one of the twelve in src/lib/rubric.js`);
   }
 
-  // --- localVariant decides whether prompt-local.md exists ---
-  const hasLocal = existsSync(path.join(abs, 'prompt-local.md'));
-  if (entry.localVariant === true && !hasLocal) {
-    bad('localVariant is true but prompt-local.md is missing');
+  // --- the local path: every project ships it, and says how well it fits ---
+  if (isObj(entry.local)) {
+    if (!LOCAL_FITS.includes(entry.local.fit)) {
+      bad(`local.fit must be one of ${LOCAL_FITS.join(' | ')}`);
+    }
+    if (!isStr(entry.local.note)) {
+      bad('local.note is required — one plain sentence on what running this on your own computer means');
+    }
+    for (const key of Object.keys(entry.local)) {
+      if (key !== 'fit' && key !== 'note') bad(`local has an unknown key "${key}"`);
+    }
   }
-  if (entry.localVariant === false && hasLocal) {
-    bad('prompt-local.md exists but localVariant is false — set it, or delete the file');
+
+  // --- prompt shape: frame lines, compose parity, pin parity ---
+  const text = {};
+  for (const file of ['prompt.md', 'prompt-local.md', 'compose.yml', 'compose.local.yml']) {
+    const full = path.join(abs, file);
+    if (existsSync(full)) text[file] = readFileSync(full, 'utf8');
+  }
+
+  if (text['prompt.md'] && !text['prompt.md'].startsWith(VPS_FRAME)) {
+    bad('prompt.md does not open with the verbatim frame lines (style guide §a)');
+  }
+  if (text['prompt-local.md']) {
+    const local = text['prompt-local.md'];
+    if (!local.startsWith(LOCAL_FRAME)) {
+      bad('prompt-local.md does not open with the verbatim local frame line (style guide, "The local path")');
+    }
+    if (!local.includes(LOCAL_CONVENTION)) {
+      bad('prompt-local.md is missing the verbatim local command-convention line');
+    }
+    if (local.includes('<DOMAIN>')) {
+      bad('prompt-local.md mentions <DOMAIN> — the local path has no hostname');
+    }
+    if (/\bssh\b/.test(local.split(LOCAL_CONVENTION).join(''))) {
+      bad('prompt-local.md mentions ssh outside the convention line — nothing on this path is remote');
+    }
+  }
+
+  for (const [promptFile, composeFile] of [
+    ['prompt.md', 'compose.yml'],
+    ['prompt-local.md', 'compose.local.yml'],
+  ]) {
+    if (!text[promptFile] || !text[composeFile]) continue;
+    const embedded = composeHeredoc(text[promptFile]);
+    if (embedded === null) {
+      bad(`${promptFile} has no compose heredoc (cat > …compose.yml <<'EOF')`);
+    } else if (embedded !== text[composeFile]) {
+      bad(`the compose block in ${promptFile} is not byte-identical to ${composeFile}`);
+    }
+  }
+
+  if (text['compose.yml'] && text['compose.local.yml']) {
+    const vpsImages = imageLines(text['compose.yml']);
+    const localImages = imageLines(text['compose.local.yml']);
+    if (JSON.stringify(vpsImages) !== JSON.stringify(localImages)) {
+      bad(
+        'compose.local.yml image pins differ from compose.yml — a version bump lands in both files or neither ' +
+          `(vps: ${vpsImages.join(', ')} · local: ${localImages.join(', ')})`
+      );
+    }
+    const vpsPorts = loopbackPorts(text['compose.yml']);
+    const localPorts = loopbackPorts(text['compose.local.yml']);
+    if (JSON.stringify(vpsPorts) !== JSON.stringify(localPorts)) {
+      bad(
+        `compose.local.yml loopback ports differ from compose.yml (vps: ${vpsPorts.join(', ') || 'none'} · ` +
+          `local: ${localPorts.join(', ') || 'none'}) — the local path keeps the same port`
+      );
+    }
   }
 
   // --- tierFactors → derived tier → time band ---
@@ -504,7 +609,7 @@ function checkProject(dir) {
   }
 
   // --- security scan over everything a reader is invited to run ---
-  const scanFiles = [...REQUIRED_FILES.filter((f) => f !== 'index.json'), 'prompt-local.md'];
+  const scanFiles = REQUIRED_FILES.filter((f) => f !== 'index.json');
   for (const file of scanFiles) {
     const full = path.join(abs, file);
     if (!existsSync(full)) continue;

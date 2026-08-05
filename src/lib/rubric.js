@@ -401,9 +401,18 @@ export const CONTENT_HASH_FILES = [
   'prompt-chat.md',
   'prompt-local.md',
   'compose.yml',
+  'compose.local.yml',
   'Caddyfile',
   'install.sh',
 ];
+
+/**
+ * How well a project suits the local path — a machine that sleeps, moves, and
+ * has no public address. "caveat" means it works but the note has to say what
+ * changes; the page prints the note either way (docs/prompt-style-guide.md,
+ * "The local path").
+ */
+export const LOCAL_FITS = ['good', 'caveat'];
 
 /**
  * Deterministic JSON: object keys sorted, array order preserved (arrays here are

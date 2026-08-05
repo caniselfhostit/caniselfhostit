@@ -1,0 +1,30 @@
+# Uptime Kuma · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   compose shape ...... https://github.com/louislam/uptime-kuma/blob/master/compose.yaml
+#   install notes ...... https://github.com/louislam/uptime-kuma/wiki/%F0%9F%94%A7-How-to-Install
+#   image details ...... https://github.com/louislam/uptime-kuma/blob/master/docker/dockerfile
+#
+# One container, on the computer the user is sitting at. No Caddy and no
+# certificate: nothing outside this machine can reach 8091, so there is nothing
+# to certify. This file sits in ~/selfhost/uptime-kuma/ and its paths are
+# relative to it, which is what lets one file work on macOS, Linux and Windows.
+# Upstream pins the floating `2` tag and publishes 3001 on every interface; this
+# file pins the release and binds to loopback. The image runs as the node user
+# (uid 1000), hence the Linux-only chown in step 3. Tag and digest are the 2.5.0
+# release read from Docker Hub on 2026-08-05, for linux/amd64 and linux/arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:2.5.0@sha256:a8610b3b4c38077922ba51b036691e06887d7cefd91fe620fd3d6d23d03dc240
+    container_name: uptime-kuma
+    restart: unless-stopped
+    volumes:
+      # kuma.db and db-config.json live here. Local disk only: SQLite needs real
+      # POSIX file locks, so a network mount or a synced folder corrupts it.
+      - ./data:/app/data
+    ports:
+      # Loopback only. No other device on this network can reach 8091, not even
+      # the user's phone.
+      - "127.0.0.1:8091:3001"

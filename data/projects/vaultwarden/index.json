@@ -32,7 +32,10 @@
   "license": "AGPL-3.0",
   "officialCompose": "upstream-example",
   "officialComposeUrl": "https://github.com/dani-garcia/vaultwarden/wiki/Using-Docker-Compose",
-  "localVariant": false,
+  "local": {
+    "fit": "caveat",
+    "note": "The browser and the Bitwarden extension on this computer reach the vault fully, but your phone and every other device cannot, so nothing syncs off this machine."
+  },
   "quote": {
     "text": "There is a PHC generator built-in into Vaultwarden",
     "source": "Vaultwarden wiki — Enabling admin page",
@@ -81,5 +84,5 @@
   "related": [],
   "pagePriority": 1,
   "contentUpdatedAt": "2026-08-05",
-  "contentHash": "7c840ed7b9442b1209dec3a8fed12aba9c237de9fcf22bf8b012a42439e58faf"
+  "contentHash": "b75eeabd3b1da9bf8af0381a473a6cfdeea13f07dc5a4bdf63c691f623a7f427"
 }

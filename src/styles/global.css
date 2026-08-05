@@ -1352,6 +1352,168 @@ button.chip:hover {
   color: var(--accent);
 }
 
+/* ---------- the path switch ----------
+   Two radios, two labels, two panels, no script. Both prompts are already in the
+   HTML — the switch only decides which one is displayed — so a crawler that runs
+   no JavaScript still reads both, and a reader with JS off can still reach the
+   other path by focusing its radio. The inputs are clipped rather than
+   display:none for exactly that reason: a hidden-by-display radio cannot be
+   focused, and the whole control is keyboard-driven.
+
+   Layout is one wrapping flex row: the two labels share the line, the panels
+   claim a full line of their own beneath them. */
+
+.pb-paths {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.pb-paths-label {
+  flex: 0 0 100%;
+  margin-bottom: 2px;
+}
+
+.pb-path-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.pb-path {
+  display: flex;
+  flex: 1 1 220px;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+  padding: 11px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-control);
+  transition: background-color var(--fast) var(--ease), border-color var(--fast) var(--ease),
+    color var(--fast) var(--ease);
+}
+
+.pb-path-name {
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+  color: inherit;
+}
+
+.pb-path-sub {
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.pb-path:hover {
+  background: var(--surface);
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--border));
+}
+
+/* the chosen path wears the accent — machinery, not a verdict */
+.pb-path-input:checked + .pb-path {
+  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+:root[data-theme='dark'] .pb-path-input:checked + .pb-path {
+  color: #17110c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .pb-path-input:checked + .pb-path {
+    color: #17110c;
+  }
+}
+
+.pb-path-input:checked + .pb-path .pb-path-sub {
+  color: inherit;
+  opacity: 0.82;
+}
+
+.pb-path-input:checked + .pb-path:hover {
+  background: color-mix(in srgb, var(--accent) 88%, var(--fg));
+  border-color: color-mix(in srgb, var(--accent) 88%, var(--fg));
+}
+
+/* The ring belongs on the label: the input it belongs to is one pixel wide. */
+.pb-path-input:focus-visible + .pb-path {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* `min-width: 0` is load-bearing: a flex item's automatic minimum size is its
+   content's, and a panel holding a 15 kB prompt would push the card wider than
+   the page rather than let the <pre> scroll inside itself. */
+.pb-panel {
+  display: none;
+  flex: 0 0 100%;
+  min-width: 0;
+}
+
+.pb-path-input[data-path='cloud']:checked ~ .pb-panel[data-path='cloud'],
+.pb-path-input[data-path='local']:checked ~ .pb-panel[data-path='local'] {
+  display: block;
+}
+
+/* the size line is per-path: it counts whichever prompt this panel shows */
+.pb-panel > .pb-size {
+  margin-top: 4px;
+}
+
+/* the local path's own compose file, under its own prompt */
+.pb-panel-file {
+  margin-top: 16px;
+}
+
+/* ---------- what running it here actually means ----------
+   Same shape as .pricing-caveat: a quiet note by default, the accent rail when
+   local.fit is "caveat" and the reader is about to install something whose
+   value depends on the machine being awake. */
+
+.pb-fit {
+  margin-top: 16px;
+  max-width: 78ch;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border);
+  border-radius: var(--r-panel);
+  background: var(--surface-2);
+  padding: 13px 15px;
+}
+
+.pb-fit.is-caveat {
+  border-color: color-mix(in srgb, var(--accent) 38%, var(--border));
+  border-left-color: var(--accent);
+  background: var(--accent-wash);
+}
+
+.pb-fit .microlabel {
+  color: var(--muted);
+}
+
+.pb-fit.is-caveat .microlabel {
+  color: var(--accent);
+  letter-spacing: 0.08em;
+}
+
+.pb-fit p + p {
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--fg);
+}
+
 .pb-outline {
   margin-top: 16px;
   border: 1px solid var(--border);
@@ -1827,6 +1989,11 @@ button.chip:hover {
   .ff-bar .copy-btn {
     width: 100%;
     justify-content: center;
+  }
+
+  /* the two paths stack: a half-width segment on a phone is a wrapped label */
+  .pb-path {
+    flex: 1 1 100%;
   }
 
   .toast {

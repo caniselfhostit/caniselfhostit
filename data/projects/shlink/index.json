@@ -31,7 +31,10 @@
   "timeToRunningMin": 75,
   "license": "MIT",
   "officialCompose": "none",
-  "localVariant": false,
+  "local": {
+    "fit": "caveat",
+    "note": "Every short link this makes begins with http://localhost:8086, which resolves on this computer and nowhere else, so anyone you send one to gets a connection error instead of your page."
+  },
   "quote": {
     "text": "using SQLite for production is not officially supported, since you can quickly face problems and limitations when dealing with big amounts of data or high traffic.",
     "source": "Shlink documentation, Supported database engines",
@@ -82,5 +85,5 @@
   ],
   "pagePriority": 3,
   "contentUpdatedAt": "2026-08-05",
-  "contentHash": "4becfb4f70fb799a4a892bba655a218fcde322c4721566ee9c0418ed7d4247e0"
+  "contentHash": "477e6f1a1482aa2d69d7d02e41a8c4dd7546a13020225cf2dfd4c8ee6458656b"
 }

@@ -15,9 +15,9 @@ const UPDATED = '2026-08-05';
   <article class="wrap prose">
     <h1>Security</h1>
     <p class="lede">
-      The prompts here tell an agent what to run as root on a server somebody bought an hour ago. A
-      dangerous one is the most urgent bug this project can have. This page is how to report it and
-      what happens after you do.
+      The prompts here tell an agent what to run with full privileges — on a server somebody bought
+      an hour ago, or on the computer they keep their photos on. A dangerous one is the most urgent
+      bug this project can have. This page is how to report it and what happens after you do.
     </p>
 
     <h2>Report it</h2>
@@ -34,10 +34,16 @@ const UPDATED = '2026-08-05';
     </p>
     <p>Useful in either case, in whatever order it comes out:</p>
     <ul>
-      <li>The page, and the file — <code>prompt.md</code>, <code>compose.yml</code>, the Caddy block.</li>
+      <li>
+        The page, and the file — <code>prompt.md</code>, <code>prompt-local.md</code>,{' '}
+        <code>compose.yml</code>, <code>compose.local.yml</code>, the Caddy block.
+      </li>
       <li>The line, or the step number.</li>
       <li>What an attacker gets, or what an unlucky reader loses.</li>
-      <li>If you ran it: the OS, the agent and version, the provider, and how far it got.</li>
+      <li>
+        If you ran it: the OS, the agent and version, where it ran — a VPS provider, or your own
+        machine and its Docker Desktop version — and how far it got.
+      </li>
     </ul>
     <p>
       Please do not publish a working exploit against a live install before the correction ships.
@@ -61,8 +67,14 @@ const UPDATED = '2026-08-05';
         prompt-injection hole, pointed at a machine with root;
       </li>
       <li>
-        an SSH, sudo, or firewall step that leaves a server weaker than the{' '}
-        <a href="/prompt-zero/">Prompt Zero</a> baseline claims it is.
+        on the server path, an SSH, sudo, or firewall step that leaves a box weaker than the{' '}
+        <a href="/prompt-zero/">Prompt Zero</a> baseline claims it is;
+      </li>
+      <li>
+        on the local path, anything that makes the install reachable from another device — a LAN
+        binding where <code>127.0.0.1</code> was promised, a port-forwarding or tunnel step, a hole
+        opened in the machine's own firewall. That path's whole baseline is that nothing is
+        exposed, so a prompt that quietly relaxes it is a security bug, not a convenience.
       </li>
     </ul>
 

@@ -1,0 +1,33 @@
+# DocuSeal · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   image, port, /data .. https://github.com/docusealco/docuseal/blob/master/README.md
+#   database selection .. https://github.com/docusealco/docuseal/blob/master/config/database.yml
+#   HOST and FORCE_SSL .. https://github.com/docusealco/docuseal/blob/master/config/environments/production.rb
+#
+# Every host path here is relative to ~/selfhost/docuseal/, where this file
+# lives, which is what lets one file work on macOS, Linux and Windows.
+# One container. With DATABASE_URL unset the app uses SQLite at $WORKDIR/db.sqlite3,
+# and the image already sets WORKDIR=/data/docuseal, so the single mount below
+# holds the database, the uploaded documents and the signed PDFs. The image runs
+# as uid 2000; on Linux that ownership is set by hand in step 3, and on macOS and
+# Windows Docker Desktop's file sharing handles it. No FORCE_SSL in the .env this
+# reads: there is no certificate here to redirect to. Tag and digest are the
+# 3.1.7 release read from Docker Hub on 2026-08-05, for linux/amd64 and
+# linux/arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  docuseal:
+    image: docuseal/docuseal:3.1.7@sha256:a8ce45fc96cb0b8670021ba781966591a1d09efb70882c920a465e87e4fea800
+    container_name: docuseal
+    restart: unless-stopped
+    env_file: ./.env
+    volumes:
+      # Database, attachments and signed documents, all in one directory.
+      - ./data:/data/docuseal
+    ports:
+      # Loopback only. Nothing outside this computer can reach 8089, not the
+      # router and not the user's own phone on the same wifi. That is the point
+      # of this path.
+      - "127.0.0.1:8089:3000"

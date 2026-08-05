@@ -32,7 +32,10 @@
   "license": "AGPL-3.0",
   "officialCompose": "upstream-maintained",
   "officialComposeUrl": "https://github.com/docusealco/docuseal/blob/master/docker-compose.yml",
-  "localVariant": false,
+  "local": {
+    "fit": "caveat",
+    "note": "Signing links generated here point at localhost and open on this computer only, so this install is for filling and signing your own documents, not for sending a request to somebody else."
+  },
   "quote": {
     "text": "It is possible to use PostgreSQL or MySQL databases by specifying the DATABASE_URL environment variable.",
     "source": "DocuSeal README",
@@ -78,5 +81,5 @@
   ],
   "pagePriority": 2,
   "contentUpdatedAt": "2026-08-05",
-  "contentHash": "0486b5b062fa4f3cca3c44c957ff182e748682f0180f5b19c7d514cb71435b37"
+  "contentHash": "2aa27c14c9eb82d1e32cebf6e04a39541ee885cc5e027b2b9473bd6992e35fea"
 }

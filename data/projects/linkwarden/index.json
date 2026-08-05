@@ -32,7 +32,10 @@
   "license": "AGPL-3.0",
   "officialCompose": "upstream-maintained",
   "officialComposeUrl": "https://github.com/linkwarden/linkwarden/blob/main/docker-compose.yml",
-  "localVariant": false,
+  "local": {
+    "fit": "good",
+    "note": "The bookmarks and their archived pages sit on the computer you browse from, so the browser extension here works and your phone cannot reach them at all."
+  },
   "quote": {
     "text": "Linkwarden has pretty minimal hardware requirements - it was tested on a VPS with 4gb of memory and it ran pretty smoothly",
     "source": "Linkwarden documentation, Setup",
@@ -80,5 +83,5 @@
   ],
   "pagePriority": 2,
   "contentUpdatedAt": "2026-08-05",
-  "contentHash": "d1bc11e24cc4408c14d99c9e49ba9b03997ef653378406b14803089d8aeec7aa"
+  "contentHash": "19fe90f383e993dcd8b8761c4a3e57092a2aa1bcfce57b7b31b33bc2e1a500f0"
 }

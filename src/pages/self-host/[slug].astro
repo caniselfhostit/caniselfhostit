@@ -179,6 +179,13 @@ const vpsClass =
       ? 'about $10 a month'
       : 'about $20 a month';
 
+// The local path. `local` is authored in index.json alongside the prompt, so a
+// project whose local prompt is still being written has neither — the answer
+// below says that rather than describing a panel that carries nothing.
+const localFit = p.local?.fit ?? null;
+const localNote = p.local?.note ?? null;
+const localReady = typeof files.promptLocal === 'string' && files.promptLocal.length > 0;
+
 const faqs = [
   {
     q: `Can I self-host ${page.name}?`,
@@ -214,6 +221,16 @@ const faqs = [
       `${p.tierLabel}${bandLabel ? ` — ${bandLabel}` : ''}. ` +
       `The rule that produced that verdict: ${p.tierRule.test}. ${p.tierRule.because} ` +
       `The tier is derived from seven countable facts about the ${p.name} install, not from anyone's impression of it, and the whole rubric is published on the methodology page.`,
+  },
+  {
+    q: `Can I run ${p.name} on my own computer instead of a server?`,
+    a:
+      `Yes — that is the second path in the prompt box above. "On my computer" installs the same ${p.name} on the machine you are sitting at: no VPS, no domain, no DNS, and nothing exposed to the internet. ` +
+      `It checks for Docker first and installs Docker Desktop if the machine does not have it — macOS, Windows and Linux each get their own step — then binds everything to loopback, so the app answers on http://localhost and only on that computer. ` +
+      (localNote ? `${localFit === 'caveat' ? 'The catch' : 'Worth knowing'}: ${localNote} ` : '') +
+      (localReady
+        ? `Same discipline as the cloud path: pinned images, secrets generated on the machine, and a first backup taken before the prompt says it is done.`
+        : `The local prompt for ${p.name} is not written yet, so that panel says so rather than handing you something nobody authored.`),
   },
 ];
 
@@ -253,7 +270,7 @@ const jsonld = [
     name: p.name,
     description: p.tagline,
     applicationCategory: p.categoryLabel,
-    operatingSystem: 'Linux (Docker)',
+    operatingSystem: 'Linux, macOS, Windows (Docker)',
     url: pageUrl,
     ...(p.repo ? { sameAs: `https://github.com/${p.repo}` } : {}),
     ...(p.license ? { license: p.license } : {}),
@@ -570,8 +587,10 @@ const mirrorHref = `/self-host/${page.slug}.md`;
           <div>
             <h2 id="prompt-h">The prompt</h2>
             <p class="section-note">
-              One prompt, assuming Prompt Zero is done. It installs {p.name} — read it before you
-              paste it, which is the whole reason it is on the page instead of behind a download.
+              Two paths to the same {p.name}: the cloud one assumes Prompt Zero is done on a server
+              you rent, the local one assumes nothing but a computer that can run Docker Desktop.
+              Read whichever you pick before you paste it, which is the whole reason both are on the
+              page instead of behind a download.
             </p>
           </div>
         </div>
@@ -582,6 +601,9 @@ const mirrorHref = `/self-host/${page.slug}.md`;
           prompt={files.prompt}
           promptChat={files.promptChat}
           promptLocal={files.promptLocal}
+          local={p.local ?? null}
+          composeLocal={files.composeLocal}
+          composeSource={p.sources?.compose ?? null}
           mirrorHref={mirrorHref}
         />
       </div>
@@ -596,9 +618,10 @@ const mirrorHref = `/self-host/${page.slug}.md`;
               <div>
                 <h2 id="files-h">The files, if you'd rather do it yourself</h2>
                 <p class="section-note">
-                  The same install with no agent involved: three files, in the order you'd use them.
-                  The prompt above writes exactly these — if the two ever disagree, the files are the
-                  ones CI diffs.
+                  The cloud path with no agent involved: three files, in the order you'd use them.
+                  The cloud prompt above writes exactly these — if the two ever disagree, the files
+                  are the ones CI diffs. The local path ships its own compose file, collapsed under
+                  its own prompt.
                 </p>
               </div>
             </div>
