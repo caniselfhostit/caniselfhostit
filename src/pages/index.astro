@@ -311,51 +311,6 @@ if (count > 0) {
     })();
   </script>
 
-  {
-    hasLedger && (
-      <section class="wrap ledger-feature" aria-labelledby="led-receipt-h">
-        <h2 class="sr-only" id="led-receipt-h">
-          A sample of the rack, itemized: monthly list price per app, and what runs in its place
-        </h2>
-
-        <div class="ledger">
-          <span class="led-stamp" aria-hidden="true">Self-hostable</span>
-
-          <div class="led-head">
-            <p class="led-head-k">The Rack — itemized</p>
-            <p class="led-head-sub">
-              {lines.length} of {count} apps · USD, monthly
-            </p>
-          </div>
-
-          <ol class="led-lines">
-            {lines.map((l) => (
-              <li class="led-line">
-                <span class="led-row">
-                  <span class="led-name">{l.name}</span>
-                  <span class="led-dots" aria-hidden="true" />
-                  <span class="led-fig">{l.price}</span>
-                </span>
-                {l.runsAs && (
-                  <span class="led-under">
-                    <span aria-hidden="true">→ </span>runs as {l.runsAs} on your server
-                  </span>
-                )}
-              </li>
-            ))}
-          </ol>
-
-          <div class="led-foot">
-            <p class="led-total">
-              <span class="led-k">Total:</span> not summed — you'd replace them one at a time.
-            </p>
-            <p class="provenance led-prov">list prices · assumptions on each app's page</p>
-          </div>
-        </div>
-      </section>
-    )
-  }
-
   <section class="section" id="the-rack">
     <div class="wrap">
       <div class="section-head">
@@ -412,6 +367,51 @@ if (count > 0) {
       </div>
     </div>
   </section>
+
+  {
+    hasLedger && (
+      <section class="wrap ledger-feature" aria-labelledby="led-receipt-h">
+        <h2 class="sr-only" id="led-receipt-h">
+          A sample of the rack, itemized: monthly list price per app, and what runs in its place
+        </h2>
+
+        <div class="ledger">
+          <span class="led-stamp" aria-hidden="true">Self-hostable</span>
+
+          <div class="led-head">
+            <p class="led-head-k">The Rack — itemized</p>
+            <p class="led-head-sub">
+              {lines.length} of {count} apps · USD, monthly
+            </p>
+          </div>
+
+          <ol class="led-lines">
+            {lines.map((l) => (
+              <li class="led-line">
+                <span class="led-row">
+                  <span class="led-name">{l.name}</span>
+                  <span class="led-dots" aria-hidden="true" />
+                  <span class="led-fig">{l.price}</span>
+                </span>
+                {l.runsAs && (
+                  <span class="led-under">
+                    <span aria-hidden="true">→ </span>runs as {l.runsAs} on your server
+                  </span>
+                )}
+              </li>
+            ))}
+          </ol>
+
+          <div class="led-foot">
+            <p class="led-total">
+              <span class="led-k">Total:</span> not summed — you'd replace them one at a time.
+            </p>
+            <p class="provenance led-prov">list prices · assumptions on each app's page</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
 </Base>
 
 <style>
@@ -603,15 +603,18 @@ if (count > 0) {
   }
 
   /* ---------- the receipt ----------
-     Where the swap band used to sit: the same money story, itemized. Paper on
-     three sides, torn along the fourth. The bottom edge is two identical
-     scallop layers one pixel apart: the lower one in --border shows through as
-     a 1px stroke that follows the notches, so the tear keeps the same hairline
-     the rest of the panel has. Both layers are token colours, so the paper
-     flips with the theme like every other surface. */
+     The page's closing exhibit, after The Rack. Paper on three sides, torn
+     along the fourth. The bottom edge is two identical scallop layers one
+     pixel apart: the lower one in --border shows through as a 1px stroke that
+     follows the notches, so the tear keeps the same hairline the rest of the
+     panel has. Both layers are token colours, so the paper flips with the
+     theme like every other surface.
+
+     The Rack above already ends in 72px of section padding; the top padding
+     here only needs to clear the stamp's 17px overhang. */
 
   .ledger-feature {
-    padding-top: 40px;
+    padding: 4px 0 24px;
   }
 
   .ledger {
@@ -791,7 +794,7 @@ if (count > 0) {
     }
 
     .ledger-feature {
-      padding-top: 34px;
+      padding: 2px 0 18px;
     }
 
     .led-stamp {
