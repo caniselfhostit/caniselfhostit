@@ -317,3 +317,77 @@ export function getProjectFiles(slug) {
     installSh: pick('install.sh'),
   };
 }
+
+/* ------------------------------------------------------------------ *
+ * SaaS pages — the paid app is the protagonist (narrative re-key)
+ * ------------------------------------------------------------------ */
+
+/**
+ * The directory and the canonical pages are keyed by the PAID app: the row is
+ * Miro, and Excalidraw is the answer to it. Each SaaS entity joins its ranked
+ * replacement projects (hydrated), and the page inherits its verdict, timings,
+ * and freshness from the top-ranked option.
+ */
+let saasPageCache;
+
+export function getAllSaasPages() {
+  if (!saasPageCache) {
+    saasPageCache = getAllSaas()
+      .map((entity) => {
+        const options = (entity.ranked ?? [])
+          .map((r) => {
+            const project = getProject(r.project);
+            if (!project) {
+              throw new Error(
+                `data/saas/${entity.slug}.json ranks "${r.project}", which has no data/projects/ dir`
+              );
+            }
+            return { ...project, rationale: r.rationale ?? null };
+          });
+        if (options.length === 0) return null; // an entity nothing replaces yet has no page
+        const primary = options[0];
+        // The headline money figure is the primary project's resolved swap for
+        // THIS SaaS — one source of truth, already seat-multiplied and dated.
+        const swap = (primary.replaces ?? []).find((r) => r.saas === entity.slug) ?? null;
+        return {
+          slug: entity.slug,
+          name: entity.name,
+          domain: entity.domain ?? null,
+          plans: entity.plans ?? [],
+          pricing: entity.pricing ?? null,
+          whyPeoplePay: entity.whyPeoplePay ?? null,
+          evaluatedNotTested: entity.evaluatedNotTested ?? [],
+          options,
+          primary,
+          swap,
+          // Verdict language: the question is about the SaaS; the answer is the
+          // primary replacement's tier.
+          tier: primary.tier,
+          tierLabel: primary.tierLabel,
+          verdictWord: primary.verdictWord,
+          category: primary.category,
+          categoryLabel: primary.categoryLabel,
+          contentUpdatedAt: primary.contentUpdatedAt ?? null,
+        };
+      })
+      .filter(Boolean)
+      .sort(
+        (a, b) =>
+          (a.primary.pagePriority ?? 99) - (b.primary.pagePriority ?? 99) ||
+          a.name.localeCompare(b.name)
+      );
+  }
+  return saasPageCache;
+}
+
+export function getSaasPage(slug) {
+  return getAllSaasPages().find((s) => s.slug === slug) ?? null;
+}
+
+/** Sibling SaaS pages: same category first, then priority order. */
+export function relatedSaasPages(page, limit = 3) {
+  const rest = getAllSaasPages().filter((s) => s.slug !== page.slug);
+  const sameCat = rest.filter((s) => s.category === page.category);
+  const others = rest.filter((s) => !sameCat.includes(s));
+  return [...sameCat, ...others].slice(0, limit);
+}

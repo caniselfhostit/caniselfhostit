@@ -2,18 +2,23 @@
  * single fetch, per llmstxt.org: an H1, a one-paragraph description, then
  * sections of links with a short note each.
  *
- * Generated from getAllProjects(), the same call the HTML directory makes. It is
- * never hand-maintained: a hand-written index of a growing catalogue is a list
- * of pages that used to exist, and an agent that trusts it gets 404s. Add a
- * project to data/projects/ and it appears here on the next build or not at all.
+ * Keyed by the PAID app, because that is the question anyone actually types. An
+ * agent asked "can I stop paying for Miro?" has no reason to know the word
+ * Excalidraw yet — so the link text is the question, and the note is the answer.
  *
- * Every project link points at the `.md` mirror rather than the HTML page —
- * that file is the same facts with the chrome removed, and it is what the copy
- * block on the page deeplinks to (PRD §4.5).
+ * Generated from getAllSaasPages(), the same call the HTML directory makes. It
+ * is never hand-maintained: a hand-written index of a growing catalogue is a
+ * list of pages that used to exist, and an agent that trusts it gets 404s. Add a
+ * SaaS entity to data/saas/ with a ranked replacement and it appears here on the
+ * next build or not at all.
+ *
+ * Every link points at the `.md` mirror rather than the HTML page — that file is
+ * the same facts with the chrome removed, and it is what the copy block on the
+ * page deeplinks to (PRD §4.5).
  */
 import type { APIRoute } from 'astro';
 import { SITE } from '../lib/site.js';
-import { getAllProjects } from '../lib/projects.js';
+import { getAllSaasPages } from '../lib/projects.js';
 
 /** Hand-listed because these are the two pages that explain the rest. */
 const CORE_LINKS = [
@@ -30,17 +35,19 @@ const CORE_LINKS = [
 ];
 
 export const GET: APIRoute = () => {
-  const projects = getAllProjects();
+  const pages = getAllSaasPages();
 
   const lines = [
     `# ${SITE.name}`,
     '',
     SITE.description,
     '',
-    '## Projects',
+    '## Paid apps, and what replaces them',
     '',
-    ...projects.map(
-      (p) => `- [${p.name}](${SITE.origin}/self-host/${p.slug}.md): ${p.tagline}`
+    ...pages.map(
+      (page: any) =>
+        `- [Can I self-host ${page.name}?](${SITE.origin}/self-host/${page.slug}.md): ` +
+        `replaced by ${page.primary.name} — ${page.primary.tagline}`
     ),
     '',
     '## Core',

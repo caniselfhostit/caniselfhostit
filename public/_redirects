@@ -1,0 +1,46 @@
+# Old project-keyed URLs -> new SaaS-keyed URLs (Cloudflare Workers static
+# assets honor this file, same as public/_headers).
+#
+# FORMAT: one rule per line, `<from> <to> <status>`. Paths only, no host.
+# Blank lines and `#` comments are ignored. Rules are evaluated in order and the
+# first match wins, so nothing here may overlap. Cloudflare's limit is 2,100
+# static rules; we are nowhere near it.
+#
+# WHY: the site used to ask its question about the free app — /self-host/
+# excalidraw/. It now asks about the paid one — /self-host/miro/ — so every
+# project URL that was indexed, linked, or pasted into somebody's notes is gone.
+# A 301 is the only thing that carries the accumulated links across. These are
+# permanent: the old URLs are never coming back under a different meaning.
+#
+# DERIVED FROM DATA, NOT TYPED: for every SaaS page (data/saas/*.json with a
+# non-empty `ranked`), every ranked option whose project slug differs from the
+# SaaS slug gets two rules — the HTML page and its .md mirror. Order follows
+# getAllSaasPages(): primary.pagePriority, then SaaS name.
+#
+# REGENERATE THIS FILE WHENEVER A PAIRING CHANGES. Adding a SaaS entity,
+# re-ranking `ranked` so a different project is primary, renaming a project or
+# SaaS slug, or retiring a project all change the correct contents here, and
+# nothing fails if you forget — the stale rule just quietly sends readers to the
+# wrong page, or to a 404, which is exactly the failure a redirect exists to
+# prevent. Two rules per pair; 10 pairs today.
+
+/self-host/vaultwarden/      /self-host/1password/  301
+/self-host/vaultwarden.md    /self-host/1password.md  301
+/self-host/stirling-pdf/     /self-host/adobe-acrobat/  301
+/self-host/stirling-pdf.md   /self-host/adobe-acrobat.md  301
+/self-host/excalidraw/       /self-host/miro/  301
+/self-host/excalidraw.md     /self-host/miro.md  301
+/self-host/healthchecks/     /self-host/cronitor/  301
+/self-host/healthchecks.md   /self-host/cronitor.md  301
+/self-host/docuseal/         /self-host/docusign/  301
+/self-host/docuseal.md       /self-host/docusign.md  301
+/self-host/freshrss/         /self-host/feedly/  301
+/self-host/freshrss.md       /self-host/feedly.md  301
+/self-host/linkwarden/       /self-host/raindrop/  301
+/self-host/linkwarden.md     /self-host/raindrop.md  301
+/self-host/uptime-kuma/      /self-host/uptimerobot/  301
+/self-host/uptime-kuma.md    /self-host/uptimerobot.md  301
+/self-host/actual-budget/    /self-host/ynab/  301
+/self-host/actual-budget.md  /self-host/ynab.md  301
+/self-host/shlink/           /self-host/bitly/  301
+/self-host/shlink.md         /self-host/bitly.md  301

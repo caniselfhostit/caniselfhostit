@@ -4,7 +4,7 @@
   "tagline": "Bookmarks that keep their own copy of the page, so a dead link is still readable years later.",
   "repo": "linkwarden/linkwarden",
   "site": "https://linkwarden.app",
-  "category": "money-home",
+  "category": "reading-bookmarks",
   "replaces": [
     {
       "saas": "raindrop",
@@ -80,5 +80,5 @@
   ],
   "pagePriority": 2,
   "contentUpdatedAt": "2026-08-05",
-  "contentHash": "ed221878e225ebd84499c6d24e895cdf2173b73cbb6943f9dbd23d68fe65ed7c"
+  "contentHash": "d1bc11e24cc4408c14d99c9e49ba9b03997ef653378406b14803089d8aeec7aa"
 }

@@ -1842,6 +1842,265 @@ button.chip:hover {
   }
 }
 
+/* ==========================================================================
+   The narrative inversion: the paid app is the protagonist
+   Everything below styles surfaces that changed when the canonical page became
+   /self-host/miro/ instead of /self-host/excalidraw/. It is appended rather
+   than woven in so the diff against the project-keyed layout stays readable —
+   the column classes (.c-project, .c-replaces) keep their names and their
+   geometry, and only the contents they carry changed.
+   ========================================================================== */
+
+/* ---------- the rack: App column is now the SaaS, domain beneath ---------- */
+
+.c-project .domain {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* "Replaced by": the project name carries the weight, the clipped tagline
+   trails it in the column's own muted colour. One line, ellipsised by the
+   existing .c-replaces rule. */
+.c-replaces .repl {
+  color: var(--fg);
+}
+
+/* ---------- why people pay ---------- */
+
+.why-prose {
+  font-size: 16px;
+  line-height: 1.7;
+  max-width: 72ch;
+  margin-top: 18px;
+}
+
+/* The plan ladder. Mono because these are figures you can check against the
+   vendor's own page, and the whole table scrolls inside itself rather than
+   pushing the document sideways on a phone. */
+.ladder-scroll {
+  margin-top: 22px;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--r-panel);
+  background: var(--surface);
+}
+
+.ladder {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.ladder thead th {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.ladder tbody tr + tr {
+  border-top: 1px solid var(--border);
+}
+
+.ladder tbody th,
+.ladder tbody td {
+  padding: 12px 14px;
+  vertical-align: top;
+}
+
+.ladder tbody th {
+  font-weight: 500;
+  width: 20%;
+}
+
+.ladder-plan {
+  display: block;
+  font-size: 15px;
+  line-height: 1.35;
+  color: var(--fg);
+}
+
+/* The one row the swap figure is built from. Copper, because it is machinery
+   pointing at a number — not a verdict about the plan. */
+.ladder tbody tr.is-swap {
+  background: var(--accent-wash);
+}
+
+.ladder-tag {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+
+.ladder-price {
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+  color: var(--fg);
+  white-space: nowrap;
+  width: 22%;
+}
+
+.ladder-note {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.ladder-prov {
+  margin-top: 12px;
+}
+
+/* A price we could not read off the vendor's page says so, at the size of the
+   claim it qualifies — not in a footnote. */
+.pricing-caveat {
+  margin-top: 14px;
+  max-width: 78ch;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border);
+  border-radius: var(--r-panel);
+  background: var(--surface-2);
+  padding: 14px 16px;
+}
+
+.pricing-caveat.is-low {
+  border-color: color-mix(in srgb, var(--accent) 38%, var(--border));
+  border-left-color: var(--accent);
+  background: var(--accent-wash);
+}
+
+.pricing-caveat .microlabel {
+  color: var(--muted);
+}
+
+.pricing-caveat.is-low .microlabel {
+  color: var(--accent);
+  letter-spacing: 0.08em;
+}
+
+.pricing-caveat p + p {
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--fg);
+}
+
+/* ---------- the replacement ---------- */
+
+.repl-tagline {
+  font-size: clamp(16px, 1.7vw, 19px);
+  line-height: 1.6;
+  max-width: 66ch;
+  margin-top: 18px;
+}
+
+.repl-meta {
+  margin-top: 16px;
+}
+
+.repl-why {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--muted);
+  max-width: 74ch;
+  margin-top: 16px;
+}
+
+/* ---------- the ranked candidates ---------- */
+
+.ranked {
+  list-style: none;
+  margin-top: 18px;
+  max-width: 82ch;
+  display: grid;
+  gap: 12px;
+}
+
+.rk {
+  border: 1px solid var(--border);
+  border-radius: var(--r-panel);
+  background: var(--surface);
+  padding: 16px 18px;
+}
+
+.rk.is-pick {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+}
+
+.rk-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.rk-name {
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.rk-pick {
+  color: var(--accent);
+}
+
+.rk-tagline {
+  font-size: 14.5px;
+  line-height: 1.6;
+  margin-top: 8px;
+}
+
+.rk-why {
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+/* ---------- related cards now carry a replacement sentence ---------- */
+
+.mc-tagline {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  overflow: hidden;
+}
+
+@media (max-width: 760px) {
+  .ladder {
+    min-width: 460px;
+  }
+
+  .ladder tbody th,
+  .ladder tbody td {
+    padding: 10px 12px;
+  }
+
+  .ladder-note {
+    font-size: 12.5px;
+  }
+
+  .why-prose {
+    font-size: 15px;
+  }
+}
+
 /* ---------- motion kill switch ----------
    Nothing on this site depends on movement to be understood. */
 

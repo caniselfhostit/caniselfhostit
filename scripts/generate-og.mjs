@@ -5,20 +5,27 @@
  * ~1000 of without regret. The card is "The Swap" at 1200x630 (PRD 11): the bill
  * you already pay on the left, the thing you would run instead on the right.
  *
+ * One card per SaaS, named for the SaaS slug, because that is what the canonical
+ * page is keyed by: /og/miro.png is the preview for /self-host/miro/, and the
+ * question it asks is "Can I self-host Miro?" The replacement project answers it
+ * — on the right of the swap, in the badge, and in the facts under the headline —
+ * but it does not name the file and it is not the protagonist.
+ *
  * Three things about this file are load-bearing, and all three are lessons the
  * MIT sibling (canivibecodeit, credited on /about) paid for first:
  *
  *   1. The content-hash cache. Rendering is slow and almost always unnecessary.
  *      .og-cache.json maps each output file to a hash of everything that fed it —
- *      this script's own source, the fonts, the project's index.json, and the
- *      resolved price. Edit the template and every card is invalidated at once;
- *      add a project and exactly one card renders.
+ *      this script's own source, the fonts, the SaaS entity, the index.json of
+ *      the project answering for it, and the resolved price. Edit the template
+ *      and every card is invalidated at once; add a SaaS entity and exactly one
+ *      card renders.
  *
  *   2. The chunked self-respawn. satori and resvg both leak native memory per
  *      render, so one process rendering the whole catalogue eventually OOMs a CI
  *      box. The parent renders the singleton cards, then re-invokes itself once
- *      per slice of projects via OG_RANGE; each child's leaked memory dies with
- *      the child. It is overkill at six projects and exactly right at six hundred.
+ *      per slice of pages via OG_RANGE; each child's leaked memory dies with the
+ *      child. It is overkill at six pages and exactly right at six hundred.
  *
  *   3. WE COMMIT THE OUTPUT. This is the one place we deliberately diverge from
  *      the sibling, which gitignores both public/og/ and its cache. That works on
@@ -190,27 +197,47 @@ const money = (n) =>
  * per-seat plans multiply by the assumed seats, everything else is already the
  * whole bill, and null means "no honest number" rather than zero.
  *
- * `replaces` lists ALTERNATIVES — a reader pays one of them, never all — so the
- * card shows the single largest priced bill, exactly as the project page does.
+ * Keyed by the SaaS now, so there is nothing to choose between: the bill on the
+ * card is the plan THIS entity's primary project says it replaces, and no other.
+ * A project that lists several `replaces` alternatives contributes exactly one of
+ * them here — the one belonging to the page being rendered.
  */
-function resolveSwap(entry, saasBySlug) {
-  const resolved = (entry.replaces ?? []).map((ref) => {
-    const entity = saasBySlug.get(ref.saas) ?? null;
-    const plan = entity?.plans?.find((p) => p.name === ref.plan) ?? null;
-    const seats = ref.seatsAssumed ?? 1;
-    const priceMonthly = plan?.priceMonthly ?? null;
-    const monthlyCost =
-      priceMonthly === null
-        ? null
-        : plan.unit === 'per-seat'
-          ? Number((priceMonthly * seats).toFixed(2))
-          : priceMonthly;
-    return { name: entity?.name ?? ref.saas, plan: ref.plan, seats, unit: plan?.unit ?? null, monthlyCost };
-  });
-  const priced = resolved
-    .filter((r) => typeof r.monthlyCost === 'number' && r.monthlyCost > 0)
-    .sort((a, b) => b.monthlyCost - a.monthlyCost);
-  return priced[0] ?? resolved[0] ?? null;
+function resolveSwapFor(entity, project) {
+  const ref = (project.replaces ?? []).find((r) => r.saas === entity.slug) ?? null;
+  if (!ref) return null;
+  const plan = entity.plans?.find((p) => p.name === ref.plan) ?? null;
+  const seats = ref.seatsAssumed ?? 1;
+  const priceMonthly = plan?.priceMonthly ?? null;
+  const monthlyCost =
+    priceMonthly === null
+      ? null
+      : plan.unit === 'per-seat'
+        ? Number((priceMonthly * seats).toFixed(2))
+        : priceMonthly;
+  return { plan: ref.plan, seats, unit: plan?.unit ?? null, monthlyCost };
+}
+
+/**
+ * The page join, kept in step with getAllSaasPages() in src/lib/projects.js: an
+ * entity's `ranked` array is editorial, best first, and the top entry is the one
+ * whose verdict the page inherits.
+ *
+ * The one deliberate difference is what happens to a rank that points at nothing:
+ * the Astro build throws, because a page it cannot render is a broken build. Here
+ * the rank is skipped and the next one gets the job, because a missing card is
+ * worse than a card sourced from the runner-up, and the build has already said
+ * its piece. An entity with no runnable rank at all gets no card and gets named.
+ */
+function saasPages(saas, projects) {
+  const bySlug = new Map(projects.map((p) => [p.slug, p]));
+  return saas
+    .map((entity) => {
+      const ranked = (entity.ranked ?? []).map((r) => r.project);
+      const primary = ranked.map((slug) => bySlug.get(slug)).find(Boolean) ?? null;
+      const missing = ranked.filter((slug) => !bySlug.has(slug));
+      return { entity, primary, missing };
+    })
+    .sort((a, b) => a.entity.slug.localeCompare(b.entity.slug));
 }
 
 /* ------------------------------------------------------------------ *
@@ -383,44 +410,48 @@ const machineBlock = (children) =>
 const microlabel = (label) => text({ ...mono(14, C.muted), letterSpacing: 2.4 }, label);
 
 /* ------------------------------------------------------------------ *
- * The project card
+ * The SaaS card
  * ------------------------------------------------------------------ */
 
-function projectCard(project, swap) {
+/**
+ * The question is asked about the app whose invoice the reader recognises; the
+ * project answers it. So the headline names the SaaS, and everything below the
+ * headline — verdict, dots, minutes, RAM, containers — comes from the project
+ * that would replace it. Nothing on this card is the project's opinion of itself.
+ */
+function saasCard(entity, project, swap) {
   const { tier } = explainTier(project.tierFactors);
 
-  // "Can I self-host Vaultwarden?" — the name in ink, the frame slightly muted,
+  // "Can I self-host Miro?" — the SaaS name in ink, the frame slightly muted,
   // because the name is the only part a reader is scanning for.
   const lead = 'Can I self-host';
-  const headSize = fitSize(lead.length + project.name.length + 2, CONTENT_W, 64, 34, 0.54);
+  const headSize = fitSize(lead.length + entity.name.length + 2, CONTENT_W, 64, 34, 0.54);
   const head = headline(headSize, [
     [lead, C.muted, 'lead'],
-    [project.name, C.ink],
+    [entity.name, C.ink],
     ['?', C.muted, 'tail'],
   ]);
 
   // The Swap, in mono because it is a literal you could check against an invoice.
-  const payingLabel = swap
-    ? typeof swap.monthlyCost === 'number' && swap.monthlyCost > 0
-      ? `${swap.name} ${money(swap.monthlyCost)}/mo`
-      : swap.name
-    : null;
+  // No price is not a zero: an unpriced plan (quote-only, or one we could not read
+  // honestly) drops the money and still shows which way the arrow points.
+  const priced = swap && typeof swap.monthlyCost === 'number' && swap.monthlyCost > 0;
+  const payingLabel = priced ? `${entity.name} ${money(swap.monthlyCost)}/mo` : entity.name;
   const runLabel = `${project.name} · self-hosted`;
-  const swapChars = (payingLabel ?? '').length + runLabel.length + 4;
+  const swapChars = payingLabel.length + runLabel.length + 4;
   const swapSize = fitSize(swapChars, CONTENT_W - 60, 27, 16, 0.62);
 
-  const swapLine = payingLabel
-    ? machineBlock([
-        microlabel('THE SWAP'),
-        row({ gap: 14 }, [
-          text(mono(swapSize, C.ink), payingLabel),
-          text(mono(swapSize + 4, C.accent), '→'),
-          text(mono(swapSize, C.ink), runLabel),
-        ]),
-      ])
-    : machineBlock([microlabel('WHAT IT IS'), text(sans(24, C.ink), project.tagline)]);
+  const swapLine = machineBlock([
+    microlabel('THE SWAP'),
+    row({ gap: 14 }, [
+      text(mono(swapSize, C.ink), payingLabel),
+      text(mono(swapSize + 4, C.accent), '→'),
+      text(mono(swapSize, C.ink), runLabel),
+    ]),
+  ]);
 
-  // Facts, not adjectives: what the badge does not already say.
+  // Facts, not adjectives: what the badge does not already say. All of them are
+  // the replacement's, because they describe the install, not the subscription.
   const meta = [
     project.timeToRunningMin ? `~${project.timeToRunningMin} min to running` : null,
     project.resources?.ramMinMB ? `${project.resources.ramMinMB} MB RAM` : null,
@@ -504,33 +535,46 @@ async function renderCached(node, file, key, cache) {
 mkdirSync(outDir, { recursive: true });
 
 const { projects, saas } = await readData();
-const saasBySlug = new Map(saas.map((s) => [s.slug, s]));
 // Deterministic order, so OG_RANGE slices mean the same thing in parent and child.
-projects.sort((a, b) => a.slug.localeCompare(b.slug));
+// saasPages() sorts by SaaS slug, which is also the output filename.
+const all = saasPages(saas, projects);
+const pages = all.filter((p) => p.primary);
 
 const range = process.env.OG_RANGE;
 
 if (range) {
   const [start, end] = range.split(':').map(Number);
   const cache = loadCache();
-  for (const project of projects.slice(start, end)) {
-    const swap = resolveSwap(project, saasBySlug);
-    // The cache key is the render's whole input surface: the entry as authored
-    // (contentHash included, so a prompt edit moves it) plus the price actually
-    // resolved out of data/saas — a price correction over there must re-render
-    // the card over here, and nothing in index.json would have told us.
-    const key = `${JSON.stringify(project)}|${JSON.stringify(swap)}`;
-    await renderCached(projectCard(project, swap), `${project.slug}.png`, key, cache);
+  for (const { entity, primary } of pages.slice(start, end)) {
+    const swap = resolveSwapFor(entity, primary);
+    // The cache key is the render's whole input surface: the SaaS entity as
+    // authored, the project entry that answers for it (contentHash included, so a
+    // prompt edit moves it), and the price actually resolved between the two. A
+    // plan renamed in data/saas or a re-rank of `ranked` must re-render the card,
+    // and neither file alone would have told us.
+    const key = `${JSON.stringify(entity)}|${JSON.stringify(primary)}|${JSON.stringify(swap)}`;
+    await renderCached(saasCard(entity, primary, swap), `${entity.slug}.png`, key, cache);
   }
   saveCache(cache);
 } else {
+  // An entity whose whole `ranked` list points at projects that do not exist has
+  // no answer to print, so it gets no card — said out loud, because the page it
+  // belongs to will fall back to the home card and that is easy to miss.
+  for (const { entity, primary, missing } of all) {
+    if (!primary) {
+      console.warn(`og: no card for ${entity.slug} — ranked project(s) missing: ${missing.join(', ') || 'none ranked'}`);
+    } else if (missing.length) {
+      console.warn(`og: ${entity.slug} answered by ${primary.slug}; missing rank(s): ${missing.join(', ')}`);
+    }
+  }
+
   const cache = loadCache();
   await renderCached(homeCard(), 'home.png', `home|${SITE.tagline}|${SITE.promise}|${SITE.domain}`, cache);
   saveCache(cache);
 
   const { spawnSync } = await import('node:child_process');
   const CHUNK = 50;
-  for (let i = 0; i < projects.length; i += CHUNK) {
+  for (let i = 0; i < pages.length; i += CHUNK) {
     const r = spawnSync(process.execPath, [self], {
       stdio: 'inherit',
       env: { ...process.env, OG_RANGE: `${i}:${i + CHUNK}` },
@@ -541,15 +585,17 @@ if (range) {
     }
   }
 
-  // Cards that no longer have a project behind them. Left in place on purpose —
-  // a deleted project's URL keeps its social preview until someone decides what
-  // the page at that URL should say — but named, so nobody has to wonder.
-  const known = new Set(['home.png', ...projects.map((p) => `${p.slug}.png`)]);
+  // Cards that no longer have a page behind them. Left in place on purpose — a
+  // retired page's URL keeps its social preview until someone decides what the
+  // page at that URL should say — but named, so nobody has to wonder. The ten
+  // project-slug cards this file used to emit are not in that category: their
+  // URLs never existed, so they were deleted outright when the cards were re-keyed.
+  const known = new Set(['home.png', ...pages.map(({ entity }) => `${entity.slug}.png`)]);
   const orphans = readdirSync(outDir).filter((f) => f.endsWith('.png') && !known.has(f));
   if (orphans.length) console.log(`og: ${orphans.length} orphaned card(s) left in place: ${orphans.join(', ')}`);
 
   const bytes = readdirSync(outDir)
     .filter((f) => f.endsWith('.png'))
     .reduce((sum, f) => sum + statSync(path.join(outDir, f)).size, 0);
-  console.log(`og: done — ${projects.length + 1} cards, ${(bytes / 1024).toFixed(0)} KB total`);
+  console.log(`og: done — ${pages.length + 1} cards, ${(bytes / 1024).toFixed(0)} KB total`);
 }

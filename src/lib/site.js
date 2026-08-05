@@ -31,10 +31,14 @@ export const TIER_VERDICTS = {
   'ongoing-ops': 'YES, IF',
 };
 
-/** "Can I self-host Plausible? YES — one prompt, ~10 minutes (2026)" */
-export function pageTitle(name, tier, minutes) {
+/**
+ * The question is asked about the PAID app; the answer names the replacement:
+ * "Can I self-host Miro? YES — it's called Excalidraw (2026)".
+ * The narrative protagonist is the thing you're paying for.
+ */
+export function pageTitle(saasName, tier, replacementName) {
   const year = new Date().getFullYear();
   const verdict = TIER_VERDICTS[tier] ?? 'YES';
-  const time = minutes ? ` — one prompt, ~${minutes} minutes` : '';
-  return `Can I self-host ${name}? ${verdict}${time} (${year})`;
+  const called = replacementName ? ` — it's called ${replacementName}` : '';
+  return `Can I self-host ${saasName}? ${verdict}${called} (${year})`;
 }

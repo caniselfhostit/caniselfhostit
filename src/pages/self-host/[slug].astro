@@ -1,16 +1,32 @@
 ---
-/* The project page — the template every project on this site renders through.
+/* The answer page — one per PAID app, and the canonical URL for everything this
+ * site knows.
  *
- * The rule that shapes the whole file: nothing on this page is written twice.
- * The verdict word, the direct answer, the savings figure, the FAQ answers, the
- * structured data and the meta description are all derived here, once, from the
- * typed fields in data/projects/<slug>/index.json. That is what keeps the number
- * in the title equal to the number in the badge equal to the number a crawler
- * reads out of the JSON-LD.
+ * The narrative inversion, stated once so the rest of the file reads straight:
+ * the protagonist is the subscription. The H1 asks the question a reader
+ * actually types — "can I self-host Miro?" — and the open-source project is the
+ * ANSWER to it, not the subject of it. Everything the old project-keyed template
+ * did well survives here, re-pointed at page.primary: the generated direct
+ * answer, the prompt above the fold, the unverified notice at full contrast, the
+ * candor list, the citations, the FAQ machinery.
  *
- * The second rule: this page does not claim a stamp it has not earned. Until the
- * harness (PRD §9) records a run, the unverified notice sits above the prompt in
- * plain sight — not in a footer, not in grey 11px type.
+ * Two rules shape the whole file.
+ *
+ * 1. Nothing is written twice. The verdict word, the direct answer, the FAQ
+ *    answers, the meta description and the structured data are all derived here
+ *    from the typed fields in data/ — that is what keeps the number in the title
+ *    equal to the number in the badge equal to the number a crawler reads out of
+ *    the JSON-LD.
+ *
+ * 2. Every money figure on this page comes from ONE object: `page.swap`, the
+ *    primary project's resolved swap for THIS SaaS, already seat-multiplied and
+ *    already dated by the data layer. The .md mirror quotes the same object, so
+ *    the two cannot drift. A swap with no honest price prints no number at all
+ *    rather than a zero.
+ *
+ * And the standing rule underneath both: this page does not claim a stamp it has
+ * not earned. Until the harness (PRD §9) records a run, the unverified notice
+ * sits above the prompt in plain sight.
  */
 import Base from '../../layouts/Base.astro';
 import BeforeYouStart from '../../components/BeforeYouStart.astro';
@@ -20,25 +36,36 @@ import PromptBox from '../../components/PromptBox.astro';
 import SwapBand from '../../components/SwapBand.astro';
 import TierBadge from '../../components/TierBadge.astro';
 import { SITE, pageTitle } from '../../lib/site.js';
-import { getAllProjects, getProjectFiles, relatedProjects, tierBandLabel } from '../../lib/projects.js';
+import {
+  getAllSaasPages,
+  getProjectFiles,
+  relatedSaasPages,
+  tierBandLabel,
+} from '../../lib/projects.js';
 import { OFFICIAL_COMPOSE } from '../../lib/rubric.js';
 
 export function getStaticPaths() {
-  return getAllProjects().map((project) => ({
-    params: { slug: project.slug },
-    props: { project },
+  return getAllSaasPages().map((page) => ({
+    params: { slug: page.slug },
+    props: { page },
   }));
 }
 
-const { project: p } = Astro.props;
-const files = getProjectFiles(p.slug);
-const related = relatedProjects(p, 3);
+const { page } = Astro.props;
 
-const pageUrl = `${SITE.origin}/self-host/${p.slug}/`;
+// `p` is the REPLACEMENT — the thing we install, and the subject of every
+// install artifact below. The page itself is about `page`, the thing you pay.
+const p = page.primary;
+const files = getProjectFiles(p.slug);
+const related = relatedSaasPages(page, 3);
+const runnersUp = page.options.slice(1);
+const pickRationale = page.options[0]?.rationale ?? null;
+
+const pageUrl = `${SITE.origin}/self-host/${page.slug}/`;
 const isVerified = p.verified?.status === 'verified';
 
 /* ------------------------------------------------------------------ *
- * Money
+ * Money — one object, quoted everywhere
  * ------------------------------------------------------------------ */
 
 const money = (n) =>
@@ -47,54 +74,91 @@ const money = (n) =>
     maximumFractionDigits: 2,
   })}`;
 
-// `replaces` lists ALTERNATIVES, so the headline is the largest single bill in
-// the list — never the sum. Nobody pays for 1Password and LastPass at once.
-const replaces = p.replaces ?? [];
-const priced = replaces
-  .filter((r) => typeof r.monthlyCost === 'number' && r.monthlyCost > 0)
-  .sort((a, b) => b.monthlyCost - a.monthlyCost);
-const swap = priced[0] ?? replaces[0] ?? null;
-const swapPriced = swap && typeof swap.monthlyCost === 'number' && swap.monthlyCost > 0;
-const seatNote = swap && swap.seatsAssumed > 1 ? `, ${swap.seatsAssumed} seats assumed` : '';
+const swap = page.swap;
+const swapPriced = !!swap && typeof swap.monthlyCost === 'number' && swap.monthlyCost > 0;
+
+// How the vendor bills decides what the figure is allowed to claim. A per-seat
+// price is a bill for a stated number of seats; a metered price is a rate, and
+// calling it a bill would be the exact dishonesty this site exists to call out.
+const seats = swap?.seatsAssumed ?? 1;
+const seatNote =
+  swap?.unit === 'per-seat' ? `${seats} seat${seats === 1 ? '' : 's'} assumed` : null;
+const meterNote = swap?.unit === 'usage' ? 'a metered rate, not a whole bill' : null;
+const qualifier = [seatNote, meterNote].filter(Boolean).join(', ');
+const qualifierClause = qualifier ? `, ${qualifier}` : '';
+
+const monthlyLine = swapPriced ? `${money(swap.monthlyCost)}/mo` : null;
+const yearlyLine = swapPriced ? `${money(swap.yearlyCost)}/yr` : null;
 
 /* ------------------------------------------------------------------ *
  * The direct answer — generated, never hand-written (PRD §5.3)
  * ------------------------------------------------------------------ */
 
-const sentence = (items) =>
-  items.length <= 1
-    ? (items[0] ?? '')
-    : `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`;
+const sentence = (items) => {
+  const list = items.filter(Boolean);
+  return list.length <= 1
+    ? (list[0] ?? '')
+    : `${list.slice(0, -1).join(', ')}, and ${list[list.length - 1]}`;
+};
 
-const answerClauses = [
-  p.ramMinMB ? `runs on a ${p.ramMinMB} MB VPS` : null,
-  p.timeToRunningMin ? `takes about ${p.timeToRunningMin} minutes to a first backup` : null,
-  swapPriced
-    ? `replaces ${swap.name} at ${money(swap.monthlyCost)}/mo (${money(swap.yearlyCost)}/yr${seatNote})`
-    : swap
-      ? `replaces ${swap.name}; no like-for-like price to quote`
-      : null,
-].filter(Boolean);
+const setupClause = sentence([
+  'one prompt',
+  p.ramMinMB ? `a ${p.ramMinMB} MB VPS` : null,
+  p.timeToRunningMin ? `about ${p.timeToRunningMin} minutes` : null,
+]);
 
-const directAnswer = answerClauses.length
-  ? `${p.verdictWord}. ${p.name} ${sentence(answerClauses)}.`
-  : `${p.verdictWord}. ${p.name} is self-hostable, and the running numbers for this page are not filled in yet.`;
+const moneySentence = swapPriced
+  ? `That is ${money(swap.monthlyCost)} a month you stop paying ${page.name} — ` +
+    `${money(swap.yearlyCost)} a year on the ${swap.plan} plan${qualifierClause}.`
+  : `There is no like-for-like ${page.name} price to quote for this swap, so this page quotes none.`;
+
+const directAnswer =
+  `${page.verdictWord} — it's called ${p.name}. ` +
+  (setupClause ? `It takes ${setupClause}. ` : '') +
+  moneySentence;
 
 /* ------------------------------------------------------------------ *
  * Head
  * ------------------------------------------------------------------ */
 
-const title = pageTitle(p.name, p.tier, p.timeToRunningMin);
+const title = pageTitle(page.name, page.tier, p.name);
 const description = [
-  `${p.verdictWord} — ${p.tierLabel.toLowerCase()}.`,
+  `${page.verdictWord} — ${p.name} is the replacement.`,
   p.ramMinMB && p.timeToRunningMin
-    ? `${p.name} runs in ${p.ramMinMB} MB of RAM, about ${p.timeToRunningMin} minutes to running.`
+    ? `${p.ramMinMB} MB of RAM, about ${p.timeToRunningMin} minutes to running.`
     : `${p.name}, self-hosted on your own server.`,
-  swapPriced ? `Replaces ${swap.name} at ${money(swap.monthlyCost)}/mo.` : null,
-  'Prompt, compose.yml, Caddyfile, install.sh.',
+  swapPriced ? `Stops ${monthlyLine} — ${yearlyLine}.` : null,
+  'One prompt, plus compose.yml, Caddyfile and install.sh.',
 ]
   .filter(Boolean)
   .join(' ');
+
+/* ------------------------------------------------------------------ *
+ * Pricing provenance
+ * ------------------------------------------------------------------ */
+
+const pricing = page.pricing ?? {};
+const lowConfidence = pricing.confidence === 'low';
+const showCaveat = !!pricing.note && pricing.confidence && pricing.confidence !== 'high';
+
+// `TODO: …` in a pricing note is an instruction to us, not to the reader. The
+// sentence is stripped; everything after it — which is the actual explanation of
+// why the number is soft — prints verbatim.
+const caveatNote = (pricing.note ?? '').replace(/^\s*TODO:[^.]*\.\s*/i, '').trim();
+
+const PRICE_UNIT_SUFFIX = {
+  'per-seat': ' per seat',
+  usage: ' metered',
+  'one-time': ' one-time',
+  flat: '',
+  custom: '',
+};
+
+function planPrice(plan) {
+  if (typeof plan.priceMonthly !== 'number') return 'quote only';
+  if (plan.priceMonthly === 0) return 'free';
+  return `${money(plan.priceMonthly)}/mo${PRICE_UNIT_SUFFIX[plan.unit] ?? ''}`;
+}
 
 /* ------------------------------------------------------------------ *
  * FAQ — one array, rendered as <details> AND as FAQPage. Answers are plain
@@ -117,36 +181,39 @@ const vpsClass =
 
 const faqs = [
   {
-    q: `How do I self-host ${p.name}?`,
+    q: `Can I self-host ${page.name}?`,
     a:
-      `Two prompts. Prompt Zero prepares the server once — Docker, a firewall, an ssh alias — and then the prompt on this page installs ${p.name}: ` +
-      `${containerPhrase} behind Caddy with automatic TLS, secrets generated on the server rather than in a chat window, and a first backup taken before the agent tells you it is done. ` +
-      (p.timeToRunningMin ? `Budget about ${p.timeToRunningMin} minutes. ` : '') +
-      `If you have no terminal agent, the chat fallback on this page walks the same install one command at a time, and the compose.yml, Caddyfile and install.sh below do it with no agent at all.`,
+      `Not ${page.name} itself — the vendor does not ship a version you can run on your own server. ` +
+      `What you can self-host is the job people pay it for, and the answer to that is ${p.name}. ${p.tagline} ` +
+      `The install is ${p.tierLabel.toLowerCase()}: ${containerPhrase} behind Caddy with automatic TLS, secrets generated on the server rather than in a chat window, and a first backup taken before the agent says it is done` +
+      (p.timeToRunningMin ? `, in about ${p.timeToRunningMin} minutes. ` : '. ') +
+      `The prompt on this page does it; the compose.yml, Caddyfile and install.sh below do the same install with no agent at all.`,
   },
   {
-    q: `What does ${p.name} cost to run?`,
+    q: `What replaces ${page.name}?`,
+    a:
+      `${p.name}. ${p.tagline}` +
+      (pickRationale ? ` ${pickRationale}` : '') +
+      (runnersUp.length
+        ? ` Also evaluated and ranked below it: ${runnersUp.map((o) => o.name).join(', ')}. The prompt on this page installs ${p.name} only.`
+        : '') +
+      (p.license ? ` ${p.name} is ${p.license}-licensed and free; nothing on this page is a hosted service we sell you.` : ''),
+  },
+  {
+    q: `What does self-hosting cost compared to ${page.name}?`,
     a:
       `${p.ramMinMB ? `${p.ramMinMB} MB of RAM` : 'A small amount of RAM'}${p.diskGB ? ` and ${p.diskGB} GB of disk` : ''} — the smallest tier most VPS hosts sell, ${vpsClass}. ` +
       `${p.name} itself is free${p.license ? ` and ${p.license}-licensed` : ''}; the bill is the server, plus a domain you probably already own. ` +
       (swapPriced
-        ? `What you stop paying: ${swap.name} ${swap.plan}, ${money(swap.monthlyCost)}/mo — ${money(swap.yearlyCost)} a year${seatNote}.`
-        : swap
-          ? `What you stop paying depends on which ${swap.name} plan you are on; there is no single list price to quote here, so this page does not invent one.`
-          : `Nothing here replaces a subscription with a list price, so there is no savings figure on this page.`),
-  },
-  {
-    q: swap ? `What do I give up versus ${swap.name}?` : `What do I give up by self-hosting this?`,
-    a:
-      `Someone else's operational responsibility becomes yours. ` +
-      (p.whatYouSignUpFor ?? []).slice(0, 3).join(' '),
+        ? `What you stop paying: ${page.name} ${swap.plan}, ${money(swap.monthlyCost)}/mo — ${money(swap.yearlyCost)} a year${qualifierClause}.`
+        : `There is no like-for-like ${page.name} list price behind this swap, so this page does not invent a savings figure.`),
   },
   {
     q: 'How hard is it really?',
     a:
       `${p.tierLabel}${bandLabel ? ` — ${bandLabel}` : ''}. ` +
       `The rule that produced that verdict: ${p.tierRule.test}. ${p.tierRule.because} ` +
-      `The tier is derived from seven countable facts about the install, not from anyone's impression of it, and the whole rubric is published on the methodology page.`,
+      `The tier is derived from seven countable facts about the ${p.name} install, not from anyone's impression of it, and the whole rubric is published on the methodology page.`,
   },
 ];
 
@@ -163,8 +230,8 @@ const jsonld = [
       // The category shelf has no page yet, so this item carries a name and no
       // `item` — the trail matches the visible breadcrumb, and nothing points a
       // crawler at a URL that would 404. It gains `item` when /category/ ships.
-      { '@type': 'ListItem', position: 2, name: p.categoryLabel },
-      { '@type': 'ListItem', position: 3, name: p.name, item: pageUrl },
+      { '@type': 'ListItem', position: 2, name: page.categoryLabel },
+      { '@type': 'ListItem', position: 3, name: page.name, item: pageUrl },
     ],
   },
   {
@@ -177,9 +244,10 @@ const jsonld = [
     })),
   },
   {
-    // AEO plumbing, not a rich-result play: SoftwareApplication cannot earn its
-    // rich result without ratings, and there is no aggregateRating here until
-    // real crawlable reviews exist (PRD §10.6).
+    // The application marked up here is the OPEN-SOURCE REPLACEMENT, never the
+    // SaaS: we do not publish Miro, and claiming its name in our own
+    // SoftwareApplication block would be a lie told to a crawler. AEO plumbing
+    // only — no aggregateRating until real crawlable reviews exist (PRD §10.6).
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
     name: p.name,
@@ -231,10 +299,13 @@ const fallbacks = [
 ].filter((f) => typeof f.text === 'string' && f.text.length > 0);
 
 const citations = (p.citations ?? []).filter((c) => c?.url);
-const mirrorHref = `/self-host/${p.slug}.md`;
+
+// The mirror is keyed by the SaaS slug, like the page it mirrors — /self-host/
+// miro.md, never /self-host/excalidraw.md, which now only exists as a 301.
+const mirrorHref = `/self-host/${page.slug}.md`;
 ---
 
-<Base {title} {description} {jsonld} ogImage={`/og/${p.slug}.png`}>
+<Base {title} {description} {jsonld} ogImage={`/og/${page.slug}.png`}>
   <article class="project">
     <!-- ── head ─────────────────────────────────────────────────────── -->
     <header class="ph blueprint">
@@ -242,20 +313,121 @@ const mirrorHref = `/self-host/${p.slug}.md`;
         <nav class="crumbs" aria-label="Breadcrumb">
           <ol>
             <li><a href="/">Home</a></li>
-            <li><span>{p.categoryLabel}</span></li>
-            <li><span aria-current="page">{p.name}</span></li>
+            <li><span>{page.categoryLabel}</span></li>
+            <li><span aria-current="page">{page.name}</span></li>
           </ol>
         </nav>
 
         <div class="ph-verdict">
-          <h1>Can I self-host {p.name}?</h1>
-          <TierBadge tier={p.tier} label={`${p.verdictWord} · ${p.tierLabel}`} size="lg" />
+          <h1>Can I self-host {page.name}?</h1>
+          <TierBadge tier={page.tier} label={`${page.verdictWord} · ${page.tierLabel}`} size="lg" />
         </div>
 
         <p class="ph-answer">{directAnswer}</p>
-        <p class="ph-tagline">{p.tagline}</p>
 
-        <ul class="ph-meta" aria-label={`Facts about ${p.name}`}>
+        <ul class="ph-meta" aria-label={`About ${page.name}`}>
+          {
+            page.domain && (
+              <li>
+                <a class="chip mono" href={`https://${page.domain}`} rel="noopener nofollow">
+                  {page.domain}
+                </a>
+              </li>
+            )
+          }
+          <li class="chip">{page.categoryLabel}</li>
+          {pricing.checkedOn && <li class="chip mono">prices checked {pricing.checkedOn}</li>}
+        </ul>
+      </div>
+    </header>
+
+    <!-- ── why people pay for it ────────────────────────────────────── -->
+    <section class="section pj-why" id="why-people-pay" aria-labelledby="why-h">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2 id="why-h">Why people pay for {page.name}</h2>
+            <p class="section-note">
+              Stated as the vendor would want it stated. A replacement you pick without knowing
+              what the subscription actually buys is a replacement you abandon in a fortnight.
+            </p>
+          </div>
+        </div>
+
+        {page.whyPeoplePay && <p class="why-prose">{page.whyPeoplePay}</p>}
+
+        {
+          page.plans.length > 0 && (
+            <div class="ladder-scroll">
+              <table class="ladder">
+                <caption class="sr-only">{page.name} plans and list prices</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Plan</th>
+                    <th scope="col">List price</th>
+                    <th scope="col">What it buys</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {page.plans.map((plan) => (
+                    <tr class={swap && plan.name === swap.plan ? 'is-swap' : undefined}>
+                      <th scope="row">
+                        <span class="ladder-plan">{plan.name}</span>
+                        {swap && plan.name === swap.plan && (
+                          <span class="ladder-tag">the plan this page prices against</span>
+                        )}
+                      </th>
+                      <td class="ladder-price mono">{planPrice(plan)}</td>
+                      <td class="ladder-note">{plan.note}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )
+        }
+
+        <p class="provenance ladder-prov">
+          Vendor list prices{pricing.currency ? ` in ${pricing.currency}` : ''}
+          {
+            pricing.source ? (
+              <>
+                , read from <a href={pricing.source} rel="noopener nofollow">the pricing page</a>
+              </>
+            ) : null
+          }
+          {pricing.checkedOn ? ` on ${pricing.checkedOn}` : ''}
+          {pricing.confidence ? ` · confidence: ${pricing.confidence}` : ''}
+        </p>
+
+        {
+          showCaveat && (
+            <aside class={lowConfidence ? 'pricing-caveat is-low' : 'pricing-caveat'}>
+              <p class="microlabel">
+                {lowConfidence ? 'Low-confidence price' : 'How this price was read'}
+              </p>
+              <p>{caveatNote}</p>
+            </aside>
+          )
+        }
+      </div>
+    </section>
+
+    <!-- ── the replacement ──────────────────────────────────────────── -->
+    <section class="section pj-repl" id="the-replacement" aria-labelledby="repl-h">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2 id="repl-h">Replaced by {p.name}</h2>
+            <p class="section-note">
+              One project, named before the prompt, so you know what you are about to install.
+            </p>
+          </div>
+        </div>
+
+        <p class="repl-tagline">{p.tagline}</p>
+
+        <ul class="ph-meta repl-meta" aria-label={`Facts about ${p.name}`}>
           {p.license && <li class="chip mono">{p.license}</li>}
           {
             p.repo && (
@@ -279,48 +451,75 @@ const mirrorHref = `/self-host/${p.slug}.md`;
           }
           {p.arm64 !== null && <li class="chip">{p.arm64 ? 'runs on arm64' : 'amd64 only'}</li>}
         </ul>
-      </div>
-    </header>
 
-    <!-- ── the swap ─────────────────────────────────────────────────── -->
+        {pickRationale && <p class="repl-why">{pickRationale}</p>}
+      </div>
+    </section>
+
+    <!-- ── the ranking, when there is more than one candidate ───────── -->
     {
-      swap && (
-        <section class="section pj-swap" aria-labelledby="swap-h">
+      page.options.length > 1 && (
+        <section class="section pj-ranked" id="ranked" aria-labelledby="ranked-h">
           <div class="wrap">
-            <h2 class="microlabel" id="swap-h">The swap</h2>
-            <SwapBand
-              payingName={swap.name}
-              payingPrice={
-                swapPriced
-                  ? `${money(swap.monthlyCost)}/mo · ${money(swap.yearlyCost)}/yr`
-                  : 'no list price to quote'
-              }
-              runningName={p.name}
-              runningMeta={swapMeta}
-            />
-            <p class="provenance swap-prov">
-              {swap.plan && <>{swap.name} {swap.plan}{seatNote ? seatNote.replace(/^, /, ' · ') : ''} · </>}
-              {
-                swapPriced ? (
-                  <>
-                    vendor list price
-                    {swap.priceCheckedOn ? <> · checked {swap.priceCheckedOn}</> : null}
-                    {swap.priceSource ? (
-                      <> · <a href={swap.priceSource} rel="noopener nofollow">source</a></>
-                    ) : null}
-                    {swap.priceConfidence && swap.priceConfidence !== 'high' ? (
-                      <> · confidence: {swap.priceConfidence}</>
-                    ) : null}
-                  </>
-                ) : (
-                  <>no like-for-like list price on the vendor's page, so this page quotes none</>
-                )
-              }
-            </p>
+            <div class="section-head">
+              <div>
+                <h2 id="ranked-h">What else we looked at</h2>
+                <p class="section-note">
+                  Ranked, with the reason each one placed where it did. Only the pick has a
+                  prompt on this page — the runners-up are named so the choice is visible, not
+                  hidden.
+                </p>
+              </div>
+            </div>
+            <ol class="ranked" role="list">
+              {page.options.map((o, i) => (
+                <li class={i === 0 ? 'rk is-pick' : 'rk'}>
+                  <div class="rk-top">
+                    <span class="rk-name">{o.name}</span>
+                    {i === 0 && <span class="rk-pick microlabel">our pick</span>}
+                    <TierBadge tier={o.tier} label={o.tierLabel} />
+                  </div>
+                  <p class="rk-tagline">{o.tagline}</p>
+                  {o.rationale && <p class="rk-why">{o.rationale}</p>}
+                </li>
+              ))}
+            </ol>
           </div>
         </section>
       )
     }
+
+    <!-- ── the swap ─────────────────────────────────────────────────── -->
+    <section class="section pj-swap" aria-labelledby="swap-h">
+      <div class="wrap">
+        <h2 class="microlabel" id="swap-h">The swap</h2>
+        <SwapBand
+          payingName={page.name}
+          payingPrice={swapPriced ? `${monthlyLine} · ${yearlyLine}` : 'no list price to quote'}
+          runningName={p.name}
+          runningMeta={swapMeta}
+        />
+        <p class="provenance swap-prov">
+          {swap?.plan && <>{page.name} {swap.plan}{qualifier ? ` · ${qualifier}` : ''} · </>}
+          {
+            swapPriced ? (
+              <>
+                vendor list price
+                {swap.priceCheckedOn ? <> · checked {swap.priceCheckedOn}</> : null}
+                {swap.priceSource ? (
+                  <> · <a href={swap.priceSource} rel="noopener nofollow">source</a></>
+                ) : null}
+                {swap.priceConfidence && swap.priceConfidence !== 'high' ? (
+                  <> · confidence: {swap.priceConfidence}</>
+                ) : null}
+              </>
+            ) : (
+              <>no like-for-like list price on the vendor's page, so this page quotes none</>
+            )
+          }
+        </p>
+      </div>
+    </section>
 
     <!-- ── before you start ─────────────────────────────────────────── -->
     <section class="section pj-bys" aria-labelledby="bys-h">
@@ -371,8 +570,8 @@ const mirrorHref = `/self-host/${p.slug}.md`;
           <div>
             <h2 id="prompt-h">The prompt</h2>
             <p class="section-note">
-              One prompt, assuming Prompt Zero is done. Read it before you paste it — that is the
-              whole reason it is on the page instead of behind a download.
+              One prompt, assuming Prompt Zero is done. It installs {p.name} — read it before you
+              paste it, which is the whole reason it is on the page instead of behind a download.
             </p>
           </div>
         </div>
@@ -429,7 +628,7 @@ const mirrorHref = `/self-host/${p.slug}.md`;
                 <h2 id="candor-h">What you're signing up for</h2>
                 <p class="section-note">
                   The part a vendor's comparison page leaves out. None of it is a reason not to do
-                  this; all of it is yours the moment you do.
+                  this; all of it is yours the moment you cancel {page.name}.
                 </p>
               </div>
             </div>
@@ -485,9 +684,9 @@ const mirrorHref = `/self-host/${p.slug}.md`;
           <div class="wrap">
             <div class="section-head">
               <div>
-                <h2 id="related-h">If you're already in here</h2>
+                <h2 id="related-h">Other invoices worth reading</h2>
                 <p class="section-note">
-                  Same shelf, same kind of evening. Each one has its own prompt.
+                  Same shelf, same kind of evening. Each one has its own answer and its own prompt.
                 </p>
               </div>
             </div>
@@ -499,7 +698,9 @@ const mirrorHref = `/self-host/${p.slug}.md`;
                       <span class="mc-name">{r.name}</span>
                       <TierBadge tier={r.tier} label={r.tierLabel} />
                     </span>
-                    <span class="mc-tagline">{r.tagline}</span>
+                    <span class="mc-tagline">
+                      Replaced by {r.primary.name} — {r.primary.tagline}
+                    </span>
                     <span class="mc-cta mono">Can I self-host {r.name}? →</span>
                   </a>
                 </li>
@@ -523,8 +724,8 @@ const mirrorHref = `/self-host/${p.slug}.md`;
         </div>
         <ProjectFaq faqs={faqs} />
         <p class="provenance faq-foot">
-          Content last checked {p.contentUpdatedAt}. Verdicts are derived from the published rubric
-          on <a href="/methodology/">/methodology</a>; corrections go through{' '}
+          Content last checked {page.contentUpdatedAt}. Verdicts are derived from the published
+          rubric on <a href="/methodology/">/methodology</a>; corrections go through{' '}
           <a href={`${SITE.repoUrl}/issues/new/choose`} rel="noopener">the issue tracker</a>.
         </p>
       </div>

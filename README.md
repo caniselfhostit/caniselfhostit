@@ -1,12 +1,14 @@
 # Can I Self-Host It?
 
-**[caniselfhostit.com](https://caniselfhostit.com)** — for every SaaS you pay for: a mature
-open-source replacement, and the exact AI-agent prompts that install it on your own server.
+**[caniselfhostit.com](https://caniselfhostit.com)** — for every app you pay for: the open-source
+replacement, and the prompts that install it on your own server.
 
-Most directories hand you a list and wish you luck. This one is built around the verb. For each
-paid product there is an open-source project that already does the job, the measured cost of
-running it yourself (RAM floor, disk, minutes to first screen), and prompts that a coding agent
-executes end to end. Honestly framed, it is **two prompts, not one**:
+Most directories hand you a list and wish you luck. This one is built around the verb, and around
+the invoice. The page is named after the thing you're paying for — "Can I self-host Miro?" — and
+the answer names the project: yes, it's called Excalidraw. Under it: why people pay, the plan
+ladder with the price we checked and when, the measured cost of running the replacement yourself
+(RAM floor, disk, minutes to first screen), and prompts that a coding agent executes end to end.
+Honestly framed, it is **two prompts, not one**:
 [Prompt Zero](https://caniselfhostit.com/prompt-zero/) takes a machine with nothing installed to
 a machine that can deploy — terminal, git, agent, VPS, SSH key, hardening baseline — and then one
 prompt per app does the install. Every published prompt ran on a clean server before it earned
@@ -14,8 +16,11 @@ its date stamp; the ones that haven't are labeled, not hidden.
 
 ## The verdict
 
-The setup tier is derived mechanically from a project's `tierFactors` (containers, external
-database, SMTP, OAuth, DNS, GPU, secrets to generate). Nobody hand-writes a verdict.
+Every page asks about a paid app and answers with one word. The word is not written by hand: it
+comes from the setup tier of the replacement, derived mechanically from that project's
+`tierFactors` (containers, external database, SMTP, OAuth, DNS, GPU, secrets to generate). "Can I
+self-host Miro?" is answered **YES** because Excalidraw is one command — not because we like
+Excalidraw.
 
 | Tier | Verdict | What you're in for |
 | --- | --- | --- |
@@ -30,6 +35,14 @@ database, SMTP, OAuth, DNS, GPU, secrets to generate). Nobody hand-writes a verd
 Projects are directories in [`data/projects/`](data/projects) — one per project, holding
 `index.json` plus the real reviewable files (`compose.yml`, `Caddyfile`, `install.sh`) and the
 prompts. Added by PR. No web form, no account: the repo is the admin panel.
+
+**Two shapes, one join.** The project is the *contribution unit* — it carries the prompts, the
+configs, the tier factors, and the measured resources. The SaaS entity in
+[`data/saas/`](data/saas) is the *page* — name, plan ladder with the date each price was checked,
+why people pay, and `ranked[]` naming the projects that replace it, best first. `getAllSaasPages()`
+in [`src/lib/projects.js`](src/lib/projects.js) joins the two, which is why adding a project
+usually means touching a SaaS file as well. The validator fails a dangling reference in either
+direction.
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) for the schema, the provenance rule, and the security
 standard the validator enforces.

@@ -4,7 +4,7 @@
   "tagline": "A feed reader in one container, with your subscriptions, your read history and your refresh schedule on your own disk.",
   "repo": "FreshRSS/FreshRSS",
   "site": "https://freshrss.org",
-  "category": "money-home",
+  "category": "reading-bookmarks",
   "replaces": [
     {
       "saas": "feedly",
@@ -77,5 +77,5 @@
   ],
   "pagePriority": 2,
   "contentUpdatedAt": "2026-08-05",
-  "contentHash": "c8bc07177a01b4ba651fc41e62633665ed13f1e4dac8800c368d48174d4b8055"
+  "contentHash": "ce15e606c6d7486423b8f636b1170326943fdd4cf48fde5e4c607cc41ea0e278"
 }
