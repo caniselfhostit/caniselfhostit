@@ -1,0 +1,67 @@
+# Vaultwarden — the deterministic fallback.
+#
+# Authored by caniselfhostit from the upstream documentation, not copied from a
+# repository:
+#   compose shape ...... https://github.com/dani-garcia/vaultwarden/wiki/Using-Docker-Compose
+#   reverse proxy ...... https://github.com/dani-garcia/vaultwarden/wiki/Proxy-examples
+#   admin token ........ https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page
+#
+# Read it before you run it. Two containers: the app, and Caddy in front of it
+# doing TLS. Nothing else is listening on the internet.
+#
+# Image tags are pinned to a release, never a moving tag — you get the version
+# that was tested, and upgrades happen when you decide they do. Bump the tag and
+# run `docker compose up -d` to update.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file. The page
+# says "re-verification in progress" until one has.
+
+services:
+  vaultwarden:
+    image: vaultwarden/server:1.37.1-alpine
+    container_name: vaultwarden
+    restart: unless-stopped
+    environment:
+      # Vaultwarden needs to know its own public URL to build links correctly.
+      DOMAIN: ${DOMAIN}
+      # Off after you have created your own account. See the candor section.
+      SIGNUPS_ALLOWED: "false"
+      # An Argon2 PHC string generated on the server by install.sh. Every "$" in
+      # it is escaped as "$$" in .env, or compose eats half the hash.
+      ADMIN_TOKEN: ${ADMIN_TOKEN}
+    volumes:
+      # The entire vault. This directory is the backup.
+      - ./data:/data
+    networks:
+      - edge
+    # Deliberately no `ports:` — the app is reachable only through Caddy, on the
+    # internal network. There is no host port to forget to firewall.
+
+  caddy:
+    image: caddy:2.11.4-alpine
+    container_name: vaultwarden-caddy
+    restart: unless-stopped
+    environment:
+      DOMAIN_HOST: ${DOMAIN_HOST}
+      ACME_EMAIL: ${ACME_EMAIL}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      # Certificates and account keys. Losing this means re-issuing, and
+      # Let's Encrypt has rate limits, so it is worth backing up too.
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - vaultwarden
+    networks:
+      - edge
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+networks:
+  edge:

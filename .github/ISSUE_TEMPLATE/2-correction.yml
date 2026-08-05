@@ -1,0 +1,60 @@
+name: Correction
+description: Something on the site is wrong — a number, a price, a claim, a dead link.
+title: "Correction: "
+labels: ["correction"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Corrections are the most welcome issue here. Every published number is supposed to be
+        traceable to a source with a date on it — if one isn't, or the source moved, that's a bug.
+
+        Setup tiers are the exception: they're derived mechanically from `tierFactors`, so a
+        wrong tier is either a wrong input (fix it here) or a wrong rubric (argue with the rubric
+        on [/methodology](https://caniselfhostit.com/methodology/)). Nobody hand-edits a verdict.
+
+  - type: input
+    id: url
+    attributes:
+      label: Page URL
+      placeholder: https://caniselfhostit.com/self-host/outline/
+    validations:
+      required: true
+
+  - type: textarea
+    id: wrong
+    attributes:
+      label: What's wrong?
+      description: Quote the exact text or number as it appears, then say what it should be.
+      placeholder: |
+        Page says: "Notion Team — $15/seat/month"
+        Should be: $20/seat/month as of today
+    validations:
+      required: true
+
+  - type: input
+    id: source
+    attributes:
+      label: Source for the correction
+      description: >
+        A URL we can check: the vendor's pricing page, the upstream docs, a release note, a
+        changelog entry. "I'm pretty sure" is a fine reason to open the issue, but say so
+        instead of leaving this blank.
+      placeholder: https://www.notion.com/pricing
+    validations:
+      required: true
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of correction?
+      options:
+        - Price or plan (data/saas)
+        - Resource figure (RAM, disk, time to running)
+        - A claim on the page is inaccurate or misleading
+        - Config or prompt no longer matches upstream
+        - Dead or wrong link
+        - License, repo, or project metadata
+        - Something else
+    validations:
+      required: true

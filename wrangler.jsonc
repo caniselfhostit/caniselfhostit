@@ -1,0 +1,14 @@
+{
+  // Cloudflare Workers config. The zone (caniselfhostit.com) is added in
+  // Phase 3; until then deploys go to workers.dev previews.
+  "name": "caniselfhostit",
+  "compatibility_date": "2026-08-01",
+  // nodejs_compat is required by @astrojs/cloudflare and for node:crypto in
+  // the outcome-report API (Phase 1).
+  // No "main"/"assets" here: @astrojs/cloudflare v14 generates the worker
+  // entry and asset config itself via the Cloudflare vite plugin.
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true
+  }
+}

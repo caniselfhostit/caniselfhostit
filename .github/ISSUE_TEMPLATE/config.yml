@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: How to contribute
+    url: https://caniselfhostit.com/contribute/
+    about: The schema, the provenance rule, and the security standard — read this first if you're adding or fixing a project.
+  - name: Report an install outcome
+    url: https://caniselfhostit.com/
+    about: "Worked / partly / failed after running a prompt? Use the outcome form at the bottom of that project's page — it feeds the counts, an issue doesn't."
+  - name: Security issue
+    url: https://caniselfhostit.com/security/
+    about: A vulnerability in a published config or prompt. Please don't open a public issue.

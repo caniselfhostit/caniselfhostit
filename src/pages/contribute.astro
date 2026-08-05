@@ -1,0 +1,37 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../lib/site.js';
+
+const title = `Contribute · ${SITE.name}`;
+const description =
+  'Every project is a directory of plain files added by pull request. No web form, no account — the repo is the admin panel.';
+---
+
+<Base {title} {description}>
+  <article class="wrap prose">
+    <h1>Contribute</h1>
+    <p>
+      Every project on this site is a directory of plain files — <code>index.json</code>, the
+      prompts, the compose file — added by pull request. No web form, no account:
+      <strong>the repo is the admin panel.</strong>
+    </p>
+    <p>
+      Start with <a href={`${SITE.repoUrl}/blob/main/CONTRIBUTING.md`} rel="noopener">CONTRIBUTING.md</a>
+      (the annotated schema and the house rules) and
+      <a href={`${SITE.repoUrl}/blob/main/docs/prompt-style-guide.md`} rel="noopener">the prompt style guide</a>.
+      The validator answers PRs in seconds; the highest-value contribution is upgrading a
+      <code>DRAFT</code> prompt to guide-compliant.
+    </p>
+    <p>
+      Found something wrong instead? <a href={`${SITE.repoUrl}/issues/new/choose`} rel="noopener">Open an issue</a> —
+      there are templates for corrections, new projects, and prompt failures.
+    </p>
+  </article>
+</Base>
+
+<style>
+  .prose {
+    max-width: 68ch;
+    padding-block: 3rem 4rem;
+  }
+</style>

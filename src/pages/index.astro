@@ -1,0 +1,150 @@
+---
+import Base from '../layouts/Base.astro';
+import DirectoryRow from '../components/DirectoryRow.astro';
+import SwapBand from '../components/SwapBand.astro';
+import { SITE } from '../lib/site.js';
+import { getAllProjects, CATEGORY_LIST } from '../lib/projects.js';
+
+// Source order is the ranking. The data layer owns editorial `pagePriority`
+// (disclosed on /methodology); re-sorting here would silently override it.
+const projects = getAllProjects() ?? [];
+const count = projects.length;
+
+// The closed category enum, from the one source of truth (rubric.js). Rendered
+// as plain chips, not links: the hub pages ship with the first cohort, and a
+// directory that leads with dead links is exactly the kind of thing this site
+// exists to complain about.
+const CATEGORIES = CATEGORY_LIST.map((c) => c.label);
+
+// The featured Swap is data-driven or absent — no invented example prices.
+const featured = projects.find((p) =>
+  (p.replaces ?? []).some((r) => typeof r?.priceMonthly === 'number' && r.priceMonthly > 0)
+);
+const featuredSaas = featured
+  ? [...(featured.replaces ?? [])]
+      .filter((r) => typeof r?.priceMonthly === 'number' && r.priceMonthly > 0)
+      .sort((a, b) => b.priceMonthly - a.priceMonthly)[0]
+  : null;
+const featuredMeta = featured
+  ? [
+      featured.tierLabel,
+      featured.timeToRunningMin ? `~${featured.timeToRunningMin} min to running` : null,
+      featured.ramMinMB ? `${featured.ramMinMB} MB RAM` : null,
+    ]
+      .filter(Boolean)
+      .join(' · ')
+  : '';
+
+const year = new Date().getFullYear();
+const title = `${SITE.name} — the SaaS-to-self-hosted directory (${year})`;
+const description = SITE.description;
+
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: SITE.name,
+    alternateName: SITE.shortName,
+    url: SITE.origin,
+    description: SITE.description,
+  },
+];
+
+if (count > 0) {
+  jsonld.push({
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'The Rack',
+    description: 'Self-hostable open-source replacements for paid SaaS, ranked.',
+    numberOfItems: count,
+    itemListElement: projects.map((p, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: p.name,
+      url: `${SITE.origin}/self-host/${p.slug}/`,
+    })),
+  });
+}
+---
+
+<Base {title} {description} {jsonld}>
+  <section class="hero blueprint">
+    <div class="wrap hero-inner">
+      {count > 0 && <p class="microlabel hero-eyebrow">The Rack · {count} projects</p>}
+      <h1>Can I self-host <span class="blank">___</span>?</h1>
+      <p class="hero-sub">{SITE.tagline}</p>
+      <p class="promise machine">{SITE.promise}</p>
+    </div>
+  </section>
+
+  {
+    featured && featuredSaas && (
+      <section class="wrap swap-feature">
+        <p class="microlabel swap-feature-label">The swap</p>
+        <SwapBand
+          payingName={featuredSaas.name ?? featuredSaas.saas}
+          payingPrice={`$${Math.round(featuredSaas.priceMonthly).toLocaleString('en-US')}/mo`}
+          runningName={featured.name}
+          runningMeta={featuredMeta}
+        />
+      </section>
+    )
+  }
+
+  <section class="section" id="the-rack">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <h2>The Rack</h2>
+          <p class="section-note">
+            Every entry: what you'd stop paying, what you'd run instead, and how much of your
+            evening it costs to get there.
+          </p>
+        </div>
+      </div>
+
+      <ul class="chips" aria-label="Categories">
+        {CATEGORIES.map((c) => <li class="chip">{c}</li>)}
+      </ul>
+      <p class="chips-note">
+        Category pages open with the first cohort — these are the shelves, not links yet.
+      </p>
+
+      <div class="rack">
+        <div class="rack-head" aria-hidden="true">
+          <span class="c-rank microlabel">#</span>
+          <span class="c-project microlabel">Project</span>
+          <span class="c-replaces microlabel">Replaces</span>
+          <span class="c-price microlabel">You'd stop paying</span>
+          <span class="c-tier microlabel">Setup</span>
+        </div>
+
+        {
+          count > 0 ? (
+            projects.map((p, i) => <DirectoryRow project={p} rank={i + 1} />)
+          ) : (
+            <div class="rack-empty">
+              <p>The Rack is being stocked — 50 verified projects landing soon.</p>
+            </div>
+          )
+        }
+      </div>
+
+      <div class="rack-foot">
+        {
+          count > 0 && (
+            <p class="provenance">
+              Rank is editorial, and the basis is written down on{' '}
+              <a href="/methodology/">/methodology</a>. Prices are vendor list prices in USD; the
+              seat assumption behind each figure is on the project page.
+            </p>
+          )
+        }
+        <p class="section-note rack-cta">
+          Running something that belongs here? <a href="/contribute/">Send it in</a> — the data, the
+          prompts, and the harness are all open.
+        </p>
+      </div>
+    </div>
+  </section>
+</Base>

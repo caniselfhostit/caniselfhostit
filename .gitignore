@@ -1,0 +1,17 @@
+# deps & build output
+node_modules/
+dist/
+.astro/
+.wrangler/
+
+# env & secrets — never committed
+.env
+.env.*
+!.env.example
+
+# OS noise
+.DS_Store
+
+# vendored reference checkout (Rob Hallam's canivibecodeit, MIT) — study material,
+# never part of this repo
+canivibecodeit/

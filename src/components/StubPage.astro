@@ -1,0 +1,29 @@
+---
+// Honest placeholder for routes whose real content lands in a later phase.
+// Always rendered noindex by the calling page — a stub in the index would be
+// exactly the thin content this site's own methodology complains about.
+import Base from '../layouts/Base.astro';
+import { SITE } from '../lib/site.js';
+
+const { heading, note, launchPhase = 'the first cohort' } = Astro.props;
+const title = `${heading} · ${SITE.name}`;
+---
+
+<Base {title} description={note} noindex={true}>
+  <article class="wrap stub">
+    <h1>{heading}</h1>
+    <p>{note}</p>
+    <p class="stub-when">Lands with {launchPhase}. Until then, the honest state is: not written yet.</p>
+    <p><a href="/">← Back to The Rack</a></p>
+  </article>
+</Base>
+
+<style>
+  .stub {
+    max-width: 68ch;
+    padding-block: 3rem 4rem;
+  }
+  .stub-when {
+    color: var(--muted);
+  }
+</style>

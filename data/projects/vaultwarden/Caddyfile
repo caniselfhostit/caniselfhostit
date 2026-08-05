@@ -1,0 +1,36 @@
+# Vaultwarden — Caddy in front, TLS handled for you.
+#
+# Authored from https://github.com/dani-garcia/vaultwarden/wiki/Proxy-examples
+# and https://caddyserver.com/docs/automatic-https
+#
+# {$VAR} reads an environment variable, so this file has no hostname baked into
+# it and is safe to read, diff, and share.
+
+{
+	# Where Let's Encrypt sends expiry warnings if renewal ever stops working.
+	email {$ACME_EMAIL}
+}
+
+{$DOMAIN_HOST} {
+	encode zstd gzip
+
+	header {
+		# The vault is only ever served over HTTPS. Tell browsers to remember.
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# `vaultwarden` is the service name on the compose network; port 80 is the
+	# container's own port, not a host port.
+	reverse_proxy vaultwarden:80 {
+		header_up X-Real-IP {remote_host}
+	}
+
+	log {
+		output stderr
+		format console
+	}
+}

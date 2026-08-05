@@ -1,0 +1,41 @@
+---
+// Trust links only. The canivibecodeit credit deliberately does NOT live here:
+// it belongs on /about and /methodology as a descriptive anchor (PRD §1, §10.11),
+// not as a sitewide reciprocal that would read as a doorway network.
+import { SITE } from '../lib/site.js';
+
+const LINKS = [
+  { href: '/about/', label: 'About' },
+  { href: '/methodology/', label: 'Methodology' },
+  { href: '/contribute/', label: 'Contribute' },
+  { href: '/colophon/', label: 'Colophon' },
+  { href: '/terms/', label: 'Terms' },
+  { href: '/privacy/', label: 'Privacy' },
+  { href: '/security/', label: 'Security' },
+];
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="inner">
+    <nav aria-label="Site information">
+      <ul class="footer-nav">
+        {
+          LINKS.map((l) => (
+            <li>
+              <a href={l.href}>{l.label}</a>
+            </li>
+          ))
+        }
+        <li>
+          <a href={SITE.repoUrl} target="_blank" rel="noopener">Source ↗</a>
+        </li>
+      </ul>
+    </nav>
+
+    <p class="footer-meta">
+      {SITE.name} · MIT · no ads, no affiliate links<br />
+      Prices in USD · English only · &copy; {year} {SITE.author.name}
+    </p>
+  </div>
+</footer>

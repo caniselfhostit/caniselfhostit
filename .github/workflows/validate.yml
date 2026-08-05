@@ -1,0 +1,30 @@
+name: validate
+
+# Every project arrives as a PR full of JSON, YAML, a Caddyfile and a shell
+# script someone is going to run as root. The schema check and the security scan
+# run on the PR itself, before a human reads a word of it.
+#
+# Schema only — no build — so a data PR gets an answer in seconds.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # No `npm ci` step and no cache key on purpose: the validator imports
+      # nothing but node: builtins and src/lib/rubric.js, so there is nothing to
+      # install. Keep it that way — a dependency here turns a 15-second answer
+      # into a minute and a supply chain.
+      - name: Validate project data
+        run: node scripts/validate-projects.mjs

@@ -1,0 +1,112 @@
+---
+// The one page shell. Head, canonical, JSON-LD, theme, chrome.
+// Structure adapted from the MIT sibling's Base.astro (credited on /about and
+// /methodology); every string that names this site comes from src/lib/site.js.
+import '@fontsource-variable/newsreader';
+import '@fontsource-variable/inter';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/600.css';
+import '../styles/global.css';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { SITE } from '../lib/site.js';
+
+const {
+  title,
+  description,
+  // No default: until the Phase-1 satori pipeline commits public/og/, a default
+  // here would point every social preview at a 404. Pages pass ogImage when the
+  // file actually exists.
+  ogImage = null,
+  jsonld = [],
+  // Pending pages (PRD §9) stay out of the index while keeping inbound links.
+  noindex = false,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, SITE.origin).href;
+// Version query = cache-buster. OG images are regenerated in place, so a stale
+// card at any edge must never outlive a deploy.
+const ogUrl = ogImage ? new URL(`${ogImage}?v=${__BUILD_ID__}`, SITE.origin).href : null;
+
+// Analytics is opt-in by environment: no key, no third-party script, and local
+// development never phones home.
+const analyticsId = import.meta.env.DATAFAST_WEBSITE_ID;
+
+const orgLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: SITE.name,
+  url: SITE.origin,
+  description: SITE.description,
+  sameAs: [SITE.repoUrl],
+};
+
+const blocks = [orgLd, ...jsonld];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#121110" media="(prefers-color-scheme: dark)" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    {ogUrl && <meta property="og:image" content={ogUrl} />}
+    <meta name="twitter:card" content={ogUrl ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {ogUrl && <meta name="twitter:image" content={ogUrl} />}
+
+    {blocks.map((b) => <script type="application/ld+json" set:html={JSON.stringify(b)} />)}
+
+    <!-- Theme before first paint: a stored choice wins, else the system asks. -->
+    <script is:inline>
+      (() => {
+        try {
+          const stored = localStorage.getItem('theme');
+          document.documentElement.dataset.theme =
+            stored === 'light' || stored === 'dark'
+              ? stored
+              : matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+        } catch {
+          /* private mode / storage disabled — CSS defaults still hold */
+        }
+      })();
+    </script>
+
+    {
+      analyticsId && (
+        <script
+          is:inline
+          defer
+          data-website-id={analyticsId}
+          data-domain={SITE.domain}
+          src="https://datafa.st/js/script.js"
+        />
+      )
+    }
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <SiteHeader />
+    <main id="main">
+      <slot />
+    </main>
+    <SiteFooter />
+    <script src={`/js/app.js?v=${__BUILD_ID__}`} defer></script>
+  </body>
+</html>

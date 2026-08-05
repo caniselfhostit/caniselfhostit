@@ -1,0 +1,93 @@
+name: Add a project
+description: Suggest an open-source project that replaces something people pay for.
+title: "Add: "
+labels: ["new project"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A PR beats an issue — if you can write the folder yourself, read
+        [/contribute](https://caniselfhostit.com/contribute/) and skip this form.
+
+        Two things get a suggestion accepted: it's mature enough that someone can run it
+        for a year without babysitting it, and there's a real subscription it replaces.
+
+  - type: input
+    id: name
+    attributes:
+      label: Project name
+      placeholder: Outline
+    validations:
+      required: true
+
+  - type: input
+    id: repo
+    attributes:
+      label: Repository URL
+      description: Where the code lives. Self-hosting docs URL too, if it's somewhere else.
+      placeholder: https://github.com/outline/outline
+    validations:
+      required: true
+
+  - type: input
+    id: replaces
+    attributes:
+      label: What paid product does it replace?
+      description: >
+        Name the product and the plan you'd actually be canceling. If the honest answer is
+        "nothing, but it's great," say that — it's a valid entry with an empty savings column,
+        and pretending otherwise is how a directory loses its credibility.
+      placeholder: Notion, Team plan, ~5 seats
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Why does it belong here?
+      description: >
+        Maturity, who maintains it, whether it's actually pleasant to run. Especially useful:
+        you're running it right now and can say what broke.
+    validations:
+      required: true
+
+  - type: textarea
+    id: tier-factors
+    attributes:
+      label: Self-assessed tierFactors
+      description: >
+        Your best honest guess at the setup shape. This derives the verdict, so estimate rather
+        than flatter — "one command" projects that take an evening are how a site gets called
+        AI slop. Leave a value blank if you don't know.
+      value: |
+        containers:          (how many services in the compose file, app + db + proxy all count)
+        externalDb:          (true/false — needs Postgres/MySQL/Redis as a separate service)
+        needsSmtp:           (true/false — useless without outbound mail)
+        needsOauth:          (true/false — requires registering an OAuth app elsewhere)
+        needsDns:            (true/false — needs a real hostname pointed at the box)
+        needsGpu:            (true/false)
+        secretsToGenerate:   (how many keys/salts/passwords the installer must create)
+        ---
+        RAM you've seen it idle at:
+        Rough time to first working screen:
+    validations:
+      required: true
+
+  - type: input
+    id: official-compose
+    attributes:
+      label: Does upstream ship a compose file?
+      description: >
+        `upstream-maintained`, `upstream-example`, or `none` — plus the URL. We author ours from
+        the docs either way, but knowing what upstream supports changes how much we trust it.
+      placeholder: upstream-maintained — https://docs.getoutline.com/...
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you submit
+      options:
+        - label: I checked the directory and the open issues — this project isn't already listed or proposed.
+          required: true
+        - label: This is an open-source or source-available project I'm not affiliated with, or I've said below that I am.
+          required: true

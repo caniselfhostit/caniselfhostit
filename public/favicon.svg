@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Can I Self-Host It?">
+  <style>
+    .paper { fill: #fbfaf7; }
+    .ink { stroke: #1a1917; }
+    .power { fill: #a8420b; }
+    @media (prefers-color-scheme: dark) {
+      .paper { fill: #1a1917; }
+      .ink { stroke: #ece8df; }
+      .power { fill: #f2955a; }
+    }
+  </style>
+  <rect class="paper" width="32" height="32" rx="7" />
+  <g class="ink" fill="none" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round">
+    <rect x="6.2" y="6.2" width="19.6" height="19.6" rx="2.4" />
+    <path d="M6.2 12.9h19.6M6.2 19.4h19.6" />
+  </g>
+  <circle class="power" cx="21.4" cy="22.6" r="2.1" />
+</svg>

@@ -1,0 +1,76 @@
+{
+  "slug": "vaultwarden",
+  "name": "Vaultwarden",
+  "tagline": "A Bitwarden-compatible password server small enough to run on the cheapest VPS you can rent.",
+  "repo": "dani-garcia/vaultwarden",
+  "site": "https://github.com/dani-garcia/vaultwarden",
+  "category": "passwords-security",
+  "replaces": [
+    {
+      "saas": "1password",
+      "plan": "Families",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 512,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/dani-garcia/vaultwarden/wiki/Using-Docker-Compose",
+  "localVariant": false,
+  "quote": {
+    "text": "There is a PHC generator built-in into Vaultwarden",
+    "source": "Vaultwarden wiki — Enabling admin page",
+    "url": "https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page",
+    "checkedOn": "2026-08-05"
+  },
+  "citations": [
+    {
+      "claim": "Vaultwarden's own compose example runs a single container that serves on port 80 and keeps every byte of state in /data.",
+      "url": "https://github.com/dani-garcia/vaultwarden/wiki/Using-Docker-Compose"
+    },
+    {
+      "claim": "Upstream's Caddy example puts a reverse proxy in front of Vaultwarden and forwards the real client IP with header_up X-Real-IP.",
+      "url": "https://github.com/dani-garcia/vaultwarden/wiki/Proxy-examples"
+    },
+    {
+      "claim": "The admin page token is an Argon2 PHC string produced by the vaultwarden binary itself, not a password you invent.",
+      "url": "https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page"
+    },
+    {
+      "claim": "Caddy obtains and renews TLS certificates automatically for any public hostname named in the Caddyfile.",
+      "url": "https://caddyserver.com/docs/automatic-https"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "You own the backups. The whole vault is one SQLite file plus attachments under /srv/vaultwarden/data — if that directory is not copied off the box, a dead disk is a dead vault, and nobody is going to email you about it.",
+    "You own the uptime. When the server is down you cannot reach new passwords from a browser you have not used before. The Bitwarden apps keep a local copy, so a short outage is an inconvenience rather than a lockout — but it is your inconvenience now.",
+    "Vaultwarden is an independent reimplementation of the Bitwarden server API. It is not built or supported by Bitwarden, and upstream client updates occasionally land before Vaultwarden has caught up.",
+    "Turn signups off after you create your account. A password server that anyone on the internet can register on is a password server for anyone on the internet.",
+    "This one is not optional the way the others are: keep the recovery path for your own account somewhere that is not on this server."
+  ],
+  "sources": {
+    "compose": "https://github.com/dani-garcia/vaultwarden/wiki/Using-Docker-Compose",
+    "caddy": "https://github.com/dani-garcia/vaultwarden/wiki/Proxy-examples",
+    "adminToken": "https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page"
+  },
+  "related": [],
+  "pagePriority": 1,
+  "contentUpdatedAt": "2026-08-05",
+  "contentHash": "104c9c1ebfcdf4b4ff90ab20ca7f9de7875ba7426e0e638816fb08f7786eabfe"
+}

@@ -1,0 +1,24 @@
+{
+  "name": "caniselfhostit",
+  "version": "0.1.0",
+  "description": "Can I Self-Host It? — for every SaaS you pay for: a mature open-source replacement, and the exact AI-agent prompts that install it on your own server.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "validate": "node scripts/validate-projects.mjs",
+    "validate:fix": "node scripts/validate-projects.mjs --fix"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^14.1.7",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/newsreader": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "astro": "^7.1.6"
+  }
+}

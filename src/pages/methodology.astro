@@ -1,0 +1,115 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../lib/site.js';
+import { TIER_RULES, TIERS, TIER_BANDS, tierBandLabel, TIER_ORDER } from '../lib/rubric.js';
+
+// This page renders the ACTUAL rules the build runs — TIER_RULES is imported
+// from the same module the validator enforces, so this page cannot drift from
+// the code. That is the point of it.
+const title = `Methodology — how the verdicts are made · ${SITE.name}`;
+const description =
+  'The setup-tier rubric, verification semantics, and provenance rules behind every verdict on this site — the same rules the build enforces, rendered verbatim.';
+---
+
+<Base {title} {description}>
+  <article class="wrap prose">
+    <h1>Methodology</h1>
+    <p>
+      Every verdict on this site is mechanical. This page is the rulebook, rendered from the same
+      code the build runs — if a badge feels wrong, the argument is with a rule below, not with a
+      label someone typed.
+    </p>
+
+    <h2>The setup tier</h2>
+    <p>
+      Each project declares seven countable facts (<code>tierFactors</code>): how many containers
+      it runs <em>excluding the shared reverse proxy</em>, whether it needs an external database,
+      outbound mail, an OAuth registration, a DNS record, a GPU, and how many secrets the installer
+      must generate. The tier is derived by the first matching rule, in order:
+    </p>
+    <ol class="rules">
+      {
+        TIER_RULES.map((r) => (
+          <li>
+            <p>
+              <strong class={`tier-name tier-${r.tier}`}>{TIERS[r.tier]}</strong> if{' '}
+              {r.test} (<code>{r.expr}</code>)
+            </p>
+            <p class="because">{r.because}</p>
+          </li>
+        ))
+      }
+    </ol>
+
+    <h2>Time bands</h2>
+    <p>
+      <code>timeToRunningMin</code> is the budget to set aside — through the first backup — not a
+      stopwatch to the first screen. The build rejects a number outside its tier's band:
+    </p>
+    <ul>
+      {
+        TIER_ORDER.map((t) => (
+          <li>
+            <strong>{TIERS[t]}</strong>: {tierBandLabel(t)}
+            {TIER_BANDS[t].maxMinutes === null ? '' : ` (${TIER_BANDS[t].minMinutes}–${TIER_BANDS[t].maxMinutes} min)`}
+          </li>
+        ))
+      }
+    </ul>
+
+    <h2>Two kinds of “verified”</h2>
+    <p>
+      <strong>Tested by us</strong> means the install ran end-to-end on a clean, disposable server
+      by our harness, and the stamp carries the date, version, and host. <strong>Reported working
+      by readers</strong> is exactly that — self-reported, rate-limited, never faked, and never
+      dressed up as more than it is. A page that fails a re-test is downgraded to
+      <em>pending</em> at the next nightly build: out of the sitemap, visibly labelled, never
+      silently stale. Nothing on this site can self-certify — verification state lives outside the
+      contributable data on purpose.
+    </p>
+
+    <h2>Provenance</h2>
+    <p>
+      Every <code>compose.yml</code>, Caddy block, and install script is authored by us from the
+      upstream documentation, with the source URL recorded per artifact — never pasted from a
+      repository. Prices cite the vendor's own pricing page with the date we read it.
+      awesome-selfhosted (CC-BY-SA) is a lead list, not a source. Drafts are AI-assisted; nothing
+      earns a stamp a test didn't produce.
+    </p>
+
+    <h2>Credit</h2>
+    <p>
+      The question-shaped format is inspired by
+      <a href={SITE.inspiredBy.url} rel="noopener">{SITE.inspiredBy.name}</a> — a different site by
+      a different operator, asking a different question: theirs is whether AI can build you a
+      replacement; ours is how you run the real thing.
+    </p>
+  </article>
+</Base>
+
+<style>
+  .prose {
+    max-width: 68ch;
+    padding-block: 3rem 4rem;
+  }
+  .prose h1 {
+    margin-bottom: 0.5em;
+  }
+  .prose h2 {
+    margin-top: 2em;
+  }
+  .rules {
+    display: grid;
+    gap: 1rem;
+    padding-left: 1.25rem;
+  }
+  .rules .because {
+    color: var(--muted);
+    margin-top: 0.25rem;
+  }
+  .tier-name {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.85em;
+    letter-spacing: 0.02em;
+  }
+</style>

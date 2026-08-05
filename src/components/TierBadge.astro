@@ -1,0 +1,36 @@
+---
+// The verdict, wearing two channels at once: a tier colour AND a 4-dot effort
+// meter. The meter is what survives greyscale, colour-blindness, and an OG card
+// re-compressed by someone else's CDN. Copper is not in this scale, by rule.
+const { tier, size = 'sm', label } = Astro.props;
+
+const TIERS = {
+  'one-command': { label: 'ONE COMMAND', dots: 1 },
+  'one-evening': { label: 'ONE EVENING', dots: 2 },
+  'one-weekend': { label: 'ONE WEEKEND', dots: 3 },
+  'ongoing-ops': { label: 'ONGOING OPS', dots: 4 },
+};
+
+const known = TIERS[tier];
+const text = label ?? known?.label ?? String(tier ?? 'unrated').toUpperCase();
+const dots = known?.dots ?? 0;
+const classes = ['tier-badge', known ? `tier-${tier}` : '', size === 'lg' ? 'is-lg' : '']
+  .filter(Boolean)
+  .join(' ');
+---
+
+<span class={classes}>
+  <span class="tb-label">{text}</span>
+  {
+    dots > 0 && (
+      <>
+        <span class="tb-dots" aria-hidden="true">
+          {[1, 2, 3, 4].map((i) => (
+            <span class={i <= dots ? 'tb-dot on' : 'tb-dot'} />
+          ))}
+        </span>
+        <span class="sr-only">— setup effort {dots} of 4</span>
+      </>
+    )
+  }
+</span>

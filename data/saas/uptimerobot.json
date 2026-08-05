@@ -1,0 +1,57 @@
+{
+  "slug": "uptimerobot",
+  "name": "UptimeRobot",
+  "domain": "uptimerobot.com",
+  "whyPeoplePay": "UptimeRobot checks your site from somewhere that is not your site — which is the one thing a monitor you host yourself cannot honestly do. The paid tiers buy shorter intervals, more monitors, and an alerting path that keeps working on the morning your own server is the thing that is down.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "50 monitors, 5-minute checks."
+    },
+    {
+      "name": "Solo",
+      "priceMonthly": 10,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "10 monitors, 60-second checks. $9/mo if paid annually."
+    },
+    {
+      "name": "Team",
+      "priceMonthly": 34,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "100 monitors, 30-second checks. $29/mo if paid annually."
+    },
+    {
+      "name": "Scale",
+      "priceMonthly": 64,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "200 to 500 monitors, 15-second checks. $54/mo if paid annually."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only — custom monitor counts and faster intervals."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-05",
+    "source": "https://uptimerobot.com/pricing/",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "Monthly-billed figures recorded; the annual-billed figure is in each plan note. UptimeRobot's free tier is generous enough that many readers pay nothing today — the savings number on the project page only applies to people already on a paid plan, and the page says so."
+  },
+  "ranked": [
+    {
+      "project": "uptime-kuma",
+      "rationale": "Matches the paid feature set that people actually use — sub-minute checks, unlimited monitors, status pages, and notifications to the twenty-odd services you already have — from one container with no database to operate. It cannot replace the outside-your-network vantage point, which is the honest limit and the reason the page recommends keeping a free external monitor pointed at it."
+    }
+  ],
+  "evaluatedNotTested": []
+}

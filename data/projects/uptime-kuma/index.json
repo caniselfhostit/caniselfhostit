@@ -1,0 +1,76 @@
+{
+  "slug": "uptime-kuma",
+  "name": "Uptime Kuma",
+  "tagline": "Uptime monitoring and status pages from one container, with no monitor quota and no per-check billing.",
+  "repo": "louislam/uptime-kuma",
+  "site": "https://github.com/louislam/uptime-kuma",
+  "category": "monitoring",
+  "replaces": [
+    {
+      "saas": "uptimerobot",
+      "plan": "Solo",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 0
+  },
+  "resources": {
+    "ramMinMB": 512,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 8,
+  "license": "MIT",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/louislam/uptime-kuma/blob/master/compose.yaml",
+  "localVariant": false,
+  "quote": {
+    "text": "Filesystem support for POSIX file locks is required to avoid SQLite database corruption",
+    "source": "Uptime Kuma wiki — How to Install",
+    "url": "https://github.com/louislam/uptime-kuma/wiki/%F0%9F%94%A7-How-to-Install",
+    "checkedOn": "2026-08-05"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's own compose file runs a single service, publishes port 3001, and keeps all state in a volume mounted at /app/data.",
+      "url": "https://github.com/louislam/uptime-kuma/blob/master/compose.yaml"
+    },
+    {
+      "claim": "Uptime Kuma's UI talks over WebSockets, and Caddy's reverse_proxy handles the upgrade without any extra configuration.",
+      "url": "https://github.com/louislam/uptime-kuma/wiki/Reverse-Proxy"
+    },
+    {
+      "claim": "The data directory must sit on a filesystem that supports POSIX file locks, which rules out mounting it from network storage.",
+      "url": "https://github.com/louislam/uptime-kuma/wiki/%F0%9F%94%A7-How-to-Install"
+    },
+    {
+      "claim": "Caddy obtains and renews TLS certificates automatically for any public hostname named in the Caddyfile.",
+      "url": "https://caddyserver.com/docs/automatic-https"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "A monitor you host cannot tell you that the machine hosting it is down. Run this somewhere other than the servers it watches, and keep one free external check pointed at the monitor itself — this is the one place where paying nobody is not the right answer.",
+    "You own the alerting path. Uptime Kuma will happily send to a notification service you set up once and never test again; send yourself a deliberate test alert the day you install it, and again whenever you change anything.",
+    "You own the backups. Everything is one SQLite database under /srv/uptime-kuma/data. Copy that directory off the box, and copy it while the container is stopped — SQLite mid-write is not a backup.",
+    "It keeps history forever unless you tell it not to. On a small disk, a year of 20-second checks across a lot of monitors is the thing that fills it up.",
+    "No outside vantage point, no phone-network SMS gateway, no support contract. Those three are what the paid tiers are actually selling."
+  ],
+  "sources": {
+    "compose": "https://github.com/louislam/uptime-kuma/blob/master/compose.yaml",
+    "caddy": "https://github.com/louislam/uptime-kuma/wiki/Reverse-Proxy",
+    "install": "https://github.com/louislam/uptime-kuma/wiki/%F0%9F%94%A7-How-to-Install"
+  },
+  "related": [],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-05",
+  "contentHash": "49c94dd27bf16748f44d609f4c9526b7709d8f2724ddf7fb26d1e71c3833efd2"
+}

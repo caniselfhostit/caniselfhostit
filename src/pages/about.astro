@@ -1,0 +1,44 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../lib/site.js';
+
+const title = `About · ${SITE.name}`;
+const description = SITE.description;
+---
+
+<Base {title} {description}>
+  <article class="wrap prose">
+    <h1>About</h1>
+    <p>
+      {SITE.name} answers one question per page: for the SaaS you're paying for, can you run the
+      open-source equivalent yourself — and if so, exactly how. It takes two prompts: one to get a
+      bare machine ready, then one per app. {SITE.promise}
+    </p>
+    <p>
+      The site is open source (MIT), the prompts are free forever, and the things that keep your
+      data safe — backup, restore, TLS renewal, the basic upgrade — will never be paywalled.
+    </p>
+    <p>
+      Reviewed by <strong>{SITE.author.name}</strong>. Drafting is AI-assisted; every published
+      prompt must run end-to-end on a clean machine before it earns a stamp, and pages that
+      haven't are labelled. The full rulebook is on
+      <a href="/methodology/">/methodology</a>.
+    </p>
+    <h2>Credit</h2>
+    <p>
+      Inspired by <a href={SITE.inspiredBy.url} rel="noopener">{SITE.inspiredBy.name}</a>, Rob
+      Hallam's directory of what AI can and can't rebuild. Different operator, different question,
+      shared conviction: honest verdicts beat listicles.
+    </p>
+  </article>
+</Base>
+
+<style>
+  .prose {
+    max-width: 68ch;
+    padding-block: 3rem 4rem;
+  }
+  .prose h2 {
+    margin-top: 2em;
+  }
+</style>

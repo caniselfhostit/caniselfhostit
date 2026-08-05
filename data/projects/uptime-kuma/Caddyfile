@@ -1,0 +1,33 @@
+# Uptime Kuma — Caddy in front, TLS handled for you.
+#
+# Authored from https://github.com/louislam/uptime-kuma/wiki/Reverse-Proxy
+# and https://caddyserver.com/docs/automatic-https
+#
+# The dashboard is a WebSocket application. Caddy's reverse_proxy upgrades the
+# connection on its own — no Upgrade/Connection headers to set by hand, which is
+# the step every nginx guide spends a paragraph on.
+
+{
+	email {$ACME_EMAIL}
+}
+
+{$DOMAIN_HOST} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# `uptime-kuma` is the service name on the compose network; 3001 is the
+	# container's own port, not a host port.
+	reverse_proxy uptime-kuma:3001
+
+	log {
+		output stderr
+		format console
+	}
+}

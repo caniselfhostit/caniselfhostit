@@ -1,0 +1,32 @@
+#!/bin/sh
+# Block obvious secrets from ever reaching a commit.
+#
+# Enable once per clone:   git config core.hooksPath .githooks
+#
+# This repo publishes install scripts and .env templates for a living, so the
+# realistic accident is not "someone commits a keyfile" — it is a real token
+# pasted into a prompt while debugging at 1am. Scan the staged diff, not the
+# working tree, and only added lines.
+#
+# The deep checks (image pinning, curl-into-shell, hardcoded credentials, the
+# content hash) live in scripts/validate-projects.mjs and run in CI. This hook is
+# the fast, dumb, last line of defence.
+
+added="$(git diff --cached -U0 --no-color | grep -E '^\+' || true)"
+[ -z "$added" ] && exit 0
+
+if printf '%s\n' "$added" | grep -qE 'sk-ant-[A-Za-z0-9_-]{16,}|sk-or-v1-[a-f0-9]{16,}|sk-proj-[A-Za-z0-9_-]{16,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|AKIA[0-9A-Z]{16}|xox[baprs]-[A-Za-z0-9-]{10,}|phc_[A-Za-z0-9]{20,}|-----BEGIN [A-Z][A-Z ]*PRIVATE KEY'; then
+	echo "pre-commit: possible secret in staged changes — commit blocked." >&2
+	echo "            If it is a placeholder, spell it CHANGE_ME." >&2
+	exit 1
+fi
+
+# Argon2 / bcrypt hashes and Supabase service keys are the two this project
+# generates by hand and could plausibly paste into a fixture.
+if printf '%s\n' "$added" | grep -qE '\$argon2id\$v=[0-9]+\$m=|\$2[aby]\$[0-9]{2}\$[./A-Za-z0-9]{53}'; then
+	echo "pre-commit: a real password hash is in the staged changes — commit blocked." >&2
+	echo "            Secrets are generated on the server at install time, never committed." >&2
+	exit 1
+fi
+
+exit 0

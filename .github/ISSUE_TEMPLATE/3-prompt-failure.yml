@@ -1,0 +1,92 @@
+name: A prompt failed
+description: You ran an install prompt and it didn't get you to a working app.
+title: "Prompt failure: "
+labels: ["prompt failure"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is the most useful report the project gets. Every published prompt passed on a clean
+        server, which proves it works on *our* clean server — the gap between that and yours is
+        exactly what this form closes.
+
+        Please scrub secrets from anything you paste: keys, tokens, passwords, your real domain
+        if you'd rather not share it, and the server IP.
+
+  - type: input
+    id: project
+    attributes:
+      label: Which project?
+      placeholder: Immich
+    validations:
+      required: true
+
+  - type: dropdown
+    id: path
+    attributes:
+      label: Which path did you take?
+      options:
+        - Claude Code install prompt
+        - Chat fallback ("guide me step by step")
+        - Local variant prompt
+        - Deterministic fallback (compose.yml / install.sh, no agent)
+    validations:
+      required: true
+
+  - type: input
+    id: agent
+    attributes:
+      label: Agent and version
+      description: If you used one. Version matters more than you'd think.
+      placeholder: Claude Code 2.x
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Your OS (the machine the agent ran on)
+      options:
+        - Windows (WSL2)
+        - Windows (no WSL2)
+        - macOS — Apple Silicon
+        - macOS — Intel
+        - Linux
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: vps
+    attributes:
+      label: VPS provider, plan, and server OS
+      description: Also worth saying if it's a box you already had rather than a fresh one.
+      placeholder: Hetzner CX22, Ubuntu 24.04, fresh
+    validations:
+      required: true
+
+  - type: textarea
+    id: where
+    attributes:
+      label: Where did it break?
+      description: >
+        Which step of the prompt, and what you expected versus what happened. If the agent went
+        off-script rather than hitting an error, describe what it did instead — that's a prompt
+        bug and it's harder for us to find without you.
+    validations:
+      required: true
+
+  - type: textarea
+    id: output
+    attributes:
+      label: Error output
+      description: >
+        Terminal output, container logs (`docker compose logs <service>`), or the agent's last
+        few messages. Secrets removed.
+      render: shell
+
+  - type: checkboxes
+    id: prompt-zero
+    attributes:
+      label: Starting state
+      options:
+        - label: I completed Prompt Zero first, and `ssh vps` worked before I started this install.
+        - label: The prompt page showed a DRAFT marker (it's fine either way — it tells us which corpus this is).

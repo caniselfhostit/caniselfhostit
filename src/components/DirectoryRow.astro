@@ -1,0 +1,56 @@
+---
+import TierBadge from './TierBadge.astro';
+
+// One row of The Rack. Data contract: src/lib/projects.js.
+// Data attributes are here for the Phase-1 client-side filters (tier, category,
+// RAM slider). Filters mint no URLs, so they can stay pure DOM state.
+const { project, rank } = Astro.props;
+const p = project ?? {};
+
+const replaces = Array.isArray(p.replaces) ? p.replaces.filter(Boolean) : [];
+const names = replaces.map((r) => r.name ?? r.saas).filter(Boolean);
+
+// The headline figure is the LARGEST single subscription this replaces — never
+// the sum of the list. Nobody pays for Dropbox and Drive and iCloud at once,
+// and adding them up would be an invented savings number.
+const priced = replaces.filter((r) => typeof r.priceMonthly === 'number' && r.priceMonthly > 0);
+const top = priced.sort((a, b) => b.priceMonthly - a.priceMonthly)[0];
+const money = (n) => `$${Math.round(n).toLocaleString('en-US')}`;
+const perSeat = top?.unit === 'seat';
+---
+
+<a
+  class="rack-row"
+  href={`/self-host/${p.slug}/`}
+  data-tier={p.tier}
+  data-category={p.category}
+  data-ram={p.ramMinMB}
+>
+  <span class="c-rank mono" aria-hidden="true">{String(rank).padStart(2, '0')}</span>
+
+  <span class="c-project">
+    <span class="name">{p.name}</span>
+    {p.tagline && <span class="tagline">{p.tagline}</span>}
+  </span>
+
+  <span class="c-replaces">
+    {names.length ? names.join(' · ') : <span aria-hidden="true">—</span>}
+  </span>
+
+  <span class="c-price">
+    {
+      top ? (
+        <>
+          <span class="mo">{money(top.priceMonthly)}/mo</span>
+          <span class="yr">
+            {money(top.priceMonthly * 12)}/yr{perSeat ? ' · per seat' : ''}
+          </span>
+        </>
+      ) : (
+        <span class="yr">no fixed price</span>
+      )
+    }
+  </span>
+
+  <span class="c-tier"><TierBadge tier={p.tier} label={p.tierLabel} /></span>
+</a>
