@@ -21,6 +21,20 @@ export const SITE = {
   // Independent, credited sibling — a different operator, not a network.
   // Credit appears on /about and /methodology only (never sitewide footers).
   inspiredBy: { name: 'canivibecodeit.com', url: 'https://canivibecodeit.com' },
+  // DataFast. This id is a PUBLIC identifier, not a credential: it ships in the
+  // HTML of every page and only labels which property receives the pageview — it
+  // cannot read the dashboard. An env var would hide it from this repo and from
+  // nobody else, while adding a way for analytics to disappear silently the day
+  // a CI variable goes missing. So it lives here, next to the domain it names.
+  // Local dev stays silent on its own: DataFast ignores localhost unless
+  // `data-allow-localhost` is set, and Base.astro never sets it.
+  datafastWebsiteId: 'dfid_GJOfrnYegFWDR6tDjge8v',
+  // The COOKIELESS build, deliberately — DataFast's default `script.js` sets a
+  // cookie for visitor identification, and their own GDPR page says that one
+  // "may need a cookie banner". /privacy is written against this exact file and
+  // renders the URL verbatim, so swapping it back makes that page visibly lie.
+  // Change the copy in the same commit or not at all (phase0-todos.md item D).
+  datafastScriptUrl: 'https://datafa.st/js/script.cookieless.js',
 };
 
 // Title verdict word is DERIVED from the setup tier (PRD §0) — never hand-written.

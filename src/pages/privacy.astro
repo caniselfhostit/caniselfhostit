@@ -1,5 +1,167 @@
 ---
-import StubPage from '../components/StubPage.astro';
+// Written against SITE.datafastScriptUrl, which is rendered verbatim below. If
+// the script ever changes, this page changes in the same commit — that is the
+// rule in docs/phase0-todos.md item D, and rendering the real URL is what keeps
+// it enforceable instead of aspirational.
+import Base from '../layouts/Base.astro';
+import { SITE } from '../lib/site.js';
+
+const title = `Privacy — what this site collects · ${SITE.name}`;
+const description =
+  'One third-party script, no cookies, no accounts, no ad tech. What DataFast records, what stays in your browser, and why there is no cookie banner.';
 ---
 
-<StubPage heading="Privacy" note="What this site collects (very little) and what it never does." launchPhase="launch — these pages block it" />
+<Base {title} {description}>
+  <article class="wrap prose">
+    <h1>Privacy</h1>
+    <p>
+      The short version: this site loads one third-party script, sets no cookies, and has no
+      accounts to attach anything to. There is no banner because there is nothing to ask you about.
+    </p>
+
+    <h2>What this site loads</h2>
+    <p>Exactly one request leaves your browser for a domain that isn't this one:</p>
+    <p><code class="url">{SITE.datafastScriptUrl}</code></p>
+    <p>
+      That is <a href="https://datafa.st" rel="noopener">DataFast</a>, the analytics that tell us
+      which pages people actually read. Everything else is served from this domain — the fonts are
+      bundled at build time rather than fetched from Google, and the only other script is the few
+      lines that run the theme toggle. No tag manager, no ad network, no embedded video, no comment
+      widget, no session recorder, no affiliate tracker.
+    </p>
+
+    <h2>What DataFast collects</h2>
+    <p>
+      That URL is DataFast's <strong>cookieless</strong> build, not their default one. Rather than
+      describe it in the abstract, here is every field the script puts in the request, read off the
+      script itself:
+    </p>
+    <ul>
+      <li>
+        <code>href</code>, <code>referrer</code>, <code>domain</code> — the page you're on and
+        whatever linked you to it.
+      </li>
+      <li>
+        <code>language</code>, <code>timezone</code>, <code>screenWidth</code>,
+        <code>screenHeight</code>, <code>viewport</code> — your browser's language, IANA time zone,
+        and window dimensions.
+      </li>
+      <li>
+        <code>adClickIds</code> — ad-click parameters if the link you followed carried any
+        (<code>gclid</code>, <code>fbclid</code>, <code>msclkid</code> and five others). This site
+        buys no ads, so in practice it is empty.
+      </li>
+      <li><code>visitorId</code>, <code>sessionId</code> — the pseudonymous ids described below.</li>
+      <li><code>cookieless: true</code> — the script telling the server which build it is.</li>
+    </ul>
+    <p>
+      Your IP address and user-agent aren't in that list because every HTTP request carries them
+      regardless. DataFast's documentation says both are used as inputs to the visitor hash, and
+      country-level location is derived from the address at their end rather than asked of your
+      browser. There is no geolocation prompt here and never will be.
+    </p>
+    <p>
+      To count you as one visitor rather than six, it derives a pseudonymous identifier on their
+      server: a hash of signals including your IP address, your browser's user-agent, this site's
+      domain, and a salt that rotates roughly every 24 hours (UTC). When that salt rotates,
+      yesterday's identifier can no longer be matched to today's. This is a trade we made
+      knowingly — it makes returning-visitor numbers fuzzier, and it means nothing durable follows
+      you.
+    </p>
+
+    <h2>What is kept in your browser</h2>
+    <p>Two things, both first-party, both strictly functional:</p>
+    <ul>
+      <li>
+        Three <code>sessionStorage</code> keys from DataFast —
+        <code>datafast_visitor_id</code>, <code>datafast_session_id</code> and
+        <code>datafast_pageview_state</code> — so that one visit isn't counted as several. Session
+        storage dies with the tab; close it and they are gone.
+      </li>
+      <li>
+        The light or dark theme you picked, if you touched the toggle. That is the only
+        <code>localStorage</code> key this site writes. It stays until you clear it and never
+        leaves your device.
+      </li>
+    </ul>
+    <p>
+      No cookies, from us or from DataFast. We read the script rather than taking a vendor's word
+      for it: the cookieless build contains no reference to <code>document.cookie</code> anywhere,
+      and writes to <code>localStorage</code> exactly never. Their default build, which we do not
+      use, references it twice.
+    </p>
+
+    <h2>Why there is no cookie banner</h2>
+    <p>
+      Banners exist to ask permission to store or read a tracking identifier on your device. This
+      site stores no such identifier, so there is no permission to ask for. A banner here would be
+      theatre — and the tell for theatre is that clicking either button changes nothing about what
+      actually happens.
+    </p>
+
+    <h2>Opting out</h2>
+    <p>
+      Before it sends anything, DataFast's script checks one flag. Set it from your browser's
+      console on this site and the script stays quiet permanently — no account, no request to us,
+      nothing for us to honour or quietly ignore:
+    </p>
+    <pre><code>localStorage.setItem('datafast_ignore', 'true')</code></pre>
+    <p>
+      Blocking <code>datafa.st</code> in a content blocker works just as well. Every page here is
+      plain HTML that renders without any of this: nothing on this site is gated behind analytics
+      loading, and nothing breaks when it doesn't.
+    </p>
+
+    <h2>What we can't tell you</h2>
+    <p>
+      DataFast is someone else's service, and this page won't claim more certainty than we have.
+      Their documentation describes the cookieless identifier as derived from your IP address; it
+      does not publish whether the raw address is discarded after hashing, or which jurisdiction
+      the data is processed in. We asked the documentation, not a salesperson, and that is where it
+      stops. If the answer matters to you, their
+      <a href="https://datafa.st/gdpr" rel="noopener">GDPR page</a> is the primary source and you
+      should read it rather than our paraphrase.
+    </p>
+    <p>
+      The site is static and served by Cloudflare. Like every web host, Cloudflare sees the
+      requests that reach it — address, user-agent, and URL — and handles them under its own terms.
+      Self-hosting this site is on the roadmap, for the same reason you're reading a directory
+      about self-hosting.
+    </p>
+
+    <h2>What this site never does</h2>
+    <p>
+      No accounts, no logins, no newsletter, no comment box, no ads, no affiliate links, and no
+      selling or sharing of anything with anyone. There is nothing here to sell, which is the only
+      privacy promise that has ever been worth much.
+    </p>
+
+    <h2>When this page changes</h2>
+    <p>
+      Before the site does, not after. If the tracking script is ever swapped for one that sets
+      cookies, this page is wrong the moment it happens — so the rule is that the copy changes in
+      the same commit as the script, or the script doesn't change. The URL above is rendered
+      straight from the site's configuration, so it cannot quietly drift out of date.
+    </p>
+  </article>
+</Base>
+
+<style>
+  .prose {
+    max-width: 68ch;
+    padding-block: 3rem 4rem;
+  }
+  .prose h1 {
+    margin-bottom: 0.5em;
+  }
+  .prose h2 {
+    margin-top: 2em;
+  }
+  .prose ul {
+    display: grid;
+    gap: 0.5rem;
+  }
+  .url {
+    overflow-wrap: anywhere;
+  }
+</style>

@@ -28,9 +28,10 @@ const canonical = new URL(Astro.url.pathname, SITE.origin).href;
 // card at any edge must never outlive a deploy.
 const ogUrl = ogImage ? new URL(`${ogImage}?v=${__BUILD_ID__}`, SITE.origin).href : null;
 
-// Analytics is opt-in by environment: no key, no third-party script, and local
-// development never phones home.
-const analyticsId = import.meta.env.DATAFAST_WEBSITE_ID;
+// Analytics: one script, no cookie banner, because there is nothing to consent
+// to (/privacy names what DataFast collects). The campaign domain reports into
+// the same property, so the list is derived — add a domain in site.js, once.
+const analyticsHostnames = SITE.redirectDomains.join(',');
 
 const orgLd = {
   '@context': 'https://schema.org',
@@ -88,17 +89,14 @@ const blocks = [orgLd, ...jsonld];
       })();
     </script>
 
-    {
-      analyticsId && (
-        <script
-          is:inline
-          defer
-          data-website-id={analyticsId}
-          data-domain={SITE.domain}
-          src="https://datafa.st/js/script.js"
-        />
-      )
-    }
+    <script
+      is:inline
+      defer
+      data-website-id={SITE.datafastWebsiteId}
+      data-domain={SITE.domain}
+      data-allowed-hostnames={analyticsHostnames}
+      src={SITE.datafastScriptUrl}
+    />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
