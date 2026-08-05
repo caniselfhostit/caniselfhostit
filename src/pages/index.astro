@@ -1,7 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
 import DirectoryRow from '../components/DirectoryRow.astro';
-import SwapBand from '../components/SwapBand.astro';
 import { SITE } from '../lib/site.js';
 import { getAllSaasPages, CATEGORY_LIST } from '../lib/projects.js';
 
@@ -24,23 +23,44 @@ const money = (n) =>
     maximumFractionDigits: 2,
   })}`;
 
-// The featured Swap is data-driven or absent — no invented example prices. It is
-// the highest-ranked page that has an honest figure, and it quotes `page.swap`,
-// the same object its row and its page quote.
-const featured = pages.find(
-  (s) => s.swap && typeof s.swap.monthlyCost === 'number' && s.swap.monthlyCost > 0
-);
-const featuredMeta = featured
-  ? [
-      featured.primary.tierLabel,
-      featured.primary.timeToRunningMin
-        ? `~${featured.primary.timeToRunningMin} min to running`
-        : null,
-      featured.primary.ramMinMB ? `${featured.primary.ramMinMB} MB RAM` : null,
-    ]
-      .filter(Boolean)
-      .join(' · ')
-  : '';
+// The hero's cycling payload: five short fields per app, never the whole object
+// — the hero must not ship the directory twice. An app with no resolved
+// replacement has no answer to show, so it is dropped rather than half-rendered.
+const cycleItems = pages
+  .map((s) => {
+    const primary = s.primary ?? {};
+    if (!s.name || !primary.name) return null;
+    return {
+      q: s.name,
+      v: s.verdictWord ?? 'YES',
+      a: primary.name,
+      m:
+        typeof primary.timeToRunningMin === 'number'
+          ? `~${primary.timeToRunningMin} min to running`
+          : '',
+      t: s.tier ?? null,
+      tl: s.tierLabel ?? '',
+    };
+  })
+  .filter(Boolean);
+
+// The receipt: only apps with an honest figure get a line. A missing swap, a
+// null price or a zero prints nothing at all rather than a made-up number — the
+// same guard DirectoryRow applies to the column below. Its foot is the one
+// place a total would be expected, and it says out loud that there isn't one:
+// alternatives are replaced one at a time, and a summed "your stack costs $X"
+// is the invented number this site exists to argue with.
+const lines = pages
+  .filter((s) => s.swap && typeof s.swap.monthlyCost === 'number' && s.swap.monthlyCost > 0)
+  .slice(0, 5)
+  .map((s) => ({
+    slug: s.slug,
+    name: s.name,
+    price: `${money(s.swap.monthlyCost)}/mo`,
+    runsAs: s.primary?.name ?? null,
+  }));
+
+const hasLedger = lines.length > 0;
 
 const year = new Date().getFullYear();
 const title = `${SITE.name} — the SaaS-to-self-hosted directory (${year})`;
@@ -76,25 +96,262 @@ if (count > 0) {
 ---
 
 <Base {title} {description} {jsonld} ogImage="/og/home.png">
-  <section class="hero blueprint">
+  <section class="hero blueprint hero-kinetic" data-kinetic>
     <div class="wrap hero-inner">
-      {count > 0 && <p class="microlabel hero-eyebrow">The Rack · {count} paid apps answered</p>}
-      <h1>Can I self-host <span class="blank">___</span>?</h1>
-      <p class="hero-sub">{SITE.tagline}</p>
+      <div class="hero-top">
+        {count > 0 && <p class="microlabel hero-eyebrow">The Rack · {count} paid apps answered</p>}
+        <button type="button" class="chip cycle-toggle" data-cycle-toggle hidden>Pause</button>
+      </div>
+
+      <div class="cycle-zone" data-zone>
+        <h1 class="hero-q">
+          Can I self-host <span class="blank"><span class="blank-sizer" aria-hidden="true">{cycleItems.map((it) => <span>{it.q}</span>)}</span><span class="blank-word" data-word>___</span></span>?
+        </h1>
+
+        <p class="hero-sub answer" data-answer>
+          <span class="answer-live" data-live hidden>
+            <span class="answer-verdict mono" data-verdict></span><span
+              class="sr-only"
+              data-tierlabel></span>
+            <span class="answer-lead">— it's called</span>
+            <span class="answer-name" data-name></span>
+            <span class="answer-meta mono" data-meta></span>
+          </span>
+          <span data-static>{SITE.tagline}</span>
+        </p>
+      </div>
+
       <p class="promise machine">{SITE.promise}</p>
+
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#the-rack">Browse the Rack</a>
+        <a class="btn" href="/prompt-zero/">Start with prompt zero</a>
+      </div>
     </div>
   </section>
 
+  <script define:vars={{ KINETIC_ITEMS: cycleItems }}>
+    (function () {
+      var root = document.querySelector('[data-kinetic]');
+      if (!root || !KINETIC_ITEMS || !KINETIC_ITEMS.length) return;
+
+      var zone = root.querySelector('[data-zone]');
+      var blank = root.querySelector('.blank');
+      var sizerWrap = root.querySelector('.blank-sizer');
+      var sizers = root.querySelectorAll('.blank-sizer > span');
+      var word = root.querySelector('[data-word]');
+      var live = root.querySelector('[data-live]');
+      var stat = root.querySelector('[data-static]');
+      var verdict = root.querySelector('[data-verdict]');
+      var tierLabel = root.querySelector('[data-tierlabel]');
+      var nameEl = root.querySelector('[data-name]');
+      var metaEl = root.querySelector('[data-meta]');
+      var toggle = root.querySelector('[data-cycle-toggle]');
+      if (!zone || !word || !live || !stat || !verdict || !nameEl || !metaEl) return;
+
+      var TIER_CLASSES = [
+        'tier-one-command',
+        'tier-one-evening',
+        'tier-one-weekend',
+        'tier-ongoing-ops',
+      ];
+      var HOLD = 3000;
+      var FADE = 280; /* matches --slow in the stylesheet */
+
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+      var index = 0;
+      var timer = null;
+      var fadeTimer = null;
+      var byUser = false;
+      var byHover = false;
+      var byFocus = false;
+
+      function serifReady() {
+        if (!document.fonts || !document.fonts.check) return true;
+        try {
+          var f = getComputedStyle(word);
+          return document.fonts.check(f.fontWeight + ' ' + f.fontSize + ' ' + f.fontFamily);
+        } catch (e) {
+          return true;
+        }
+      }
+
+      /* Both gates, or the measurement lies: before the stylesheet applies,
+         the type is UA-sized and serifReady() passes on system fallbacks — the
+         sizer computing position:absolute is the proof the scoped CSS is on. */
+      function measurable() {
+        return (
+          sizerWrap && getComputedStyle(sizerWrap).position === 'absolute' && serifReady()
+        );
+      }
+
+      /* The slot fits the CURRENT name: measured off the hidden sizer span
+         (subpixel, so nothing clips) and applied as an explicit width the CSS
+         transitions. Invariant: never set a width measured in a font that is
+         not the one on screen — a fallback-font width goes stale the moment
+         the serif swaps in, and the word overhangs or wraps. Until then the
+         blank keeps width:auto, which always hugs the current word. */
+      function fit(n) {
+        if (blank && sizers[n] && measurable()) {
+          blank.style.width = sizers[n].getBoundingClientRect().width + 'px';
+        }
+      }
+
+      function paint(n) {
+        var it = KINETIC_ITEMS[n];
+        word.textContent = it.q;
+        fit(n);
+        verdict.textContent = it.v;
+        nameEl.textContent = it.a;
+        metaEl.textContent = it.m ? '· ' + it.m : '';
+        /* The tier is a colour on screen; a screen reader gets the same fact in words. */
+        if (tierLabel) {
+          tierLabel.textContent = it.tl ? ' (' + it.tl.toLowerCase() + ' setup)' : '';
+        }
+        for (var k = 0; k < TIER_CLASSES.length; k++) {
+          verdict.classList.remove(TIER_CLASSES[k]);
+        }
+        if (it.t) verdict.classList.add('tier-' + it.t);
+      }
+
+      function step() {
+        root.classList.add('is-out');
+        clearTimeout(fadeTimer);
+        fadeTimer = setTimeout(function () {
+          index = (index + 1) % KINETIC_ITEMS.length;
+          paint(index);
+          root.classList.remove('is-out');
+        }, FADE);
+      }
+
+      /* Reduced motion freezes the whole thing on the first real app: the global
+         CSS kill switch cannot stop a setInterval, so this has to. */
+      function canRun() {
+        return (
+          KINETIC_ITEMS.length > 1 &&
+          !byUser &&
+          !byHover &&
+          !byFocus &&
+          !document.hidden &&
+          !reduce.matches
+        );
+      }
+
+      function sync() {
+        if (canRun()) {
+          if (!timer) timer = setInterval(step, HOLD);
+        } else if (timer) {
+          clearInterval(timer);
+          timer = null;
+        }
+        if (toggle) {
+          var offered = KINETIC_ITEMS.length > 1 && !reduce.matches;
+          toggle.hidden = !offered;
+          var verb = byUser ? 'Resume' : 'Pause';
+          toggle.textContent = verb;
+          toggle.setAttribute('aria-label', verb + ' the app name cycling in the question');
+        }
+      }
+
+      live.hidden = false;
+      stat.hidden = true;
+      root.classList.add('is-live');
+      paint(0);
+      sync();
+
+      /* Hover pauses the question itself; focus pauses anywhere in the hero,
+         except on the toggle, which would otherwise be unable to resume. */
+      zone.addEventListener('mouseenter', function () {
+        byHover = true;
+        sync();
+      });
+      zone.addEventListener('mouseleave', function () {
+        byHover = false;
+        sync();
+      });
+      root.addEventListener('focusin', function (e) {
+        if (toggle && e.target === toggle) return;
+        byFocus = true;
+        sync();
+      });
+      root.addEventListener('focusout', function (e) {
+        if (toggle && e.target === toggle) return;
+        byFocus = false;
+        sync();
+      });
+      document.addEventListener('visibilitychange', sync);
+      window.addEventListener('resize', function () {
+        fit(index);
+      });
+      /* The first fit can run against the fallback font, and fonts.ready may
+         already have resolved before the face requests even start — so the
+         reliable signal is loadingdone, which fires per completed batch. The
+         load re-fit covers dev, where stylesheets arrive as modules after this
+         classic script and an early measurement sees unstyled type. */
+      if (document.fonts && document.fonts.addEventListener) {
+        document.fonts.addEventListener('loadingdone', function () {
+          fit(index);
+        });
+      }
+      window.addEventListener('load', function () {
+        fit(index);
+      });
+      if (toggle) {
+        toggle.addEventListener('click', function () {
+          byUser = !byUser;
+          sync();
+        });
+      }
+      if (reduce.addEventListener) {
+        reduce.addEventListener('change', function () {
+          root.classList.remove('is-out');
+          sync();
+        });
+      }
+    })();
+  </script>
+
   {
-    featured && (
-      <section class="wrap swap-feature">
-        <p class="microlabel swap-feature-label">The swap</p>
-        <SwapBand
-          payingName={featured.name}
-          payingPrice={`${money(featured.swap.monthlyCost)}/mo`}
-          runningName={featured.primary.name}
-          runningMeta={featuredMeta}
-        />
+    hasLedger && (
+      <section class="wrap ledger-feature" aria-labelledby="led-receipt-h">
+        <h2 class="sr-only" id="led-receipt-h">
+          A sample of the rack, itemized: monthly list price per app, and what runs in its place
+        </h2>
+
+        <div class="ledger">
+          <span class="led-stamp" aria-hidden="true">Self-hostable</span>
+
+          <div class="led-head">
+            <p class="led-head-k">The Rack — itemized</p>
+            <p class="led-head-sub">
+              {lines.length} of {count} apps · USD, monthly
+            </p>
+          </div>
+
+          <ol class="led-lines">
+            {lines.map((l) => (
+              <li class="led-line">
+                <span class="led-row">
+                  <span class="led-name">{l.name}</span>
+                  <span class="led-dots" aria-hidden="true" />
+                  <span class="led-fig">{l.price}</span>
+                </span>
+                {l.runsAs && (
+                  <span class="led-under">
+                    <span aria-hidden="true">→ </span>runs as {l.runsAs} on your server
+                  </span>
+                )}
+              </li>
+            ))}
+          </ol>
+
+          <div class="led-foot">
+            <p class="led-total">
+              <span class="led-k">Total:</span> not summed — you'd replace them one at a time.
+            </p>
+            <p class="provenance led-prov">list prices · assumptions on each app's page</p>
+          </div>
+        </div>
       </section>
     )
   }
@@ -156,3 +413,408 @@ if (count > 0) {
     </div>
   </section>
 </Base>
+
+<style>
+  /* Compound selectors throughout: these rules have to outrank the shipped
+     .hero / .hero-sub / .chip rules in global.css regardless of stylesheet
+     order, so every one of them carries at least two classes. */
+
+  .hero.hero-kinetic {
+    padding: 84px 0 64px;
+  }
+
+  .hero-kinetic .hero-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    width: 100%;
+  }
+
+  /* The pause control only exists once the script has something to pause. */
+  .hero-kinetic .cycle-toggle {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 6px 10px;
+  }
+
+  .hero-kinetic .cycle-toggle:hover {
+    color: var(--fg);
+  }
+
+  .hero-kinetic .cycle-toggle[hidden] {
+    display: none;
+  }
+
+  /* The question and its answer are one unit: tighter gap than the hero's, and
+     the region the pointer/keyboard pause listens on. */
+  .hero-kinetic .cycle-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    width: 100%;
+  }
+
+  .hero-kinetic .hero-q {
+    font-size: clamp(32px, 6.4vw, 68px);
+    max-width: 20ch;
+  }
+
+  /* The slot. The width is set by the script to the CURRENT name (measured off
+     the hidden sizer spans) and transitions on the same curve as the crossfade,
+     so the "?" glides to hug each name instead of orphaning after short ones.
+     Without JS no width is ever set, so the blank is exactly as wide as "___". */
+  .hero-kinetic .blank {
+    position: relative;
+    display: inline-grid;
+    grid-template-columns: minmax(0, max-content);
+    max-width: 100%;
+    vertical-align: baseline;
+    padding-bottom: 0.05em;
+    /* Declared transparent up front so switching it on causes no reflow. */
+    border-bottom: 2px solid transparent;
+  }
+
+  .hero-kinetic.is-live .blank {
+    transition: width var(--slow) var(--ease);
+    border-bottom-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  }
+
+  .hero-kinetic .blank > * {
+    grid-area: 1 / 1;
+    justify-self: start;
+  }
+
+  .hero-kinetic .blank-word {
+    overflow-wrap: anywhere;
+  }
+
+  /* Live, the word may never break mid-name: the script's width can be stale
+     for a frame around a font swap, and a momentary overhang reads far better
+     than a two-line copper wrap. The h1's size cap keeps the widest name
+     fitting a 375px viewport, so this forfeits nothing real. */
+  .hero-kinetic.is-live .blank-word {
+    overflow-wrap: normal;
+    white-space: nowrap;
+  }
+
+  /* No JS: the sizer is not in the layout at all, so the blank is exactly as
+     wide as "___" — the shipped hero, unchanged. */
+  .hero-kinetic .blank-sizer {
+    display: none;
+  }
+
+  /* Out of the layout entirely: each span is measured one at a time by the
+     script, so they must not wrap and must inherit the h1's font, which they do
+     by staying inside the .blank. */
+  .hero-kinetic.is-live .blank-sizer {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    /* max-content, or the sizer shrink-to-fits against the .blank's own set
+       width and every measurement reads back the width already applied. */
+    width: max-content;
+    visibility: hidden;
+    pointer-events: none;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Stacked, not inline: a row of all ten names is metres of invisible box,
+     and absolutely-positioned overflow still counts toward the document's
+     scrollable area — the body would scroll sideways for text nobody sees.
+     Stacked, the sizer is only as wide as the widest single name, and each
+     span still measures its own text via width: max-content. */
+  .hero-kinetic.is-live .blank-sizer > span {
+    display: block;
+    width: max-content;
+  }
+
+  /* The answer line. Reserved for one line on wide screens and two on narrow
+     ones, so the promise and the buttons below never shuffle. */
+  .hero-kinetic .answer {
+    max-width: 60ch;
+    min-height: 1.5em;
+  }
+
+  .hero-kinetic .answer-live {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 0.42em;
+    row-gap: 2px;
+  }
+
+  .hero-kinetic .answer-live[hidden] {
+    display: none;
+  }
+
+  /* The verdict wears the setup tier's colour — never copper, which on this site
+     means brand and machinery and nothing about how hard a thing is. */
+  .hero-kinetic .answer-verdict {
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--tier, var(--fg));
+  }
+
+  .hero-kinetic .answer-lead {
+    color: var(--muted);
+  }
+
+  .hero-kinetic .answer-name {
+    font-family: var(--font-serif);
+    font-size: 1.06em;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+
+  .hero-kinetic .answer-meta {
+    color: var(--muted);
+  }
+
+  .hero-kinetic .answer-meta:empty {
+    display: none;
+  }
+
+  /* One dissolve, one curve, no movement. Under prefers-reduced-motion the
+     script never adds .is-out, so these never fire. */
+  .hero-kinetic .blank-word,
+  .hero-kinetic .answer-live {
+    transition: opacity var(--slow) var(--ease);
+  }
+
+  .hero-kinetic.is-out .blank-word,
+  .hero-kinetic.is-out .answer-live {
+    opacity: 0;
+  }
+
+  .hero-kinetic .hero-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* ---------- the receipt ----------
+     Where the swap band used to sit: the same money story, itemized. Paper on
+     three sides, torn along the fourth. The bottom edge is two identical
+     scallop layers one pixel apart: the lower one in --border shows through as
+     a 1px stroke that follows the notches, so the tear keeps the same hairline
+     the rest of the panel has. Both layers are token colours, so the paper
+     flips with the theme like every other surface. */
+
+  .ledger-feature {
+    padding-top: 40px;
+  }
+
+  .ledger {
+    position: relative;
+    width: 100%;
+    max-width: 460px;
+    padding: 20px 22px 32px;
+    border: 1px solid var(--border);
+    border-bottom: 0;
+    border-radius: var(--r-panel) var(--r-panel) 0 0;
+    background:
+      radial-gradient(circle 5px at 7px 9px, transparent 92%, var(--surface) 100%) 0
+        calc(100% - 1px) / 14px 9px repeat-x,
+      radial-gradient(circle 5px at 7px 9px, transparent 92%, var(--border) 100%) 0 100% / 14px 9px
+        repeat-x,
+      linear-gradient(var(--surface), var(--surface)) 0 0 / 100% calc(100% - 9px) no-repeat;
+  }
+
+  /* ---------- the stamp ----------
+     Copper, because it is the site's own mark on the paper — machinery, not a
+     verdict about any one app. Decorative: the claim is the whole page. */
+
+  .led-stamp {
+    position: absolute;
+    top: -17px;
+    right: 18px;
+    padding: 7px 11px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    line-height: 1;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--accent) 88%, transparent);
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    border: 2px solid color-mix(in srgb, var(--accent) 44%, transparent);
+    border-radius: var(--r-badge);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 15%, transparent);
+    transform: rotate(-7deg);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* ---------- receipt head ---------- */
+
+  .led-head {
+    padding-bottom: 12px;
+    border-bottom: 1px dashed color-mix(in srgb, var(--muted) 42%, transparent);
+  }
+
+  .led-head-k {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    line-height: 1.4;
+    text-transform: uppercase;
+    color: var(--fg);
+  }
+
+  .led-head-sub {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* ---------- the lines ---------- */
+
+  .led-lines {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 0;
+  }
+
+  .led-line + .led-line {
+    margin-top: 12px;
+  }
+
+  .led-row {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+
+  .led-name {
+    flex: 0 1 auto;
+    min-width: 0;
+    color: var(--fg);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* dot leaders — an empty flex track wearing a dotted rule */
+  .led-dots {
+    flex: 1 1 auto;
+    min-width: 16px;
+    height: 0;
+    border-bottom: 1px dotted color-mix(in srgb, var(--muted) 62%, transparent);
+  }
+
+  .led-fig {
+    flex: none;
+    font-weight: 600;
+    color: var(--fg);
+  }
+
+  .led-under {
+    display: block;
+    margin-top: 2px;
+    padding-left: 13px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--muted);
+    /* The name above is clipped with an ellipsis; this line wraps instead, and
+       breaks mid-token if a project ever ships a name longer than the column.
+       Either way the receipt absorbs it and the document never scrolls
+       sideways. */
+    overflow-wrap: anywhere;
+  }
+
+  /* ---------- receipt foot: the row that refuses to be a total ---------- */
+
+  .led-foot {
+    margin-top: 18px;
+    padding-top: 13px;
+    border-top: 1px dashed color-mix(in srgb, var(--muted) 42%, transparent);
+  }
+
+  .led-total {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+
+  .led-k {
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fg);
+  }
+
+  .led-prov {
+    margin-top: 7px;
+    font-size: 11.5px;
+  }
+
+  /* ---------- the in-page jump ----------
+     The hero links to #the-rack and the header is sticky: without a scroll
+     margin the browser parks the section at y=0 and the header eats the top of
+     the "The Rack" heading. The section's own 56px of padding does most of the
+     work; this adds the rest. */
+
+  #the-rack {
+    scroll-margin-top: 32px;
+  }
+
+  /* ---------- responsive ---------- */
+
+  @media (max-width: 760px) {
+    .hero.hero-kinetic {
+      padding: 46px 0 40px;
+    }
+
+    .hero-kinetic .cycle-zone {
+      gap: 12px;
+    }
+
+    .ledger-feature {
+      padding-top: 34px;
+    }
+
+    .led-stamp {
+      top: -13px;
+      right: 12px;
+      font-size: 10.5px;
+      padding: 6px 9px;
+      letter-spacing: 0.14em;
+    }
+
+    .ledger {
+      max-width: none;
+      padding: 18px 16px 30px;
+    }
+
+    .led-row {
+      font-size: 13px;
+    }
+  }
+
+  @media (max-width: 620px) {
+    .hero-kinetic .answer {
+      min-height: 3em;
+    }
+  }
+</style>
