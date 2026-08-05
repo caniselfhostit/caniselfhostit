@@ -1,0 +1,11 @@
+# Cache policy for Workers static assets (Cloudflare honors this file).
+# HTML must never go stale across deploys: revalidate every time (cheap 304s
+# via asset ETags). Hashed /_astro/* assets get their immutable rule appended
+# below by @astrojs/cloudflare at build time, overriding the catch-all.
+/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+# OG cards change rarely and carry a ?v= build-id buster in every meta tag,
+# so a short edge TTL is safe and keeps social scrapers fast.
+/og/*
+  Cache-Control: public, max-age=3600
