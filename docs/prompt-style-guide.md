@@ -28,7 +28,7 @@ Inverts:
 | No Docker at personal scale | Docker Compose is the only supported runtime |
 | SQLite or flat files, no Postgres | Whatever the upstream image expects, pinned, in one compose file |
 | Secrets in `.env` on the reader's laptop | Secrets generated **on the server**, never in the prompt |
-| Flat `- ` bullets, no headings, 15-30 lines | Numbered `##` step blocks, 150-260 lines |
+| Flat `- ` bullets, no headings, 15-30 lines | Numbered `##` step blocks, 10-15 KB (~150-350 lines) |
 | Builds new software | Installs existing software at a stated version |
 | "Include a README" | "Take a backup and prove you can restore it" |
 
@@ -123,7 +123,11 @@ honest warning exists.
 - **Size: 10,000 to 15,000 bytes** (`wc -c`), which lands near the 3,400-token target in
   PRD §5.3. Under 10,000 you have underspecified something, most often preflight or restore.
   Over 15,000 you are writing documentation, move it to the page body. Hard ceiling 16,500.
-- **150-260 lines.** Wrap prose at 90 columns. Never wrap a command.
+- **The byte count is the rule; the line count is not.** Expect roughly 150 lines for a
+  single-container project and up to ~350 when the embedded compose.yml and Caddyfile are
+  large — config lines cost bytes slowly, so a multi-container prompt legitimately runs long
+  and half our launch catalogue does. Never cut operational content to hit a line number.
+  Wrap prose at 90 columns. Never wrap a command.
 - No YAML front matter, no H1. The whole file is the payload: anything in it that is not
   addressed to the agent is a bug. The page supplies the H1, the metadata and the citations.
 - Steps are `## N. Title`. No H3. No nested lists deeper than one level.
@@ -293,8 +297,9 @@ without losing their place. Inside each block the unit changes from an instructi
 2. `You should see:` and the literal output, or the shape of it.
 3. `If you do not:` and the one most likely cause, with the fix.
 
-The third line is the whole reason this file is longer than prompt.md. Expect 1.2 to 1.6 times
-the byte count. That is correct, not bloat.
+The third line is the whole reason this file is longer than prompt.md. Expect 1.1 to 1.6 times
+the byte count — installs with no SMTP branch or OAuth detour run near the bottom of that
+range, and that is correct. Never pad to hit a ratio.
 
 **One added rule, chat only.** State explicitly, in block 3, that the reader must not paste
 `.env` contents, tokens, or any command output containing a secret back into the chat window.

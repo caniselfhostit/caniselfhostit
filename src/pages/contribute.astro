@@ -4,27 +4,52 @@ import { SITE } from '../lib/site.js';
 
 const title = `Contribute · ${SITE.name}`;
 const description =
-  'Every project is a directory of plain files added by pull request. No web form, no account — the repo is the admin panel.';
+  'Every page is built from plain files added by pull request. No web form, no account — the repo is the admin panel.';
 ---
 
 <Base {title} {description}>
   <article class="wrap prose">
     <h1>Contribute</h1>
     <p>
-      Every project on this site is a directory of plain files — <code>index.json</code>, the
-      prompts, the compose file — added by pull request. No web form, no account:
-      <strong>the repo is the admin panel.</strong>
+      Every page on this site is built from plain files, added by pull request. No web form, no
+      account: <strong>the repo is the admin panel.</strong> Fork it, edit, open a PR — the
+      validator answers in seconds with exactly what's off.
     </p>
     <p>
-      Start with <a href={`${SITE.repoUrl}/blob/main/CONTRIBUTING.md`} rel="noopener">CONTRIBUTING.md</a>
-      (the annotated schema and the house rules) and{' '}
+      Two file shapes do the work. A page is named after the <em>paid</em> app
+      (<code>data/saas/miro.json</code> carries the money, the reason people pay, and the ranked
+      replacements); the open-source project that answers it is a directory
+      (<code>data/projects/excalidraw/</code> carries the prompts, the configs, and the measured
+      facts). Adding a project usually means touching both — one file says what you built, the
+      other says what it gets you out of.
+    </p>
+    <p>
+      Start with{' '}
+      <a href={`${SITE.repoUrl}/blob/main/CONTRIBUTING.md`} rel="noopener">CONTRIBUTING.md</a>
+      {' '}(the annotated schema and the house rules) and{' '}
       <a href={`${SITE.repoUrl}/blob/main/docs/prompt-style-guide.md`} rel="noopener">the prompt style guide</a>.
-      The validator answers PRs in seconds; the highest-value contribution is upgrading a{' '}
-      <code>DRAFT</code> prompt to guide-compliant.
     </p>
+    <p>The contributions worth the most right now, in order:</p>
+    <ul>
+      <li>
+        <strong>Run a prompt and report what happened.</strong> Nothing here has been through the
+        verification harness yet — a real "it worked / it broke at step 6" report on the{' '}
+        <a href={`${SITE.repoUrl}/issues/new/choose`} rel="noopener">prompt-failure template</a> is
+        worth more than any new entry.
+      </li>
+      <li>
+        <strong>Re-check a low-confidence price.</strong> A few SaaS entries say so on their page —
+        reading the vendor's pricing page and updating the file (with the date) is a five-minute PR.
+      </li>
+      <li>
+        <strong>Add a paid app + its open-source replacement</strong> — the full pair, per the
+        schema.
+      </li>
+    </ul>
     <p>
-      Found something wrong instead? <a href={`${SITE.repoUrl}/issues/new/choose`} rel="noopener">Open an issue</a> —
-      there are templates for corrections, new projects, and prompt failures.
+      Found something wrong instead?{' '}
+      <a href={`${SITE.repoUrl}/issues/new/choose`} rel="noopener">Open an issue</a> — there are
+      templates for corrections, new projects, and prompt failures.
     </p>
   </article>
 </Base>
@@ -33,5 +58,10 @@ const description =
   .prose {
     max-width: 68ch;
     padding-block: 3rem 4rem;
+  }
+  .prose ul {
+    display: grid;
+    gap: 0.75rem;
+    padding-left: 1.25rem;
   }
 </style>

@@ -246,11 +246,16 @@ ends with a concrete verification URL and the exact string the reader should see
 screen.
 
 A prompt that hasn't been brought up to the guide carries a **DRAFT** marker, and the page says
-so. **Upgrading a DRAFT prompt into a guide-compliant one is the single highest-value PR you can
-send here** — higher than adding a new project. The sibling site learned this the expensive way:
-a corpus of template-generated prompts is a corpus of prompts nobody has run.
+so. The launch catalogue is fully guide-compliant, so today the marker only appears on new
+entries mid-review — but the convention stands: never remove a DRAFT marker on a prompt you
+haven't run end to end on a clean server.
 
-Do not add or remove a DRAFT marker on a prompt you haven't run end to end on a clean server.
+**The single highest-value PR you can send right now is a run report.** Nothing here has been
+through the verification harness yet — paste a prompt, run it for real, and file what happened
+(worked, or broke at which step, with the output) on the prompt-failure issue template. Second:
+re-checking a price the data marks low-confidence, with the vendor URL and the date. Both beat
+adding a new entry. The sibling site learned the underlying lesson the expensive way: a corpus
+of prompts nobody has run is worth less than a smaller corpus somebody has.
 
 ## House rules
 
