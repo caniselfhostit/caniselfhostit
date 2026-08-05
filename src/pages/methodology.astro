@@ -67,12 +67,23 @@ const description =
       silently stale. Nothing on this site can self-certify — verification state lives outside the
       contributable data on purpose.
     </p>
+    <p>
+      One limit worth stating plainly: <strong>the harness tests the server path</strong>. It
+      creates a disposable machine, runs the install, asserts the health endpoint and the
+      first-screen string, and destroys the box. The local prompts are written to the same standard
+      — same pins, same acceptance criteria, same first backup — and reviewed against the same
+      checklist, but no machine has run them end to end yet. A stamp on a page is a claim about the
+      server path only, and the local path carries no stamp until a harness exists that can earn
+      one.
+    </p>
 
     <h2>Provenance</h2>
     <p>
-      Every <code>compose.yml</code>, Caddy block, and install script is authored by us from the
-      upstream documentation, with the source URL recorded per artifact — never pasted from a
-      repository. Prices cite the vendor's own pricing page with the date we read it.
+      Every <code>compose.yml</code>, <code>compose.local.yml</code>, Caddy block, install script,
+      and local prompt is authored by us from the upstream documentation, with the source URL
+      recorded per artifact — never pasted from a repository. The local path is held to the same
+      rule as the server one: the same pinned digests, authored from the same docs, checked by the
+      same validator. Prices cite the vendor's own pricing page with the date we read it.
       awesome-selfhosted (CC-BY-SA) is a lead list, not a source. Drafts are AI-assisted; nothing
       earns a stamp a test didn't produce.
     </p>

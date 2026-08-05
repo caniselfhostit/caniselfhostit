@@ -1,0 +1,32 @@
+# Excalidraw · the deterministic fallback for the local path.
+#
+# Authored by caniselfhostit from the upstream documentation, not copied from a
+# repository:
+#   image and port ..... https://hub.docker.com/r/excalidraw/excalidraw
+#   docker notes ....... https://docs.excalidraw.com/docs/introduction/development
+#   collab server ...... https://github.com/excalidraw/excalidraw-room
+#
+# This file lives at ~/selfhost/excalidraw/compose.yml on the user's own
+# computer. One container, and it is an nginx serving the compiled Excalidraw
+# frontend. There is no database, no account system and no server side document
+# store, so there is no volume to bind and no .env to read: every drawing lives
+# in the browser that drew it. ~/selfhost/excalidraw/data holds the scenes the
+# user exports by hand.
+#
+# Upstream publishes no versioned tag for this image, only a rolling one, so the
+# pin is the multi-arch manifest digest read from Docker Hub on 2026-08-05, which
+# covers linux/amd64 and linux/arm64. It is the same digest the VPS compose.yml
+# carries, and the two files move together or not at all.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  excalidraw:
+    image: excalidraw/excalidraw@sha256:f7ee194addd607bf831d2af0f0a34463dd4225e426cf35199ef0b12a803398e9
+    container_name: excalidraw
+    restart: unless-stopped
+    ports:
+      # Loopback only. 8083 answers programs on this computer and nothing else,
+      # so no other device on the network can reach it, including the user's
+      # own phone. That is the posture of this path, not a gap in it.
+      - "127.0.0.1:8083:80"

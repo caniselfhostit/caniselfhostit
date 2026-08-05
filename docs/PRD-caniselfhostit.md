@@ -49,7 +49,7 @@ Every competitor is a *list* (awesome-selfhosted: 1,341 entries, zero install in
 | Launch features | GitHub stats + charts · outcome reports · PR contributions |
 | Stack | **Astro on Cloudflare + Supabase** — prerendered content, nightly rebuilds (§12) |
 | Code | **Fully open source, MIT** |
-| Prompt environment | **VPS-first** (Hetzner default, DigitalOcean runner-up); `localVariant` projects get a local path |
+| Prompt environment | **VPS-first** (Hetzner default, DigitalOcean runner-up), with a **first-class local path on every product** — the reader's own computer, Docker Desktop, `http://localhost:<port>`, no domain and no Prompt Zero |
 | Monetization | **None at launch**; free prompts forever. Paid day-2-ops skills later (§14) |
 | Byline | **"Reviewed by Jashanpreet Singh"** + author page; harness work machine-attributed |
 | Content axes | Migration guides + license/withholding grades **deferred post-launch** — launch is prompts + health + savings |
@@ -119,7 +119,7 @@ Launch shape: **~12–20** canonical pages carry the ranked list; the rest commi
 
 The order is the argument: establish the bill before proposing the work. As built:
 
-breadcrumbs → head (H1 "Can I self-host Miro?", big tier badge answering it, direct answer naming the replacement) → **The Swap band** (pay → run) → **why people pay** (`whyPeoplePay` — one honest paragraph, not a takedown) → **the plan ladder** (`plans[]` as the vendor actually sells it, each row with `checkedOn` + source) → **the answer**: ranked options table (§5.2) or the single pick, each option carrying its rationale → *then the replacement's install content* → **Before You Start strip** (RAM · disk · domain? · ~minutes) → paths as tabs (VPS default · local if `localVariant` · chat) → **Prompt box** (`~3,400 tokens · verified <date> · Claude Code`; copy · open in Claude Code · download install.md; collapsed **"What this prompt will do"** 8-step outline — the top AEO block, and why a beginner isn't pasting blind) → deterministic fallback files → **first-screen screenshot from the verification run** → health card → day-2 (backup/restore/TLS-renewal + basic upgrade command — free forever) → **what you're signing up for** (candor; includes a one-line honest note where enterprise editions withhold features — the formal grading system is deferred) → sibling SaaS pages 3-up → FAQ.
+breadcrumbs → head (H1 "Can I self-host Miro?", big tier badge answering it, direct answer naming the replacement) → **The Swap band** (pay → run) → **why people pay** (`whyPeoplePay` — one honest paragraph, not a takedown) → **the plan ladder** (`plans[]` as the vendor actually sells it, each row with `checkedOn` + source) → **the answer**: ranked options table (§5.2) or the single pick, each option carrying its rationale → *then the replacement's install content* → **Before You Start strip** (RAM · disk · domain? · ~minutes) → paths as tabs (VPS default · local · chat) → **Prompt box** (`~3,400 tokens · verified <date> · Claude Code`; copy · open in Claude Code · download install.md; collapsed **"What this prompt will do"** 8-step outline — the top AEO block, and why a beginner isn't pasting blind) → deterministic fallback files → **first-screen screenshot from the verification run** → health card → day-2 (backup/restore/TLS-renewal + basic upgrade command — free forever) → **what you're signing up for** (candor; includes a one-line honest note where enterprise editions withhold features — the formal grading system is deferred) → sibling SaaS pages 3-up → FAQ.
 
 Install content belongs to the **primary** option. Where a page ranks several, the runners-up get their row, their rationale, and a link — not a second prompt box; one page, one recommended path.
 
@@ -139,8 +139,8 @@ Per-project **directory** (compose files as real reviewable files, not JSON stri
 
 ```
 data/projects/<slug>/
-  index.json · prompt.md · prompt-chat.md · prompt-local.md (if localVariant)
-  compose.yml · Caddyfile · install.sh
+  index.json · prompt.md · prompt-chat.md · prompt-local.md   # all three, always
+  compose.yml · compose.local.yml · Caddyfile · install.sh    # all four, always
 data/saas/<slug>.json    # SaaS entity: name, domain, plan ladder + checkedOn + source,
                          # "why people pay" prose, ranked[{project, rationale}],
                          # evaluatedNotTested[{name, repo, note}]
@@ -165,7 +165,11 @@ data/saas/<slug>.json    # SaaS entity: name, domain, plan ladder + checkedOn + 
   "timeToRunningMin": 45,      // validator: must fall inside the derived tier's band
   "license": "BSL-1.1",        // validated SPDX id, cross-checked vs github_stats.license_spdx
   "officialCompose": "upstream-maintained",  // enum: upstream-maintained | upstream-example | none (+url)
-  "localVariant": false,       // rule: true when no inbound web exposure needed
+  "local": { "fit": "caveat", "note": "…" },  // every project ships prompt-local.md; this says
+                               // how well it suits a laptop. fit: good | caveat — "caveat" when
+                               // the value depends on being reachable while the machine sleeps.
+                               // note: one plain sentence, printed on the local path and said to
+                               // the user in block 1 before anything installs
   "quote": { "text": "…", "source": "Outline docs", "url": "…", "checkedOn": "…" },
   "citations": [{ "claim": "…", "url": "…" }],   // GEO gate inputs (§10.2)
   "whatYouSignUpFor": ["you own the backups", "…"],
@@ -267,7 +271,7 @@ Seeded from the sibling's priorArt graph (~950/976 SaaS→OSS pairs — self-aut
 | Comms & scheduling | Cal.com (→ Calendly) · Chatwoot (→ Intercom) · Mattermost (→ Slack; Rocket.Chat cut) · Jitsi Meet (→ Zoom — second cohort unless a real two-client assert ships) |
 | Marketing & content | Ghost (→ Substack/Medium) · Listmonk (→ Mailchimp) · Postiz (→ Buffer) · Shlink (→ Bitly) · Formbricks (→ Typeform) · Directus (→ Contentful) |
 | Work & PM | NocoDB · Baserow (→ Airtable) · Planka · Vikunja (→ Trello/Todoist) · Plane (→ Jira/Linear; enterprise-withholding noted in candor section) · Kimai (→ Toggl) · Invoice Ninja (→ the tweet that started this) · **EspoCRM (→ HubSpot/Salesforce)** |
-| Money & home | Actual Budget (→ YNAB) · Firefly III (→ Mint) · Home Assistant (**localVariant-only** — device discovery and USB dongles don't exist on a VPS) · FreshRSS (→ Feedly) · Linkwarden (→ Raindrop) · Wallabag (→ Pocket) |
+| Money & home | Actual Budget (→ YNAB) · Firefly III (→ Mint) · Home Assistant (**local-only** — the cloud path does not apply at all; device discovery and USB dongles don't exist on a VPS) · FreshRSS (→ Feedly) · Linkwarden (→ Raindrop) · Wallabag (→ Pocket) |
 | AI | **Open WebUI + Ollama as an editorial page** ("when self-hosted LLMs make sense" — no prompt, no savings figure; the one entry where the math inverts, and saying so is the stronger page) · LanguageTool (→ Grammarly) |
 
 Deferred with reasons on `/methodology`: Mailcow (email = the #1 self-hosting failure; "NOT WORTH IT (yet)" until written carefully), Headscale (needs joined-client assert; savings column empty — Tailscale free to 100 devices).

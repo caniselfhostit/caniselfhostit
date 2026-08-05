@@ -1,0 +1,33 @@
+# Vaultwarden · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   compose shape ... https://github.com/dani-garcia/vaultwarden/wiki/Using-Docker-Compose
+#   admin token ..... https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page
+#   websockets ...... https://github.com/dani-garcia/vaultwarden/wiki/Enabling-WebSocket-notifications
+#
+# One container, no proxy and no certificate. Every path is relative to the
+# directory this file sits in, ~/selfhost/vaultwarden/, so one file works on
+# macOS, Linux and Windows. 8222 is on 127.0.0.1 only, and ./data is the whole
+# vault: SQLite, attachments, RSA keys. Since 1.31.0 WebSocket traffic rides the
+# main HTTP port. Tag and digest are the 1.37.1 release read from the Docker Hub
+# registry API on 2026-08-05, amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  vaultwarden:
+    image: vaultwarden/server:1.37.1-alpine@sha256:b094afed4ed5ea353821c6efcedca446f30c6654ba2bc441db6089b0c2b94ac8
+    container_name: vaultwarden
+    restart: unless-stopped
+    environment:
+      # The address the browser uses, port included: Vaultwarden builds
+      # its links from this one value.
+      DOMAIN: ${DOMAIN}
+      # Opened for one step during the install, then closed and asserted closed.
+      SIGNUPS_ALLOWED: "false"
+      # Argon2 PHC hash made on this machine. Every "$" is stored as "$$" in .env.
+      ADMIN_TOKEN: ${ADMIN_TOKEN}
+    volumes:
+      - ./data:/data
+    ports:
+      # Loopback only. Nothing outside this computer can reach 8222.
+      - "127.0.0.1:8222:80"

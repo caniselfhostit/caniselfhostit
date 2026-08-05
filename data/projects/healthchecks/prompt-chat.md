@@ -225,11 +225,12 @@ cd /srv/healthchecks
 docker compose up -d
 sleep 20
 curl -sS -o /dev/null -w '%{http_code}\n' https://<DOMAIN>/api/v3/status/
-curl -sS -o /dev/null -w '%{http_code}\n' https://<DOMAIN>/accounts/signup/
+curl -sS https://<DOMAIN>/accounts/login/ | grep -c 'id="signup-modal"'
 ```
 
-You should see: `200` twice. The first URL is the endpoint the image's own health check uses,
-and it answers 200 only when the database connection is alive.
+You should see: `200`, then a number greater than 0. The first URL is the endpoint the image's
+own health check uses, and it answers 200 only when the database connection is alive. The
+second counts the sign-up form on the log-in page.
 
 If you do not: `000` or `502` means the certificate is not there yet, so run
 `sudo journalctl -u caddy -n 30`. `500` on the status endpoint usually means the `data`
@@ -238,8 +239,9 @@ directory is not writable by the container, which is step 2 done wrong: check wi
 
 A container listed in `docker ps` is not proof of anything. The two checks above are.
 
-Now open https://<DOMAIN>/accounts/signup/ and sign up with your address. Healthchecks emails
-you a sign-in link, and that link is how you get in the first time. If it does not arrive,
+Now open https://<DOMAIN>, click `Sign Up`, and sign up with your address. Healthchecks emails
+you a sign-in link, and that link is how you get in the first time. There is no page at
+/accounts/signup/ to open directly; it takes POST only. If it does not arrive,
 read step 10 before you change anything: this is the single most likely place for this install
 to stall, and it is usually not Healthchecks.
 
@@ -250,12 +252,12 @@ sed -i 's/^REGISTRATION_OPEN=True$/REGISTRATION_OPEN=False/' /srv/healthchecks/.
 cd /srv/healthchecks && docker compose up -d --force-recreate
 sleep 20
 curl -sS -o /dev/null -w '%{http_code}\n' https://<DOMAIN>/api/v3/status/
-curl -sS -o /dev/null -w '%{http_code}\n' https://<DOMAIN>/accounts/signup/
+curl -sS https://<DOMAIN>/accounts/login/ | grep -c 'id="signup-modal"' || true
 ```
 
-You should see: `200`, then anything that is not `200`.
+You should see: `200`, then `0`.
 
-If you do not: a second `200` means the file was not edited, so check with
+If you do not: anything but `0` means the file was not edited, so check with
 `grep REGISTRATION /srv/healthchecks/.env`. Until that reads `False`, anyone who finds your
 hostname can create an account on your monitor.
 

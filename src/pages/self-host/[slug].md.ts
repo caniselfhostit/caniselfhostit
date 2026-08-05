@@ -138,9 +138,12 @@ export const GET: APIRoute = ({ params }) => {
 
   section('Install prompt (Claude Code)', 'text', files.prompt);
   section('Chat fallback', 'text', files.promptChat);
-  // Only projects with `localVariant: true` ship this file; the rest skip it.
-  section('Local variant (no server, no domain)', 'text', files.promptLocal);
+  // Every project ships a local path (docs/prompt-style-guide.md, "The local
+  // path") — the section is omitted only while the file is still unwritten,
+  // because an empty fence reads to a model as "there is no local install".
+  section('Local install prompt (your own computer, no server)', 'text', files.promptLocal);
   section('docker-compose.yml', 'yaml', files.compose);
+  section('compose.local.yml', 'yaml', files.composeLocal);
   section('Caddyfile', 'text', files.caddyfile);
   section('install.sh', 'bash', files.installSh);
 

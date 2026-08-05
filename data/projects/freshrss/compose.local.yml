@@ -1,0 +1,34 @@
+# FreshRSS · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   image and env vars . https://github.com/FreshRSS/FreshRSS/blob/edge/Docker/README.md
+#   built-in cron ...... https://freshrss.github.io/FreshRSS/en/admins/08_FeedUpdates.html
+#   what to back up .... https://freshrss.github.io/FreshRSS/en/admins/05_Backup.html
+#
+# One container, on the computer the reader is sitting at. This file lives in
+# ~/selfhost/freshrss/, so its paths are relative and one file works the same on
+# macOS, Linux and Windows. FreshRSS ships with SQLite, so the database, the user
+# record and the favicons live under /var/www/FreshRSS/data, and that directory
+# is what a backup has to contain. CRON_MIN is the image's own cron daemon, and
+# leaving it unset means nothing refreshes. No proxy sits in front of this
+# container, so the VPS file's TRUSTED_PROXY is absent. Tag and digest are the
+# 1.29.1 release read from Docker Hub on 2026-08-05, covering amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  freshrss:
+    image: freshrss/freshrss:1.29.1@sha256:ab6b363102ccdbc39f6a62db926f567c61a5289bf25ba460f1c34423d8cc1a4d
+    container_name: freshrss
+    restart: unless-stopped
+    env_file: ./.env
+    volumes:
+      # uid 33 (www-data) in the image writes here, which is why the layout step
+      # chowns ./data on Linux; on macOS and Windows Docker Desktop maps the uid
+      # instead. Local disk only, never a network share: SQLite needs real POSIX
+      # file locks to stay intact.
+      - ./data:/var/www/FreshRSS/data
+    ports:
+      # Loopback only. Nothing outside this computer can open a connection to
+      # 8084, and that is the posture of this path rather than a limit on it.
+      # Same host port the VPS compose file publishes.
+      - "127.0.0.1:8084:80"

@@ -30,19 +30,27 @@ project no SaaS entity ranks has no page; the fix is to rank it, not to add a ro
 ```
 data/projects/<slug>/
   index.json         # the typed record — every facetable field, every validator rule
-  prompt.md          # the Claude Code install prompt (primary path)
+  prompt.md          # the Claude Code install prompt — cloud path, on a VPS
   prompt-chat.md     # "guide me step by step" fallback for ChatGPT / Claude.ai users
-  prompt-local.md    # ONLY if "localVariant": true — otherwise the validator rejects it
+  prompt-local.md    # the same install on the reader's own computer — no server, no domain
   compose.yml        # deterministic fallback: real, reviewable, downloadable
-  Caddyfile          # reverse proxy + automatic TLS
+  compose.local.yml  # the local path's compose file — relative binds, same pins, same port
+  Caddyfile          # reverse proxy + automatic TLS (cloud path only)
   install.sh         # what the prompt automates, as a script someone can read first
 
 data/saas/<slug>.json   # the SaaS entity a project replaces (see below)
 ```
 
-`compose.yml`, `Caddyfile`, and `install.sh` are the deterministic fallback — the agent-free
-path, the thing the verification harness actually runs, and the block answer engines quote. They
-are files, not JSON strings, so they can be reviewed and diffed like code.
+**All eight files are required, for every project.** `prompt-local.md` and `compose.local.yml`
+are not a special case any more: a reader who never wants to rent a server is a reader we serve,
+and the product page offers them the choice with a toggle. The validator fails a directory that
+is missing either one, and it checks that the local path did not quietly drift from the cloud
+path — same image digests, same host port, and the compose block inside `prompt-local.md`
+byte-identical to `compose.local.yml`.
+
+`compose.yml`, `compose.local.yml`, `Caddyfile`, and `install.sh` are the deterministic fallback
+— the agent-free path, the thing the verification harness actually runs, and the block answer
+engines quote. They are files, not JSON strings, so they can be reviewed and diffed like code.
 
 ## index.json
 
@@ -111,9 +119,25 @@ genuinely don't have and `[]` for an empty list, rather than dropping the key.
                                // sources.compose, which is the doc URL OUR compose.yml was
                                // authored from — keep both.
 
-  "localVariant": false,       // true only when the app needs NO inbound web exposure
-                               // (Home Assistant, anything driving local hardware).
-                               // true requires prompt-local.md; false forbids it.
+  // How well this app suits the local path. Every project ships prompt-local.md, so this
+  // is never "whether", only "how honestly". Both keys required; no others accepted.
+  "local": {
+    "fit": "caveat",           // "good"   — a laptop serves it as well as a server does
+                               // "caveat" — it works, but a machine that sleeps changes
+                               //            what you get. Use "caveat" whenever the value
+                               //            depends on being reachable while the computer
+                               //            is closed: a monitor that cannot watch your
+                               //            sites overnight, a password manager your phone
+                               //            cannot sync to, a shortener whose links only
+                               //            resolve on one desk.
+    "note": "Only this computer can open the wiki, so on the local path a team of one is the honest use."
+                               // One plain-language sentence, in the candor voice, stating
+                               // the consequence without talking the reader out of it. The
+                               // page prints it on the local path and block 1 of
+                               // prompt-local.md says it before anything installs. A "good"
+                               // fit still needs one: there is always something worth
+                               // saying about where the data now lives.
+  },
 
   // GEO gate: one attributed quote, with a URL and the date you read it.
   "quote": {
@@ -228,9 +252,12 @@ a shell on a server they just bought.
 - **Secrets are generated on the server**, by the install step, into a file the reader owns
   (`openssl rand -hex 32` and friends). Never in the prompt text, never in the chat transcript,
   never in the repo.
-- **The hardening baseline is in every install:** non-root service user, key-only SSH,
-  default-deny firewall with the open ports listed explicitly, unattended security upgrades,
-  automatic TLS via Caddy.
+- **The hardening baseline is in every install.** On the cloud path: non-root service user,
+  key-only SSH, default-deny firewall with the open ports listed explicitly, unattended security
+  upgrades, automatic TLS via Caddy. On the local path there is no firewall to configure and
+  nothing to certify, so the baseline is the binding itself — every port on `127.0.0.1`, nothing
+  reachable from another device, and the prompt says so plainly rather than leaving the reader to
+  assume it.
 - **A first backup before day one ends.** Every install ends with a backup that has been
   restored once. Free forever, in every prompt, no exceptions.
 - **Prompts never tell the agent to fetch and obey arbitrary upstream text.** "Read the docs at
@@ -240,9 +267,17 @@ a shell on a server they just bought.
 ## The prompts
 
 `docs/prompt-style-guide.md` is the specification: required shape, numbered rules, worked
-before/after, and the verification checklist. Read it before writing `prompt.md`. Every prompt
-states its assumed starting state ("Prompt Zero complete, `ssh vps` works"), uses one layout, and
-ends with a concrete verification URL and the exact string the reader should see on the first
+before/after, and the verification checklist. Read it before writing any of them.
+
+Three prompts ship per project, and the guide covers all three. `prompt.md` is the cloud path:
+Claude Code, a VPS, Prompt Zero already done, a domain with automatic TLS. `prompt-chat.md` is
+the same install restructured for someone who has only a chat window. `prompt-local.md` is the
+local path — the reader's own computer, Docker Desktop, `http://localhost:<port>`, no server and
+no Prompt Zero — and it has its own section in the guide, **"The local path · `prompt-local.md`"**,
+plus checklist item 11. Read that section before you write the file; it fixes the two frame
+lines byte-for-byte, the canonical Docker block, and what each of the eleven blocks does when the
+machine belongs to the reader. Every prompt states its assumed starting state, uses one layout,
+and ends with a concrete verification URL and the exact string the reader should see on the first
 screen.
 
 A prompt that hasn't been brought up to the guide carries a **DRAFT** marker, and the page says
@@ -279,9 +314,10 @@ of prompts nobody has run is worth less than a smaller corpus somebody has.
 
 - **Corrections.** A wrong RAM floor, a dead link, a price that moved, a compose file that no
   longer works upstream. Use the correction issue template and bring the source.
-- **Prompt failure reports.** A prompt broke on your machine: which project, which agent, which
-  OS, which VPS provider, and where exactly it stopped. This is the most useful bug report the
-  project gets, because it's the difference between "works on the harness" and "works."
+- **Prompt failure reports.** A prompt broke on your machine: which project, which path, which
+  agent, which OS, and where exactly it stopped — plus the VPS provider on the cloud path, or your
+  Docker Desktop version on the local one. This is the most useful bug report the project gets,
+  because it's the difference between "works on the harness" and "works."
 - **Outcome reports** go through the form on the app's page, not through the repo.
 
 Security issues: don't open a public issue. See `/security` on the site for the contact path.

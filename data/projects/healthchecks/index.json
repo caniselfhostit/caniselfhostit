@@ -32,7 +32,10 @@
   "license": "BSD-3-Clause",
   "officialCompose": "upstream-example",
   "officialComposeUrl": "https://github.com/healthchecks/healthchecks/blob/master/docker/docker-compose.yml",
-  "localVariant": false,
+  "local": {
+    "fit": "caveat",
+    "note": "Nothing outside this computer can reach a localhost ping URL, so this instance can only watch cron jobs that run on this same machine, and the jobs on your servers will have to report somewhere else."
+  },
   "quote": {
     "text": "uWSGI is configured to perform database migrations on startup, and to run sendalerts, sendreports, and smtpd in the background.",
     "source": "Healthchecks Docker README",
@@ -78,5 +81,5 @@
   ],
   "pagePriority": 2,
   "contentUpdatedAt": "2026-08-05",
-  "contentHash": "2b7bb53655b5a099587ce164cedb6062266309de7ace767c9f320d442aa90a0a"
+  "contentHash": "ba5c0da04ffa85d7d5be5775619697a807131ae23af9b8f6b9b2c5f2ed0d4c39"
 }

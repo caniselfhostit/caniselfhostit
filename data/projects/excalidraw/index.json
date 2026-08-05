@@ -32,7 +32,10 @@
   "license": "MIT",
   "officialCompose": "upstream-example",
   "officialComposeUrl": "https://github.com/excalidraw/excalidraw/blob/master/docker-compose.yml",
-  "localVariant": false,
+  "local": {
+    "fit": "good",
+    "note": "Every drawing is saved in the browser on this computer and nowhere else, so nothing syncs to your phone and nobody else can join a board with you, which is equally true of the server install."
+  },
   "quote": {
     "text": "At the moment, self-hosting your own instance doesn't support sharing or collaboration features.",
     "source": "Excalidraw developer documentation, Development",
@@ -77,5 +80,5 @@
   ],
   "pagePriority": 1,
   "contentUpdatedAt": "2026-08-05",
-  "contentHash": "5c6d2d2004da92313ad6ad8d6d82cdd8ca218003d90032fbae2d1e616a7d11c8"
+  "contentHash": "98f0d1ff7da6454df8cc1544dade34eece95a5a1cf292bf5d6a80006c8386599"
 }

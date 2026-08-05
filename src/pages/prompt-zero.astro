@@ -300,8 +300,8 @@ Two facts to state to the user, not to schedule: Caddy requests a certificate th
 hostname reaches it and renews on its own, so there is no cron job to add; and port 80 stays open
 because that is where the certificate challenge arrives.
 
-Leave /etc/caddy/Caddyfile as installed. Every install prompt on this site appends its own site
-block and reloads.
+Leave /etc/caddy/Caddyfile as installed. Every server install prompt on this site appends its own
+site block and reloads.
 
 ## 10. What usually goes wrong
 
@@ -314,8 +314,8 @@ prompt is wrong. Check the provider's console before debugging SSH.
 ## 11. Out of scope
 
 - Do not install fail2ban, an intrusion detector, or any other add-on. Key-only SSH behind a
-  default-deny firewall is the baseline every install prompt on this site assumes, and a second
-  moving part here is one nobody verified.
+  default-deny firewall is the baseline every server install prompt on this site assumes, and a
+  second moving part here is one nobody verified.
 - Do not move SSH to a non-standard port.
 - Do not create a DNS record, a Caddy site block, or a TLS certificate. The first install prompt
   does that, with a real hostname.
@@ -366,7 +366,7 @@ const jsonld = [
       {
         '@type': 'HowToStep',
         name: 'Make ssh vps work',
-        text: 'Four lines in ~/.ssh/config give the server the alias every prompt on this site uses.',
+        text: 'Four lines in ~/.ssh/config give the server the alias every server-path prompt on this site uses.',
       },
       {
         '@type': 'HowToStep',
@@ -385,7 +385,7 @@ const jsonld = [
 
 <Base {title} {description} {jsonld}>
   <article class="wrap pz prose">
-    <p class="microlabel pz-eyebrow">Step 0 · every project page starts here</p>
+    <p class="microlabel pz-eyebrow">Step 0 · where the server path starts</p>
     <h1>Prompt Zero</h1>
     <p class="lede">
       From a machine with nothing installed — not even git — to a hardened server with Claude Code
@@ -394,6 +394,13 @@ const jsonld = [
     <p>
       It takes two prompts: this page's, once — then one per app. That is the honest version of the
       promise. Anyone selling you "one prompt from nothing" is counting the setup as free.
+    </p>
+    <p class="note">
+      That count is for the path that ends on a rented server. Every product page offers a second
+      one, and if you chose <strong>On my computer</strong> there, you need none of this page: no
+      VPS, no SSH key, no domain, no firewall, no Prompt Zero. That path is a single prompt, it runs
+      on the machine you are reading this on, and everything it installs stays on it. Keep reading
+      only if the app is going somewhere the internet can reach.
     </p>
 
     <h2 id="who">Who this is for</h2>
@@ -663,7 +670,7 @@ const jsonld = [
 
     <h3>Make <code>ssh vps</code> work</h3>
     <p>
-      Every prompt on this site says <code>ssh vps</code> and means it literally. On your own
+      Every prompt on the server path says <code>ssh vps</code> and means it literally. On your own
       machine — in WSL if you are on Windows — create or open <code>~/.ssh/config</code> and add
       this block, with the server's real IP address from the provider's panel in place of the
       example:

@@ -6,9 +6,11 @@ body:
   - type: markdown
     attributes:
       value: |
-        This is the most useful report the project gets. Every published prompt passed on a clean
-        server, which proves it works on *our* clean server — the gap between that and yours is
-        exactly what this form closes.
+        This is the most useful report the project gets. Every published server prompt passed on a
+        clean server, which proves it works on *our* clean server — the gap between that and yours
+        is exactly what this form closes. Local prompts are wanted even more: they are written and
+        reviewed to the same standard, but no harness has run one yet, so yours may be the first
+        machine that ever has.
 
         Please scrub secrets from anything you paste: keys, tokens, passwords, your real domain
         if you'd rather not share it, and the server IP.
@@ -28,7 +30,7 @@ body:
       options:
         - Claude Code install prompt
         - Chat fallback ("guide me step by step")
-        - Local variant prompt
+        - Local prompt (my own computer)
         - Deterministic fallback (compose.yml / install.sh, no agent)
     validations:
       required: true
@@ -57,9 +59,12 @@ body:
   - type: input
     id: vps
     attributes:
-      label: VPS provider, plan, and server OS
-      description: Also worth saying if it's a box you already had rather than a fresh one.
-      placeholder: Hetzner CX22, Ubuntu 24.04, fresh
+      label: Where it ran
+      description: >
+        On the cloud path: VPS provider, plan, and server OS, plus whether it was a fresh box or
+        one you already had. On the local path: your OS version and your Docker Desktop version
+        (`docker --version`, or the About box) — that pair explains most local failures on its own.
+      placeholder: Hetzner CX22, Ubuntu 24.04, fresh — or macOS 15.5, Docker Desktop 4.34
     validations:
       required: true
 
@@ -88,5 +93,5 @@ body:
     attributes:
       label: Starting state
       options:
-        - label: I completed Prompt Zero first, and `ssh vps` worked before I started this install.
+        - label: Cloud path only — I completed Prompt Zero first, and `ssh vps` worked before I started this install.
         - label: The prompt page showed a DRAFT marker (it's fine either way — it tells us which corpus this is).

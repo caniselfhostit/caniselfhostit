@@ -38,7 +38,10 @@
     "url": "https://github.com/actualbudget/actual/blob/master/packages/sync-server/docker-compose.yml",
     "checkedOn": "2026-08-05"
   },
-  "localVariant": false,
+  "local": {
+    "fit": "good",
+    "note": "The budget never leaves this computer, which also means nothing else is holding a copy of it, so the backup step is the whole safety net."
+  },
   "citations": [
     {
       "claim": "ACTUAL_DATA_DIR defaults to /data, with server-files holding account.sqlite and session data and user-files holding the budget files as binary blobs.",
@@ -78,5 +81,5 @@
   ],
   "pagePriority": 2,
   "contentUpdatedAt": "2026-08-05",
-  "contentHash": "5bc795d7359859856357d2784eaae126d82fac99a7af20ef8a41a7b7603c2eb7"
+  "contentHash": "f7bf343a0fd19a4e6accd1ca458cc7bfb072ee970a6a464b126ee50e1c358378"
 }

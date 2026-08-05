@@ -1,0 +1,58 @@
+# Shlink · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker install ..... https://shlink.io/documentation/install-docker-image/
+#   variable reference . https://shlink.io/documentation/environment-variables/
+#   database engines ... https://shlink.io/documentation/supported-db-engines/
+#   api health check ... https://shlink.io/documentation/api-docs/
+#
+# Two services on the computer you are sitting at. Every path in it is relative
+# to ~/selfhost/shlink/, which lets one file work on macOS, Linux and Windows.
+# SQLite is ignored: upstream says it is for testing only. The database is a
+# named volume, not a bind mount, because PostgreSQL chowns its data directory
+# to its own uid and a home-directory bind mount cannot allow that on Windows.
+# Digests read on 2026-08-05; both images publish amd64 and arm64.
+# DEFAULT_DOMAIN is localhost:8086, so links resolve on this computer only.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: postgres:16.14-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
+    container_name: shlink-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: shlink
+      POSTGRES_USER: shlink
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - shlink-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shlink -d shlink"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other container.
+
+  shlink:
+    image: shlinkio/shlink:5.1.5@sha256:77b8eb87bcb1a56bd0ecc590398d415545e5ba83414f28d37dc565a91c3c50b2
+    container_name: shlink
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      DB_DRIVER: postgres
+      DB_HOST: postgres
+      DB_NAME: shlink
+      DB_USER: shlink
+      # Nothing terminates TLS here, so the links this prints say http.
+      IS_HTTPS_ENABLED: "false"
+      # No IP tracking: no GeoLite2 download, no MaxMind account. Visits
+      # are still counted, not placed on a map.
+      DISABLE_IP_TRACKING: "true"
+    ports:
+      # Loopback only: no other device on the wifi can reach 8086.
+      - "127.0.0.1:8086:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  shlink-pgdata:

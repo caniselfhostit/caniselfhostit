@@ -188,16 +188,18 @@ cd /srv/healthchecks
 docker compose up -d
 sleep 20
 curl -sS -o /dev/null -w '%{http_code}\n' https://<DOMAIN>/api/v3/status/
-curl -sS -o /dev/null -w '%{http_code}\n' https://<DOMAIN>/accounts/signup/
+curl -sS https://<DOMAIN>/accounts/login/ | grep -c 'id="signup-modal"'
 ```
 
-Assert: both print `200`, and print what you received. The first is the image's own
-health-check endpoint and answers 200 only when the database connection is alive, which is
-worth more than a green `docker ps`. If either misses, stop, run
-`docker compose logs --tail 40 healthchecks`, and name the likely earlier step. The first
-screen at https://<DOMAIN> is a sign-in form offering to email a sign-in link.
+Assert: the first prints `200`, the second a number greater than 0, and print what you
+received. The first is the image's own health-check endpoint and answers 200 only when the
+database connection is alive, which is worth more than a green `docker ps`. If either misses,
+stop, run `docker compose logs --tail 40 healthchecks`, and name the likely earlier step. The
+first screen at https://<DOMAIN> is a sign-in form headed `Log In to Checks`, with an
+`Email Me a Link` button and a `Sign Up` link that opens the sign-up form. `/accounts/signup/`
+takes POST only, so there is no page to open there.
 
-STOP: tell the user to open https://<DOMAIN>/accounts/signup/, sign up with <ADMIN_EMAIL>, and
+STOP: tell the user to open https://<DOMAIN>, click `Sign Up`, sign up with <ADMIN_EMAIL>, and
 click the link they are emailed. Wait until they confirm they are signed in. If no mail
 arrives, send them to step 10 before anything is changed.
 
@@ -208,11 +210,13 @@ sed -i 's/^REGISTRATION_OPEN=True$/REGISTRATION_OPEN=False/' /srv/healthchecks/.
 cd /srv/healthchecks && docker compose up -d --force-recreate
 sleep 20
 curl -sS -o /dev/null -w '%{http_code}\n' https://<DOMAIN>/api/v3/status/
-curl -sS -o /dev/null -w '%{http_code}\n' https://<DOMAIN>/accounts/signup/
+curl -sS https://<DOMAIN>/accounts/login/ | grep -c 'id="signup-modal"' || true
 ```
 
-Assert: the first prints `200`, the second anything other than `200`. Print both. The second is
-the security assert: it stops a stranger who finds the hostname creating an account here.
+Assert: the first prints `200`, the second `0`. Print both. That `0` is the security assert,
+`signup-modal` being the id of the sign-up form itself, so it counts the form gone from the
+log-in page; `grep -c` exits 1 counting nothing, hence `|| true`. It stops a stranger who finds
+the hostname creating an account here.
 
 ## 8. First backup and restore
 

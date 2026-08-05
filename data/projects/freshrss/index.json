@@ -31,7 +31,10 @@
   "timeToRunningMin": 10,
   "license": "AGPL-3.0",
   "officialCompose": "none",
-  "localVariant": false,
+  "local": {
+    "fit": "caveat",
+    "note": "FreshRSS only fetches feeds while this computer is awake and Docker is running, and no phone app can reach it from outside the machine, so the reading happens where the install is."
+  },
   "quote": {
     "text": "All other folders belong to the source code and are restored by a fresh install or upgrade.",
     "source": "FreshRSS documentation, Backup",
@@ -77,5 +80,5 @@
   ],
   "pagePriority": 2,
   "contentUpdatedAt": "2026-08-05",
-  "contentHash": "ce15e606c6d7486423b8f636b1170326943fdd4cf48fde5e4c607cc41ea0e278"
+  "contentHash": "73803f05c6a37e4ca0684e8290e9ae080c23a6f74f518ba1ad4f224927ac6643"
 }
