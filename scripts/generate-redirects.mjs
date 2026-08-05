@@ -79,10 +79,18 @@ if (orphans.length) console.error(`ORPHAN PROJECTS (no redirect target): ${orpha
 const width = Math.max(...pairs.map(([p]) => `/self-host/${p}.md`.length));
 const out = pairs
   .flatMap(([proj, sa]) => [
+    // Three forms per pair: slashed, bare (Workers asset matching is exact-path,
+    // so /self-host/excalidraw without the slash falls through to the 404 page
+    // unless named), and the .md mirror.
     `${`/self-host/${proj}/`.padEnd(width)}  /self-host/${sa}/  301`,
+    `${`/self-host/${proj}`.padEnd(width)}  /self-host/${sa}/  301`,
     `${`/self-host/${proj}.md`.padEnd(width)}  /self-host/${sa}.md  301`,
   ])
   .join('\n');
 
-console.log(`# ${pairs.length} pairs`);
+console.log(`# public/_redirects — old project-keyed URLs -> new SaaS-keyed URLs.
+# Cloudflare Workers static assets honor this file (same as public/_headers).
+# GENERATED: node scripts/generate-redirects.mjs . > public/_redirects
+# The validator fails CI when this file drifts from what data/ implies.
+# ${pairs.length} pairs, 3 rules each (slashed, bare, .md mirror), all 301.`);
 console.log(out);
