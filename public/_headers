@@ -9,3 +9,8 @@
 # so a short edge TTL is safe and keeps social scrapers fast.
 /og/*
   Cache-Control: public, max-age=3600
+
+# Hashed build assets are immutable by construction (declared here explicitly:
+# the adapter only auto-injects this rule when no user _headers file exists).
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
