@@ -79,6 +79,19 @@ Disallow: /api/
 # Filters on the directory (tier, category, license, RAM) mint no URLs at all —
 # they are client-side DOM state — so any query string that shows up is tracking
 # or a hand-built experiment, and neither belongs in an index.
+# --- Social preview fetchers -------------------------------------------------
+# Named explicitly so the wildcard stanza's query-string disallow can never
+# block a link-card fetch. Twitterbot in particular honors robots.txt for the
+# og:image request itself — an unnamed Twitterbot means no cards on X.
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
 User-agent: *
 Allow: /
 Disallow: /api/

@@ -24,9 +24,12 @@ const {
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, SITE.origin).href;
-// Version query = cache-buster. OG images are regenerated in place, so a stale
-// card at any edge must never outlive a deploy.
-const ogUrl = ogImage ? new URL(`${ogImage}?v=${__BUILD_ID__}`, SITE.origin).href : null;
+// OG URLs are deliberately query-free: Twitterbot honors robots.txt (whose
+// wildcard stanza disallows /*?) when fetching card images, and social
+// scrapers cache cards by exact URL — a build-id buster would force a
+// re-scrape every deploy. Freshness comes from the 1h edge TTL on /og/*
+// in public/_headers instead.
+const ogUrl = ogImage ? new URL(ogImage, SITE.origin).href : null;
 
 // Analytics is opt-in by environment: no key, no third-party script, and local
 // development never phones home.
