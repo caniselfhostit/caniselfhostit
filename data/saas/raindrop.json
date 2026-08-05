@@ -1,0 +1,36 @@
+{
+  "slug": "raindrop",
+  "name": "Raindrop.io",
+  "domain": "raindrop.io",
+  "whyPeoplePay": "Raindrop is the rare paid tool that is cheap enough to forget about, and it earns that by keeping permanent copies of the pages you saved, searching inside them, and syncing to apps on every platform without ever asking you to think about it. The free tier already does unlimited bookmarks, so Pro is bought for the archive and the search rather than for capacity.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Unlimited bookmarks and collections on unlimited devices, without permanent copies or full-text search."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 3,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Adds full-text search, permanent copies of saved pages, more upload space, cloud backup and duplicate cleanup. Annual billing is the advertised path, at roughly $28 a year."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-05",
+    "source": "https://raindrop.io/pro/",
+    "currency": "USD",
+    "confidence": "low",
+    "note": "TODO: re-read the vendor page and raise this to high. Raindrop's Pro and buy pages render their prices as images, so no figure was readable in the page text we fetched on 2026-08-05; the plan features quoted above did come from that page. The $3 monthly figure is what 2026 secondary sources report for annual billing, around $28 a year, and they disagree with each other by up to fifty cents. Nobody on this project has read a price off raindrop.io, so do not build a headline savings claim on this number."
+  },
+  "ranked": [
+    {
+      "project": "linkwarden",
+      "rationale": "The only self-hosted option that matches the reason people pay Raindrop: it keeps its own copy of every page it saves, as a screenshot, a PDF and a single-file HTML archive, so a dead link is still readable years later. It costs a PostgreSQL you operate and a headless browser that wants real memory, and searching inside those archives needs MeiliSearch, which our install leaves out."
+    }
+  ],
+  "evaluatedNotTested": []
+}

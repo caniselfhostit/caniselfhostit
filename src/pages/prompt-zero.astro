@@ -1,8 +1,1038 @@
 ---
-import StubPage from '../components/StubPage.astro';
+import Base from '../layouts/Base.astro';
+import CopyButton from '../components/CopyButton.astro';
+import { SITE } from '../lib/site.js';
+
+const title = `Prompt Zero — from nothing to a hardened server · ${SITE.name}`;
+const description =
+  'The one-time setup: install Claude Code on macOS, Windows or Linux, buy a VPS, make ssh vps work, then run one prompt that hardens the server end to end. The honest monthly bill included.';
+
+// The bill is a table because it is a table. Every figure carries the reason it
+// is approximate; the agent plan is deliberately not asserted as a fixed price.
+const BILL = [
+  {
+    item: 'Anthropic account, paid plan',
+    cost: 'from about $20/mo',
+    note: 'Claude Code needs a paid plan or API billing. Currently from about $20/mo — check anthropic.com/pricing for today\u2019s number. This is the one line that is not per app: the same plan installs all of them.',
+    href: 'https://www.anthropic.com/pricing',
+  },
+  {
+    item: 'VPS, Hetzner CX22-class',
+    cost: '~\u20ac4\u20136/mo',
+    note: '2 vCPU, 4 GB RAM, 40 GB disk, billed in euros, plus a small charge for the IPv4 address. Destroy the server and the meter stops the same hour.',
+    href: 'https://www.hetzner.com/cloud',
+  },
+  {
+    item: 'A domain',
+    cost: '~$10/yr',
+    note: 'One domain covers every app you ever run: notes.example.com, photos.example.com, invoices.example.com. It is the only annual commitment here.',
+    href: null,
+  },
+];
+
+// The exact block that makes `ssh vps` work. 203.0.113.10 is a documentation
+// address (RFC 5737) on purpose: nobody can paste this and reach a real server.
+const SSH_CONFIG = `Host vps
+  HostName 203.0.113.10
+  User root
+  IdentityFile ~/.ssh/id_ed25519
+  IdentitiesOnly yes`;
+
+const END_STATE = `os          Ubuntu 24.04, fully patched
+login       one non-root user, in the sudo group, no password set
+ssh         key-only · root login off · password login off · port 22
+firewall    ufw, default deny inbound, allow outbound · open: 22, 80, 443
+updates     unattended-upgrades on · automatic reboot off, on purpose
+docker      Docker Engine + Compose plugin, from Docker's apt repository
+            your user is in the docker group, which is root-equivalent here
+caddy       systemd service, enabled and active · stock Caddyfile
+            automatic TLS, issued on the first request for a hostname
+layout      /srv is empty. Each app gets /srv/<app>/ and writes nothing outside it.
+your way in ssh vps`;
+
+// The prompt. Written against docs/prompt-style-guide.md: numbered blocks, an
+// acceptance criterion per block, one STOP: barrier at the point where getting
+// the order wrong locks the reader out, no :latest, no piping a URL into a shell.
+const PROMPT = `You are Claude Code on the user's machine. The user has a fresh Ubuntu 24.04 server from a cloud
+provider, the SSH public key from this machine was added when the server was created, and
+\`ssh vps\` currently logs in as root.
+
+Harden that server end to end: one non-root login user with sudo, key-only SSH, a default-deny
+firewall with 22, 80 and 443 open, automatic security updates, Docker Engine with the Compose
+plugin, and Caddy running under systemd. Verify every block before starting the next one, and
+finish by printing a checklist of what changed.
+
+Run every command on the server over \`ssh vps\` unless a step says otherwise. Blocks 1 to 5 run as
+root. From block 6 on, \`ssh vps\` logs in as <USER> and anything touching /etc carries \`sudo\`.
+
+Never print, echo, or repeat in your summary the contents of any key, keyfile, or credential on
+either machine.
+
+## 1. Preflight
+
+If <USER> is still literal, ask the user once what to call their login account, then stop until
+they answer. Lowercase letters and digits, no spaces, not \`admin\`, not \`root\`.
+
+\`\`\`bash
+grep PRETTY_NAME /etc/os-release
+uname -m
+id -un
+ls -A /srv
+\`\`\`
+
+Assert: the release is Ubuntu 24.04, the architecture is x86_64 or aarch64, and \`id -un\` prints
+\`root\`. If the login is not root, ask the user which account the provider gave them and stop.
+
+If \`ls -A /srv\` prints anything, or the user says this box already runs something they care
+about, stop and say so. This prompt assumes a server whose total loss would cost nothing.
+
+## 2. Update the system
+
+\`\`\`bash
+apt-get update
+DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
+test -f /var/run/reboot-required && echo REBOOT-NEEDED || echo no-reboot-needed
+\`\`\`
+
+If the last line printed REBOOT-NEEDED, reboot now with \`reboot\`. That ends the connection. Wait
+about 30 seconds, then open a new one and check:
+
+\`\`\`bash
+ssh vps 'uptime -p'
+\`\`\`
+
+Assert: it answers, and reports minutes rather than days. Rebooting here costs 30 seconds.
+Rebooting after nine services are installed costs an argument about which one failed to come back.
+
+## 3. Create the login user
+
+\`\`\`bash
+adduser --disabled-password --gecos "" <USER>
+usermod -aG sudo <USER>
+install -d -m 700 -o <USER> -g <USER> /home/<USER>/.ssh
+install -m 600 -o <USER> -g <USER> /root/.ssh/authorized_keys /home/<USER>/.ssh/authorized_keys
+\`\`\`
+
+Give that account sudo without a password prompt, and validate the file before anything depends
+on it:
+
+\`\`\`bash
+echo "<USER> ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/90-<USER>
+chmod 440 /etc/sudoers.d/90-<USER>
+visudo -c -f /etc/sudoers.d/90-<USER>
+id <USER>
+wc -l < /home/<USER>/.ssh/authorized_keys
+\`\`\`
+
+Assert: \`visudo -c\` prints \`parsed OK\`, \`id\` lists the \`sudo\` group, and the key file has at
+least one line. A malformed file under /etc/sudoers.d breaks sudo for every account on the box,
+which is why it is checked in the same block that writes it.
+
+The account has no password, on purpose. SSH becomes key-only two blocks from now, so a password
+would be an unused secret sitting in a password manager. Tell the user in one sentence: their SSH
+key is the only credential to this server, sudo will not ask them for anything, and the key
+belongs on their laptop with a passphrase and nowhere else.
+
+## 4. Firewall
+
+Open 22 in the same block that enables the firewall, before enabling it. \`ufw enable\` under a
+default-deny policy with no SSH rule ends the session and does not give it back.
+
+\`\`\`bash
+ufw default deny incoming
+ufw default allow outgoing
+ufw allow 22/tcp
+ufw allow 80/tcp
+ufw allow 443/tcp
+ufw --force enable
+ufw status verbose
+\`\`\`
+
+22 is the only way in. 80 is where the certificate challenge arrives, and where Caddy answers with
+a redirect to HTTPS. 443 is where every app the user installs will answer.
+
+Assert: the output contains \`Status: active\`, \`deny (incoming)\`, \`allow (outgoing)\`, and allow
+rules for 22, 80 and 443 and nothing else. Application and database ports never appear in this
+list for the life of the server: they bind to 127.0.0.1 in compose, and Caddy reaches them there.
+
+## 5. STOP before the door closes
+
+The next block turns off password authentication and root login. If the new account cannot get in
+yet, that block locks the user out of their own server. This is the most common way a first VPS
+dies, and the order of these two steps is the entire difference.
+
+STOP: tell the user to do these three things in a second terminal window, and wait. Do not
+continue until they confirm all three.
+
+1. Open ~/.ssh/config and change \`User root\` to \`User <USER>\`.
+2. Run \`ssh vps\`. It must log in, and \`whoami\` must print <USER>.
+3. In that same session run \`sudo -n true; echo $?\`. It must print \`0\`.
+
+If any of the three fails, fix it here, in this block. Do not proceed on the basis that it will
+probably work.
+
+Then state the recovery path once, so the stakes are clear rather than frightening: if a later
+step does lock them out, the provider's web console still reaches the machine, and rebuilding this
+server from scratch takes about a minute, because nothing on it is theirs yet.
+
+## 6. Key-only SSH
+
+\`\`\`bash
+sudo tee /etc/ssh/sshd_config.d/99-hardening.conf >/dev/null <<'EOF'
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PermitRootLogin no
+PubkeyAuthentication yes
+X11Forwarding no
+MaxAuthTries 3
+EOF
+sudo chmod 644 /etc/ssh/sshd_config.d/99-hardening.conf
+sudo sshd -t
+sudo systemctl restart ssh
+sudo sshd -T | grep -E '^(passwordauthentication|permitrootlogin|kbdinteractiveauthentication) '
+\`\`\`
+
+Assert: \`sshd -t\` prints nothing and exits 0, and the last command prints
+\`passwordauthentication no\`, \`permitrootlogin no\` and \`kbdinteractiveauthentication no\`. Running
+\`sshd -t\` before the restart is the whole safety net here: a typo in that file plus a restart is a
+locked door with no error message.
+
+Open a new connection and prove the door still opens:
+
+\`\`\`bash
+ssh -o BatchMode=yes vps 'whoami'
+\`\`\`
+
+Assert: it prints <USER>. Sessions that are already open survive the restart, so a fresh
+connection is the only honest test.
+
+SSH stays on port 22. Moving it reduces log noise and nothing else, and it breaks every tool that
+assumes the default.
+
+## 7. Automatic security updates
+
+\`\`\`bash
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y unattended-upgrades
+sudo dpkg-reconfigure -f noninteractive unattended-upgrades
+cat /etc/apt/apt.conf.d/20auto-upgrades
+sudo unattended-upgrade --dry-run -v | tail -3
+\`\`\`
+
+Assert: 20auto-upgrades contains \`APT::Periodic::Update-Package-Lists "1";\` and
+\`APT::Periodic::Unattended-Upgrade "1";\`, and the dry run exits 0. If either line is missing or
+set to 0, write the file and re-read it:
+
+\`\`\`bash
+sudo tee /etc/apt/apt.conf.d/20auto-upgrades >/dev/null <<'EOF'
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+EOF
+cat /etc/apt/apt.conf.d/20auto-upgrades
+\`\`\`
+
+Automatic reboots stay off. Security patches install themselves; a kernel update that needs a
+reboot waits for the user. An unattended 3am reboot during a database write is a worse outage than
+a kernel that is a week old. Tell the user to run \`cat /var/run/reboot-required\` when they log in,
+and to reboot when it says something.
+
+## 8. Docker Engine and the Compose plugin
+
+From Docker's apt repository, with its signing key on disk. Not a script piped into a shell: apt
+gives a signed repository, one upgrade path, and packages the distribution can account for.
+
+\`\`\`bash
+sudo apt-get install -y ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $VERSION_CODENAME) stable" | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo usermod -aG docker <USER>
+\`\`\`
+
+\`\`\`bash
+sudo systemctl is-enabled docker
+sudo systemctl is-active docker
+sudo docker version --format 'server {{.Server.Version}}'
+sudo docker compose version
+\`\`\`
+
+Assert: \`enabled\`, \`active\`, and both versions print. Record both version strings for block 12.
+
+Group membership only applies to new sessions, so confirm it the way the user will meet it:
+
+\`\`\`bash
+ssh vps 'docker compose version'
+\`\`\`
+
+Assert: a version prints, with no \`sudo\` and no permission error. If it reports permission denied
+on /var/run/docker.sock, that session predates the group change; open another one.
+
+Tell the user plainly: membership in the \`docker\` group is equivalent to root on this server,
+because anyone who can run \`docker\` can mount the host filesystem into a container. That is the
+accepted trade for not typing sudo in front of every container command, and it is the reason this
+server has exactly one human account on it.
+
+## 9. Caddy
+
+From Caddy's own apt repository, so \`apt-get upgrade\` keeps it patched with everything else.
+
+\`\`\`bash
+sudo apt-get install -y debian-keyring debian-archive-keyring apt-transport-https curl
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list >/dev/null
+sudo apt-get update
+sudo apt-get install -y caddy
+\`\`\`
+
+\`\`\`bash
+caddy version
+sudo systemctl is-enabled caddy
+sudo systemctl is-active caddy
+curl -sSI http://127.0.0.1 | head -1
+\`\`\`
+
+Assert: a version prints, the service is \`enabled\` and \`active\`, and the last line contains
+\`200\`, which is Caddy's stock page answering on port 80. Record the version for block 12.
+
+Two facts to state to the user, not to schedule: Caddy requests a certificate the first time a
+hostname reaches it and renews on its own, so there is no cron job to add; and port 80 stays open
+because that is where the certificate challenge arrives.
+
+Leave /etc/caddy/Caddyfile as installed. Every install prompt on this site appends its own site
+block and reloads.
+
+## 10. What usually goes wrong
+
+Three failures account for most of them. The lockout in block 6, which is why block 5 is a hard
+stop. \`docker\` refusing to run without sudo in the same session that added the group, which is
+not a broken install and needs nothing but a new connection. And a provider that has not finished
+verifying the account: the server appears in the panel, \`ssh vps\` times out, and nothing in this
+prompt is wrong. Check the provider's console before debugging SSH.
+
+## 11. Out of scope
+
+- Do not install fail2ban, an intrusion detector, or any other add-on. Key-only SSH behind a
+  default-deny firewall is the baseline every install prompt on this site assumes, and a second
+  moving part here is one nobody verified.
+- Do not move SSH to a non-standard port.
+- Do not create a DNS record, a Caddy site block, or a TLS certificate. The first install prompt
+  does that, with a real hostname.
+- Do not install an application, a database, or a language runtime. This prompt produces a
+  hardened empty server and stops.
+- Do not open another firewall port.
+
+## 12. The closing checklist
+
+Print exactly this, filled in from what the run measured, and nothing after it:
+
+\`\`\`
+login user       <USER> · in the sudo group · sudo without a password · no password set
+root ssh login   disabled
+password ssh     disabled
+firewall         default deny inbound, allow outbound · open: 22, 80, 443
+auto updates     unattended-upgrades enabled · automatic reboot off
+docker           server <version> · compose <version> · <USER> in the docker group
+caddy            <version> · systemd enabled and active · stock page on :80
+reboot pending   yes or no, from /var/run/reboot-required
+your way in      ssh vps
+\`\`\`
+
+Then tell the user two things and stop. Their SSH key is the only credential to this server. And
+the next prompt they paste is an install prompt from a project page, which assumes every line of
+that checklist is true.`;
+
+const promptBytes = new TextEncoder().encode(PROMPT).length;
+
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: 'Prompt Zero: from nothing installed to a hardened server',
+    description: description,
+    totalTime: 'PT45M',
+    step: [
+      {
+        '@type': 'HowToStep',
+        name: 'Install Claude Code and make an SSH key',
+        text: 'On macOS, Windows (WSL2) or Linux: a terminal you can find again, Claude Code installed and logged in, and ssh-keygen run once.',
+      },
+      {
+        '@type': 'HowToStep',
+        name: 'Get a VPS',
+        text: 'A Hetzner CX22-class server running Ubuntu 24.04, with your SSH public key added at creation. DigitalOcean is the runner-up.',
+      },
+      {
+        '@type': 'HowToStep',
+        name: 'Make ssh vps work',
+        text: 'Four lines in ~/.ssh/config give the server the alias every prompt on this site uses.',
+      },
+      {
+        '@type': 'HowToStep',
+        name: 'Run Prompt Zero',
+        text: 'One prompt hardens the server: non-root sudo user, key-only SSH, default-deny firewall, unattended security upgrades, Docker Engine with the Compose plugin, and Caddy under systemd.',
+      },
+      {
+        '@type': 'HowToStep',
+        name: 'Check the end state',
+        text: 'The prompt finishes by printing a checklist. Every per-app install prompt assumes exactly that state.',
+      },
+    ],
+  },
+];
 ---
 
-<StubPage
-  heading="Prompt Zero"
-  note="From a machine with nothing installed — not even git — to a hardened server with an AI agent ready: per-OS setup, the honest monthly bill, a fresh SSH key, and a firewalled box. Every project page starts here."
-/>
+<Base {title} {description} {jsonld}>
+  <article class="wrap pz prose">
+    <p class="microlabel pz-eyebrow">Step 0 · every project page starts here</p>
+    <h1>Prompt Zero</h1>
+    <p class="lede">
+      From a machine with nothing installed — not even git — to a hardened server with Claude Code
+      ready to work on it.
+    </p>
+    <p>
+      It takes two prompts: this page's, once — then one per app. That is the honest version of the
+      promise. Anyone selling you "one prompt from nothing" is counting the setup as free.
+    </p>
+
+    <h2 id="who">Who this is for</h2>
+    <p>
+      You pay for software you'd rather run yourself. You can copy, paste, and read what comes back.
+      You have never administered a server, and you do not want a career in it.
+    </p>
+    <p>
+      You will not need to know what a reverse proxy is by the end of this page. You will have one
+      running, patched, and holding a certificate it renews without you. Set aside an evening for
+      the first time through — most of it is waiting on a provider and reading two prices.
+    </p>
+
+    <nav class="toc" aria-label="On this page">
+      <ol>
+        <li><a href="#bill">The honest bill</a></li>
+        <li><a href="#your-machine">Set up your machine</a></li>
+        <li><a href="#vps">Get a VPS</a></li>
+        <li><a href="#permission">The permission truth</a></li>
+        <li><a href="#prompt">Prompt Zero itself</a></li>
+        <li><a href="#end-state">Where you end up</a></li>
+      </ol>
+    </nav>
+
+    <h2 id="bill">The honest bill</h2>
+    <p>
+      Before anything else, because it is the part that decides whether you keep going. Three lines,
+      no bundle, no trial that turns into a subscription.
+    </p>
+
+    <table class="bill">
+      <thead>
+        <tr>
+          <th scope="col">What</th>
+          <th scope="col">Cost</th>
+          <th scope="col">Why it is approximate</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          BILL.map((row) => (
+            <tr>
+              <th scope="row">{row.item}</th>
+              <td class="cost">{row.cost}</td>
+              <td class="why">
+                {row.note}
+                {row.href && (
+                  <>
+                    {' '}
+                    <a href={row.href} rel="noopener">Pricing page ↗</a>
+                  </>
+                )}
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+
+    <p class="provenance">
+      Vendor list prices, each in the currency that vendor bills in. They drift, so the pricing
+      pages are linked rather than copied. <strong>No affiliate links anywhere on this site — the
+      recommendations owe nobody anything.</strong>
+    </p>
+    <p>
+      Call it about $25 a month while you are learning, and notice where it goes: the agent is the
+      biggest line, and it is not per app. Cancel the server and that charge stops the same hour.
+      The domain is the only thing you are committed to for a year.
+    </p>
+
+    <h2 id="your-machine">Set up your machine</h2>
+    <p>
+      Three branches, one per operating system. Open yours, ignore the others. All three end in the
+      same place: a terminal you can find again, <code>claude</code> available in it, and an SSH key
+      that exists.
+    </p>
+    <p class="note">
+      One thing this page does not do: reprint the Claude Code install command. It changes, and this
+      site's own rule bans piping an unpinned script from a web page into a shell. The current
+      command lives on{' '}
+      <a href="https://docs.claude.com/en/docs/claude-code/setup" rel="noopener">the Claude Code
+      setup docs</a>, which is also the only place it stays correct. Read it before you run it —
+      that is the habit this whole site is trying to build.
+    </p>
+
+    <details class="branch">
+      <summary>macOS — Apple Silicon and Intel</summary>
+      <ol>
+        <li>
+          Open Terminal: press Command and Space, type <code>Terminal</code>, press Return. To find
+          it again later it lives in Applications, then Utilities. Drag it to your Dock now; you will
+          want it tomorrow.
+        </li>
+        <li>
+          Install Claude Code by following{' '}
+          <a href="https://docs.claude.com/en/docs/claude-code/setup" rel="noopener">the setup
+          docs</a>. Then run <code>claude --version</code>. It must print a version number. Run{' '}
+          <code>claude</code> once and log in to your Anthropic account in the browser window it
+          opens.
+        </li>
+        <li>
+          Make an SSH key: <code>ssh-keygen -t ed25519 -C "prompt-zero"</code>. Accept the default
+          file location. Set a passphrase — this key is about to be the only credential to a server.
+          If the command warns that <code>~/.ssh/id_ed25519</code> already exists, press Control-C
+          and keep the key you have.
+        </li>
+        <li>
+          Load it into the agent so you type that passphrase once per boot:{' '}
+          <code>ssh-add --apple-use-keychain ~/.ssh/id_ed25519</code>.
+        </li>
+        <li>
+          Print the public half, which is the part you give away:{' '}
+          <code>cat ~/.ssh/id_ed25519.pub</code>. It is one line starting{' '}
+          <code>ssh-ed25519</code>. Copy it.
+        </li>
+      </ol>
+      <p>
+        Apple Silicon and Intel take identical steps. The only difference you may trip over is
+        Homebrew's location if you install it later, <code>/opt/homebrew</code> on Apple Silicon
+        against <code>/usr/local</code> on Intel, which matters only when you follow instructions
+        written for the other machine. Your laptop's architecture has nothing to do with the
+        server's: the VPS is x86 either way, and the agent, not your CPU, is what talks to it.
+      </p>
+      <p class="branch-end mono">
+        Branch complete · claude --version prints a version · ~/.ssh/id_ed25519.pub exists
+      </p>
+    </details>
+
+    <details class="branch">
+      <summary>Windows — the WSL2 reality, stated plainly</summary>
+      <p>
+        Claude Code wants a Linux shell, and on Windows that means WSL2. This is the longest branch
+        of the three and the one with reboots in it. Budget an hour, and read the trap at the end
+        before you start: it is the one that costs people an afternoon.
+      </p>
+      <ol>
+        <li>
+          Open Windows Terminal or PowerShell <strong>as Administrator</strong> (right-click, Run as
+          administrator) and run <code>wsl --install</code>. Reboot when it asks. That is reboot one.
+        </li>
+        <li>
+          If it fails with a virtualization error, hardware virtualization is off in your firmware.
+          You have to reboot into BIOS or UEFI to turn it on: the key is usually F2, F10, or Delete,
+          pressed during the vendor logo, and the setting is called Intel VT-x, AMD-V, or SVM Mode
+          depending on who made the board. Enable it, save, and let Windows come back up. That is
+          reboot two, and a trip into a screen that looks nothing like Windows. It is normal, and it
+          is the single most common reason this branch stalls.
+        </li>
+        <li>
+          After the reboot, run <code>wsl --install -d Ubuntu</code> if a distribution was not
+          installed already, then <code>wsl -l -v</code>. Ubuntu must be listed with{' '}
+          <strong>VERSION 2</strong>. If it says 1, run <code>wsl --set-version Ubuntu 2</code>.
+        </li>
+        <li>
+          Open the Ubuntu shell (Start menu, type Ubuntu) and set your Linux username and password
+          when it asks. Everything from here happens <em>inside that shell</em>, not in PowerShell.
+        </li>
+        <li>
+          Install Claude Code inside Ubuntu by following{' '}
+          <a href="https://docs.claude.com/en/docs/claude-code/setup" rel="noopener">the setup
+          docs</a>, then run <code>claude --version</code>. Run <code>claude</code> once and log in.
+        </li>
+        <li>
+          Make the key <em>inside Ubuntu</em>:{' '}
+          <code>ssh-keygen -t ed25519 -C "prompt-zero"</code>, default location, with a passphrase.
+          Then <code>eval "$(ssh-agent -s)"</code> and{' '}
+          <code>ssh-add ~/.ssh/id_ed25519</code>. WSL starts no agent for you, so this pair of
+          commands belongs in your session each time, or in your{' '}
+          <code>~/.bashrc</code>.
+        </li>
+        <li>Print the public half: <code>cat ~/.ssh/id_ed25519.pub</code> and copy the line.</li>
+      </ol>
+      <p class="trap">
+        <strong>The trap.</strong> Windows has two separate filesystems and each has its own{' '}
+        <code>.ssh</code> directory. A key made in PowerShell lands in{' '}
+        <code>C:\Users\you\.ssh\</code>. A key made in Ubuntu lands in the Linux home directory,
+        reachable from Windows as <code>\\wsl.localhost\Ubuntu\home\you\.ssh\</code>. They are not
+        the same place and neither one can see the other's key. If you generate a key in PowerShell
+        and then run the agent in WSL, <code>ssh vps</code> fails with a permission error that says
+        nothing about the real cause. Decide once, at the start: everything happens inside WSL. Keys,{' '}
+        <code>~/.ssh/config</code>, the agent, the prompts. If you already made a key in PowerShell,
+        make a second one in Ubuntu and use that; copying keys between the two filesystems drops the
+        file permissions SSH insists on.
+      </p>
+      <p class="branch-end mono">
+        Branch complete · inside the Ubuntu shell: claude --version prints a version ·
+        ~/.ssh/id_ed25519.pub exists
+      </p>
+    </details>
+
+    <details class="branch">
+      <summary>Linux — the short one</summary>
+      <ol>
+        <li>
+          Open your terminal. Install Claude Code by following{' '}
+          <a href="https://docs.claude.com/en/docs/claude-code/setup" rel="noopener">the setup
+          docs</a>, then run <code>claude --version</code> and <code>claude</code> once to log in.
+        </li>
+        <li>
+          <code>ssh-keygen -t ed25519 -C "prompt-zero"</code>, default location, with a passphrase.
+        </li>
+        <li>
+          If your desktop is not already running an agent:{' '}
+          <code>eval "$(ssh-agent -s)"</code> then <code>ssh-add ~/.ssh/id_ed25519</code>.
+        </li>
+        <li><code>cat ~/.ssh/id_ed25519.pub</code> and copy the line.</li>
+      </ol>
+      <p class="branch-end mono">
+        Branch complete · claude --version prints a version · ~/.ssh/id_ed25519.pub exists
+      </p>
+    </details>
+
+    <h2 id="vps">Get a VPS</h2>
+    <p>
+      A VPS is a computer you rent by the hour, in a building with better power and network than
+      yours. You will destroy your first one, probably twice, and that is the correct use of it.
+    </p>
+
+    <h3>Hetzner — the default</h3>
+    <p>
+      Cheapest credible option for this, by a margin wide enough to matter at hobby scale. Take a{' '}
+      <strong>CX22-class</strong> server with <strong>Ubuntu 24.04</strong>, in the location nearest
+      to you. 4 GB of RAM clears the floor for most of this catalog. Do not take a 1 GB box to save
+      two euros: it survives the install and dies during the first real import, and the failure
+      looks random when it was decided at checkout.
+    </p>
+    <p>
+      <strong>Add your SSH key on the creation screen</strong>, in the SSH keys section, by pasting
+      the <code>ssh-ed25519 …</code> line you copied. This is the whole reason there is no password
+      in this guide. If you skip it, the provider emails you a root password and you are already in
+      a worse position than this page assumes.
+    </p>
+    <p>
+      Two things about Hetzner that people meet the hard way, so meet them here instead:
+    </p>
+    <ul>
+      <li>
+        <strong>Identity checks.</strong> New accounts are sometimes asked to verify who they are,
+        with a photo ID or a small card transaction, before the first server will boot. It is not a
+        scam and it is not a rejection. It can take hours, occasionally into the next day. Start the
+        signup before the evening you plan to build something.
+      </li>
+      <li>
+        <strong>Outbound mail is blocked.</strong> Ports 25, 465 and 587 are closed on new accounts
+        until you ask support to open them, which means anything that sends email — password resets,
+        invitations, alerts — silently does not. Request the unblock on day one, in a support
+        ticket, and treat the lead time as days. The rule is documented in{' '}
+        <a href="https://docs.hetzner.com/cloud/servers/faq/" rel="noopener">Hetzner's cloud-server
+        FAQ</a>. Every prompt on this site is written so nothing depends on mail on day one.
+      </li>
+    </ul>
+
+    <h3>DigitalOcean — the runner-up</h3>
+    <p>
+      Pick this one if the Hetzner signup stalls or asks for more than you want to give. The signup
+      is smoother, the documentation is friendlier, and it costs a bit more for the same machine.
+      Take a Basic droplet with Ubuntu 24.04 and <strong>at least 2 GB of RAM</strong> — the
+      entry-level 1 GB droplet is under the floor for most of the catalog, and 1 GB of RAM is where
+      the OOM killer lives. Same rule about the SSH key: add it on the creation page, not
+      afterwards. Outbound mail is restricted on new accounts here too.
+    </p>
+    <p class="note">
+      Both are named because they were the two that survived a signup-friction and price check, not
+      because either pays us. There is nothing to disclose, which is the point of having nothing to
+      disclose.
+    </p>
+
+    <h3>Make <code>ssh vps</code> work</h3>
+    <p>
+      Every prompt on this site says <code>ssh vps</code> and means it literally. On your own
+      machine — in WSL if you are on Windows — create or open <code>~/.ssh/config</code> and add
+      this block, with the server's real IP address from the provider's panel in place of the
+      example:
+    </p>
+    <pre class="snippet" set:text={SSH_CONFIG} />
+    <p>
+      Then <code>chmod 600 ~/.ssh/config</code>, and run <code>ssh vps</code>. It asks once whether
+      you trust the host's fingerprint; type <code>yes</code>. You are now root on a server you have
+      not hardened, which is exactly the state the next section is about.
+    </p>
+    <p class="provenance">
+      203.0.113.10 is a documentation address reserved by RFC 5737. Nothing answers there.{' '}
+      <code>User root</code> is correct for now and changes to your own account in block 5 of the
+      prompt.
+    </p>
+
+    <h2 id="permission">The permission truth</h2>
+    <p>
+      When Claude Code asks to run <code>ssh vps</code> and you approve it, you are giving the agent
+      full control of that server. Not a subset. It can install, delete, reconfigure, reboot, and
+      read every file on the box, including anything you later put there. That is the deal, and no
+      allow-list in the tool makes it granular.
+    </p>
+    <p>The boundary that actually matters is the one either side of it:</p>
+    <ul>
+      <li>
+        <strong>It never controls your laptop.</strong> The agent runs on your machine and asks
+        before it does anything there. Your files, your keys, your other accounts are on the far
+        side of a prompt you answer every time.
+      </li>
+      <li>
+        <strong>The server is disposable.</strong> You created it in ninety seconds. If it ends up
+        in a state you do not understand, destroy it and run this page again. Nothing on the box
+        after Prompt Zero is yours yet, which makes this the cheapest possible moment to get it
+        wrong.
+      </li>
+    </ul>
+    <p>
+      Two consequences worth taking seriously. Point Prompt Zero at a <em>fresh, empty</em> server,
+      never at a box that already runs something you would miss. And once your data does live there,
+      the answer stops being "destroy it" and starts being "restore it" — which is why every install
+      prompt on this site takes a backup before it finishes, and why that will never be a paid
+      feature.
+    </p>
+    <p>
+      One more thing, stated here rather than buried: Prompt Zero puts your login account in the{' '}
+      <code>docker</code> group, and on this server that is equivalent to root. Anyone who can run{' '}
+      <code>docker</code> can mount the host filesystem into a container. It is the accepted trade
+      for not typing sudo in front of every container command, and it is why the box gets exactly
+      one human account.
+    </p>
+
+    <h2 id="prompt">Prompt Zero itself</h2>
+    <p>
+      Open Claude Code in any directory, paste the whole thing, and answer the questions it asks.
+      It stops once, on purpose, before the step that could lock you out. Nothing in it downloads an
+      instruction: every package comes from a signed apt repository, and every block ends in
+      something checkable rather than "make sure it works".
+    </p>
+
+    <div class="promptbox machine">
+      <div class="promptbox-bar">
+        <p class="microlabel">Prompt Zero · Claude Code · <span class="num">{promptBytes.toLocaleString('en-US')}</span> bytes · 12 blocks · 1 stop</p>
+        <CopyButton
+          target="#prompt-zero-text"
+          label="Copy prompt"
+          copiedLabel="Copied"
+          announce="Prompt Zero"
+          primary
+        />
+      </div>
+      <pre
+        id="prompt-zero-text"
+        class="promptbox-pre"
+        tabindex="0"
+        role="region"
+        aria-label="Prompt Zero, full text. Scrollable."
+        set:text={PROMPT}
+      />
+    </div>
+
+    <p class="provenance">
+      This prompt carries no clean-machine stamp yet. The harness verifies per-app installs on
+      disposable servers and writes the stamp from the run; when Prompt Zero has its own run, the
+      date lands here. Until then the honest label is: written against{' '}
+      <a href={`${SITE.repoUrl}/blob/main/docs/prompt-style-guide.md`} rel="noopener">the style
+      guide</a>, not yet machine-verified. The rules behind that distinction are on{' '}
+      <a href="/methodology/">/methodology</a>.
+    </p>
+
+    <h2 id="end-state">Where you end up</h2>
+    <p>
+      When the checklist prints, the server looks like this. Every per-app prompt on this site opens
+      by assuming it, which is the entire reason this page exists.
+    </p>
+    <pre class="endstate" set:text={END_STATE} />
+    <p>
+      What you do <em>not</em> have yet: a DNS record, a certificate, or a single application. Those
+      arrive with the first install prompt, which needs one thing from you that no agent can do —
+      a hostname pointed at that IP address.
+    </p>
+    <p class="next">
+      Next: pick something off <a href="/">The Rack</a> and paste one more prompt. If Prompt Zero
+      broke for you, the{' '}
+      <a href={`${SITE.repoUrl}/issues/new/choose`} rel="noopener">prompt-failure report</a> is the
+      most useful thing this project receives, and if it did something dangerous rather than
+      something broken, <a href="/security/">report it privately</a>.
+    </p>
+  </article>
+</Base>
+
+<style>
+  /* The page is wider than a prose column because the bill, the prompt, and the
+     end-state box are all tables of literals. Prose stays at reading width. */
+  .pz {
+    max-width: 900px;
+    padding-block: 3rem 4.5rem;
+  }
+
+  .pz > p,
+  .pz > ul,
+  .pz > ol,
+  .pz h1,
+  .pz h2,
+  .pz h3,
+  .pz details p,
+  .pz details li {
+    max-width: 68ch;
+  }
+
+  .pz-eyebrow {
+    margin-bottom: 0.75rem;
+  }
+
+  .lede {
+    font-size: 1.125rem;
+    line-height: 1.55;
+  }
+
+  .note,
+  .trap {
+    border-left: 2px solid var(--border);
+    padding-left: 15px;
+    color: var(--muted);
+  }
+
+  .trap {
+    border-left-color: var(--accent);
+    color: var(--fg);
+  }
+
+  /* on this page */
+  .toc {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding-block: 14px;
+    margin-block: 2.5rem;
+  }
+
+  .toc ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 22px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: toc;
+    font-size: 14px;
+  }
+
+  .toc li {
+    margin: 0;
+    counter-increment: toc;
+  }
+
+  .toc li::before {
+    content: counter(toc) '. ';
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .toc a {
+    text-decoration: none;
+  }
+
+  .toc a:hover {
+    text-decoration: underline;
+  }
+
+  /* the honest bill */
+  .bill {
+    width: 100%;
+    border-collapse: collapse;
+    margin-block: 1.5rem;
+    font-size: 14px;
+    text-align: left;
+  }
+
+  .bill th,
+  .bill td {
+    border-bottom: 1px solid var(--border);
+    padding: 12px 14px 12px 0;
+    vertical-align: baseline;
+  }
+
+  .bill thead th {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom-color: var(--fg);
+  }
+
+  .bill tbody th {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    padding-right: 20px;
+  }
+
+  .bill .cost {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    padding-right: 20px;
+    color: var(--fg);
+  }
+
+  .bill .why {
+    color: var(--muted);
+    line-height: 1.6;
+    width: 55%;
+  }
+
+  /* per-OS branches */
+  .branch {
+    border: 1px solid var(--border);
+    border-radius: var(--r-panel);
+    background: var(--surface);
+    padding: 0 18px;
+    margin-block: 12px;
+  }
+
+  .branch > summary {
+    font-family: var(--font-serif);
+    font-size: 19px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 16px 0;
+    list-style-position: outside;
+  }
+
+  .branch[open] > summary {
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 18px;
+  }
+
+  .branch > *:last-child {
+    margin-bottom: 20px;
+  }
+
+  .branch ol {
+    padding-left: 22px;
+  }
+
+  .branch li + li {
+    margin-top: 10px;
+  }
+
+  .branch-end {
+    border-top: 1px dashed var(--border);
+    padding-top: 12px;
+    font-size: 12px;
+    color: var(--teal);
+  }
+
+  /* pasteable literals */
+  .snippet,
+  .endstate,
+  .promptbox-pre {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.65;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--r-panel);
+    padding: 16px 18px;
+    overflow-x: auto;
+    white-space: pre;
+    tab-size: 2;
+  }
+
+  .endstate {
+    font-size: 12.5px;
+  }
+
+  /* the prompt */
+  .promptbox {
+    border-left-width: 2px;
+    margin-block: 1.75rem;
+    padding-left: 15px;
+  }
+
+  .promptbox-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .promptbox-bar p {
+    margin: 0;
+  }
+
+  .promptbox-pre {
+    max-height: 34rem;
+    overflow: auto;
+    margin: 0;
+  }
+
+  .next {
+    border-top: 1px solid var(--border);
+    padding-top: 1.5rem;
+    margin-top: 2.5rem;
+  }
+
+  @media (max-width: 760px) {
+    .bill {
+      font-size: 13px;
+    }
+
+    /* Grid-collapse: the note column becomes a second row instead of a 9ch
+       column. Nothing overlaps at any width. */
+    .bill thead {
+      display: none;
+    }
+
+    .bill tr {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      border-bottom: 1px solid var(--border);
+      padding-block: 12px;
+    }
+
+    .bill th,
+    .bill td {
+      border: 0;
+      padding: 0;
+    }
+
+    .bill tbody th {
+      white-space: normal;
+    }
+
+    .bill .why {
+      grid-column: 1 / -1;
+      width: auto;
+      margin-top: 6px;
+    }
+
+    .promptbox-pre {
+      max-height: 26rem;
+      font-size: 12px;
+    }
+  }
+</style>

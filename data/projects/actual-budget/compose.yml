@@ -1,0 +1,32 @@
+# Actual Budget · the deterministic fallback. Authored by caniselfhostit from
+# the upstream documentation, not copied from a repository:
+#   image, port, /data .. https://actualbudget.org/docs/install/docker
+#   configuration ....... https://actualbudget.org/docs/config/
+#   health route ........ https://github.com/actualbudget/actual/blob/master/packages/sync-server/src/scripts/health-check.js
+#
+# One container, no database process and no secret to generate: the sync server
+# keeps account.sqlite and the budget blobs under /data, and the only credential
+# is the server password you set in a browser at step 7. The image runs as uid
+# 1001, hence the ownership in step 2. Tag and digest are the 26.8.0 release read
+# from Docker Hub on 2026-08-05, for linux/amd64 and linux/arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  actual:
+    image: actualbudget/actual-server:26.8.0@sha256:0b300f370dba85a74998a953736a831bd931cc8cb76c0d8ceac3d3fd288dfd4d
+    container_name: actual
+    restart: unless-stopped
+    environment:
+      # Caddy reaches the published port from the host, so the container sees
+      # the Docker bridge as the client. Naming that range keeps the rate
+      # limiter counting real clients instead of one proxy.
+      ACTUAL_TRUSTED_PROXIES: 172.16.0.0/12
+    volumes:
+      # server-files holds account.sqlite, user-files holds the budget blobs.
+      # Local disk only: SQLite needs real POSIX file locks to stay intact.
+      - /srv/actual-budget/data:/data
+    ports:
+      # Loopback only. The Caddy that Prompt Zero installed on the host is the
+      # only thing that can reach this port, and 8090 never enters the firewall.
+      - "127.0.0.1:8090:5006"

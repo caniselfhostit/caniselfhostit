@@ -1,0 +1,44 @@
+# Every change to main deploys. The validator gates the build, the build
+# regenerates the deploy config (routes included, from wrangler.jsonc), and
+# wrangler ships it to the caniselfhostit.com custom domains.
+#
+# Secrets required (Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_API_TOKEN   — dashboard → My Profile → API Tokens →
+#                            "Edit Cloudflare Workers" template
+#   CLOUDFLARE_ACCOUNT_ID  — set via `gh secret set`, not sensitive but tidy
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-main
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # The same gate contributors run locally — a data file that fails
+      # validation never reaches production.
+      - run: node scripts/validate-projects.mjs
+
+      - run: npm run build
+
+      - name: Deploy to Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy -c dist/client/wrangler.json

@@ -1,17 +1,14 @@
-# Uptime Kuma — Caddy in front, TLS handled for you.
+# Uptime Kuma · the Caddy site block for this service.
 #
-# Authored from https://github.com/louislam/uptime-kuma/wiki/Reverse-Proxy
-# and https://caddyserver.com/docs/automatic-https
+# Authored by caniselfhostit from
+# https://github.com/louislam/uptime-kuma/wiki/Reverse-Proxy and
+# https://caddyserver.com/docs/automatic-https
 #
-# The dashboard is a WebSocket application. Caddy's reverse_proxy upgrades the
-# connection on its own — no Upgrade/Connection headers to set by hand, which is
-# the step every nginx guide spends a paragraph on.
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed, with
+# <DOMAIN> replaced by the hostname pointed at this box. Caddy runs under systemd
+# on the host. There is no Caddy container anywhere in this project.
 
-{
-	email {$ACME_EMAIL}
-}
-
-{$DOMAIN_HOST} {
+<DOMAIN> {
 	encode zstd gzip
 
 	header {
@@ -22,12 +19,10 @@
 		-Server
 	}
 
-	# `uptime-kuma` is the service name on the compose network; 3001 is the
-	# container's own port, not a host port.
-	reverse_proxy uptime-kuma:3001
-
-	log {
-		output stderr
-		format console
-	}
+	# The dashboard is a WebSocket application. Caddy negotiates the upgrade on
+	# its own, so there are no Upgrade or Connection headers to set by hand,
+	# which is the step every nginx guide spends a paragraph on.
+	#
+	# 8091 is the loopback port compose publishes; it is never in the firewall.
+	reverse_proxy 127.0.0.1:8091
 }

@@ -1,0 +1,23 @@
+---
+// The FAQ, rendered from the same array that becomes the FAQPage JSON-LD on the
+// page that includes this component. Answers are plain strings on purpose: no
+// links, no markup, nothing that could make the structured data say something
+// the visible text does not (PRD §10.6 — the markup must match what a human
+// reads, or it is a lie told to a crawler).
+const { faqs = [] } = Astro.props;
+---
+
+{
+  faqs.length > 0 && (
+    <ul class="faq" role="list">
+      {faqs.map((f, i) => (
+        <li>
+          <details open={i === 0}>
+            <summary><h3>{f.q}</h3></summary>
+            <p>{f.a}</p>
+          </details>
+        </li>
+      ))}
+    </ul>
+  )
+}

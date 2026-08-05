@@ -1,0 +1,84 @@
+{
+  "slug": "linkwarden",
+  "name": "Linkwarden",
+  "tagline": "Bookmarks that keep their own copy of the page, so a dead link is still readable years later.",
+  "repo": "linkwarden/linkwarden",
+  "site": "https://linkwarden.app",
+  "category": "money-home",
+  "replaces": [
+    {
+      "saas": "raindrop",
+      "plan": "Pro",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 20,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/linkwarden/linkwarden/blob/main/docker-compose.yml",
+  "localVariant": false,
+  "quote": {
+    "text": "Linkwarden has pretty minimal hardware requirements - it was tested on a VPS with 4gb of memory and it ran pretty smoothly",
+    "source": "Linkwarden documentation, Setup",
+    "url": "https://docs.linkwarden.app/self-hosting/setup",
+    "checkedOn": "2026-08-05"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's setup docs require NEXTAUTH_URL with an /api/v1/auth suffix, NEXTAUTH_SECRET and POSTGRES_PASSWORD, and say the secret values must be changed from the samples.",
+      "url": "https://docs.linkwarden.app/self-hosting/setup"
+    },
+    {
+      "claim": "MeiliSearch is optional: Linkwarden only initialises its search client when MEILI_MASTER_KEY is set, which is why this install runs two containers rather than three.",
+      "url": "https://docs.linkwarden.app/self-hosting/environment-variables"
+    },
+    {
+      "claim": "Self-service registration is closed by setting NEXT_PUBLIC_DISABLE_REGISTRATION, and a changed environment file needs the containers recreated rather than restarted.",
+      "url": "https://docs.linkwarden.app/self-hosting/environment-variables"
+    },
+    {
+      "claim": "Upstream's reverse proxy guide assumes Linkwarden on http://127.0.0.1:3000 and documents nginx, setting by hand the forwarding headers Caddy sets on its own.",
+      "url": "https://docs.linkwarden.app/self-hosting/reverse-proxy"
+    },
+    {
+      "claim": "Caddy obtains and renews TLS certificates automatically for any public hostname named in the Caddyfile.",
+      "url": "https://caddyserver.com/docs/automatic-https"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "You own a PostgreSQL. Two containers, and the database is the part that has to be backed up with pg_dump rather than copied off disk, because a file copy of a running database is not a restore you can rely on.",
+    "Preserving a page runs a headless Chromium. On a 2 GB box a large import is slow and can be stopped by the OOM killer partway through, which looks like a random failure and is actually a sizing decision made at checkout.",
+    "No search inside the archives. Raindrop Pro's full-text search over saved page contents needs MeiliSearch, a third container and a third secret, and this install leaves it out on purpose.",
+    "Archives grow, and faster than people expect. Every saved link can leave a screenshot, a PDF and a single-file HTML copy behind, so the disk floor here is about the third month rather than the first day.",
+    "Registration is open for exactly one step of the install, and closing it needs the containers recreated rather than restarted. Get that wrong and anyone who finds the hostname can sign up."
+  ],
+  "sources": {
+    "compose": "https://docs.linkwarden.app/self-hosting/setup",
+    "caddy": "https://docs.linkwarden.app/self-hosting/reverse-proxy",
+    "install": "https://docs.linkwarden.app/self-hosting/environment-variables"
+  },
+  "related": [
+    "freshrss",
+    "shlink",
+    "vaultwarden"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-05",
+  "contentHash": "ed221878e225ebd84499c6d24e895cdf2173b73cbb6943f9dbd23d68fe65ed7c"
+}

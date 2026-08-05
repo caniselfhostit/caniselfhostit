@@ -1,0 +1,43 @@
+{
+  "slug": "cronitor",
+  "name": "Cronitor",
+  "domain": "cronitor.io",
+  "whyPeoplePay": "Cronitor watches the jobs nobody watches: the nightly backup, the invoice run, the sync that has quietly not run since March. It notices absence, which is harder than noticing failure, and it does it from infrastructure that is not yours, so the alert still leaves the building when your building is the problem.",
+  "plans": [
+    {
+      "name": "Hacker",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Free. 5 monitors, one basic status page, email and Slack alerts only. No SMS, no premium integrations."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": 2,
+      "unit": "usage",
+      "seatsIncluded": 1,
+      "note": "$2/month per monitor, plus $5/month per additional user. 12-month data retention, SMS alerts and premium integrations included. Volume discounts apply. 14-day free trial."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "From $6,000/year. Custom integrations, a dedicated engineer, invoice billing."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-05",
+    "source": "https://cronitor.io/pricing",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "Read from cronitor.io/pricing on 2026-08-05. The Business tier is metered rather than a flat seat price, so the monthly figure recorded is the per-monitor rate, not a bill. Ten jobs and one person is $20/month at list; the free tier covers five monitors, so a reader with three cron jobs pays Cronitor nothing today and the savings number on the project page does not apply to them."
+  },
+  "ranked": [
+    {
+      "project": "healthchecks",
+      "rationale": "Same dead-man's-switch model, same one-line curl at the end of a cron job, and no monitor quota at all. It is the honest match because it is the same idea rather than a near miss: a check that has to be pinged, and an alert when the ping does not arrive. What it cannot do is send that alert from somewhere other than your own server, which is the limit the page leads with."
+    }
+  ],
+  "evaluatedNotTested": []
+}

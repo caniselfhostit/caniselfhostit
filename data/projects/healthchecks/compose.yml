@@ -1,0 +1,25 @@
+# Healthchecks · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   image and proxy notes . https://github.com/healthchecks/healthchecks/blob/master/docker/README.md
+#   configuration ......... https://healthchecks.io/docs/self_hosted_configuration/
+#
+# One container. DB=sqlite means no database process to operate: the instance is
+# one file at /data/hc.sqlite, and uWSGI runs migrations on boot and keeps
+# sendalerts alive, so there is no cron job. Tag and digest are the v4.3 release
+# read from Docker Hub on 2026-08-05, for linux/amd64 and linux/arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  healthchecks:
+    image: healthchecks/healthchecks:v4.3@sha256:cd7bcd94350818b3944f82eb5995f48bdeab8c8627977578a569ffa73f56f56f
+    container_name: healthchecks
+    restart: unless-stopped
+    env_file: /srv/healthchecks/.env
+    volumes:
+      # Owned by the hc uid, hence step 2. SQLite needs real POSIX file locks.
+      - /srv/healthchecks/data:/data
+    ports:
+      # Loopback only. The Caddy that Prompt Zero installed on the host is the
+      # only thing that can reach this port, and 8088 never enters the firewall.
+      - "127.0.0.1:8088:8000"

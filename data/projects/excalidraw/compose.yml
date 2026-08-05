@@ -1,0 +1,27 @@
+# Excalidraw · the deterministic fallback.
+#
+# Authored by caniselfhostit from the upstream documentation, not copied from a
+# repository:
+#   image and port ..... https://hub.docker.com/r/excalidraw/excalidraw
+#   docker notes ....... https://docs.excalidraw.com/docs/introduction/development
+#   collab server ...... https://github.com/excalidraw/excalidraw-room
+#
+# One container, and it is an nginx serving the compiled Excalidraw frontend.
+# There is no database, no account system and no server side document store.
+# Every drawing lives in the browser that drew it.
+#
+# Upstream publishes no versioned tag for this image, only a rolling one, so the
+# pin is the multi-arch manifest digest read from Docker Hub on 2026-08-05, which
+# covers linux/amd64 and linux/arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  excalidraw:
+    image: excalidraw/excalidraw@sha256:f7ee194addd607bf831d2af0f0a34463dd4225e426cf35199ef0b12a803398e9
+    container_name: excalidraw
+    restart: unless-stopped
+    ports:
+      # Loopback only. The Caddy that Prompt Zero installed on the host is the
+      # only thing that can reach this port, and 8083 never enters the firewall.
+      - "127.0.0.1:8083:80"

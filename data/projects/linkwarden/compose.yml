@@ -1,0 +1,46 @@
+# Linkwarden · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   setup and env vars . https://docs.linkwarden.app/self-hosting/setup
+#   variable reference . https://docs.linkwarden.app/self-hosting/environment-variables
+#   reverse proxy ...... https://docs.linkwarden.app/self-hosting/reverse-proxy
+#
+# Two services: the app, and the PostgreSQL it needs. MeiliSearch is deliberately
+# absent, because Linkwarden only starts its search client when MEILI_MASTER_KEY
+# is set, so leaving it out costs a container and a secret. Tags and digests were
+# read from the registries on 2026-08-05; both images publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: postgres:16.14-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
+    container_name: linkwarden-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - /srv/linkwarden/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other container.
+
+  linkwarden:
+    image: ghcr.io/linkwarden/linkwarden:v2.16.0@sha256:d805877fb707d160b809027c302f84cfba11a248d7fdc12de90b4791f98e6b55
+    container_name: linkwarden
+    restart: unless-stopped
+    env_file: /srv/linkwarden/.env
+    environment:
+      # Built here, not in .env: compose expands ${...} in this file.
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
+    volumes:
+      # Archives, screenshots, PDFs, uploads. STORAGE_FOLDER defaults to `data`
+      # and the image's working directory is /data, hence /data/data.
+      - /srv/linkwarden/data:/data/data
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8085.
+      - "127.0.0.1:8085:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy

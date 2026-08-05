@@ -1,0 +1,86 @@
+{
+  "slug": "shlink",
+  "name": "Shlink",
+  "tagline": "Your own short-link domain, with visit counts and a REST API the existing apps already speak.",
+  "repo": "shlinkio/shlink",
+  "site": "https://shlink.io",
+  "category": "marketing-content",
+  "replaces": [
+    {
+      "saas": "bitly",
+      "plan": "Core",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 75,
+  "license": "MIT",
+  "officialCompose": "none",
+  "localVariant": false,
+  "quote": {
+    "text": "using SQLite for production is not officially supported, since you can quickly face problems and limitations when dealing with big amounts of data or high traffic.",
+    "source": "Shlink documentation, Supported database engines",
+    "url": "https://shlink.io/documentation/supported-db-engines/",
+    "checkedOn": "2026-08-05"
+  },
+  "citations": [
+    {
+      "claim": "The image ships a working SQLite database, but upstream states SQLite is not supported for production, which is why this install runs PostgreSQL instead.",
+      "url": "https://shlink.io/documentation/supported-db-engines/"
+    },
+    {
+      "claim": "Upstream closed the request to move the SQLite file into a mountable directory as not planned, on the grounds that SQLite is not meant for production use.",
+      "url": "https://github.com/shlinkio/shlink/issues/1876"
+    },
+    {
+      "claim": "Shlink listens on port 8080 by default, INITIAL_API_KEY creates an admin API key once during container start-up, and DISABLE_IP_TRACKING turns off visitor location tracking.",
+      "url": "https://shlink.io/documentation/environment-variables/"
+    },
+    {
+      "claim": "Without a GeoLite2 license key Shlink still runs and simply does not geolocate visits, so no MaxMind account is needed.",
+      "url": "https://shlink.io/documentation/geolite-license-key/"
+    },
+    {
+      "claim": "API calls authenticate with an X-Api-Key header, and a missing, invalid, disabled or expired key returns status 401.",
+      "url": "https://shlink.io/documentation/api-docs/authentication/"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "A short domain is a promise you are now making. Every link you hand out lives on a domain you have to keep registered and a database row you have to keep alive, and when either lapses the links die on pages you do not control. That promise is most of what Bitly actually sells.",
+    "You own a PostgreSQL. Upstream will not support SQLite for production and closed the request to make its file mountable, so there is a real database here that has to be dumped rather than copied.",
+    "No maps. This install sets DISABLE_IP_TRACKING and asks you for no MaxMind licence key, so visits are counted, referrers and user agents are recorded, and nothing is placed on a country chart.",
+    "No dashboard. The official web client is a separate application on its own hostname, and this install does not run it. You get the REST API, the command line, and whichever third-party app you point at them.",
+    "No link-in-bio pages, no QR campaign reporting, no branded-domain management for a team. Those are the paid tiers, not the shortener."
+  ],
+  "sources": {
+    "compose": "https://shlink.io/documentation/install-docker-image/",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://shlink.io/documentation/environment-variables/",
+    "database": "https://shlink.io/documentation/supported-db-engines/",
+    "health": "https://raw.githubusercontent.com/shlinkio/shlink/main/docs/swagger/paths/health.json",
+    "cli": "https://shlink.io/documentation/command-line-interface/entry-point/"
+  },
+  "related": [
+    "linkwarden",
+    "uptime-kuma",
+    "excalidraw"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-05",
+  "contentHash": "4becfb4f70fb799a4a892bba655a218fcde322c4721566ee9c0418ed7d4247e0"
+}

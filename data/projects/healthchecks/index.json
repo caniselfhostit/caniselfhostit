@@ -1,0 +1,82 @@
+{
+  "slug": "healthchecks",
+  "name": "Healthchecks",
+  "tagline": "A dead-man's switch for every cron job you own, with no monitor quota and no per-check billing.",
+  "repo": "healthchecks/healthchecks",
+  "site": "https://healthchecks.io",
+  "category": "monitoring",
+  "replaces": [
+    {
+      "saas": "cronitor",
+      "plan": "Business",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": true,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "BSD-3-Clause",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/healthchecks/healthchecks/blob/master/docker/docker-compose.yml",
+  "localVariant": false,
+  "quote": {
+    "text": "uWSGI is configured to perform database migrations on startup, and to run sendalerts, sendreports, and smtpd in the background.",
+    "source": "Healthchecks Docker README",
+    "url": "https://github.com/healthchecks/healthchecks/blob/master/docker/README.md",
+    "checkedOn": "2026-08-05"
+  },
+  "citations": [
+    {
+      "claim": "The published image runs uWSGI, which performs the database migrations on startup and keeps the alert sender and the report sender running in the background, so a self-hosted install needs no cron job of its own.",
+      "url": "https://github.com/healthchecks/healthchecks/blob/master/docker/README.md"
+    },
+    {
+      "claim": "DB defaults to sqlite, DB_NAME sets the database file path, SITE_ROOT is the base URL every absolute link is built from, and REGISTRATION_OPEN controls whether visitors can create accounts.",
+      "url": "https://healthchecks.io/docs/self_hosted_configuration/"
+    },
+    {
+      "claim": "The image's own health check polls /api/v3/status/, which answers only when the database connection is alive.",
+      "url": "https://github.com/healthchecks/healthchecks/blob/master/docker/fetchstatus.py"
+    },
+    {
+      "claim": "Hetzner blocks outbound SMTP on ports 25, 465 and 587 for new cloud accounts until support unblocks them, which is why the alert path is the first thing to test.",
+      "url": "https://docs.hetzner.com/cloud/servers/faq/"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "A monitor you host cannot tell you that the machine hosting it is down, and one that emails through a relay cannot tell you when the relay is down either. Keep one free external check pointed at this instance. This is the one place where paying nobody is not the right answer.",
+    "You need an SMTP relay you already have before you start. Healthchecks signs you in by emailing a link, so mail is not a nicety here, it is the front door. New Hetzner and DigitalOcean accounts block outbound mail ports until you ask, and that request takes days.",
+    "You own the backups. The whole instance is one SQLite file at /srv/healthchecks/data/hc.sqlite, and it has to be copied with the container stopped. The ping URLs live in there too, so a restore keeps the crontab lines you already pasted on other machines working.",
+    "Nothing is monitored until you paste a ping URL into something. Healthchecks watches for the absence of a signal, which means an empty dashboard is not a healthy system, it is an unwired one. Break a check on purpose the day you install it.",
+    "No SMS gateway, no phone-tree escalation, no on-call rota. Those three are what the paid tiers are actually selling, and none of them arrive with this container."
+  ],
+  "sources": {
+    "compose": "https://github.com/healthchecks/healthchecks/blob/master/docker/README.md",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://healthchecks.io/docs/self_hosted_configuration/",
+    "health": "https://github.com/healthchecks/healthchecks/blob/master/docker/fetchstatus.py",
+    "mailPorts": "https://docs.hetzner.com/cloud/servers/faq/"
+  },
+  "related": [
+    "uptime-kuma",
+    "freshrss",
+    "shlink"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-05",
+  "contentHash": "2b7bb53655b5a099587ce164cedb6062266309de7ace767c9f320d442aa90a0a"
+}

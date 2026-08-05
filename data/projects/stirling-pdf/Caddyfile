@@ -1,0 +1,25 @@
+# Stirling-PDF · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from https://caddyserver.com/docs/automatic-https and
+# https://docs.stirlingpdf.com/Installation/Docker%20Install
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed, with
+# <DOMAIN> replaced by the hostname pointed at this box. Caddy runs under systemd
+# on the host. There is no Caddy container anywhere in this project.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8087 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall. Caddy sets no request
+	# body limit of its own, so SYSTEM_MAXFILESIZE in .env is the ceiling.
+	reverse_proxy 127.0.0.1:8087
+}

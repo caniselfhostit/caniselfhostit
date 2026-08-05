@@ -1,5 +1,100 @@
 ---
-import StubPage from '../components/StubPage.astro';
+import Base from '../layouts/Base.astro';
+import { SITE } from '../lib/site.js';
+
+const title = `Privacy · ${SITE.name}`;
+const description =
+  'No accounts, no tracking cookies, no consent banner. Cookieless analytics in production when configured, edge request logs, and nothing else — the whole list.';
+
+const UPDATED = '2026-08-05';
 ---
 
-<StubPage heading="Privacy" note="What this site collects (very little) and what it never does." launchPhase="launch — these pages block it" />
+<Base {title} {description}>
+  <article class="wrap prose">
+    <h1>Privacy</h1>
+    <p class="lede">
+      There is nothing to sign up for here, so there is not much to tell. This page is the whole
+      list, including the parts that are true of any website.
+    </p>
+
+    <h2>What the site stores on your device</h2>
+    <p>
+      One thing: your light or dark theme choice, in <code>localStorage</code> under the key{' '}
+      <code>theme</code>. It stays in your browser, it is not a cookie, and it is never sent
+      anywhere. There is no tracking cookie, no consent banner to dismiss, and nothing stored about
+      what you read, copy, or expand.
+    </p>
+
+    <h2>Analytics</h2>
+    <p>
+      In production, when the deployment is configured with a site ID, the site loads{' '}
+      <a href="https://datafa.st" rel="noopener">DataFast</a> — cookieless analytics. It counts page
+      views and referrers, plus a coarse country and device type derived from the request. It sets no
+      cookie, and there is no cross-site profile to join.
+    </p>
+    <p>
+      No site ID means no script at all: local development and preview builds load nothing
+      third-party. Nothing you type, copy, or paste into a page reaches it, because there is nothing
+      on this site to type into. Fonts and scripts are served from this domain, so no CDN learns you
+      were here by handing you a typeface.
+    </p>
+
+    <h2>Server logs</h2>
+    <p>
+      Cloudflare serves these pages and keeps request logs — IP address, user agent, timestamp, URL
+      — for delivery, caching, and abuse handling. That is inherent to being served by anyone over
+      the internet rather than a choice this site makes on top. We take no per-visitor log out of it
+      and do not want one.
+    </p>
+    <p>
+      This site is prerendered static pages. There is no login, no session, no user record, and no
+      database of readers to leak.
+    </p>
+
+    <h2>What ships next, and what it will store</h2>
+    <p>
+      Outcome reports — worked, partly, failed — are planned on project pages, so that "reported
+      working by readers" can mean something countable. When that form ships, a report row stores the
+      project, the version, your OS, the agent you used, and your note. It stores nothing about your
+      host: no IP address, no domain, no hostname, no credential, and no output from your install.
+      Rate limiting happens at the edge and is not kept with the report. There is no email field,
+      because there is no mailing list.
+    </p>
+    <p>
+      When that ships, this page changes first. If this page and the code ever disagree, that is a
+      bug worth reporting.
+    </p>
+
+    <h2>Questions</h2>
+    <p>
+      No accounts means there is no profile to export or delete. For anything else, open an{' '}
+      <a href={`${SITE.repoUrl}/issues/new/choose`} rel="noopener">issue</a> — including "your
+      privacy page is wrong about your own stack", which would be a correction like any other.
+    </p>
+
+    <p class="provenance">
+      Last updated {UPDATED}. Changes to this page are commits, and the{' '}
+      <a href={`${SITE.repoUrl}/commits/main/src/pages/privacy.astro`} rel="noopener">file
+      history</a> is the changelog.
+    </p>
+  </article>
+</Base>
+
+<style>
+  .prose {
+    max-width: 68ch;
+    padding-block: 3rem 4rem;
+  }
+  .prose h2 {
+    margin-top: 2.5em;
+  }
+  .lede {
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+  .provenance {
+    border-top: 1px solid var(--border);
+    padding-top: 1.25rem;
+    margin-top: 3rem;
+  }
+</style>

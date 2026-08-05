@@ -1,0 +1,202 @@
+---
+// THE PROMPT — the payload the whole page exists to hand over.
+//
+// Three rules encoded here:
+//   1. The prompt renders verbatim, in the initial HTML. No AI crawler executes
+//      JavaScript (PRD §10.3), and a reader who cannot read it before pasting it
+//      has no reason to trust it.
+//   2. The "what this will do" outline is DERIVED from the prompt's own step
+//      headings — never a second hand-written summary that can drift from the
+//      thing it summarises.
+//   3. Nothing here claims the prompt was tested. The stamp is earned by a
+//      harness run (PRD §9) or it is absent.
+import CopyButton from './CopyButton.astro';
+
+const { name, slug, prompt, promptChat, promptLocal, mirrorHref } = Astro.props;
+
+/* ---- the outline, parsed out of the prompt text ---- */
+
+// Strip inline markdown so a heading reads as a sentence, not as source.
+// Underscores are deliberately left alone: `_` is a markdown emphasis marker AND
+// half the identifiers in an install prompt (DOMAIN_HOST, ADMIN_TOKEN), and
+// silently renaming an environment variable in the summary of a prompt that sets
+// it is worse than leaving one stray underscore on the page.
+function plain(s) {
+  return s
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/[*`]+/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function firstSentence(s) {
+  const cut = s.match(/^(.*?[.!?])(\s|$)/);
+  const out = plain(cut ? cut[1] : s);
+  return out.length > 120 ? `${out.slice(0, 117).trimEnd()}…` : out;
+}
+
+/**
+ * The style guide (docs/prompt-style-guide.md §c) mandates eleven `## N. Title`
+ * blocks, so a compliant prompt outlines itself. Drafts written before the guide
+ * landed carry their steps as a top-level ordered list instead — those are read
+ * one level down rather than inventing a summary the prompt does not contain.
+ *
+ * Scanned line by line rather than with a global regex because an install prompt
+ * is mostly fenced shell: `## something` is a comment inside a bash block, not a
+ * step heading, and a numbered line inside a heredoc is not a step either.
+ */
+function outlineOf(text) {
+  if (!text) return { steps: [], from: null };
+
+  const headings = [];
+  const items = [];
+  let fence = null;
+
+  for (const line of text.split('\n')) {
+    const open = line.match(/^\s*(`{3,}|~{3,})/);
+    if (open) {
+      const marker = open[1][0].repeat(3);
+      if (!fence) fence = marker;
+      else if (line.trimStart().startsWith(fence)) fence = null;
+      continue;
+    }
+    if (fence) continue;
+
+    const heading = line.match(/^##[ \t]+(.+?)[ \t]*$/);
+    if (heading) {
+      headings.push(plain(heading[1]).replace(/^\d+\.\s*/, ''));
+      continue;
+    }
+    const item = line.match(/^\d+\.[ \t]+(.+?)[ \t]*$/);
+    if (item) items.push(firstSentence(item[1]));
+  }
+
+  if (headings.length) return { steps: headings, from: 'headings' };
+  return { steps: items, from: items.length ? 'list' : null };
+}
+
+const outline = outlineOf(prompt);
+
+/* ---- the honest size of the thing ---- */
+const bytes = prompt ? new TextEncoder().encode(prompt).length : 0;
+const lines = prompt ? prompt.trimEnd().split('\n').length : 0;
+const sizeLine = prompt
+  ? `${lines.toLocaleString('en-US')} lines · ${bytes.toLocaleString('en-US')} bytes`
+  : null;
+
+const promptId = `prompt-${slug}`;
+const chatId = `prompt-chat-${slug}`;
+const localId = `prompt-local-${slug}`;
+---
+
+<div class="promptbox">
+  <div class="pb-head">
+    <p class="pb-meta mono">authored from upstream docs · not yet machine-verified · Claude Code</p>
+    {sizeLine && <p class="pb-size mono">{sizeLine}</p>}
+  </div>
+
+  {
+    prompt ? (
+      <>
+        {outline.steps.length > 0 && (
+          <details class="pb-outline">
+            <summary>What this prompt will do</summary>
+            <div class="pb-outline-body">
+              <ol>
+                {outline.steps.map((s) => (
+                  <li>{s}</li>
+                ))}
+              </ol>
+              <p class="provenance">
+                {outline.from === 'headings'
+                  ? 'Read out of the prompt’s own step headings at build time — if the prompt changes, this list changes with it.'
+                  : 'Read out of the prompt’s own numbered steps at build time — abridged to the first sentence of each. The prompt below is the whole of it.'}
+              </p>
+            </div>
+          </details>
+        )}
+
+        <div class="pb-bar">
+          <CopyButton
+            target={`#${promptId}`}
+            label="Copy the prompt"
+            copiedLabel="Copied"
+            announce={`Install prompt for ${name}`}
+            primary={true}
+          />
+          <p class="pb-hint mono">
+            paste it into Claude Code in a terminal on your own machine · it runs the install over{' '}
+            <code>ssh vps</code>
+          </p>
+        </div>
+
+        <pre
+          id={promptId}
+          class="pb-pre"
+          tabindex="0"
+          aria-label={`Install prompt for ${name}`}>{prompt.trimEnd()}</pre>
+
+        {promptChat && (
+          <details class="pb-alt">
+            <summary>No terminal agent? Use the chat fallback — slower, you paste the commands</summary>
+            <div class="pb-alt-body">
+              <p class="pb-alt-note">
+                For ChatGPT or Claude in a browser. The model cannot touch your server, so it hands
+                you one command at a time and you run each one. Same install, more of your evening.
+              </p>
+              <div class="pb-bar">
+                <CopyButton
+                  target={`#${chatId}`}
+                  label="Copy the chat prompt"
+                  copiedLabel="Copied"
+                  announce={`Chat prompt for ${name}`}
+                  small={true}
+                />
+              </div>
+              <pre
+                id={chatId}
+                class="pb-pre is-alt"
+                tabindex="0"
+                aria-label={`Chat fallback prompt for ${name}`}>{promptChat.trimEnd()}</pre>
+            </div>
+          </details>
+        )}
+
+        {promptLocal && (
+          <details class="pb-alt">
+            <summary>Run it on your own machine instead</summary>
+            <div class="pb-alt-body">
+              <p class="pb-alt-note">
+                The same install with no public hostname and no certificate — reachable on your own
+                network only. Nothing here is exposed to the internet, and nothing renews.
+              </p>
+              <div class="pb-bar">
+                <CopyButton
+                  target={`#${localId}`}
+                  label="Copy the local prompt"
+                  copiedLabel="Copied"
+                  announce={`Local prompt for ${name}`}
+                  small={true}
+                />
+              </div>
+              <pre
+                id={localId}
+                class="pb-pre is-alt"
+                tabindex="0"
+                aria-label={`Local install prompt for ${name}`}>{promptLocal.trimEnd()}</pre>
+            </div>
+          </details>
+        )}
+      </>
+    ) : (
+      <p class="pb-missing">
+        The install prompt for {name} is not written yet. That is the honest state of this page —
+        the fallback files below are real, the prompt is not.
+      </p>
+    )
+  }
+
+  <p class="pb-foot provenance">
+    agent-readable mirror: <a href={mirrorHref}>{mirrorHref}</a>
+  </p>
+</div>

@@ -1,0 +1,24 @@
+# Healthchecks · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from https://caddyserver.com/docs/automatic-https
+# and https://github.com/healthchecks/healthchecks/blob/master/docker/README.md
+#
+# Append this to /etc/caddy/Caddyfile, with <DOMAIN> replaced by the hostname
+# pointed at this box. Caddy runs under systemd. No Caddy container here.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8088 is the loopback port compose publishes; it is never in the firewall.
+	# Caddy replaces any client-supplied X-Forwarded-Proto with the real scheme,
+	# which is what uWSGI in this image reads to decide a request is secure.
+	reverse_proxy 127.0.0.1:8088
+}

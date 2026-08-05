@@ -1,0 +1,82 @@
+{
+  "slug": "docuseal",
+  "name": "DocuSeal",
+  "tagline": "Send a PDF for signature and get it back signed, from one container, with the documents never leaving your disk.",
+  "repo": "docusealco/docuseal",
+  "site": "https://www.docuseal.com",
+  "category": "files-docs",
+  "replaces": [
+    {
+      "saas": "docusign",
+      "plan": "Personal",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": true,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/docusealco/docuseal/blob/master/docker-compose.yml",
+  "localVariant": false,
+  "quote": {
+    "text": "It is possible to use PostgreSQL or MySQL databases by specifying the DATABASE_URL environment variable.",
+    "source": "DocuSeal README",
+    "url": "https://github.com/docusealco/docuseal/blob/master/README.md",
+    "checkedOn": "2026-08-05"
+  },
+  "citations": [
+    {
+      "claim": "With DATABASE_URL unset, DocuSeal falls back to SQLite at $WORKDIR/db.sqlite3, and the image sets WORKDIR to /data/docuseal, so one mounted directory holds the database and the documents.",
+      "url": "https://github.com/docusealco/docuseal/blob/master/config/database.yml"
+    },
+    {
+      "claim": "SMTP is configured entirely through environment variables (SMTP_ADDRESS, SMTP_PORT, SMTP_DOMAIN, SMTP_USERNAME, SMTP_PASSWORD), and delivery errors are deliberately not raised, so a mail that never leaves the box produces no visible error.",
+      "url": "https://github.com/docusealco/docuseal/blob/master/config/environments/production.rb"
+    },
+    {
+      "claim": "The container runs as a docuseal account with uid 2000 and listens on port 3000.",
+      "url": "https://github.com/docusealco/docuseal/blob/master/Dockerfile"
+    },
+    {
+      "claim": "/up is the Rails health route, and /setup stops answering with 200 and redirects to the sign-in page as soon as the first user exists.",
+      "url": "https://github.com/docusealco/docuseal/blob/master/config/routes.rb"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "You are not buying recognition. The counterparty's lawyer has seen a DocuSign completion certificate before and has not seen yours. For a freelance contract or a household form that is fine; for something a bank or a court will examine, budget for a conversation you would not have had otherwise.",
+    "Email is the product. A signing invitation is an email, and new Hetzner and DigitalOcean accounts block outbound mail ports until you ask them not to. DocuSeal is also configured not to raise delivery errors, so a broken relay looks exactly like a working install until you notice nobody ever signed anything.",
+    "You own the backups, and two files have to travel together. The documents and the database are under /srv/docuseal/data, and the key that decrypts the encrypted columns is derived from SECRET_KEY_BASE in .env. Copy one without the other and the restore is unreadable.",
+    "AGPL-3.0 with additional terms in a separate file, and a paid Pro edition upstream. Bulk send, conditional fields and single sign-on live there, not in the image this install runs, and the boundary can move between releases.",
+    "SQLite is the honest choice for one person sending a handful of agreements. A team sending hundreds a week should be on PostgreSQL, which upstream's own compose file uses, and this install does not set that up."
+  ],
+  "sources": {
+    "compose": "https://github.com/docusealco/docuseal/blob/master/README.md",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://github.com/docusealco/docuseal/blob/master/config/environments/production.rb",
+    "database": "https://github.com/docusealco/docuseal/blob/master/config/database.yml",
+    "routes": "https://github.com/docusealco/docuseal/blob/master/config/routes.rb"
+  },
+  "related": [
+    "stirling-pdf",
+    "vaultwarden",
+    "linkwarden"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-05",
+  "contentHash": "0486b5b062fa4f3cca3c44c957ff182e748682f0180f5b19c7d514cb71435b37"
+}

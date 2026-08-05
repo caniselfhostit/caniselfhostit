@@ -1,0 +1,27 @@
+# Stirling-PDF · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   image and ports .... https://docs.stirlingpdf.com/Installation/Docker%20Install
+#   login settings ..... https://docs.stirlingpdf.com/Configuration/System%20and%20Security/
+#
+# One container, no database process: the user table is an embedded H2 file under
+# /configs, so that directory plus the .env is the whole install. The image runs
+# as uid 1000, hence the ownership in step 2. Tag and digest are the 2.14.2
+# release read from Docker Hub on 2026-08-05, for linux/amd64 and linux/arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  stirling-pdf:
+    image: stirlingtools/stirling-pdf:2.14.2@sha256:7ed4d9681d18e4fbc3aa6a63647c4b5c2bcc4b75841df7c05d7e3d2320f5c9a1
+    container_name: stirling-pdf
+    restart: unless-stopped
+    env_file: /srv/stirling-pdf/.env
+    volumes:
+      # The H2 user database and the generated server certificate live here.
+      # One mount, so one directory to copy. OCR language packs beyond the
+      # bundled English set would need a second mount at /usr/share/tessdata.
+      - /srv/stirling-pdf/config:/configs
+    ports:
+      # Loopback only. The Caddy that Prompt Zero installed on the host is the
+      # only thing that can reach this port, and 8087 never enters the firewall.
+      - "127.0.0.1:8087:8080"

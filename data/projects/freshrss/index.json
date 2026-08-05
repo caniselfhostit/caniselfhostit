@@ -1,0 +1,81 @@
+{
+  "slug": "freshrss",
+  "name": "FreshRSS",
+  "tagline": "A feed reader in one container, with your subscriptions, your read history and your refresh schedule on your own disk.",
+  "repo": "FreshRSS/FreshRSS",
+  "site": "https://freshrss.org",
+  "category": "money-home",
+  "replaces": [
+    {
+      "saas": "feedly",
+      "plan": "Pro",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 512,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "AGPL-3.0",
+  "officialCompose": "none",
+  "localVariant": false,
+  "quote": {
+    "text": "All other folders belong to the source code and are restored by a fresh install or upgrade.",
+    "source": "FreshRSS documentation, Backup",
+    "url": "https://freshrss.github.io/FreshRSS/en/admins/05_Backup.html",
+    "checkedOn": "2026-08-05"
+  },
+  "citations": [
+    {
+      "claim": "The Docker image carries its own cron daemon, enabled by CRON_MIN, and leaving that variable unset disables background refreshing entirely.",
+      "url": "https://freshrss.github.io/FreshRSS/en/admins/08_FeedUpdates.html"
+    },
+    {
+      "claim": "Backing up the data directory is the required part; everything else belongs to the source code and comes back with a fresh install.",
+      "url": "https://freshrss.github.io/FreshRSS/en/admins/05_Backup.html"
+    },
+    {
+      "claim": "The image serves on container port 80, keeps state under /var/www/FreshRSS/data, and ships command line scripts that install FreshRSS and create a user without the web wizard.",
+      "url": "https://github.com/FreshRSS/FreshRSS/blob/edge/Docker/README.md"
+    },
+    {
+      "claim": "Upstream's own reverse proxy page uses a bare Caddy reverse_proxy for a subdomain install and documents base_url as the override when links come out wrong.",
+      "url": "https://freshrss.github.io/FreshRSS/en/admins/Caddy.html"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "You own the refresh. Feeds update when the container's cron says so, at 13 and 43 minutes past the hour in this install, and FreshRSS will not refresh any feed more often than every twenty minutes. A reader that looks empty for half an hour after you add feeds is working correctly.",
+    "You own the backups. The entire reader is one directory, /srv/freshrss/data, and it has to be copied with the container stopped, because a SQLite file caught mid-write is not a backup.",
+    "SQLite is the honest choice for one reader and it is the reason this is a single container. A household of readers with thousands of feeds should move to PostgreSQL, and this install does not set that up.",
+    "No Feedly AI. The filtering and summarising that Pro+ sells is not here, and neither are shared boards or the newsletter-to-feed inbox.",
+    "Mobile apps talk to FreshRSS through its Google Reader or Fever API, which each mean issuing a credential per app. This install leaves both off, so the first phone you connect is a decision you make later."
+  ],
+  "sources": {
+    "compose": "https://github.com/FreshRSS/FreshRSS/blob/edge/Docker/README.md",
+    "caddy": "https://freshrss.github.io/FreshRSS/en/admins/Caddy.html",
+    "install": "https://freshrss.github.io/FreshRSS/en/admins/08_FeedUpdates.html",
+    "backup": "https://freshrss.github.io/FreshRSS/en/admins/05_Backup.html",
+    "config": "https://freshrss.github.io/FreshRSS/en/admins/17_configs_not_ui.html"
+  },
+  "related": [
+    "linkwarden",
+    "uptime-kuma",
+    "excalidraw"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-05",
+  "contentHash": "c8bc07177a01b4ba651fc41e62633665ed13f1e4dac8800c368d48174d4b8055"
+}

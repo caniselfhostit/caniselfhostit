@@ -8,6 +8,12 @@
   // No "main"/"assets" here: @astrojs/cloudflare v14 generates the worker
   // entry and asset config itself via the Cloudflare vite plugin.
   "compatibility_flags": ["nodejs_compat"],
+  // The zone lives in this same Cloudflare account, so custom domains
+  // auto-create their DNS records on deploy.
+  "routes": [
+    { "pattern": "caniselfhostit.com", "custom_domain": true },
+    { "pattern": "www.caniselfhostit.com", "custom_domain": true }
+  ],
   "observability": {
     "enabled": true
   }

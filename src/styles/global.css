@@ -1007,6 +1007,678 @@ button.chip:hover {
   padding: 0;
 }
 
+/* ---------- copy controls ----------
+   Mono, because what they copy is pasteable. The button carries no payload: the
+   handler in public/js/app.js reads the target element's textContent, so the
+   bytes exist once in the HTML. */
+
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  color: var(--fg);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-control);
+  padding: 10px 14px;
+  transition: border-color var(--fast) var(--ease), background-color var(--fast) var(--ease),
+    color var(--fast) var(--ease);
+}
+
+.copy-btn:hover {
+  background: var(--surface-2);
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--border));
+}
+
+.copy-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.copy-btn.is-primary {
+  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+:root[data-theme='dark'] .copy-btn.is-primary {
+  color: #17110c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .copy-btn.is-primary {
+    color: #17110c;
+  }
+}
+
+.copy-btn.is-primary:hover {
+  background: color-mix(in srgb, var(--accent) 88%, var(--fg));
+  border-color: color-mix(in srgb, var(--accent) 88%, var(--fg));
+}
+
+.copy-btn.is-small {
+  font-size: 11.5px;
+  padding: 8px 11px;
+}
+
+/* copied: the teal of verification, not the copper of brand */
+.copy-btn[data-state='copied'] {
+  color: var(--teal);
+  background: var(--teal-wash);
+  border-color: color-mix(in srgb, var(--teal) 45%, transparent);
+}
+
+.copy-btn[data-state='failed'] {
+  color: var(--tier-ongoing-ops);
+  border-color: color-mix(in srgb, var(--tier-ongoing-ops) 45%, transparent);
+}
+
+.copy-ico {
+  flex: none;
+  opacity: 0.85;
+}
+
+/* one shared live region, created by app.js on first copy */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  z-index: 300;
+  transform: translate(-50%, 10px);
+  opacity: 0;
+  pointer-events: none;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--fg);
+  background: var(--surface);
+  border: 1px solid color-mix(in srgb, var(--teal) 40%, var(--border));
+  border-left: 2px solid var(--teal);
+  border-radius: var(--r-control);
+  box-shadow: var(--shadow);
+  padding: 10px 14px;
+  max-width: min(90vw, 44ch);
+  transition: opacity var(--fast) var(--ease), transform var(--fast) var(--ease);
+}
+
+.toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.toast[data-ok='no'] {
+  border-color: color-mix(in srgb, var(--tier-ongoing-ops) 40%, var(--border));
+  border-left-color: var(--tier-ongoing-ops);
+}
+
+/* ---------- details furniture ----------
+   Every collapsible on a project page shares one marker so the page reads as one
+   machine. No JS: <details> already works with the script blocked. */
+
+.project details > summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.project details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.project details > summary::before {
+  content: '';
+  flex: none;
+  width: 7px;
+  height: 7px;
+  margin-top: 0.42em;
+  border-right: 1.5px solid var(--accent);
+  border-bottom: 1.5px solid var(--accent);
+  transform: rotate(-45deg);
+  transition: transform var(--fast) var(--ease);
+}
+
+.project details[open] > summary::before {
+  transform: rotate(45deg);
+}
+
+/* ---------- the project page ---------- */
+
+.project h2.microlabel {
+  font-family: var(--font-sans);
+  margin-bottom: 12px;
+}
+
+.project .section {
+  padding: 44px 0 0;
+}
+
+.project .section:last-child {
+  padding-bottom: 72px;
+}
+
+/* head */
+
+.ph {
+  border-bottom: 1px solid var(--border);
+  padding: 26px 0 40px;
+}
+
+.crumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.crumbs li + li::before {
+  content: '›';
+  margin-right: 8px;
+  color: var(--border);
+}
+
+.crumbs a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.crumbs a:hover {
+  color: var(--fg);
+}
+
+.crumbs [aria-current='page'] {
+  color: var(--fg);
+}
+
+.ph-verdict {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  margin: 22px 0 0;
+}
+
+.ph-verdict h1 {
+  font-size: clamp(30px, 4.6vw, 52px);
+  font-weight: 500;
+  letter-spacing: -0.024em;
+  margin: 0;
+}
+
+/* the generated direct answer — the first thing a reader or a crawler gets */
+.ph-answer {
+  font-size: clamp(17px, 2vw, 21px);
+  line-height: 1.5;
+  max-width: 52ch;
+  margin-top: 18px;
+}
+
+.ph-tagline {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 62ch;
+  margin-top: 10px;
+}
+
+.ph-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  margin-top: 22px;
+}
+
+/* the swap band's provenance line */
+
+.swap-prov {
+  margin-top: 12px;
+}
+
+/* before you start */
+
+.bys {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.bys-tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-panel);
+  padding: 14px 16px;
+}
+
+.bys-tile dd {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 6px;
+}
+
+.bys-figure {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+}
+
+.bys-note {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* ---------- the unverified notice ----------
+   Prominent but calm. It is the honesty layer the whole publishing plan rests
+   on, so it sits above the prompt at full contrast — not in a footer. */
+
+.unverified {
+  border: 1px solid color-mix(in srgb, var(--accent) 38%, var(--border));
+  border-left: 3px solid var(--accent);
+  border-radius: var(--r-panel);
+  background: var(--accent-wash);
+  padding: 18px 20px;
+  max-width: 74ch;
+}
+
+.unverified p + p {
+  margin-top: 8px;
+}
+
+.unverified .microlabel {
+  color: var(--accent);
+  letter-spacing: 0.08em;
+}
+
+.unverified p {
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+
+.unverified-ask {
+  color: var(--muted);
+}
+
+.verify-stamp {
+  margin-bottom: 8px;
+}
+
+/* ---------- the prompt box ---------- */
+
+.pj-prompt .section-head {
+  margin-top: 28px;
+}
+
+.promptbox {
+  margin-top: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  padding: 18px;
+}
+
+.pb-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.pb-meta,
+.pb-size {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.pb-meta {
+  color: var(--accent);
+}
+
+.pb-outline {
+  margin-top: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-panel);
+  background: var(--surface-2);
+  padding: 13px 16px;
+}
+
+.pb-outline > summary {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.pb-outline-body {
+  padding-top: 10px;
+}
+
+.pb-outline ol {
+  padding-left: 22px;
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+
+.pb-outline ol li + li {
+  margin-top: 4px;
+}
+
+.pb-outline .provenance {
+  margin-top: 12px;
+}
+
+.pb-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  margin: 16px 0 10px;
+}
+
+.pb-hint {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.pb-hint code {
+  font-size: 1em;
+}
+
+/* the payload. Its own scroll container in both axes: the page body never
+   scrolls sideways because a prompt has a long command in it. */
+.pb-pre,
+.ff-pre {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.7;
+  white-space: pre;
+  tab-size: 2;
+  color: var(--fg);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-panel);
+  padding: 16px 18px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  max-height: min(70vh, 660px);
+}
+
+.pb-pre:focus-visible,
+.ff-pre:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.pb-pre.is-alt {
+  max-height: min(60vh, 460px);
+}
+
+.pb-alt {
+  margin-top: 16px;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+
+.pb-alt > summary {
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.pb-alt-body {
+  padding-top: 6px;
+}
+
+.pb-alt-note {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 70ch;
+  margin-top: 8px;
+}
+
+.pb-missing {
+  margin-top: 16px;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 70ch;
+}
+
+.pb-foot {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+/* ---------- deterministic fallback files ---------- */
+
+.ff-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.ff {
+  border: 1px solid var(--border);
+  border-radius: var(--r-panel);
+  background: var(--surface);
+  padding: 14px 16px;
+}
+
+.ff > summary {
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+.ff-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.ff-what {
+  font-size: 13px;
+  color: var(--muted);
+  flex: 1 1 auto;
+}
+
+.ff-size {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.ff-body {
+  padding-top: 14px;
+}
+
+.ff-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  margin-bottom: 12px;
+}
+
+/* ---------- candor list ---------- */
+
+.candor {
+  list-style: none;
+  margin-top: 18px;
+  max-width: 74ch;
+  display: grid;
+  gap: 14px;
+}
+
+.candor li {
+  position: relative;
+  font-size: 15.5px;
+  line-height: 1.65;
+  padding-left: 18px;
+}
+
+.candor li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 8px;
+  height: 2px;
+  background: var(--accent);
+}
+
+/* ---------- provenance: quote + citations ---------- */
+
+.pj-quote {
+  max-width: 66ch;
+  margin-top: 6px;
+}
+
+.pj-quote p {
+  font-family: var(--font-serif);
+  font-size: 19px;
+  line-height: 1.45;
+}
+
+.pj-quote footer {
+  margin-top: 8px;
+}
+
+.cites {
+  list-style: none;
+  margin-top: 20px;
+  max-width: 78ch;
+  display: grid;
+  gap: 10px;
+}
+
+.cites li {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--muted);
+  padding-left: 16px;
+  border-left: 1px solid var(--border);
+}
+
+.cite-claim {
+  color: var(--fg);
+}
+
+.cite-link {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* ---------- related mini cards ---------- */
+
+.mini-cards {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.mini-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  padding: 18px;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color var(--fast) var(--ease), background-color var(--fast) var(--ease);
+}
+
+.mini-card:hover {
+  background: var(--surface-2);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+}
+
+.mc-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.mc-name {
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.mc-tagline {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--muted);
+  flex: 1 1 auto;
+}
+
+.mc-cta {
+  font-size: 11.5px;
+  color: var(--accent);
+}
+
+/* ---------- faq ---------- */
+
+.faq {
+  list-style: none;
+  margin-top: 18px;
+  max-width: 78ch;
+  border-top: 1px solid var(--border);
+}
+
+.faq > li {
+  border-bottom: 1px solid var(--border);
+}
+
+.faq details {
+  padding: 14px 2px;
+}
+
+.faq summary h3 {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.45;
+  display: inline;
+}
+
+.faq details p {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--muted);
+  margin-top: 10px;
+  padding-left: 17px;
+}
+
+.faq-foot {
+  margin-top: 22px;
+  max-width: 78ch;
+}
+
 /* ---------- responsive ---------- */
 
 @media (max-width: 900px) {
@@ -1015,6 +1687,9 @@ button.chip:hover {
   }
   .c-tier {
     width: 132px;
+  }
+  .mini-cards {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1115,6 +1790,55 @@ button.chip:hover {
 
   .site-footer .inner {
     flex-direction: column;
+  }
+
+  /* project page: the strip becomes 2×2 — four numbers still read as a set */
+  .bys {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .project .section {
+    padding: 34px 0 0;
+  }
+
+  .ph {
+    padding: 18px 0 32px;
+  }
+
+  .ph-verdict {
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .promptbox {
+    padding: 14px;
+    border-radius: var(--r-panel);
+  }
+
+  .pb-pre,
+  .ff-pre {
+    font-size: 12px;
+    padding: 13px 14px;
+    max-height: 62vh;
+    border-radius: var(--r-control);
+  }
+
+  .pb-bar .copy-btn,
+  .ff-bar .copy-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .toast {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    max-width: none;
+    transform: translateY(10px);
+  }
+
+  .toast.is-visible {
+    transform: translateY(0);
   }
 }
 

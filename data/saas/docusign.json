@@ -1,0 +1,50 @@
+{
+  "slug": "docusign",
+  "name": "DocuSign",
+  "domain": "docusign.com",
+  "whyPeoplePay": "DocuSign sells recognition. The counterparty has signed one before, their lawyer accepts the certificate of completion without a conversation, and the audit trail has survived enough disputes that nobody asks what it is. That is most of the product, and it is the part that has nothing to do with drawing a signature on a page.",
+  "plans": [
+    {
+      "name": "Personal",
+      "priceMonthly": 15,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Billed monthly, one user, 5 envelopes per month. About $10/user/month if paid annually."
+    },
+    {
+      "name": "Standard",
+      "priceMonthly": 45,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Billed monthly. About $25/user/month if paid annually. Unlimited envelopes through the web app, shared templates, reminders."
+    },
+    {
+      "name": "Business Pro",
+      "priceMonthly": 65,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Billed monthly. About $40/user/month if paid annually. Adds payment collection, bulk send and advanced fields."
+    },
+    {
+      "name": "Enhanced Plans",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The page says contact sales, with custom envelope limits."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-05",
+    "source": "https://ecom.docusign.com/plans-and-pricing/esignature",
+    "currency": "USD",
+    "confidence": "low",
+    "note": "TODO: re-read from a US session and raise this confidence. docusign.com/products-and-pricing redirected to this page and served Canadian dollars from our location on 2026-08-05, so we could see the plan ladder and the envelope limits but not the USD figures. The dollar amounts above are our best knowledge of the US list price, cross-checked against secondary trackers, not read off the vendor page. We record the monthly-billed figure rather than the annual one on purpose: the annual price is a twelve-month commitment, and on the Standard and Business Pro tiers the advertised annual rate is a first-year promotional rate that rises at renewal, so savings math built on it overstates year two."
+  },
+  "ranked": [
+    {
+      "project": "docuseal",
+      "rationale": "The closest match on the part that actually matters day to day: you drag fields onto a PDF, send it, and the other person signs in a browser with no account. It keeps a completion audit trail and embeds the signature in the document. What it cannot hand you is DocuSign's name on that trail, which is exactly what the counterparty's lawyer is looking for, and the page says so rather than pretending otherwise."
+    }
+  ],
+  "evaluatedNotTested": []
+}

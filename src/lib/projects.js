@@ -277,3 +277,43 @@ export function relatedProjects(project, limit = 3) {
   const others = rest.filter((p) => !curated.includes(p) && !siblings.includes(p));
   return [...curated, ...siblings, ...others].slice(0, limit);
 }
+
+/* ------------------------------------------------------------------ *
+ * Raw file loaders — prompts and deterministic-fallback artifacts
+ * ------------------------------------------------------------------ */
+
+const rawFileModules = () =>
+  globOrExplain(
+    () =>
+      import.meta.glob(
+        [
+          '/data/projects/*/prompt.md',
+          '/data/projects/*/prompt-chat.md',
+          '/data/projects/*/prompt-local.md',
+          '/data/projects/*/compose.yml',
+          '/data/projects/*/Caddyfile',
+          '/data/projects/*/install.sh',
+        ],
+        { eager: true, query: '?raw', import: 'default' }
+      ),
+    'project prompt/artifact files'
+  );
+
+/**
+ * The raw text of a project's prompts and fallback artifacts, keyed by role.
+ * Only the project page and the .md mirror read these — they are deliberately
+ * kept out of getAllProjects() so the directory never carries megabytes of
+ * prompt text it does not render.
+ */
+export function getProjectFiles(slug) {
+  const files = rawFileModules();
+  const pick = (name) => files[`/data/projects/${slug}/${name}`] ?? null;
+  return {
+    prompt: pick('prompt.md'),
+    promptChat: pick('prompt-chat.md'),
+    promptLocal: pick('prompt-local.md'),
+    compose: pick('compose.yml'),
+    caddyfile: pick('Caddyfile'),
+    installSh: pick('install.sh'),
+  };
+}

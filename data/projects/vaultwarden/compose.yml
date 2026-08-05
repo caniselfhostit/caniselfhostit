@@ -1,67 +1,31 @@
-# Vaultwarden — the deterministic fallback.
+# Vaultwarden · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   compose shape ... https://github.com/dani-garcia/vaultwarden/wiki/Using-Docker-Compose
+#   reverse proxy ... https://github.com/dani-garcia/vaultwarden/wiki/Proxy-examples
+#   admin token ..... https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page
+#   websockets ...... https://github.com/dani-garcia/vaultwarden/wiki/Enabling-WebSocket-notifications
 #
-# Authored by caniselfhostit from the upstream documentation, not copied from a
-# repository:
-#   compose shape ...... https://github.com/dani-garcia/vaultwarden/wiki/Using-Docker-Compose
-#   reverse proxy ...... https://github.com/dani-garcia/vaultwarden/wiki/Proxy-examples
-#   admin token ........ https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page
+# One container, and no proxy service: the Caddy that Prompt Zero installed under
+# systemd terminates TLS and reaches this one on loopback. SQLite keeps the vault
+# and the attachments under /data, so that directory is the whole backup. Since
+# 1.31.0 WebSocket traffic rides the main HTTP port. Tag and digest are the 1.37.1
+# release read from the Docker Hub registry API on 2026-08-05, amd64 and arm64.
 #
-# Read it before you run it. Two containers: the app, and Caddy in front of it
-# doing TLS. Nothing else is listening on the internet.
-#
-# Image tags are pinned to a release, never a moving tag — you get the version
-# that was tested, and upgrades happen when you decide they do. Bump the tag and
-# run `docker compose up -d` to update.
-#
-# NOT YET VERIFIED: no harness run has been recorded against this file. The page
-# says "re-verification in progress" until one has.
+# NOT YET VERIFIED: no harness run has been recorded against this file.
 
 services:
   vaultwarden:
-    image: vaultwarden/server:1.37.1-alpine
+    image: vaultwarden/server:1.37.1-alpine@sha256:b094afed4ed5ea353821c6efcedca446f30c6654ba2bc441db6089b0c2b94ac8
     container_name: vaultwarden
     restart: unless-stopped
     environment:
-      # Vaultwarden needs to know its own public URL to build links correctly.
       DOMAIN: ${DOMAIN}
-      # Off after you have created your own account. See the candor section.
+      # Opened for one step during the install, then closed and asserted closed.
       SIGNUPS_ALLOWED: "false"
-      # An Argon2 PHC string generated on the server by install.sh. Every "$" in
-      # it is escaped as "$$" in .env, or compose eats half the hash.
+      # Argon2 PHC hash made on the server. Every "$" is stored as "$$" in .env.
       ADMIN_TOKEN: ${ADMIN_TOKEN}
     volumes:
-      # The entire vault. This directory is the backup.
-      - ./data:/data
-    networks:
-      - edge
-    # Deliberately no `ports:` — the app is reachable only through Caddy, on the
-    # internal network. There is no host port to forget to firewall.
-
-  caddy:
-    image: caddy:2.11.4-alpine
-    container_name: vaultwarden-caddy
-    restart: unless-stopped
-    environment:
-      DOMAIN_HOST: ${DOMAIN_HOST}
-      ACME_EMAIL: ${ACME_EMAIL}
+      - /srv/vaultwarden/data:/data
     ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      # Certificates and account keys. Losing this means re-issuing, and
-      # Let's Encrypt has rate limits, so it is worth backing up too.
-      - caddy_data:/data
-      - caddy_config:/config
-    depends_on:
-      - vaultwarden
-    networks:
-      - edge
-
-volumes:
-  caddy_data:
-  caddy_config:
-
-networks:
-  edge:
+      # Loopback only, and 8222 never enters the firewall.
+      - "127.0.0.1:8222:80"
