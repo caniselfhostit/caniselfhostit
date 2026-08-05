@@ -13,8 +13,7 @@ export const SITE = {
     'For every SaaS you pay for: a mature open-source replacement, and the exact AI-agent prompts that install it on your own server — starting from a machine with nothing on it.',
   // Campaign domain; 301s to the canonical origin (configured at the zone, Phase 3).
   redirectDomains: ['dontvibecodeit.com'],
-  // Personal account for now; a later transfer to an org auto-redirects.
-  repoUrl: 'https://github.com/singhjp006/caniselfhostit',
+  repoUrl: 'https://github.com/caniselfhostit/caniselfhostit',
   author: {
     name: 'Jashanpreet Singh',
     url: '/about/',
