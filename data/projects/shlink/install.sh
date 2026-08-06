@@ -125,7 +125,7 @@ redirect="$(curl -sS -o /dev/null -w '%{http_code}' "https://${DOMAIN_HOST}/self
 
 STAMP="$(date +%Y%m%d-%H%M%S)"
 docker compose exec -T postgres pg_dump -U shlink -d shlink | gzip > "$APP_DIR/backups/shlink-db-${STAMP}.sql.gz"
-sudo tar -C "$APP_DIR" -czf "$APP_DIR/backups/shlink-config-${STAMP}.tar.gz" compose.yml Caddyfile .env
+sudo tar -czf "$APP_DIR/backups/shlink-config-${STAMP}.tar.gz" -C "$APP_DIR" compose.yml .env -C /etc/caddy Caddyfile
 ls -lh "$APP_DIR/backups/"
 [ -s "$APP_DIR/backups/shlink-db-${STAMP}.sql.gz" ] || die "the database dump is empty"
 

@@ -245,7 +245,7 @@ archive holds the files that rebuild the service around them.
 ```bash
 cd /srv/shlink
 docker compose exec -T postgres pg_dump -U shlink -d shlink | gzip > /srv/shlink/backups/shlink-db-$(date +%F).sql.gz
-sudo tar -C /srv/shlink -czf /srv/shlink/backups/shlink-config-$(date +%F).tar.gz compose.yml Caddyfile .env
+sudo tar -czf /srv/shlink/backups/shlink-config-$(date +%F).tar.gz -C /srv/shlink compose.yml .env -C /etc/caddy Caddyfile
 ls -lh /srv/shlink/backups/
 ```
 
