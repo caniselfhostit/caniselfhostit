@@ -1,0 +1,66 @@
+{
+  "slug": "strava",
+  "name": "Strava",
+  "domain": "strava.com",
+  "whyPeoplePay": "Strava's product is not the GPS trace, it is everyone else's. Segments only mean something because thousands of people have ridden them, kudos only arrive because your friends are already there, and the year in review is compelling because it ranks you against a crowd. The subscription buys the analysis on top of that, but the crowd is the thing, and it is the one part no server of your own can hold.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Records activities and shows a feed. Segment leaderboards, most route planning and the deeper analysis sit behind the subscription."
+    },
+    {
+      "name": "Subscription",
+      "priceMonthly": 11.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "The monthly-billed rate. $79.99 a year on the annual plan, which works out at $6.67 a month."
+    },
+    {
+      "name": "Family",
+      "priceMonthly": 11.67,
+      "unit": "flat",
+      "seatsIncluded": 4,
+      "note": "Sold annually only, at $139.99 a year for up to four people. The monthly figure here is that annual price divided by twelve, because there is no month-to-month option."
+    },
+    {
+      "name": "Strava + Runna",
+      "priceMonthly": 12.5,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Sold annually only, at $149.99 a year, bundling the Runna training-plan app. The monthly figure is that annual price divided by twelve."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://www.strava.com/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Strava's pricing and subscribe pages render in the currency of whoever is looking, and both served Canadian dollars to us on the day we checked. The USD figures recorded here are the ones Strava's own pricing page states for the United States, corroborated across two searches on the same day rather than read directly off the page in a US session. A student rate exists and is advertised as annual-only; we could not read its USD figure and have not guessed one."
+  },
+  "ranked": [
+    {
+      "project": "fittrackee",
+      "rationale": "The only one here that is a server you log into rather than a desktop app or a companion dashboard. It takes .gpx, .fit, .tcx and .kml files, draws the route on a map, keeps per-sport statistics and records, and puts every workout on one global map. What it cannot give you is the reason most people pay: there are no segments because nobody else is on your server, and the kudos never come. Take it as a training log you own, not as Strava with the bill removed."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "wger",
+      "repo": "https://github.com/wger-project/wger",
+      "note": "Actively maintained and popular, AGPL-3.0, but it tracks the other half of fitness: gym routines, sets and reps, body weight and nutrition. There is no GPS track, no map and no .fit import, so it sits next to a Strava replacement rather than being one."
+    },
+    {
+      "name": "GoldenCheetah",
+      "repo": "https://github.com/GoldenCheetah/GoldenCheetah",
+      "note": "Still actively developed and far deeper on the analysis than anything else on this list, with power-curve and training-load models a subscription does not give you. It is a desktop application you install on one computer, though, not a server, so there is no phone, no browser and nothing to share."
+    },
+    {
+      "name": "Dreeve",
+      "repo": "https://github.com/dreeveapp/dreeve",
+      "note": "Formerly Statistics for Strava, renamed and moved in July 2026; the old repository is now a pointer. Actively maintained and AGPL-3.0, but it builds its dashboard by pulling from the Strava API, so it needs the account you were trying to stop paying for. A companion, not a replacement."
+    }
+  ]
+}

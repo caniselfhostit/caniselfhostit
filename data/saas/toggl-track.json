@@ -1,0 +1,66 @@
+{
+  "slug": "toggl-track",
+  "name": "Toggl Track",
+  "domain": "toggl.com",
+  "whyPeoplePay": "Toggl Track sells the two seconds before the work starts. The timer is one click from wherever you already are, on a phone, in a menu bar, inside a browser extension that knows which Jira ticket you are looking at, and it syncs before you have finished thinking about it. Everything downstream, the billable rates and the profitability reports, only works because that first click is frictionless enough that people actually do it, and that is the part a team is really renting.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": null,
+      "note": "The pricing page says only \"Free for a limited number of users\" and no longer publishes the number."
+    },
+    {
+      "name": "Starter",
+      "priceMonthly": 12,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$12 per license per month billed monthly; $9 per license per month billed annually."
+    },
+    {
+      "name": "Premium",
+      "priceMonthly": 20,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$20 per license per month billed monthly; $18 billed annually, with a first year of a new Premium annual subscription at $14."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The page offers a demo booking rather than a price."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://toggl.com/track/pricing/",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The pricing page renders its annual toggle by default and draws the monthly figures in the browser, so the monthly-billed numbers are not in the page we can read. They come from Toggl's own knowledge base article on Track pricing, read the same day, which states 12 USD monthly against 9 annual for Starter and 20 monthly against 18 annual for Premium. The Free plan's user limit is recorded as null because Toggl no longer publishes it."
+  },
+  "ranked": [
+    {
+      "project": "kimai",
+      "rationale": "The closest match for the half of Toggl that gets invoiced. Customers, projects, activities, hourly and fixed rates, exports and per-user timesheets are all here without a seat count, and the data is a MySQL you can dump. Be honest about the trade: you give up the one-click timer everywhere and the integration list, and you get them back only through third-party mobile and browser clients that Kimai lists but does not write."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "solidtime",
+      "repo": "https://github.com/solidtime-io/solidtime",
+      "note": "The newest serious contender and the closest in feel to Toggl itself, AGPL-3.0 and actively developed with a Laravel backend, billable rates and a real API. We have not tested it, and it is young enough that the honest comparison is against Kimai's decade of invoicing edge cases rather than against its screenshots."
+    },
+    {
+      "name": "Traggo",
+      "repo": "https://github.com/traggo/server",
+      "note": "GPL-3.0 and still maintained, but a deliberately different model: time entries carry tags instead of belonging to a customer and a project, and there is no invoicing. If you want a searchable log of where your hours went it fits; if you want to bill somebody it does not."
+    },
+    {
+      "name": "ActivityWatch",
+      "repo": "https://github.com/ActivityWatch/activitywatch",
+      "note": "MPL-2.0 and widely used, but a different job entirely. It watches what your own machine does and keeps that history locally, with no shared server, no customers and no timesheets to approve. Useful next to a tracker, not instead of one."
+    }
+  ]
+}

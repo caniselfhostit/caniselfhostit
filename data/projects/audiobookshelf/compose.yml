@@ -1,0 +1,47 @@
+# Audiobookshelf · the deterministic fallback. Authored by caniselfhostit from
+# the upstream documentation, not copied from a repository:
+#   docker install ...... https://www.audiobookshelf.org/docs/documentation/install/docker
+#   configuration ....... https://www.audiobookshelf.org/docs/documentation/install/configuration
+#   backups ............. https://www.audiobookshelf.org/docs/documentation/server-management/backups
+#   reverse proxy ....... https://www.audiobookshelf.org/docs/documentation/install/reverse-proxy/caddy
+#
+# One service. The whole state is a SQLite database under /config, which
+# upstream says must be local disk and never a network mount. The image already
+# sets PORT=80, CONFIG_PATH=/config and METADATA_PATH=/metadata, so this file
+# does not repeat them. Upstream states that Audiobookshelf does not read PUID
+# or PGID, so the container runs as root and the two state directories are
+# root-owned on the host to match. The audiobook library is mounted read-only,
+# because nothing in this configuration writes to it. Tag and digest read from
+# ghcr.io on 2026-08-06; the image publishes linux/amd64 and linux/arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:2.36.0@sha256:180acad33d69c99ed208676465d8edcb268fa46967735579a7810859885b1a8e
+    container_name: audiobookshelf
+    restart: unless-stopped
+    environment:
+      TZ: UTC
+      # Backups belong beside the other backups on this box rather than inside
+      # the metadata cache. The scheduler that fills this folder ships off and
+      # stays off until it is turned on in the web UI.
+      BACKUP_PATH: /backups
+    volumes:
+      - /srv/audiobookshelf/config:/config
+      - /srv/audiobookshelf/metadata:/metadata
+      - /srv/audiobookshelf/backups:/backups
+      # Read-only. Nothing in this configuration writes to the library, and the
+      # mount is what keeps a mis-click in the UI from writing to it either.
+      - /srv/audiobookshelf/audiobooks:/audiobooks:ro
+      # Read-write, because podcast episodes are downloaded into this folder.
+      - /srv/audiobookshelf/podcasts:/podcasts
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8125.
+      - "127.0.0.1:8125:80"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s

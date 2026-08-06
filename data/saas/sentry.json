@@ -1,0 +1,61 @@
+{
+  "slug": "sentry",
+  "name": "Sentry",
+  "domain": "sentry.io",
+  "whyPeoplePay": "Sentry sells the minutes between a user hitting an exception and you reading the line of code that threw it. The SDKs are everywhere, the stack traces come back with your source maps applied, and tracing, profiling and session replay let you watch the request that failed instead of guessing at it. What you are renting is depth, and an event pipeline somebody else keeps up while your own site is the thing on fire.",
+  "plans": [
+    {
+      "name": "Developer",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Free, limited to one user. The pricing page lists 5k errors, 5 GB of logs, 5M spans and 50 replays a month."
+    },
+    {
+      "name": "Team",
+      "priceMonthly": 26,
+      "unit": "usage",
+      "seatsIncluded": null,
+      "note": "Unlimited users. The base covers a fixed monthly allowance, listed as 50k errors, 5 GB of logs, 5M spans and 50 replays; anything above it is billed pay-as-you-go. The page shows the same figure for monthly and annual billing and offers further discounts for annual or prepaid at checkout."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": 80,
+      "unit": "usage",
+      "seatsIncluded": null,
+      "note": "Same included allowance as Team plus the advanced features, with the same pay-as-you-go overage. The page shows the same figure for monthly and annual billing."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The page says custom volume, with a technical account manager and dedicated support."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://sentry.io/pricing/",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The plan names and base prices were read from sentry.io/pricing on 2026-08-06 and corroborated against docs.sentry.io/pricing. Confidence is medium for two reasons: the pricing page renders its numbers in the browser rather than in the HTML, and it prints the same figure for monthly and annual billing while also promising extra annual and prepaid discounts at checkout, so the annual rate a buyer is actually offered is not visible on the page. Treat the base price as a floor rather than a bill: every paid plan is a base plus pay-as-you-go usage above the included allowance, so what you pay depends on how many errors your users hit."
+  },
+  "ranked": [
+    {
+      "project": "glitchtip",
+      "rationale": "The only one here that keeps your instrumentation. GlitchTip speaks the Sentry SDK protocol, so the sentry-sdk already in your code stays, you change one DSN string, and errors land on your own hostname with no monthly event count deciding the bill. It is three containers and MIT licensed, and the honest half is what it does not do: no session replay, no profiling, and tracing that shows slow transactions rather than the deep performance product Sentry sells. If what you actually read every week is the issue stream, this is the trade to make."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Sentry (self-hosted)",
+      "repo": "https://github.com/getsentry/self-hosted",
+      "note": "The real thing, packaged by Sentry, and structurally out of reach for this catalogue. Their compose file declares more than sixty services, counted on 2026-08-06: Kafka, ClickHouse, Snuba, Relay, Symbolicator, SeaweedFS and dozens of consumers. Upstream describes it as being for low-volume deployments and proofs of concept, and their own docs point you at a machine far larger than a small VPS. The licence is FSL-1.1-Apache-2.0, which is source-available rather than open source until each version converts to Apache-2.0 two years on. We did not test it because a stack that size is not a prompt, it is a job."
+    },
+    {
+      "name": "Bugsink",
+      "repo": "https://github.com/bugsink/bugsink",
+      "note": "Also Sentry-SDK compatible, actively developed, and deliberately smaller: one container with SQLite or MySQL behind it, which would make it the easier install of the two. It is not open source. GitHub reports the licence as Other; the LICENSE file resolves to the PolyForm Shield License 1.0.0, which permits use but forbids competing with the licensor, and a separate ee/ directory carries its own terms. That is a defensible choice by its author and a real constraint on yours, so it is recorded here rather than ranked."
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+# LimeSurvey · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://github.com/martialblog/docker-limesurvey/blob/7.0.7-260729/README.md and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, with <DOMAIN> replaced by the hostname
+# pointed at this box. That hostname is also HOST_INFO in .env, and it is the
+# address inside every survey link you hand out.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	# LimeSurvey sets its own framing and content-security headers on the
+	# admin side; these are the rest. The referrer is trimmed because a
+	# shared survey link would otherwise carry its token onward.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# 8130 is the loopback port compose publishes on this host, not a
+	# container port and not open in the firewall. Caddy passes the Host
+	# header through, which is what the image README asks of a proxy in
+	# front of LimeSurvey, and the image reads a response's client address
+	# from X-Real-IP through Apache's mod_remoteip.
+	reverse_proxy 127.0.0.1:8130 {
+		header_up X-Real-IP {remote_host}
+	}
+}

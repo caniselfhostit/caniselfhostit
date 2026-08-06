@@ -1,0 +1,26 @@
+# Penpot · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://help.penpot.app/technical-guide/getting-started/docker/ and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy Prompt Zero installed, with
+# <DOMAIN> replaced by the hostname pointed at this box. That hostname is also
+# PENPOT_PUBLIC_URI in .env; Penpot builds every share and export URL from it.
+
+<DOMAIN> {
+	# The frontend image already sends nosniff, Referrer-Policy,
+	# Permissions-Policy and X-Frame-Options SAMEORIGIN, so repeating them
+	# here would send each twice. HSTS is the one it cannot set: only this
+	# block knows the name is served over TLS. No `encode` either, because
+	# that nginx gzips its own responses.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+	}
+
+	# 8122 is the loopback port compose publishes here. Not a container port,
+	# not open in the firewall. reverse_proxy passes the /ws/notifications
+	# upgrade through untouched, which is how cursors move.
+	reverse_proxy 127.0.0.1:8122
+}

@@ -1,0 +1,66 @@
+{
+  "slug": "pipedrive",
+  "name": "Pipedrive",
+  "domain": "pipedrive.com",
+  "whyPeoplePay": "Pipedrive sells a pipeline you can see. The deal board, the activity reminders and the two-way mail sync are arranged so that a salesperson knows what to do next without first being taught a data model, and that clarity is genuinely hard to build. What you rent alongside it is somebody else's uptime and somebody else's backups. The bill climbs on the axis a growing team cannot avoid: it is per seat, every month, and the things a sales manager eventually wants (lead routing, scoring, e-signatures, account security rules) sit on the upper two rungs of a four-rung ladder, with five metered add-ons priced beside it.",
+  "plans": [
+    {
+      "name": "Lite",
+      "priceMonthly": 24,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Billed monthly. $14 per seat per month billed annually, charged as one payment of $168 per seat per year."
+    },
+    {
+      "name": "Growth",
+      "priceMonthly": 49,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Billed monthly. $39 per seat per month billed annually, one payment of $468 per seat per year. This is the first tier with full email sync, automations and sequences."
+    },
+    {
+      "name": "Premium",
+      "priceMonthly": 79,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Billed monthly. $59 per seat per month billed annually, one payment of $708 per seat per year. Marked most popular on the page, and the first tier with lead generation and routing, scoring, and e-signatures."
+    },
+    {
+      "name": "Ultimate",
+      "priceMonthly": 99,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Billed monthly. $79 per seat per month billed annually, one payment of $948 per seat per year. Adds account security rules, contact data enrichment and a sandbox."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://www.pipedrive.com/en/pricing",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "Pipedrive prices the rendered page in the currency of the reader's country, and it served us Canadian dollars. The USD figures here are Pipedrive's own, read out of the plan data the same page carries for every currency it sells in, and the annual totals were confirmed against a US-rendered copy of the page. We record the monthly-billed figure in each row, because the page advertises savings of up to 44% for annual billing and quoting only the annual rate would understate what a month-to-month subscriber pays. The five add-ons (LeadBooster, Projects, Campaigns, Web Visitors, Smart Docs) are priced separately and are not in this ladder. Prices are quoted excluding VAT."
+  },
+  "ranked": [
+    {
+      "project": "espocrm",
+      "rationale": "The closest thing to a whole Pipedrive you can run yourself: pipelines and deal stages, contacts and organisations, activities with reminders, quotes and documents, a documented REST API with an OpenAPI spec, and no seat counter anywhere. AGPL-3.0, released continuously, with an official Docker image its own vendor maintains. What you take on is real: four containers, a MariaDB you back up, and a background daemon that has to keep running or the CRM keeps answering while silently doing nothing on a schedule."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Twenty",
+      "repo": "https://github.com/twentyhq/twenty",
+      "note": "The one everybody links to, and deservedly: 54k stars, commits every day, and an interface designed this decade rather than inherited from 2010. GitHub reports the licence as Other, and reading the LICENSE file explains why. Most of the tree is AGPLv3 with an added Section 7 permission for applications built on its APIs, the SDK and UI packages are MIT, and files carrying an `@license Enterprise` comment are under a separate commercial licence instead. Self-hosting is a multi-service stack with PostgreSQL, Redis and a worker. We have not tested it."
+    },
+    {
+      "name": "SuiteCRM",
+      "repo": "https://github.com/SuiteCRM/SuiteCRM",
+      "note": "AGPL-3.0 and still actively developed, the long-running fork of SugarCRM's community edition, and the right answer when you need the heavyweight list: quotes, contracts, campaigns, a workflow engine and reporting, in the box rather than as paid extensions. It is larger than EspoCRM in every direction, including what it asks of the server and of the person configuring it, and the interface carries two decades of history. No container from us yet."
+    },
+    {
+      "name": "Monica",
+      "repo": "https://github.com/monicahq/monica",
+      "note": "AGPL-3.0 and well known, but it answers a different question: it is a personal CRM for remembering birthdays, conversations and the names of your friends' children. There are no pipelines, no deals and no sales reporting, so it does not replace a Pipedrive seat. Development has also slowed, with the last push to its default branch in April 2026. Listed because it surfaces in every CRM search and it is worth knowing it is the wrong tool for a sales team."
+    }
+  ]
+}

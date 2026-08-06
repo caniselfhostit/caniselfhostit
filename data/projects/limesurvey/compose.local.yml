@@ -1,0 +1,75 @@
+# LimeSurvey · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   config reference . https://www.limesurvey.org/manual/Optional_settings
+#   image repo ....... https://github.com/martialblog/docker-limesurvey/tree/7.0.7-260729
+#
+# LimeSurvey publishes no Docker image; martialblog/limesurvey is a community
+# image, MIT, whose Dockerfile fetches the official 7.0.7+260729 tarball and
+# checks its sha256. Both mounts are named volumes: MariaDB chowns its data dir
+# to its own uid, which Docker Desktop cannot grant on a Windows home-directory
+# bind mount, and `upload` ships with base content a bind mount would hide.
+# ${...} comes from ./.env, mode 600. Digests read 2026-08-06.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  db:
+    image: mariadb:11.8.8@sha256:d9f7eb2637296652f24b484afd5d246f759f49f5babcadc6a9e344c9acb75fbf
+    container_name: limesurvey-db
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: limesurvey
+      MARIADB_USER: limesurvey
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_DISABLE_UPGRADE_BACKUP: "1"
+    volumes:
+      - limesurvey-db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      retries: 20
+    # No `ports:` at all: 3306 is reachable only from the other container.
+
+  app:
+    image: martialblog/limesurvey:7.0.7-260729-apache@sha256:556d09839640f4702ee5ef6618a426c68f0688ded967b2805a0bd903a241f051
+    container_name: limesurvey-app
+    restart: unless-stopped
+    environment:
+      DB_TYPE: mysql
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_NAME: limesurvey
+      DB_USERNAME: limesurvey
+      DB_PASSWORD: ${DB_PASSWORD}
+      # Upstream's default engine; InnoDB caps a survey row near 8 KB.
+      DB_MYSQL_ENGINE: MyISAM
+      # The entrypoint exits without ADMIN_PASSWORD; these four seed it.
+      ADMIN_USER: admin
+      ADMIN_NAME: Site administrator
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      # Nothing terminates TLS here, so these links say http.
+      HOST_INFO: ${HOST_INFO}
+      # Written to config/security.php each start; changing either loses data.
+      ENCRYPT_NONCE: ${ENCRYPT_NONCE}
+      ENCRYPT_SECRET_BOX_KEY: ${ENCRYPT_SECRET_BOX_KEY}
+    volumes:
+      - limesurvey-upload:/var/www/html/upload
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS -o /dev/null http://127.0.0.1:8080/index.php/admin/authentication/sa/login || exit 1"]
+      start_period: 30s
+      interval: 15s
+      retries: 20
+    ports:
+      # Loopback only. The container listens on 8080, as www-data.
+      - "127.0.0.1:8130:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  limesurvey-db:
+  limesurvey-upload:

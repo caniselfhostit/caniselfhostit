@@ -1,0 +1,59 @@
+# Kimai · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker compose ... https://www.kimai.org/documentation/docker-compose.html
+#   docker image ..... https://www.kimai.org/documentation/docker.html
+#   backups .......... https://www.kimai.org/documentation/backups.html
+#
+# Two services, run from ~/selfhost/kimai/. Both data directories are named
+# volumes, not bind mounts: MySQL chowns /var/lib/mysql and Kimai chowns
+# /opt/kimai/var, each to a uid it picks, which a home bind mount cannot grant
+# on Windows. Digests read 2026-08-06; both images have arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  sqldb:
+    image: mysql:8.4.11@sha256:b3b90af2a6552ae30c266fdb7d5dd55f3afb72404bb78d37fe8a23eb857fd3fb
+    container_name: kimai-db
+    restart: unless-stopped
+    command: --default-storage-engine innodb
+    environment:
+      MYSQL_DATABASE: kimai
+      MYSQL_USER: kimai
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - kimai-mysqldata:/var/lib/mysql
+    healthcheck:
+      # Runs in the container, where that value already is an env var.
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u kimai -p$$MYSQL_PASSWORD --silent"]
+      start_period: 30s
+      interval: 10s
+      retries: 20
+    # No `ports:` at all: 3306 is reachable only from the kimai container.
+
+  kimai:
+    image: kimai/kimai2:2.63.0@sha256:c0d55027c384b5f4e612dfeb326fdcff1d700dc469f85961b365eeb1c353119b
+    container_name: kimai
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: "mysql://kimai:${DB_PASSWORD}@sqldb/kimai?charset=utf8mb4&serverVersion=8.4.0"
+      APP_SECRET: ${APP_SECRET}
+      # A regex Symfony matches the Host header against.
+      TRUSTED_HOSTS: localhost|127.0.0.1
+      # Created while ADMINPASS is set; step 7 drops that line from .env.
+      ADMINMAIL: ${ADMIN_EMAIL}
+      ADMINPASS: ${ADMIN_PASSWORD:-}
+      memory_limit: 512M
+    volumes:
+      - kimai-vardata:/opt/kimai/var
+    ports:
+      # Loopback only: no device on the wifi can reach 8126.
+      - "127.0.0.1:8126:8001"
+    depends_on:
+      sqldb:
+        condition: service_healthy
+
+volumes:
+  kimai-mysqldata:
+  kimai-vardata:

@@ -1,0 +1,49 @@
+# PeerTube · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://github.com/Chocobozzz/PeerTube/blob/v8.2.4/support/nginx/peertube,
+# https://caddyserver.com/docs/caddyfile/directives/reverse_proxy and
+# https://caddyserver.com/docs/automatic-https
+#
+# Upstream ships a 262-line nginx config and a container to run it in. This
+# block replaces both; each comment names the nginx setting it stands in for.
+# Its ciphers, certbot and ACME webroot become Caddy's automatic HTTPS; its
+# sendfile, aio and limit_rate are dropped as I/O tuning.
+#
+# Append to /etc/caddy/Caddyfile with <DOMAIN> replaced by your hostname.
+
+<DOMAIN> {
+	# nginx: client_max_body_size 12G on the upload routes. Caddy applies
+	# no limit unless told to, so one ceiling is tighter than the default.
+	# Upstream's per-route regexes are not copied: such a list rots the day
+	# PeerTube adds an endpoint.
+	request_body {
+		max_size 12GB
+	}
+
+	# nginx: X-File-Maximum-Size, which PeerTube's uploader reads off a
+	# 413. 8GB against a 12GB cap because multipart encoding inflates a
+	# body by about 1.4x. Upstream pairs the same two numbers.
+	header /api/v1/videos/upload* X-File-Maximum-Size "8GB"
+
+	header {
+		# PeerTube sets its own X-Frame-Options, so this does not.
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# nginx: gzip on CSS, JS, fonts, SVG and XML. Caddy's default matcher
+	# is that list and holds no video type, so HLS segments and Range
+	# requests pass through untouched and seeking works.
+	encode zstd gzip
+
+	# 8124 is the loopback port compose publishes here, not a container
+	# port and not open in the firewall. Three nginx settings need nothing
+	# written: proxy_request_buffering off (Caddy never spools a request
+	# body to disk), proxy_read_timeout 15m (no transport read timeout) and
+	# the Upgrade headers on the socket routes (reverse_proxy upgrades
+	# WebSockets itself).
+	reverse_proxy 127.0.0.1:8124
+}

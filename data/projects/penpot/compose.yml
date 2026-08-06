@@ -1,0 +1,98 @@
+# Penpot · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker install ... https://help.penpot.app/technical-guide/getting-started/docker/
+#   configuration .... https://help.penpot.app/technical-guide/configuration/
+#   sizing + valkey .. https://help.penpot.app/technical-guide/getting-started/recommended-settings/
+#   flag definitions . https://github.com/penpot/penpot/blob/2.17.0/common/src/app/common/flags.cljc
+#
+# Five services: nginx plus the browser app, the API and file data, an exporter
+# rendering in a headless Chromium inside its own image, PostgreSQL for the
+# designs, Valkey for websocket notifications.
+#
+# Upstream's compose runs two more this file leaves out: an MCP server, routed
+# by the frontend only when PENPOT_FLAGS contains enable-mcp, and a mailcatcher,
+# a development mailbox. Telemetry is off here; upstream's compose turns it on.
+#
+# Digests read from Docker Hub on 2026-08-06; all five publish amd64 and arm64.
+# Backend and frontend run as uid 1001, which is why /srv/penpot/assets is too.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+name: penpot
+
+services:
+  penpot-postgres:
+    image: postgres:15.18@sha256:6eb0add3b77c081df18aa518ce43df58fdcc40f2e6d868a6fd08038dc7acd425
+    restart: unless-stopped
+    stop_signal: SIGINT
+    environment:
+      POSTGRES_DB: penpot
+      POSTGRES_USER: penpot
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_INITDB_ARGS: --data-checksums
+    volumes:
+      - /srv/penpot/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U penpot -d penpot"]
+      interval: 10s
+      retries: 30
+    # No `ports:`: 5432 is reachable only from the other containers.
+
+  penpot-valkey:
+    image: valkey/valkey:8.1.9-alpine@sha256:a038175878d66b9d274fbf8be73c0305e93798b83917647f167e18cef3c71eec
+    restart: unless-stopped
+    # Arguments rather than upstream's env var; numbers from their docs.
+    command: ["valkey-server", "--maxmemory", "128mb", "--maxmemory-policy", "volatile-lfu"]
+    healthcheck:
+      test: ["CMD-SHELL", "valkey-cli ping | grep PONG"]
+      interval: 5s
+      retries: 20
+
+  penpot-backend:
+    image: penpotapp/backend:2.17.0@sha256:471cdebf185be899ef7d7593e9cd7994b908ebd7ffb78ca547e3d843bb83536f
+    restart: unless-stopped
+    volumes:
+      - /srv/penpot/assets:/opt/data/assets
+    environment:
+      PENPOT_FLAGS: ${PENPOT_FLAGS}
+      PENPOT_PUBLIC_URI: ${PENPOT_PUBLIC_URI}
+      PENPOT_SECRET_KEY: ${PENPOT_SECRET_KEY}
+      PENPOT_DATABASE_URI: postgresql://penpot-postgres/penpot
+      PENPOT_DATABASE_USERNAME: penpot
+      PENPOT_DATABASE_PASSWORD: ${DB_PASSWORD}
+      PENPOT_REDIS_URI: redis://penpot-valkey/0
+      PENPOT_OBJECTS_STORAGE_BACKEND: fs
+      PENPOT_OBJECTS_STORAGE_FS_DIRECTORY: /opt/data/assets
+      PENPOT_TELEMETRY_ENABLED: "false"
+    depends_on:
+      penpot-postgres:
+        condition: service_healthy
+      penpot-valkey:
+        condition: service_healthy
+
+  penpot-exporter:
+    image: penpotapp/exporter:2.17.0@sha256:7e8beb6ef2bdb9d778e9bbcbf7feebf8c99a137b2d9eb3969450c0a1a49e41c5
+    restart: unless-stopped
+    environment:
+      PENPOT_PUBLIC_URI: ${PENPOT_PUBLIC_URI}
+      PENPOT_SECRET_KEY: ${PENPOT_SECRET_KEY}
+      PENPOT_REDIS_URI: redis://penpot-valkey/0
+      PENPOT_INTERNAL_URI: http://penpot-frontend:8080
+    depends_on:
+      penpot-valkey:
+        condition: service_healthy
+
+  penpot-frontend:
+    image: penpotapp/frontend:2.17.0@sha256:861989dfff50f12b9de1358c6b0f3cc1e601d7a678db2826f3643d0f93438500
+    restart: unless-stopped
+    volumes:
+      - /srv/penpot/assets:/opt/data/assets
+    environment:
+      PENPOT_FLAGS: ${PENPOT_FLAGS}
+      PENPOT_PUBLIC_URI: ${PENPOT_PUBLIC_URI}
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8122.
+      - "127.0.0.1:8122:8080"
+    depends_on:
+      - penpot-backend
+      - penpot-exporter

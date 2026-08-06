@@ -1,0 +1,28 @@
+# FitTrackee · the Caddy site block for this service. Authored by caniselfhostit
+# from https://docs.fittrackee.org/en/installation/deployment.html and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy Prompt Zero installed, with
+# <DOMAIN> replaced by the hostname pointed at this box. It is also UI_URL in
+# .env, so the two have to stay the same string.
+
+<DOMAIN> {
+	# The workout list is a JavaScript bundle and the API answers JSON.
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+	# No Content-Security-Policy: every workout map pulls tiles from
+	# tile.openstreetmap.org, and one written without testing that breaks
+	# the maps. Caddy sets no request body limit either, so an upload
+	# ceiling raised in FitTrackee's Administration page needs nothing here.
+
+	# 8129 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8129
+}

@@ -1,0 +1,66 @@
+{
+  "slug": "audible",
+  "name": "Audible",
+  "domain": "audible.com",
+  "whyPeoplePay": "The catalog is the product, and so is the studio time behind it. Audible pays for the narrators, the exclusive rights and the Originals nobody else can license, so a book published this morning is one tap away, already produced, on a phone, a car and a watch, with the place you stopped kept in all three. A credit each month buys a title you keep after you cancel, and Whispersync moves you between the Kindle text and the audio without losing the page. None of that is software you can install: it is licensing and production, and it is what the subscription actually buys. What it also buys, and what you can take back, is the player, the library and the progress bar.",
+  "plans": [
+    {
+      "name": "Audible Plus",
+      "priceMonthly": 7.95,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Unlimited listening from the Plus Catalog. No credits, so premium titles are not included."
+    },
+    {
+      "name": "Premium Plus",
+      "priceMonthly": 14.95,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "The Plus Catalog plus one credit a month for any premium title, and that title stays in your library after you cancel."
+    },
+    {
+      "name": "Premium Plus 2 Credits",
+      "priceMonthly": 22.95,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Two credits a month instead of one. This is the least certain figure in this ladder: it was corroborated from secondary pricing coverage rather than read on a page Audible served us."
+    },
+    {
+      "name": "Premium Plus Annual",
+      "priceMonthly": 12.46,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$149.50 billed once a year, with twelve credits granted up front rather than one a month. The figure recorded here is that annual price divided by twelve, so it can be compared with the monthly plans."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://www.audible.com/ep/memberships",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Audible's US membership pages redirected us to a non-US storefront on every fetch, so these figures were corroborated from Amazon's own Audible membership landing pages and from current pricing coverage rather than read directly off audible.com. The $7.95 Plus, $14.95 Premium Plus and $149.50 annual figures agreed across every source we saw; the $22.95 two-credit tier appeared only in secondary coverage, which is why confidence here is medium rather than high. Re-check this ladder against audible.com from a US connection."
+  },
+  "ranked": [
+    {
+      "project": "audiobookshelf",
+      "rationale": "The honest answer to a narrower question. It does not replace the catalog and nothing self-hosted does; it replaces the player, the library and the progress bar. Point it at audiobooks you already hold in an ordinary format and one container gives you a web player, per-user listening positions, series and author browsing, and a podcast library beside it. The reason it is first is the client story: upstream ships its own phone apps, Android on Google Play and iOS as a TestFlight beta, and those keep your place across devices the way the paid app does. A listening server your phone cannot reach is a folder with extra steps."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Jellyfin",
+      "repo": "https://github.com/jellyfin/jellyfin",
+      "note": "GPL-2.0, v10.11.11 released in June 2026 with a 12.0 release candidate in the open, and one of the most actively maintained projects in this category. It plays audiobooks and it has apps on phones, tablets and TV boxes. Two honest caveats: audiobooks are not what it is built around, so a long multi-file book is browsed as an album and resume behaviour is weaker than a purpose-built server's, and there is no podcast subscription handling without a plugin. If you already run it for film and television, adding the books there is a defensible choice; if audiobooks are the reason you are here, it is not the one to start with."
+    },
+    {
+      "name": "Kavita",
+      "repo": "https://github.com/Kareadita/Kavita",
+      "note": "GPL-3.0, v0.9.0.2 in May 2026, commits landing this week. A reading server with a genuinely good library model for ebooks, comics and manga, and it is the right answer to an adjacent question. It is on this list because people find it while searching for the same thing, not because it is a substitute: its own scope is text and images, so an audiobook collection is not what its scanner, its reader or its progress tracking are for."
+    },
+    {
+      "name": "Booksonic-Air",
+      "repo": "https://github.com/popeen/Booksonic-Air",
+      "note": "GPL-3.0, and the honest verdict is that it has stopped. The last tagged release is v2201.1.0 from January 2022 and the last commit to the default branch was in March 2023, so it has had no security work in over three years while running a Java web application you would expose to the internet. Its own README warns that the code may not be release-ready. It was the Subsonic-derived audiobook server people used before Audiobookshelf existed, and it is here for that history rather than as a live option."
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "slug": "limesurvey",
+  "name": "LimeSurvey",
+  "tagline": "Research-grade questionnaires on a hostname you own, with branching logic, quotas and no monthly response meter.",
+  "repo": "LimeSurvey/LimeSurvey",
+  "site": "https://www.limesurvey.org",
+  "category": "marketing-content",
+  "replaces": [
+    {
+      "saas": "surveymonkey",
+      "plan": "Advantage Annual",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 5
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 100,
+  "license": "GPL-2.0-or-later",
+  "officialCompose": "none",
+  "local": {
+    "fit": "caveat",
+    "note": "Every survey link this makes begins with http://localhost:8130, which resolves on this computer and nowhere else, so the people you wanted answers from get a connection error instead of question one."
+  },
+  "quote": {
+    "text": "ONCE SET, ENCRYPTION KEYS SHOULD NEVER BE CHANGED, OTHERWISE ALL ENCRYPTED DATA COULD BE LOST",
+    "source": "LimeSurvey source, LSSodium.php, in the security.php file it writes",
+    "url": "https://github.com/LimeSurvey/LimeSurvey/blob/7.0.7%2B260729/application/core/LSSodium.php",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "The LimeSurvey project publishes no Docker image of its own. The de-facto image is the community-maintained martialblog/limesurvey, MIT licensed, whose Dockerfile downloads the official LimeSurvey release tarball from LimeSurvey's repository and verifies its sha256 before unpacking it.",
+      "url": "https://github.com/martialblog/docker-limesurvey/blob/7.0.7-260729/7.0/apache/Dockerfile"
+    },
+    {
+      "claim": "LimeSurvey 6.x community edition left normal support in April 2025 and extended support in June 2026, while 7.x carries normal support until May 2028, which is why this install pins the 7.0 line rather than 6.x.",
+      "url": "https://www.limesurvey.org/manual/LimeSurvey_roadmap"
+    },
+    {
+      "claim": "The image's entrypoint exits with an error when DB_PASSWORD or ADMIN_PASSWORD is missing, writes application/config/config.php itself, and runs the LimeSurvey console installer, so no browser setup wizard ever runs and no default password exists.",
+      "url": "https://github.com/martialblog/docker-limesurvey/blob/7.0.7-260729/7.0/apache/entrypoint.sh"
+    },
+    {
+      "claim": "Once application/config/config.php exists, LimeSurvey's installer controller refuses every request with \"Installation has been done already. Installer disabled.\", which is the assertion this install checks after first boot.",
+      "url": "https://github.com/LimeSurvey/LimeSurvey/blob/7.0.7%2B260729/application/controllers/InstallerController.php"
+    },
+    {
+      "claim": "LimeSurvey's shipped configuration defaults mysqlEngine to MyISAM, the engine this install keeps, because each survey gets one wide response table and InnoDB caps a row near 8 KB.",
+      "url": "https://github.com/LimeSurvey/LimeSurvey/blob/7.0.7%2B260729/application/config/config-defaults.php"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The application is upstream's, the Docker packaging is not. LimeSurvey publishes no image, so this install uses martialblog/limesurvey, a community image under the MIT licence maintained at github.com/martialblog/docker-limesurvey by someone outside the LimeSurvey project. Its Dockerfile fetches LimeSurvey's own release tarball and checks its sha256, so the code is upstream's, but the wrapper's update cadence is one more thing you are trusting, and it currently builds on PHP 8.5 where LimeSurvey's manual says tested up to 8.4.x, a gap only the packager's CI is watching.",
+    "Two encryption values in .env are the whole of your participant privacy. LimeSurvey encrypts participant fields with a nonce and a secret-box key, and this install generates both and keeps them in one 600-mode file rather than letting the container invent throwaway ones. Lose that file and the encrypted rows in your backups are unreadable, by you and by anyone else, permanently.",
+    "You own a MariaDB, and the survey tables are MyISAM because that is upstream's default. Backups are a dump that read-locks each table for the moment it reads it, restores are a load, and an unclean shutdown is the case where you learn what REPAIR TABLE does. A dump you have never restored is not a backup.",
+    "No mail, so no invitations. Anonymous link surveys, the core loop, work with nothing configured. Token-based invitations, reminders and password reset all need SMTP, and this install deliberately does not set it up, which means the participants list is yours to distribute by other means.",
+    "No respondent panel and nobody on call. SurveyMonkey Audience sells you people to answer the survey, and their subscription buys someone who notices at 3am when the survey page is down mid-fieldwork. Both are the parts a self-hosted questionnaire engine cannot hand you."
+  ],
+  "sources": {
+    "compose": "https://github.com/martialblog/docker-limesurvey/blob/7.0.7-260729/README.md",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://www.limesurvey.org/manual/Installation_-_LimeSurvey_CE",
+    "config": "https://www.limesurvey.org/manual/Optional_settings",
+    "encryption": "https://www.limesurvey.org/manual/Data_encryption",
+    "support": "https://www.limesurvey.org/manual/LimeSurvey_roadmap",
+    "image": "https://github.com/martialblog/docker-limesurvey/blob/7.0.7-260729/7.0/apache/Dockerfile",
+    "entrypoint": "https://github.com/martialblog/docker-limesurvey/blob/7.0.7-260729/7.0/apache/entrypoint.sh",
+    "imageComposeExample": "https://github.com/martialblog/docker-limesurvey/blob/7.0.7-260729/docker-compose.yml"
+  },
+  "related": [
+    "formbricks",
+    "listmonk",
+    "matomo"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "ca418ced572b395b4dfac147a18592363266786a200ef6471d89e86bd47042d2"
+}

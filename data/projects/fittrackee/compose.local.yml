@@ -1,0 +1,60 @@
+# FitTrackee · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker install . https://docs.fittrackee.org/en/installation/installation.html
+#   variables ...... https://docs.fittrackee.org/en/installation/environments_variables.html
+#   emails ......... https://docs.fittrackee.org/en/installation/emails.html
+#
+# Two services, every path relative to ~/selfhost/fittrackee/ so one file works
+# on macOS, Linux and Windows. PostGIS 3.4+ is a mandatory prerequisite, so the
+# database image is postgis/postgis, which publishes linux/amd64 only, in
+# upstream's own words. It is a named volume, not a bind mount, because
+# PostgreSQL chowns its data directory. Digests read 2026-08-06.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  fittrackee-db:
+    image: postgis/postgis:18-3.6-alpine@sha256:22e5371710d26bae9b4f3b28f962bcfddecbf8ba8c9e8357ece4ca18858ede28
+    platform: linux/amd64
+    container_name: fittrackee-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: fittrackee
+      POSTGRES_USER: fittrackee
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - fittrackee-pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fittrackee -d fittrackee"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other container.
+
+  fittrackee:
+    image: fittrackee/fittrackee:v1.3.4@sha256:87ebf6879eccad561e84b257eb1ec825030030d6b0142fbaef0048c7d8cc29ba
+    container_name: fittrackee
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      FLASK_APP: fittrackee
+      FLASK_SKIP_DOTENV: "1"
+      DATABASE_URL: postgresql://fittrackee:${POSTGRES_PASSWORD}@fittrackee-db:5432/fittrackee
+      UPLOAD_FOLDER: /usr/src/app/uploads
+      STATICMAP_CACHE_DIR: /usr/src/app/.staticmap_cache
+      # Console logging, so /usr/src/app/logs never has to exist.
+      GUNICORN_LOG: "-"
+      # Empty on purpose: no mail server, so no Redis and no worker.
+      EMAIL_URL: ""
+    command: sh docker-entrypoint.sh
+    volumes:
+      - ./uploads:/usr/src/app/uploads
+      - ./staticmap_cache:/usr/src/app/.staticmap_cache
+    ports:
+      # Loopback only: no other device on the wifi can reach 8129.
+      - "127.0.0.1:8129:5000"
+    depends_on:
+      fittrackee-db:
+        condition: service_healthy
+
+volumes:
+  fittrackee-pgdata:

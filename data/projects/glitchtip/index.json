@@ -1,0 +1,94 @@
+{
+  "slug": "glitchtip",
+  "name": "GlitchTip",
+  "tagline": "Error tracking that speaks the Sentry SDK protocol, so your code keeps its instrumentation and changes one DSN.",
+  "repo": "burke-software/GlitchTip",
+  "site": "https://glitchtip.com",
+  "category": "monitoring",
+  "replaces": [
+    {
+      "saas": "sentry",
+      "plan": "Team",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 3,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 20,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 120,
+  "license": "MIT",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://glitchtip.com/assets/compose.sample.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Every DSN this hands out begins with http://localhost:8123, so only code running on this same computer can report to it, and a machine that is asleep collects nothing while your users are hitting the bug."
+  },
+  "quote": {
+    "text": "Our app is compatible with Sentry client SDKs, but easier to run.",
+    "source": "GlitchTip project homepage",
+    "url": "https://glitchtip.com",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "GlitchTip requires PostgreSQL 14 or newer and a single service, with separate web and worker services only for scaling, and Valkey or Redis 7 optional; upstream recommends 512 MB of RAM and puts a million events a month at roughly 30 GB of disk.",
+      "url": "https://glitchtip.com/documentation/install"
+    },
+    {
+      "claim": "Upstream's own sample compose file runs three services, postgres, valkey and web with SERVER_ROLE all_in_one, publishes port 8000, and disables Django Admin and the OpenAPI schema.",
+      "url": "https://glitchtip.com/assets/compose.sample.yml"
+    },
+    {
+      "claim": "With ENABLE_USER_REGISTRATION set to False, self-signup is disabled once the first user is registered, and ENABLE_ORGANIZATION_CREATION defaults to False so only superusers create further organizations.",
+      "url": "https://glitchtip.com/documentation/install#configuration"
+    },
+    {
+      "claim": "The all_in_one start script applies Django migrations and maintains the Postgres partitions before it starts the web server with the worker embedded, which is why the first boot binds its port minutes after the container starts.",
+      "url": "https://gitlab.com/glitchtip/glitchtip-backend/-/blob/v6.2.3/bin/run-all-in-one.sh"
+    },
+    {
+      "claim": "Email is optional in the code: with no mail transport configured nothing is sent, account verification and password reset are off, and /api/settings/ omits the email feature so the frontend hides that UI.",
+      "url": "https://gitlab.com/glitchtip/glitchtip-backend/-/blob/v6.2.3/glitchtip/settings.py"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Your instrumentation survives, your depth does not. GlitchTip receives what the Sentry SDKs send, so the sentry-sdk in your code stays and one DSN string changes. What you give up is the part Sentry charges for: no session replay, no profiling, and tracing that lists slow transactions rather than the performance product. If the thing you actually open every week is the issue stream, that is a fair trade, and if it is replay, it is not.",
+    "No mail, by choice. This install configures no SMTP, and GlitchTip responds by turning email off: account verification and password reset disappear from the interface, and the one account you create is the whole recovery story. Alerts still work, through a webhook recipient you add on the project's alert rule, so wire one to whatever you actually read before you rely on this to tell you anything.",
+    "You are now the retention policy. Events default to 90 days and the database is the product, so disk is the number that bites: upstream's own guide puts a million events a month at roughly 30 GB. Nobody sends you an overage email here. The failure mode is a full disk at 2am instead of a bill.",
+    "A monitor of your own code cannot watch itself. If GlitchTip runs on the same box as the application it tracks, the outage that takes down one takes down the reporting for the other, and the errors thrown during it are gone rather than queued.",
+    "No hosted vantage point, no support contract, and no on-call anybody. The paid plans buy a team keeping the event pipeline up while your site is the thing on fire; here that is you."
+  ],
+  "sources": {
+    "compose": "https://glitchtip.com/documentation/install",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://glitchtip.com/documentation/install#configuration",
+    "sample": "https://glitchtip.com/assets/compose.sample.yml",
+    "health": "https://gitlab.com/glitchtip/glitchtip-backend/-/blob/v6.2.3/glitchtip/views.py",
+    "settings": "https://gitlab.com/glitchtip/glitchtip-backend/-/blob/v6.2.3/glitchtip/settings.py",
+    "startup": "https://gitlab.com/glitchtip/glitchtip-backend/-/blob/v6.2.3/bin/run-all-in-one.sh",
+    "alerts": "https://glitchtip.com/documentation/error-tracking",
+    "repo": "https://gitlab.com/glitchtip/glitchtip",
+    "releases": "https://gitlab.com/glitchtip/glitchtip-backend/-/tags"
+  },
+  "related": [
+    "healthchecks",
+    "uptime-kuma",
+    "grafana"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "9ed2a4313342a88b5b786d84aa625fe6a486e6e2356bd314a2b90dd93111ab2a"
+}

@@ -1,0 +1,33 @@
+# GlitchTip · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://glitchtip.com/documentation/install and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also GLITCHTIP_DOMAIN and ALLOWED_HOSTS in .env, and every DSN this server
+# hands out is built from it, so changing it later means editing every
+# application that reports here.
+
+<DOMAIN> {
+	# GlitchTip sends its own Content-Security-Policy, so nothing here
+	# touches that header. HSTS, nosniff and a same-origin frame rule are
+	# the additions.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	encode zstd gzip
+
+	# Upstream's nginx example raises client_max_body_size to 40M because
+	# nginx caps a body at 1M. Caddy has no such cap, so nothing to raise.
+	#
+	# 8123 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8123
+}

@@ -1,0 +1,93 @@
+{
+  "slug": "kimai",
+  "name": "Kimai",
+  "tagline": "Timesheets with customers, projects, hourly rates and invoices, on a server that never asks how many seats you have.",
+  "repo": "kimai/kimai",
+  "site": "https://www.kimai.org",
+  "category": "work-pm",
+  "replaces": [
+    {
+      "saas": "toggl-track",
+      "plan": "Starter",
+      "seatsAssumed": 3
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 4
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://www.kimai.org/documentation/docker-compose.html",
+  "local": {
+    "fit": "caveat",
+    "note": "On your own computer Kimai answers at http://localhost:8126 and nowhere else, so the timer you meant to start from your phone or a colleague's desk is a timer nobody can reach, and the hours you forget to record are the ones you never invoice."
+  },
+  "quote": {
+    "text": "For security reasons, it is crucial that you use unique values for your environment variables.",
+    "source": "Kimai documentation, Docker Compose",
+    "url": "https://www.kimai.org/documentation/docker-compose.html",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's compose example runs Kimai against a MySQL service, publishes the application on port 8001 and keeps state under /opt/kimai/var.",
+      "url": "https://www.kimai.org/documentation/docker-compose.html"
+    },
+    {
+      "claim": "Setting ADMINMAIL and ADMINPASS makes the container's start-up script run kimai:user:create for a ROLE_SUPER_ADMIN account, and that script runs under bash -x, so the command it builds is traced into the container log.",
+      "url": "https://github.com/kimai/kimai/blob/2.63.0/.docker/entrypoint.sh"
+    },
+    {
+      "claim": "The Apache image listens on 8001, declares /opt/kimai/var as a volume, and carries a health check that curls its own root with no start period.",
+      "url": "https://github.com/kimai/kimai/blob/2.63.0/Dockerfile"
+    },
+    {
+      "claim": "Kimai requires PHP 8.2 or newer and either MariaDB or MySQL, so there is no SQLite option to fall back on.",
+      "url": "https://www.kimai.org/documentation/installation.html"
+    },
+    {
+      "claim": "Upstream's backup page asks for a full database dump plus .env, config/packages/local.yaml and the var directories, which is why this install mounts all of /opt/kimai/var rather than two subdirectories of it.",
+      "url": "https://www.kimai.org/documentation/backups.html"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "This is a timesheet, not a stopwatch that follows you around. Kimai gives you customers, projects, activities, hourly and fixed rates, exports and invoices, all of which Toggl charges by the seat for. What it does not give you is Toggl's one-click timer in a menu bar with a hundred integrations behind it, and that ergonomic layer is most of what people are actually paying for.",
+    "You own a MySQL. Kimai supports MariaDB and MySQL only, so there is a real database here that has to be dumped rather than copied, and the dump is the record of every hour you intend to bill.",
+    "No mail unless you set it up. This install leaves the mailer switched off, so there is no password-reset email and no notifications; the admin creates the other accounts by hand. Losing the admin password means running a console command on the server.",
+    "The phone story is other people's software. Kimai is a web app you can add to a home screen on iOS, Android, Mac, Windows and Chrome OS, and its own directory lists native mobile clients, desktop clients and browser extensions, all of them written by third parties rather than by the Kimai project.",
+    "No mobile app of its own, no automatic activity tracking, no calendar or Jira integrations in the box. Those are the paid tiers of the product you are leaving, not features missing from this one."
+  ],
+  "sources": {
+    "compose": "https://www.kimai.org/documentation/docker-compose.html",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://www.kimai.org/documentation/docker.html",
+    "requirements": "https://www.kimai.org/documentation/installation.html",
+    "backup": "https://www.kimai.org/documentation/backups.html",
+    "image": "https://github.com/kimai/kimai/blob/2.63.0/Dockerfile",
+    "entrypoint": "https://github.com/kimai/kimai/blob/2.63.0/.docker/entrypoint.sh",
+    "apps": "https://www.kimai.org/en/integrations",
+    "homescreen": "https://www.kimai.org/documentation/homescreen.html"
+  },
+  "related": [
+    "openproject",
+    "vikunja",
+    "actual-budget"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "493d09c85183b76c55c0c84e8bd2ef3532ed9ad5b4a483c009a190d124058905"
+}

@@ -1,0 +1,70 @@
+{
+  "slug": "figma",
+  "name": "Figma",
+  "domain": "figma.com",
+  "whyPeoplePay": "Figma sells the place the work already is. One link that is always the current version, the comment sitting on the frame it is about, a handoff an engineer opens without asking anyone for a file, and a browser tab that runs a real vector editor fast enough that nobody thinks about the browser. The per-seat bill is mostly the price of never again asking which copy is the live one.",
+  "plans": [
+    {
+      "name": "Starter",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Free, with limited access across the Figma products and an AI allowance the page states as 150 credits a day, up to 500 a month."
+    },
+    {
+      "name": "Professional",
+      "priceMonthly": 20,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "A Full seat billed monthly. On annual billing it is $16, which is the figure the pricing page shows first. Dev seats are $15 monthly and $12 annual; Collab seats are $5 monthly and $3 annual."
+    },
+    {
+      "name": "Organization",
+      "priceMonthly": 55,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "A Full seat. Sold on annual billing only, so $55 is the annual rate expressed per month rather than a month-to-month price. Dev seats are $25 and Collab seats $5 on the same terms."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": 90,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "A Full seat, annual billing only, so again an annual rate expressed per month. Dev seats are $35 and Collab seats $5. Every paid plan lets unlimited extra people view and comment without a seat."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://www.figma.com/pricing/",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The pricing page is JavaScript-rendered and prints one number per seat type without labelling the billing period in the text we could read, so the $16 Full, $12 Dev and $3 Collab it shows for Professional are its annual-billed defaults. The monthly-billed figures recorded here for Professional, $20, $15 and $5, were corroborated by search on the same day rather than read straight off the page. Organization and Enterprise are sold on annual billing only, so their numbers are the annual rate expressed per month, which is what the page itself does."
+  },
+  "ranked": [
+    {
+      "project": "penpot",
+      "rationale": "The only self-hosted option here that is the same category of tool. Components and variants, auto layout, prototyping links, a code-inspection panel for handoff, and more than one cursor on the same board, none of it behind a paid tier or a seat count. The cost is real: five services and a PostgreSQL you now operate, so this is the heaviest install on the design shelf. What you give up is Figma's plugin catalogue and its bundled licensed fonts, not the parts of the job the seats were for."
+    },
+    {
+      "project": "excalidraw",
+      "rationale": "Second because it answers a different half of the same bill, and answers it honestly. If the seat you actually resented was the one somebody used for whiteboarding, this is a single static container and you are finished in ten minutes. It is not a design tool: no components, no auto layout, no prototyping, and in the self-hosted image no realtime collaboration and no server-side file store either, so drawings live in the browser that made them. Pick it when the sketching was the point, not when the design system was."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Quant-UX",
+      "repo": "https://github.com/KlausSchaefers/quant-ux",
+      "note": "Actively developed, GPL-3.0, and aimed at a narrower job than Figma: build a clickable prototype, run it past testers, read the click and heatmap data afterwards. Two things kept it out of the ranked list. This repository is the front end only, so self-hosting means their compose file with a separate Java backend and MongoDB alongside it, and there are no tagged GitHub releases to pin against, which means an install here would chase image digests by hand."
+    },
+    {
+      "name": "Graphite",
+      "repo": "https://github.com/GraphiteEditor/Graphite",
+      "note": "Apache-2.0, very actively developed, and genuinely interesting: a node-based procedural vector and raster editor with a non-destructive edit history. Not ranked because it is not the same tool and does not claim to be. Its own README calls the editor alpha, there is no multi-user document server to host, and it is aimed at graphic design and motion rather than product screens and handoff."
+    },
+    {
+      "name": "Pencil Project",
+      "repo": "https://github.com/evolus/pencil",
+      "note": "GPL-2.0 desktop application for GUI mockups and diagrams, with stencil collections for common interface widgets. Listed for completeness and not recommended: the last tagged release is v3.1.1 from January 2023, it is a local Electron app rather than something you host, and there is no collaboration, no component model and no handoff story."
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "slug": "espocrm",
+  "name": "EspoCRM",
+  "tagline": "A whole sales CRM on your own hostname: pipelines, contacts, activities and a REST API, with nobody counting seats.",
+  "repo": "espocrm/espocrm",
+  "site": "https://www.espocrm.com",
+  "category": "work-pm",
+  "replaces": [
+    {
+      "saas": "pipedrive",
+      "plan": "Growth",
+      "seatsAssumed": 3
+    }
+  ],
+  "tierFactors": {
+    "containers": 4,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 3
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 240,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://docs.espocrm.com/administration/docker/installation/",
+  "local": {
+    "fit": "caveat",
+    "note": "Only this computer can open the CRM, so a colleague or your own phone gets a connection error, and the background job container stops working through the queue every time the machine sleeps."
+  },
+  "quote": {
+    "text": "Jobs are tasks executing in the background. They handle operations like sending notifications, mass mailing, syncing, cleanup, etc.",
+    "source": "EspoCRM documentation, Jobs",
+    "url": "https://docs.espocrm.com/administration/jobs/",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's own Docker Compose stack for a Caddy install is four services: the EspoCRM web container, a daemon container running the job queue, a websocket container, and MariaDB.",
+      "url": "https://docs.espocrm.com/administration/docker/caddy/"
+    },
+    {
+      "claim": "ESPOCRM_ADMIN_USERNAME, ESPOCRM_ADMIN_PASSWORD, ESPOCRM_DATABASE_PASSWORD and ESPOCRM_SITE_URL are one-time installation environment variables, and upstream calls the site URL very important for normal operating of EspoCRM.",
+      "url": "https://docs.espocrm.com/administration/docker/installation/"
+    },
+    {
+      "claim": "Left unset, the image falls back to a built-in default for both the administrator and the database account, prints a warning that insecure default credentials were detected, and starts anyway.",
+      "url": "https://github.com/espocrm/espocrm-docker/blob/master/docker-entrypoint.sh"
+    },
+    {
+      "claim": "Email fetching does not work at all unless the background job runner is configured, which is what the daemon container in this install is for.",
+      "url": "https://docs.espocrm.com/administration/emails/"
+    },
+    {
+      "claim": "The API accepts HTTP Basic authentication and answers 401 when the username or password is wrong, which is the check this install uses to prove the built-in default password no longer works.",
+      "url": "https://docs.espocrm.com/development/api/"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "This is a stack, not an app. Four containers: the web application, a daemon that works the job queue, a websocket process for live updates, and MariaDB. The daemon is the one nobody notices until it stops, because the CRM keeps answering pages perfectly while notification email, mass mailing and inbound mail quietly stop happening.",
+    "No mail, and mail is half of what a CRM does. This install configures no SMTP and no IMAP, so there is no email-to-case, no campaign sending, no notification mail and no password-reset link. Everything else works, and you add a mail provider on the day you are ready to own deliverability.",
+    "The administrator account is the whole recovery story. It is created once during the first start, with a password generated on the server, and with no mail configured the Forgot Password link has nothing to send. Lose that password and the way back in is editing the database by hand.",
+    "You own a MariaDB. Every contact, deal, note and attachment record is a row in it, and the database dump plus the file archive are one backup in two pieces, because data/config-internal.php holds the credentials those rows are read with.",
+    "Lead enrichment, web-visitor tracking, e-signatures and phone support are what the upper Pipedrive tiers actually sell, and none of them is here. EspoCRM's own vendor sells extension packs for some of that ground, priced separately from the AGPL release you install."
+  ],
+  "sources": {
+    "compose": "https://docs.espocrm.com/administration/docker/installation/",
+    "caddy": "https://docs.espocrm.com/administration/docker/caddy/",
+    "install": "https://github.com/espocrm/espocrm-docker/blob/master/docker-entrypoint.sh",
+    "jobs": "https://docs.espocrm.com/administration/jobs/",
+    "backups": "https://docs.espocrm.com/administration/backup-and-restore/",
+    "api": "https://docs.espocrm.com/development/api/",
+    "requirements": "https://docs.espocrm.com/administration/server-configuration/",
+    "email": "https://docs.espocrm.com/administration/emails/",
+    "image": "https://github.com/espocrm/espocrm-docker/blob/master/versions.json",
+    "firstScreen": "https://github.com/espocrm/espocrm/blob/10.0.3/client/res/templates/login.tpl",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "listmonk",
+    "calcom",
+    "invoice-ninja"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "203829007dae16a61c368b5cb8635b72d90c79f25a2616298bbd227fad5377c8"
+}

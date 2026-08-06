@@ -1,0 +1,76 @@
+# PeerTube · the deterministic fallback. Authored by caniselfhostit from the
+# upstream docs, not copied from a repository:
+#   https://docs.joinpeertube.org/install/docker
+#   https://github.com/Chocobozzz/PeerTube/tree/v8.2.4/support/docker/production
+#
+# Three services. Upstream's compose ships seven: nginx, certbot and a reload
+# loop in front, a postfix relay behind. Caddy replaces the first three. No
+# postfix means no mail: one admin, closed signup, a password reset from a
+# shell. PeerTube connects as the superuser the PostgreSQL image creates,
+# because it runs CREATE EXTENSION for pg_trgm and unaccent at first boot.
+# Digests read 2026-08-06; all three are multi-arch.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: postgres:17.10-alpine@sha256:742f40ea20b9ff2ff31db5458d127452988a2164df9e17441e191f3b72252193
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: peertube
+      POSTGRES_USER: peertube
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - /srv/peertube/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U peertube -d peertube"]
+      interval: 10s
+      retries: 18
+    # No `ports:` at all: 5432 is reachable only from the other containers.
+
+  redis:
+    image: redis:8.10.0-alpine@sha256:978f0e01593e65eed801f2402944efcd936d43b5027e4908a7897baf88ed6241
+    restart: unless-stopped
+    # Session store and job queue. Appendonly keeps queued jobs.
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - /srv/peertube/redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 18
+
+  peertube:
+    image: chocobozzz/peertube:v8.2.4@sha256:fee7ff44b9705401d8c228227e770257f088c3f3cb056746493888344a5a0324
+    restart: unless-stopped
+    env_file: /srv/peertube/.env
+    environment:
+      PEERTUBE_DB_HOSTNAME: postgres
+      PEERTUBE_DB_USERNAME: peertube
+      PEERTUBE_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      PEERTUBE_DB_SSL: "false"
+      PEERTUBE_REDIS_HOSTNAME: redis
+      # Caddy terminates TLS; without these two, every URL PeerTube
+      # writes would say http.
+      PEERTUBE_WEBSERVER_HTTPS: "true"
+      PEERTUBE_WEBSERVER_PORT: "443"
+      # Trust the docker bridge, so rate limits see real client IPs.
+      PEERTUBE_TRUST_PROXY: '["loopback","linklocal","uniquelocal"]'
+      # Closed registration, stated rather than assumed. Upstream agrees.
+      PEERTUBE_SIGNUP_ENABLED: "false"
+      PEERTUBE_CONTACT_FORM_ENABLED: "false"
+      # Live wants a second published port and transcoding pipeline.
+      PEERTUBE_LIVE_ENABLED: "false"
+    volumes:
+      # Videos, HLS segments, thumbnails, logs. The one that grows.
+      - /srv/peertube/data:/data
+      # PEERTUBE_LOCAL_CONFIG: what the admin UI writes.
+      - /srv/peertube/config:/config
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8124.
+      - "127.0.0.1:8124:9000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy

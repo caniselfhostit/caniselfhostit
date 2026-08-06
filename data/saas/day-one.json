@@ -1,0 +1,59 @@
+{
+  "slug": "day-one",
+  "name": "Day One",
+  "domain": "dayoneapp.com",
+  "whyPeoplePay": "Day One sells the parts of keeping a journal that are hard to build and easy to abandon. First-party apps on iPhone, iPad, Mac and Android that open fast enough to catch a thought before it goes. End-to-end encrypted sync between them, so the entries are on every device and readable on none of the company's servers. On-this-day resurfacing that turns five years of entries into something you actually reread. And a printing service that ends the year as a hardcover book on a shelf. Automattic runs the sync, the apps and the press, and that operation is what the subscription buys.",
+  "plans": [
+    {
+      "name": "Basic",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Free. Unlimited entries and journals on one device, one photo per entry, end-to-end encryption, daily prompts and templates. Sync between devices is not included."
+    },
+    {
+      "name": "Silver",
+      "priceMonthly": 8.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Sync across devices, up to 30 media attachments per entry, audio with transcription, PDF scanning, Strava and Zapier integrations. dayoneapp.com/pricing sells it only as $49.99 a year, which works out to $4.17 a month if you pay twelve up front; $8.99 is the month-to-month price on the US App Store listing. This tier was called Premium until March 2026."
+    },
+    {
+      "name": "Gold",
+      "priceMonthly": 6.25,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Everything in Silver plus the AI features: Daily Chat, entry summaries, title suggestions and image generation, and a bigger discount on printed journals. $74.99 a year is the only figure the vendor publishes for it; $6.25 is that number divided by twelve, not a monthly plan you can buy."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://dayoneapp.com/pricing/",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The annual figures ($0, $49.99, $74.99) are read straight off dayoneapp.com/pricing and match the vendor's own subscription FAQ on the same day, so those are solid. The monthly numbers are weaker and are the reason this is not high confidence: the vendor's page publishes no monthly rate at all, $8.99 for Silver comes from the US App Store in-app purchase list, and the Gold monthly figure is the annual price divided by twelve rather than a plan anyone can subscribe to."
+  },
+  "ranked": [
+    {
+      "project": "memos",
+      "rationale": "The right answer to the narrower question, said plainly. Memos does not replace Day One's apps, its encrypted sync or its printing, and no self-hosted project does; it replaces the daily capture loop and the timeline you scroll back through. One container, one SQLite file, markdown entries with tags and photos, and a private instance that answers a stranger with a sign-in page. What you give up is real: the server reads every entry, there is no first-party phone app, and the third-party iOS and Android client does not speak this release yet, so on a phone this is a web page saved to the home screen. What you get back is a journal nobody can price, rename or discontinue, on a disk you can hold."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Trilium",
+      "repo": "https://github.com/TriliumNext/Trilium",
+      "note": "AGPL-3.0, v0.104.1 in July 2026, actively maintained, and already in this catalogue as the Evernote answer. It is a hierarchical knowledge base: a note tree you shape, with relations, attributes, scripting and revision history, all in one SQLite file. That is a different job from a journal. A day in Day One is a stamped moment nobody ever files; a note in Trilium wants a place in the tree, and the friction of choosing that place is exactly what stops people writing daily. Pick it if what you want back is the archive and the structure rather than the habit."
+    },
+    {
+      "name": "Joplin",
+      "repo": "https://github.com/laurent22/joplin",
+      "note": "The honest counterweight to what Memos gives up. The apps are AGPL-3.0-or-later, they ship first-party on iOS, Android, Windows, macOS and Linux, and Joplin's sync is end-to-end encrypted, which is the exact pair of things a Day One subscriber notices missing. Stable 3.6.15 landed in June 2026. Two catches worth knowing before you choose it: packages/server carries its own Joplin Server Personal Use License rather than an open-source one, so the self-hosted sync server is not something a company can run; and you can sidestep that entirely by syncing over WebDAV, S3 or Nextcloud, at the cost of operating one of those instead."
+    },
+    {
+      "name": "jrnl",
+      "repo": "https://github.com/jrnl-org/jrnl",
+      "note": "GPL-3.0, a command-line journal that writes plain text files and can encrypt them at rest. If your journaling is one sentence typed into a terminal, this is the smallest honest answer on this page, it needs no server at all, and its files will outlive every application here. Commits still land weekly, but the last tagged release is v4.2 from November 2024, so what you install is well behind the code. There is no phone app, no web view and no photos."
+    }
+  ]
+}

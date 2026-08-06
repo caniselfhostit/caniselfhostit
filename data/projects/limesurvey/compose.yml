@@ -1,0 +1,83 @@
+# LimeSurvey · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   requirements ..... https://www.limesurvey.org/manual/Installation_-_LimeSurvey_CE
+#   config reference . https://www.limesurvey.org/manual/Optional_settings
+#   image README ..... https://github.com/martialblog/docker-limesurvey/blob/7.0.7-260729/README.md
+#   image entrypoint . https://github.com/martialblog/docker-limesurvey/blob/7.0.7-260729/7.0/apache/entrypoint.sh
+#
+# The LimeSurvey project publishes no Docker image. martialblog/limesurvey is a
+# community image, MIT, maintained outside that project; its Dockerfile fetches
+# the official LimeSurvey 7.0.7+260729 tarball and checks its sha256.
+#
+# Two services: Apache with PHP, and the MariaDB it keeps surveys and responses
+# in. Every ${...} comes from /srv/limesurvey/.env, mode 600. `upload` is a named
+# volume because the image ships that directory's base content, which a bind
+# mount would hide. Digests read 2026-08-06; both publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  db:
+    image: mariadb:11.8.8@sha256:d9f7eb2637296652f24b484afd5d246f759f49f5babcadc6a9e344c9acb75fbf
+    container_name: limesurvey-db
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: limesurvey
+      MARIADB_USER: limesurvey
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_DISABLE_UPGRADE_BACKUP: "1"
+    volumes:
+      - /srv/limesurvey/mariadb:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      retries: 20
+    # No `ports:` at all: 3306 is reachable only from the other container.
+
+  app:
+    image: martialblog/limesurvey:7.0.7-260729-apache@sha256:556d09839640f4702ee5ef6618a426c68f0688ded967b2805a0bd903a241f051
+    container_name: limesurvey-app
+    restart: unless-stopped
+    environment:
+      DB_TYPE: mysql
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_NAME: limesurvey
+      DB_USERNAME: limesurvey
+      DB_PASSWORD: ${DB_PASSWORD}
+      # Upstream's default engine for the wide table each survey gets. InnoDB
+      # caps a row near 8 KB, which a long questionnaire goes past.
+      DB_MYSQL_ENGINE: MyISAM
+      # The entrypoint exits without ADMIN_PASSWORD; these four seed the
+      # LimeSurvey console installer once, on first boot.
+      ADMIN_USER: admin
+      ADMIN_NAME: Site administrator
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      # Caddy terminates TLS, so LimeSurvey is told the scheme and host it
+      # should build absolute links from.
+      HOST_INFO: ${HOST_INFO}
+      # Written to application/config/security.php on every start. Change
+      # either one and encrypted participant data stops decrypting.
+      ENCRYPT_NONCE: ${ENCRYPT_NONCE}
+      ENCRYPT_SECRET_BOX_KEY: ${ENCRYPT_SECRET_BOX_KEY}
+    volumes:
+      - limesurvey-upload:/var/www/html/upload
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS -o /dev/null http://127.0.0.1:8080/index.php/admin/authentication/sa/login || exit 1"]
+      start_period: 30s
+      interval: 15s
+      retries: 20
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8130.
+      # The container listens on 8080 and runs as www-data, not root.
+      - "127.0.0.1:8130:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  limesurvey-upload:

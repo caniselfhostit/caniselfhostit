@@ -1,0 +1,95 @@
+{
+  "slug": "memos",
+  "name": "Memos",
+  "tagline": "A private capture stream for the thought you would otherwise lose: markdown entries, tags and a timeline, from one container.",
+  "repo": "usememos/memos",
+  "site": "https://www.usememos.com",
+  "category": "notes-wikis",
+  "replaces": [
+    {
+      "saas": "day-one",
+      "plan": "Silver",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 0
+  },
+  "resources": {
+    "ramMinMB": 512,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 9,
+  "license": "MIT",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/usememos/memos/blob/v0.30.0/scripts/compose.yaml",
+  "local": {
+    "fit": "caveat",
+    "note": "On your own computer this answers only at http://localhost:8131, so the phone you would actually reach for at the moment worth writing down cannot open it, and the journal is only ever as current as the last time you sat at this desk."
+  },
+  "quote": {
+    "text": "The first user becomes the host admin and can configure registration, authentication, storage, and other global settings.",
+    "source": "Memos documentation, Getting Started",
+    "url": "https://www.usememos.com/docs/getting-started",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "The first account created during setup becomes the instance admin, so the image ships no default account and no password.",
+      "url": "https://www.usememos.com/docs/getting-started"
+    },
+    {
+      "claim": "The published image sets MEMOS_PORT to 5230 and declares /var/opt/memos as its data volume, and its entrypoint hands that directory to uid 10001 before re-execing as that user.",
+      "url": "https://github.com/usememos/memos/blob/v0.30.0/scripts/Dockerfile"
+    },
+    {
+      "claim": "Memos reads deployment configuration from files under /etc/secrets once at start-up, so a GENERAL instance-setting file with disallowUserRegistration set closes self-registration before the first request is served.",
+      "url": "https://github.com/usememos/memos/blob/v0.30.0/docs/configuration-provisioning.md"
+    },
+    {
+      "claim": "An instance with no MEMOS_INSTANCE_URL configured is treated as private: anonymous callers are limited to the sign-in endpoints and the web UI redirects them to the sign-in page.",
+      "url": "https://github.com/usememos/memos/blob/v0.30.0/internal/profile/profile.go"
+    },
+    {
+      "claim": "Moe Memos, the third-party iOS and Android client, states that it supports Memos 0.21.0 and 0.27.0 to 0.29.1, which does not include the 0.30.0 release this install pins.",
+      "url": "https://github.com/mudkipme/MoeMemosAndroid"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Nothing here is end-to-end encrypted. Day One holds your entries as ciphertext it cannot read; this server reads every word, and you are the server. That is a different arrangement rather than a smaller one: nobody else holds a key, and nobody else can lose one. The protection now lives in disk encryption on the box and in what you do with the backup archive, so treat both as if they were the journal, because they are.",
+    "The phone is the weak half, and it is the half where journaling actually happens. There is no first-party mobile app. Memos ships a web app manifest, so adding it to a home screen gives a full-screen icon, but there is no offline cache: with no signal there is no capture. Moe Memos, the third-party iOS and Android client, says it supports Memos up to 0.29.1, so as of today it does not speak this release.",
+    "Self-registration is off before the first request, not after. The install writes one deployment configuration file that upstream reads at start-up, so there is never a window where a stranger can sign themselves up. The cost is that the general settings group belongs to that file: the instance title, the week start day and the registration switch change by editing it and restarting the container, and the buttons for them in the admin screen will refuse.",
+    "You own the backups, and they are small. Entries, tags and accounts are one SQLite file, attached photos are ordinary files next to it, and the whole thing is one archive you can copy while the container is stopped. Nothing else on the box matters.",
+    "No on-this-day resurfacing, no daily prompts, no AI reflection, no audio transcription, and no hardcover book at the end of the year. Those are what the paid tiers sell, and none of them arrives with the container."
+  ],
+  "sources": {
+    "compose": "https://www.usememos.com/docs/deploy/docker-compose",
+    "caddy": "https://www.usememos.com/docs/deploy/reverse-proxy",
+    "install": "https://www.usememos.com/docs/configuration/environment-variables",
+    "security": "https://www.usememos.com/docs/configuration/security",
+    "provisioning": "https://github.com/usememos/memos/blob/v0.30.0/docs/configuration-provisioning.md",
+    "image": "https://github.com/usememos/memos/blob/v0.30.0/scripts/Dockerfile",
+    "health": "https://github.com/usememos/memos/blob/v0.30.0/server/server.go",
+    "firstRun": "https://www.usememos.com/docs/getting-started",
+    "backup": "https://www.usememos.com/docs/operations/backup-restore",
+    "clients": "https://github.com/mudkipme/MoeMemosAndroid",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "trilium",
+    "linkding",
+    "obsidian-livesync"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "d1162b05a3aee9898a8df28e51b54eb7800f637731c5743c538d2f9d380d4105"
+}

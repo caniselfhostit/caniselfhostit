@@ -1,0 +1,71 @@
+# Invoice Ninja · the deterministic fallback for the local path, authored by
+# caniselfhostit from the upstream docs, not copied from a repository:
+#   https://invoiceninja.github.io/docs/self-host/self-host-installation
+#   https://github.com/invoiceninja/dockerfiles/blob/debian/README.md
+#
+# php-fpm under supervisord (which also runs the two queue workers and the
+# scheduler), nginx in front, MySQL, Redis. Named volumes rather than binds:
+# all three chown the directory they are given, which a home-directory bind
+# cannot grant on Windows. Digests read 2026-08-06.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  mysql:
+    image: mysql:8.4.11@sha256:b3b90af2a6552ae30c266fdb7d5dd55f3afb72404bb78d37fe8a23eb857fd3fb
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ninja
+      MYSQL_USER: ninja
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", 'mysqladmin ping -h 127.0.0.1 -u ninja -p"$$MYSQL_PASSWORD" --silent']
+      interval: 10s
+      retries: 30
+
+  redis:
+    image: redis:8.10.0-alpine@sha256:978f0e01593e65eed801f2402944efcd936d43b5027e4908a7897baf88ed6241
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 30
+
+  app:
+    image: invoiceninja/invoiceninja-debian:5.13.30@sha256:3e8649be15e9fb7d76626d6ab06cd46dabc8dcba5910d77f7f7f8c885e367cac
+    restart: unless-stopped
+    env_file: ./.env
+    volumes:
+      - app_public:/var/www/html/public
+      - app_storage:/var/www/html/storage
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    # No `ports:` here, on mysql or on redis: 3306, 6379 and 9000 stay inside.
+
+  nginx:
+    image: nginx:1.30.4-alpine@sha256:97d490c12ba55b4946b01546d1c3ed324e8d41ab1c9fcb2a616aa470620e5b46
+    restart: unless-stopped
+    volumes:
+      - ./nginx:/etc/nginx/conf.d:ro
+      - app_public:/var/www/html/public:ro
+      - app_storage:/var/www/html/storage:ro
+    depends_on:
+      app:
+        condition: service_started
+    ports:
+      # Loopback only: no other device can reach 8127.
+      - "127.0.0.1:8127:80"
+
+volumes:
+  mysql_data:
+  redis_data:
+  app_public:
+  app_storage:

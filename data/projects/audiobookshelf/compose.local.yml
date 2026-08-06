@@ -1,0 +1,45 @@
+# Audiobookshelf · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker install ...... https://www.audiobookshelf.org/docs/documentation/install/docker
+#   configuration ....... https://www.audiobookshelf.org/docs/documentation/install/configuration
+#   backups ............. https://www.audiobookshelf.org/docs/documentation/server-management/backups
+#
+# One service on the computer you are sitting at. Every path is relative to
+# ~/selfhost/audiobookshelf/, so one file works on macOS, Linux and Windows and
+# you can open config/, audiobooks/ and backups/ in Finder or Explorer. No
+# named volume is needed: upstream states that Audiobookshelf does not read
+# PUID or PGID, the container runs as root, and nothing chowns its own data
+# directory. The image already sets PORT=80, CONFIG_PATH=/config and
+# METADATA_PATH=/metadata. The library is read-only: no media file is ever
+# written. Digest read from ghcr.io on 2026-08-06; amd64 and arm64 published.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:2.36.0@sha256:180acad33d69c99ed208676465d8edcb268fa46967735579a7810859885b1a8e
+    container_name: audiobookshelf
+    restart: unless-stopped
+    environment:
+      TZ: UTC
+      # Backups belong in a folder you can see, not inside the metadata cache.
+      # The scheduler that fills it stays off until turned on in the web UI.
+      BACKUP_PATH: /backups
+    volumes:
+      - ./config:/config
+      - ./metadata:/metadata
+      - ./backups:/backups
+      # Read-only: nothing here writes to the library, and the mount keeps a
+      # mis-click in the UI from writing to it either.
+      - ./audiobooks:/audiobooks:ro
+      # Read-write, because podcast episodes are downloaded into this folder.
+      - ./podcasts:/podcasts
+    ports:
+      # Loopback only: no other device on the wifi can reach 8125.
+      - "127.0.0.1:8125:80"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s

@@ -1,0 +1,95 @@
+{
+  "slug": "fittrackee",
+  "name": "FitTrackee",
+  "tagline": "A training log on your own server: your .gpx and .fit files, on a map, with the statistics and none of the leaderboard.",
+  "repo": "SamR1/FitTrackee",
+  "site": "https://docs.fittrackee.org",
+  "category": "money-home",
+  "replaces": [
+    {
+      "saas": "strava",
+      "plan": "Subscription",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": false,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/SamR1/FitTrackee/blob/v1.3.4/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "On your own computer FitTrackee answers only at http://localhost:8129, so the phone that recorded the ride cannot reach it: every workout arrives as a file you copy onto that one machine and upload in a browser."
+  },
+  "quote": {
+    "text": "On single-user instance, it is possible to disable email sending with an empty EMAIL_URL (in this case, no need to start Dramatiq workers).",
+    "source": "FitTrackee documentation, Emails",
+    "url": "https://docs.fittrackee.org/en/installation/emails.html",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "PostGIS 3.4 or later is a mandatory prerequisite alongside PostgreSQL 14 or later, which is why this install runs the postgis image rather than plain postgres.",
+      "url": "https://docs.fittrackee.org/en/installation/index.html"
+    },
+    {
+      "claim": "Upstream states there is no official PostGIS image for ARM platforms yet and that the workaround is to build one locally, which is why this install is amd64 only.",
+      "url": "https://docs.fittrackee.org/en/installation/installation.html"
+    },
+    {
+      "claim": "Upstream states that a single-user instance can disable email sending with an empty EMAIL_URL and then needs no Dramatiq workers, which is why this install runs two containers and no Redis.",
+      "url": "https://docs.fittrackee.org/en/installation/emails.html"
+    },
+    {
+      "claim": "The active users limit ships at 0, which means registration is enabled with no restrictions, so a fresh install has an open signup form until the limit is set.",
+      "url": "https://docs.fittrackee.org/en/features/administration.html"
+    },
+    {
+      "claim": "A new account is inactive until its confirmation email is followed, and where email sending is not configured a command line activates it instead.",
+      "url": "https://docs.fittrackee.org/en/features/registration_and_authentication.html"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Nobody is on it but you. Segments, leaderboards, kudos and the friends already in your feed are what the subscription actually sells, and no server of your own can hold them. FitTrackee has comments and likes, for the people who also have an account on your machine, which on a single-user install is nobody. What you get instead is every ride you have ever recorded, on one map, that nobody can rank you on.",
+    "You bring the files. Nothing here records anything: you record with a watch or a phone app, export .gpx, .fit, .tcx or .kml, and upload it. Upstream's own README points at four Android apps for the recording half and names none for iPhone, and there is no first-party mobile app on either platform. If your watch only syncs to one vendor's cloud, that step is yours to solve before this is useful.",
+    "amd64 only. PostGIS is a mandatory prerequisite and upstream states there is no official PostGIS image for ARM, so a Raspberry Pi or an Ampere VPS is out. On an Apple Silicon Mac the local path works under Docker Desktop's emulation, slowly on the first start.",
+    "No mail, and that is a choice with consequences. Every new account starts inactive waiting for a confirmation email this install does not send, so activating one is a command you run on the server. Password reset by email does not work either. Without the Redis upstream uses for rate limiting, nothing throttles repeated login attempts, so the password on that account is the whole defence.",
+    "Your history is two things, not one. The track files sit in an uploads directory and everything computed from them sits in PostgreSQL, so a backup that takes one and not the other restores nothing. The in-app data export needs the worker this install does not run; the backup step here takes both halves instead."
+  ],
+  "sources": {
+    "compose": "https://docs.fittrackee.org/en/installation/installation.html",
+    "caddy": "https://docs.fittrackee.org/en/installation/deployment.html",
+    "install": "https://docs.fittrackee.org/en/installation/index.html",
+    "variables": "https://docs.fittrackee.org/en/installation/environments_variables.html",
+    "emails": "https://docs.fittrackee.org/en/installation/emails.html",
+    "health": "https://docs.fittrackee.org/en/api/health_check.html",
+    "cli": "https://docs.fittrackee.org/en/cli.html",
+    "registration": "https://docs.fittrackee.org/en/features/registration_and_authentication.html",
+    "administration": "https://docs.fittrackee.org/en/features/administration.html",
+    "workouts": "https://docs.fittrackee.org/en/features/workout.html",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "home-assistant",
+    "actual-budget",
+    "mealie"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "1abcc575c7399dfee11a3dccb59ab908091c5bc55f0bdd239418b9b20490a204"
+}

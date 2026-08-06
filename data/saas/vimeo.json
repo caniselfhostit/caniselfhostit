@@ -1,0 +1,73 @@
+{
+  "slug": "vimeo",
+  "name": "Vimeo",
+  "domain": "vimeo.com",
+  "whyPeoplePay": "Vimeo sells the parts of online video that are invisible until they break: encoding that turns whatever you exported into a file every browser can play, a network that keeps the stream smooth for someone watching on hotel wifi, a player you can drop on a client's site with no ads and no recommendations afterwards, and privacy controls precise enough to show a rough cut to four people and nobody else. The plans differ mostly in how many videos and how much storage, which is another way of saying the product is somebody else's disk and somebody else's uplink.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "2 videos a month, 25 in total, and 2 TB of player bandwidth a month."
+    },
+    {
+      "name": "Starter",
+      "priceMonthly": 20,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$144 a year on the annual plan, which the page shows as $12/month billed annually. 60 videos per seat per year, 2 TB of storage, 1 seat."
+    },
+    {
+      "name": "Standard",
+      "priceMonthly": 41,
+      "unit": "flat",
+      "seatsIncluded": 5,
+      "note": "$300 a year on the annual plan, shown as $25/month billed annually. 120 videos per seat per year, 4 TB of storage, 5 seats."
+    },
+    {
+      "name": "Advanced",
+      "priceMonthly": 125,
+      "unit": "flat",
+      "seatsIncluded": 10,
+      "note": "$900 a year on the annual plan, shown as $75/month billed annually. 240 videos per seat per year, 7 TB of storage, 10 seats."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The page sends you to a contact form."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://vimeo.com/upgrade",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Vimeo builds its plan table in the browser, so a plain fetch of the page returns navigation and no prices. These figures come from the plan data the page itself ships, which carries a monthly and an annual price for each tier, and the monthly figures were corroborated against independent pricing write-ups read the same day. We record the monthly-billed number because the page leads with the annual rate, and quoting only that understates what a month-to-month subscriber pays. Confidence is medium rather than high because nobody here watched the rendered toggle."
+  },
+  "ranked": [
+    {
+      "project": "peertube",
+      "rationale": "The only one of these that does the whole job Vimeo does: you upload a file, it transcodes to adaptive HLS, and you get a page, a player and an embed code on your own domain. It also hands you the two costs Vimeo was absorbing. Transcoding runs on your CPU, so a ten-minute upload occupies a small VPS for about ten minutes, and every viewer streams from your uplink with no CDN behind it. Federation is the part with no paid equivalent: other instances can follow yours, and yours can follow theirs, which is a different relationship with an audience than a private link."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "MediaCMS",
+      "repo": "https://github.com/mediacms-io/mediacms",
+      "note": "AGPL-3.0, Django and React, releases through 2026. A video CMS rather than a federated platform: uploads, transcoding, playlists, categories and a REST API, without ActivityPub. If the fediverse part of PeerTube is the part you did not want, this is the narrower answer. We have not run it."
+    },
+    {
+      "name": "Owncast",
+      "repo": "https://github.com/owncast/owncast",
+      "note": "MIT, a single Go binary, commits in the last week. It solves the adjacent problem honestly: one live stream with chat, not a back catalogue. If what you actually miss about Vimeo is the events, take this instead, and understand it stores no library of past videos to browse."
+    },
+    {
+      "name": "Jellyfin",
+      "repo": "https://github.com/jellyfin/jellyfin",
+      "note": "GPL-2.0, very actively maintained, apps on nearly every TV and phone. A private media server for files you already own, which is a different job: nothing in it publishes a video to the open web or gives you an embed code, so it replaces a media cabinet rather than a Vimeo account."
+    }
+  ]
+}

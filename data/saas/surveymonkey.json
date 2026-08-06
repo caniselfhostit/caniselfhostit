@@ -1,0 +1,91 @@
+{
+  "slug": "surveymonkey",
+  "name": "SurveyMonkey",
+  "domain": "surveymonkey.com",
+  "whyPeoplePay": "SurveyMonkey sells the two things a questionnaire tool cannot make for itself: people and confidence. The Audience panel puts respondents in front of a survey that nobody would otherwise find, and the subscription buys a page that stays up through the week of fieldwork you cannot repeat. The templates, the logic and the crosstabs are real work, but they are not what makes the invoice hard to cancel.",
+  "plans": [
+    {
+      "name": "Basic",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Free. Capped at 10 questions per survey and a small number of viewable responses."
+    },
+    {
+      "name": "Standard Monthly",
+      "priceMonthly": 99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "The only individual plan billed month to month, with no annual commitment. Around 1,000 responses a month."
+    },
+    {
+      "name": "Advantage Annual",
+      "priceMonthly": 39,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Billed annually, about $468 a year. Advertised as $39/month, which is not a rate you can pay monthly."
+    },
+    {
+      "name": "Premier Annual",
+      "priceMonthly": 139,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Billed annually, about $1,668 a year. Adds white-label branding, multilingual surveys and phone support."
+    },
+    {
+      "name": "Team Advantage",
+      "priceMonthly": 30,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per user per month, billed annually, minimum three users, so the smallest team bill is three seats."
+    },
+    {
+      "name": "Team Premier",
+      "priceMonthly": 92,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per user per month, billed annually, minimum three users. The least certain figure on this page; see the pricing note."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only, five or more users. SSO, HIPAA terms and an admin dashboard sit here."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://www.surveymonkey.com/pricing/",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "surveymonkey.com/pricing geolocates. Read on 2026-08-06 it served Canadian dollars, listing Standard Monthly at CA$119/month, Advantage Annual at CA$45/month (CA$540 billed annually), Premier Annual at CA$134/month (CA$1,608 billed annually), Team Advantage at CA$30 and Team Premier at CA$84 per user per month. The plan names and the billing shape here are the vendor's own; the USD figures are corroborated from two independent 2026 pricing reviews that agree on every individual plan. They disagree on the team tiers, quoting Team Premier at both $57 and $92 per user per month, so that row is the one to re-check from a US connection before anyone quotes it."
+  },
+  "ranked": [
+    {
+      "project": "limesurvey",
+      "rationale": "The only one on this list built for the survey rather than the form. Branching on any earlier answer, quotas that close a cell when it fills, randomisation, panel integration and an SPSS export are the machinery that makes a questionnaire defensible, and LimeSurvey has had all of it for twenty years. The price is a PHP application with a MariaDB under it and an admin interface that looks its age; what you get back is no response meter deciding when your fieldwork stops."
+    },
+    {
+      "project": "formbricks",
+      "rationale": "The honest split is what you are measuring. Formbricks is built for in-product and link surveys, the NPS box that appears after somebody uses a feature, and it looks like software written this decade. It is not trying to be a research instrument: if your survey needs quota cells, randomised blocks or an SPSS file at the end, it will run out of room, and if it needs to look good embedded in your app tomorrow, LimeSurvey will."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "HeyForm",
+      "repo": "https://github.com/heyform/heyform",
+      "note": "AGPL-3.0, actively developed, and the closest open-source thing to Typeform's conversational one-question-per-screen form. Genuinely nice to answer. Its logic model is form logic rather than survey logic, so there are no quotas and no randomisation, and its self-hosted deployment wants MongoDB and Redis alongside the app, which is a larger standing surface than LimeSurvey's two containers."
+    },
+    {
+      "name": "OpnForm",
+      "repo": "https://github.com/OpnForm/OpnForm",
+      "note": "Actively developed form builder, AGPL-3.0 for the main tree with an Enterprise directory carved out under a separate licence, so read the LICENSE file before assuming the whole thing is open source. Good at forms with conditional fields and integrations; not a questionnaire engine, and no response-level statistics."
+    },
+    {
+      "name": "OhMyForm",
+      "repo": "https://github.com/ohmyform/ohmyform",
+      "note": "Archived. The repository is read-only and has had no commits since October 2024, so it takes no security fixes. It still turns up in alternative lists, which is the reason for this row: do not start here."
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "slug": "invoice-ninja",
+  "name": "Invoice Ninja",
+  "tagline": "Invoices, quotes, expenses and a client portal on your own domain, with no cap on how many clients you bill.",
+  "repo": "invoiceninja/invoiceninja",
+  "site": "https://invoiceninja.com",
+  "category": "money-home",
+  "replaces": [
+    {
+      "saas": "freshbooks",
+      "plan": "Plus",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 4,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 4
+  },
+  "resources": {
+    "ramMinMB": 3072,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 240,
+  "license": "Elastic-2.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/invoiceninja/dockerfiles/blob/debian/debian/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Every invoice link and client-portal address this creates begins with http://localhost:8127, which resolves on this computer and nowhere else, so a client you send one to gets a connection error instead of your invoice."
+  },
+  "quote": {
+    "text": "You may not provide the software to third parties as a hosted or managed service, where the service provides users with access to any substantial set of the features or functionality of the software.",
+    "source": "Invoice Ninja LICENSE, Elastic License 2.0",
+    "url": "https://github.com/invoiceninja/invoiceninja/blob/v5.13.30/LICENSE",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "The account-creation command Invoice Ninja runs on first boot falls back to the published address admin@example.com with a published password when it is called without an email and a password, which is why this install generates one and passes both.",
+      "url": "https://github.com/invoiceninja/invoiceninja/blob/v5.13.30/app/Console/Commands/CreateAccount.php"
+    },
+    {
+      "claim": "The app container runs php-fpm, two Laravel queue workers and the scheduler under one supervisord, so a self-hosted install needs no separate worker or cron container.",
+      "url": "https://github.com/invoiceninja/dockerfiles/blob/debian/debian/supervisor/programs.conf"
+    },
+    {
+      "claim": "The image's own health check asks /health through the php-fpm socket and expects the body {\"status\":\"ok\",\"message\":\"API is healthy\"}, which is the string this install asserts on.",
+      "url": "https://github.com/invoiceninja/dockerfiles/blob/debian/debian/Dockerfile"
+    },
+    {
+      "claim": "Upstream documents APP_KEY as the key used for encryption and decryption of datapoints inside the application, and TRUSTED_PROXIES as what an install behind a proxy needs set to avoid SSL errors.",
+      "url": "https://invoiceninja.github.io/docs/self-host/env-variables"
+    },
+    {
+      "claim": "Removing Invoice Ninja branding from the client-facing pages and the PDFs is a paid annual white-label licence, and the admin interface keeps its branding either way.",
+      "url": "https://invoiceninja.github.io/docs/self-host/self-host-white-labeling"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Source-available, not open source. Invoice Ninja is under the Elastic License 2.0, which is not an OSI licence: you may run it for your own business, modify it and keep the source, but you may not offer it to other people as a hosted or managed service, and you may not disable its licence-key checks. For one business billing its own clients that boundary is nowhere near you.",
+    "Your PDFs say Invoice Ninja until you pay. The footer on the client-facing pages and the generated PDFs is removed by a paid annual white-label licence, and the admin screens keep the branding even then. It is the one feature gate a self-hoster meets on day one.",
+    "Mail is a second install. This one sets MAIL_MAILER=log, upstream's own Docker default, which writes messages into a log file and reports success, so clicking Email Invoice appears to work and delivers nothing. Until you configure a provider under Settings, an invoice reaches a client as a PDF or a portal link you send yourself.",
+    "This is a stack: four containers, a MySQL you back up and a Redis holding sessions and the job queue. The backup is three files that travel together, because APP_KEY in .env is what decrypts the encrypted columns in the dump.",
+    "No bank feeds and no card processing out of the box. Both are separate accounts you sign up for and wire in yourself, and they are a large part of what an invoicing subscription is actually selling."
+  ],
+  "sources": {
+    "compose": "https://github.com/invoiceninja/dockerfiles/blob/debian/README.md",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://invoiceninja.github.io/docs/self-host/self-host-installation",
+    "variables": "https://invoiceninja.github.io/docs/self-host/env-variables",
+    "image": "https://github.com/invoiceninja/dockerfiles/blob/debian/debian/Dockerfile",
+    "nginx": "https://laravel.com/docs/12.x/deployment#nginx",
+    "health": "https://github.com/invoiceninja/invoiceninja/blob/v5.13.30/routes/api.php",
+    "account": "https://github.com/invoiceninja/invoiceninja/blob/v5.13.30/app/Console/Commands/CreateAccount.php",
+    "whiteLabel": "https://invoiceninja.github.io/docs/self-host/self-host-white-labeling"
+  },
+  "related": [
+    "actual-budget",
+    "kimai",
+    "espocrm"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "acd70bef3bf6f5ff7ae0ed97651748cb7c7b9a4313712234fc47a23228e670a3"
+}

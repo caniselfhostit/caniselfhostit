@@ -1,0 +1,94 @@
+{
+  "slug": "audiobookshelf",
+  "name": "Audiobookshelf",
+  "tagline": "An audiobook and podcast server for the files you already own, with first-party phone apps that keep your place.",
+  "repo": "advplyr/audiobookshelf",
+  "site": "https://www.audiobookshelf.org",
+  "category": "photos-media",
+  "replaces": [
+    {
+      "saas": "audible",
+      "plan": "Premium Plus",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 0
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "GPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://www.audiobookshelf.org/docs/documentation/install/docker",
+  "local": {
+    "fit": "caveat",
+    "note": "On your own computer this answers only at http://localhost:8125, so the phone and the car cannot reach it and the Audiobookshelf apps that are the best part of it stay unused: the browser on that one machine is the whole player."
+  },
+  "quote": {
+    "text": "no media files or covers stored with library items are backed up",
+    "source": "Audiobookshelf documentation, Backups",
+    "url": "https://www.audiobookshelf.org/docs/documentation/server-management/backups",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "The published image sets PORT to 80, CONFIG_PATH to /config and METADATA_PATH to /metadata, and exposes port 80.",
+      "url": "https://github.com/advplyr/audiobookshelf/blob/v2.36.0/Dockerfile"
+    },
+    {
+      "claim": "Upstream states that Audiobookshelf does not use PUID or PGID environment variables, and that the /config mount must be local storage rather than a network mount.",
+      "url": "https://www.audiobookshelf.org/docs/documentation/install/docker"
+    },
+    {
+      "claim": "The server answers /healthcheck with a bare 200 and /status with a JSON object whose isInit field stays false until a root user exists.",
+      "url": "https://github.com/advplyr/audiobookshelf/blob/v2.36.0/server/Server.js"
+    },
+    {
+      "claim": "Scheduled backups are off by default: backupSchedule ships as false in the server settings, and the BACKUP_PATH environment variable moves where backups are written.",
+      "url": "https://github.com/advplyr/audiobookshelf/blob/v2.36.0/server/objects/settings/ServerSettings.js"
+    },
+    {
+      "claim": "The Android app is published on Google Play and the iOS app is distributed as a TestFlight beta, both linked from the project's own home page.",
+      "url": "https://www.audiobookshelf.org/"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "You bring the audio. This plays files that are already on the disk, and nothing appears in it that you did not put there. The .aax and .aaxc files Audible's apps download are locked to Audible and will not play here. Audible's catalog, its credits and its Originals are the actual product, and no self-hosted server replaces them. What you get back is the player, the library and the bill.",
+    "The apps are the reason this works, with one caveat worth knowing first. Upstream publishes its own Android app on Google Play and its own iOS app as a TestFlight beta, so the phone keeps your place the way the paid app does. The iOS side is a beta invite rather than an App Store listing, and TestFlight builds expire and have to be re-installed.",
+    "Your library is not in the backup. The install backs up the database, which holds your accounts, your libraries and every listening position, and that archive is small and quick. The audio is tens of gigabytes and belongs in whatever protects the machine you copied it from. Upstream's own backups exclude media files for the same reason.",
+    "Nothing backs itself up until you say so. The scheduled backup inside Audiobookshelf ships turned off, and this install points it at a folder and then tells you to go and enable it. A backup setting you never opened is not a backup.",
+    "No credits, no Originals, no Whispersync with a Kindle, and no way to buy the book you wanted at eleven at night. Those are the subscription, not missing features of this."
+  ],
+  "sources": {
+    "compose": "https://www.audiobookshelf.org/docs/documentation/install/docker",
+    "caddy": "https://www.audiobookshelf.org/docs/documentation/install/reverse-proxy/caddy",
+    "install": "https://www.audiobookshelf.org/docs/documentation/install/configuration",
+    "backup": "https://www.audiobookshelf.org/docs/documentation/server-management/backups",
+    "library": "https://www.audiobookshelf.org/docs/documentation/libraries/book-library/directory-structure",
+    "image": "https://github.com/advplyr/audiobookshelf/blob/v2.36.0/Dockerfile",
+    "health": "https://github.com/advplyr/audiobookshelf/blob/v2.36.0/server/Server.js",
+    "settings": "https://github.com/advplyr/audiobookshelf/blob/v2.36.0/server/objects/settings/ServerSettings.js",
+    "apps": "https://www.audiobookshelf.org/",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "navidrome",
+    "immich",
+    "freshrss"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "84b54e0ac4a695269f65a0b8468a4e2536339d677e3b18f944a0250dfe4c01d0"
+}

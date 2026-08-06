@@ -1,0 +1,96 @@
+{
+  "slug": "peertube",
+  "name": "PeerTube",
+  "tagline": "A video site of your own, with the player, the embed codes and the transcoding, on a server whose bandwidth bill is yours.",
+  "repo": "Chocobozzz/PeerTube",
+  "site": "https://joinpeertube.org",
+  "category": "photos-media",
+  "replaces": [
+    {
+      "saas": "vimeo",
+      "plan": "Starter",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 3,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 3
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 40,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 135,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/Chocobozzz/PeerTube/blob/v8.2.4/support/docker/production/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "On your own computer PeerTube answers only at http://localhost:8124, so nobody you would send a video to can open it and no other instance can follow yours: what you get is a private library with a real player, on one machine."
+  },
+  "quote": {
+    "text": "1.5 GB of RAM should be plenty for a basic PeerTube instance, which usually takes at most 500 MB in RAM.",
+    "source": "PeerTube FAQ, hardware requirements",
+    "url": "https://joinpeertube.org/faq",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's own compose file runs seven services: an nginx webserver, a certbot, a reload loop, PeerTube, PostgreSQL, Redis and a postfix relay. This install replaces the first three with the Caddy already on the box and drops postfix, leaving three.",
+      "url": "https://github.com/Chocobozzz/PeerTube/blob/v8.2.4/support/docker/production/docker-compose.yml"
+    },
+    {
+      "claim": "The nginx config upstream ships caps the video upload route at 12G with request buffering off, returns X-File-Maximum-Size on a rejected upload, and gzips only CSS, JavaScript, fonts, SVG and XML, which is what the Caddyfile here had to reproduce.",
+      "url": "https://github.com/Chocobozzz/PeerTube/blob/v8.2.4/support/nginx/peertube"
+    },
+    {
+      "claim": "Registration is closed in PeerTube's shipped defaults: signup.enabled is false, and transcoding to HLS is on while the second web-videos format is off, which is what keeps one copy per video rather than two.",
+      "url": "https://github.com/Chocobozzz/PeerTube/blob/v8.2.4/config/default.yaml"
+    },
+    {
+      "claim": "PeerTube creates its root account on first boot and, unless PT_INITIAL_ROOT_PASSWORD is set, invents a password and writes it to the log. This install sets it, so the credential never has to be read back out of a container log.",
+      "url": "https://github.com/Chocobozzz/PeerTube/blob/v8.2.4/server/core/initializers/installer.ts"
+    },
+    {
+      "claim": "Upstream puts the minimum at 1 vCore and 1.5 GB of RAM, recommends 8 vCore and 8 GB when transcoding runs on the same machine, and says plainly that serving both delivery formats doubles storage.",
+      "url": "https://joinpeertube.org/faq"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "You bring the videos and the CPU. Every upload is re-encoded by ffmpeg on your own server, one thread by default, so ten minutes of 1080p is roughly ten minutes of a small VPS at full tilt. Nothing about that is broken, and no setting makes it free.",
+    "Disk is the running cost. HLS keeps a transcoded copy of every video beside everything else you store, upstream says serving both delivery formats doubles that again, and the 40 GB floor here is what you need before the first upload rather than a budget for the library.",
+    "Federation is on, and it is a decision rather than a feature. Public videos are announced to instances that follow yours, and following someone else pulls their videos and their comments onto your disk. This install follows nobody; the day you follow anyone, your disk usage stops being about you.",
+    "No mail, on purpose. One administrator, registration closed, and a password reset that is a command on the server rather than a link in an inbox. Add SMTP the day you invite a second person, not before.",
+    "No CDN and no bandwidth allowance. Most of what Vimeo charges for is delivery, and here every viewer streams from your server's uplink. The peer-to-peer part helps when several people watch the same video at once and does nothing at all for the first one."
+  ],
+  "sources": {
+    "compose": "https://docs.joinpeertube.org/install/docker",
+    "caddy": "https://caddyserver.com/docs/caddyfile/directives/reverse_proxy",
+    "install": "https://github.com/Chocobozzz/PeerTube/tree/v8.2.4/support/docker/production",
+    "nginx": "https://github.com/Chocobozzz/PeerTube/blob/v8.2.4/support/nginx/peertube",
+    "config": "https://github.com/Chocobozzz/PeerTube/blob/v8.2.4/config/default.yaml",
+    "variables": "https://github.com/Chocobozzz/PeerTube/blob/v8.2.4/support/docker/production/config/custom-environment-variables.yaml",
+    "image": "https://github.com/Chocobozzz/PeerTube/blob/v8.2.4/support/docker/production/Dockerfile",
+    "firstRun": "https://github.com/Chocobozzz/PeerTube/blob/v8.2.4/server/core/initializers/installer.ts",
+    "hardware": "https://joinpeertube.org/faq",
+    "encode": "https://caddyserver.com/docs/caddyfile/directives/encode",
+    "requestBody": "https://caddyserver.com/docs/caddyfile/directives/request_body",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "navidrome",
+    "immich",
+    "ghost"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "933ad60aa6b97398739085bf06fb878157712bcf6a6d838b78cd86d033078531"
+}

@@ -1,0 +1,78 @@
+{
+  "slug": "freshbooks",
+  "name": "FreshBooks",
+  "domain": "freshbooks.com",
+  "whyPeoplePay": "FreshBooks sells the part of getting paid that nobody enjoys building: an invoice that lands in an inbox instead of a spam folder, a payment link the client can actually use, reminders that chase the late ones without you having to, and books an accountant will accept in April. You are renting deliverability, a payments relationship and somebody else's tax-season liability, not an invoice template.",
+  "plans": [
+    {
+      "name": "Lite",
+      "priceMonthly": 23,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "source": "https://www.freshbooks.com/pricing",
+      "checkedOn": "2026-08-06",
+      "note": "Billed monthly, capped at 5 billable clients, one user. Annual billing is advertised at about 10% less."
+    },
+    {
+      "name": "Plus",
+      "priceMonthly": 43,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "source": "https://www.freshbooks.com/pricing",
+      "checkedOn": "2026-08-06",
+      "note": "Billed monthly, capped at 50 billable clients, one user. The tier that adds proposals, retainers and accountant access."
+    },
+    {
+      "name": "Premium",
+      "priceMonthly": 70,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "source": "https://www.freshbooks.com/pricing",
+      "checkedOn": "2026-08-06",
+      "note": "Billed monthly, unlimited billable clients, one user. Adds project profitability and email customization."
+    },
+    {
+      "name": "Select",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": 2,
+      "source": "https://www.freshbooks.com/pricing",
+      "checkedOn": "2026-08-06",
+      "note": "Quote only. The page says Let's Talk, and includes two team member accounts and data migration."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://www.freshbooks.com/pricing",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "Regular monthly rates recorded. The page was running a 90%-off-for-three-months promotion on the day we read it and those promotional figures are deliberately excluded, because a saving calculated against an introductory rate overstates what the fourth month costs. Annual billing is advertised at roughly 10% less. Every paid plan is single-user: a second person on the account is an $11 per month add-on on top of the plan price, so the number above is a floor, not a total."
+  },
+  "ranked": [
+    {
+      "project": "invoice-ninja",
+      "rationale": "The only one here that covers the whole billing loop the way FreshBooks does: clients, quotes, invoices, recurring invoices, expenses, a client portal your customer signs into, and payment-gateway integrations you connect yourself. It is also the heaviest to run, four containers and a MySQL you own, and it is source-available under the Elastic License rather than open source, with an Invoice Ninja footer on client-facing PDFs until you buy the white-label licence. What you get for that is the end of the client cap that decides your FreshBooks tier."
+    },
+    {
+      "project": "kimai",
+      "rationale": "The right answer if what you actually bill is hours. Kimai is a time tracker first and an invoicer second, so it turns tracked time into an invoice cleanly and does not pretend to be an accounting system. Pick it over Invoice Ninja when the timesheet is the source of truth and the invoice is the last five minutes of the month."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "InvoiceShelf",
+      "repo": "https://github.com/InvoiceShelf/InvoiceShelf",
+      "note": "The maintained community fork of Crater, AGPL-3.0, releasing steadily (2.4.2 in July 2026). Much smaller than Invoice Ninja: invoices, estimates, expenses and payments, with no client portal and no recurring billing. A genuinely lighter install if a plain invoice is all you need, and the one to watch if Invoice Ninja's licence is a problem for you."
+    },
+    {
+      "name": "Crater",
+      "repo": "https://github.com/crater-invoice/crater",
+      "note": "The original, AGPL-3.0, and the most-starred invoicing project on GitHub. Its last commit was August 2024 and its last release March 2022, so it is effectively unmaintained; InvoiceShelf exists because of that. Listed so you recognise the name, not so you install it."
+    },
+    {
+      "name": "Kill Bill",
+      "repo": "https://github.com/killbill/killbill",
+      "note": "Apache-2.0 and actively released, but a different job: subscription billing and payment infrastructure for a product company, driven by an API, with no invoice-writing screen for a freelancer. Right if you are metering usage for thousands of customers, wrong if you send twelve invoices a month."
+    }
+  ]
+}

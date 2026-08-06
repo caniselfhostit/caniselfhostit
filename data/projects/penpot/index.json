@@ -1,0 +1,93 @@
+{
+  "slug": "penpot",
+  "name": "Penpot",
+  "tagline": "Components, prototyping and more than one cursor on the same board, on a domain you own and with no per-seat bill.",
+  "repo": "penpot/penpot",
+  "site": "https://penpot.app",
+  "category": "design-whiteboard",
+  "replaces": [
+    {
+      "saas": "figma",
+      "plan": "Professional",
+      "seatsAssumed": 3
+    }
+  ],
+  "tierFactors": {
+    "containers": 5,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 4096,
+    "ramMeasuredMB": null,
+    "diskGB": 20,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 240,
+  "license": "MPL-2.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/penpot/penpot/blob/2.17.0/docker/images/docker-compose.yaml",
+  "local": {
+    "fit": "caveat",
+    "note": "Everything Penpot is built for happens between people, and here the board answers at http://localhost:8122, which means this computer and nowhere else, so the colleague you wanted to review the design cannot open the link you send them."
+  },
+  "quote": {
+    "text": "if you're exposing Penpot to the internet, you should remove the flags 'disable-secure-session-cookies' and 'disable-email-verification'",
+    "source": "Penpot, docker-compose.yaml at tag 2.17.0",
+    "url": "https://github.com/penpot/penpot/blob/2.17.0/docker/images/docker-compose.yaml",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's own compose file runs a frontend, a backend, an exporter, an MCP server, PostgreSQL, Valkey and a mailcatcher; this install keeps five of those and drops the last two.",
+      "url": "https://github.com/penpot/penpot/blob/2.17.0/docker/images/docker-compose.yaml"
+    },
+    {
+      "claim": "Penpot's defaults enable registration, email verification and secure session cookies, and a default is switched off by naming the same flag with a disable- prefix in PENPOT_FLAGS.",
+      "url": "https://github.com/penpot/penpot/blob/2.17.0/common/src/app/common/flags.cljc"
+    },
+    {
+      "claim": "The frontend container writes its MCP proxy routes only when PENPOT_FLAGS contains enable-mcp, which is why leaving that flag out also removes the need to run the MCP container.",
+      "url": "https://github.com/penpot/penpot/blob/2.17.0/docker/images/files/nginx-entrypoint.sh"
+    },
+    {
+      "claim": "The /readyz endpoint runs a query against PostgreSQL before it answers, returning 200 with the body OK, so it is one health check covering the backend and the database together.",
+      "url": "https://github.com/penpot/penpot/blob/2.17.0/backend/src/app/http/debug.clj"
+    },
+    {
+      "claim": "Penpot's own answer to what a self-hosted instance needs is 1 to 2 CPUs and 4 GiB of RAM, with disk driven by the database and whatever users upload.",
+      "url": "https://community.penpot.app/t/faq-what-is-the-server-specs-needed-to-host-penpot/6946"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "This is a stack, not an app. Five services stay up: a frontend, a backend, an exporter carrying its own headless Chromium, PostgreSQL and Valkey. On any given morning one of them can be the unhappy one, and you are the only person who will notice.",
+    "It is a different tool, not a clone of one. Components, prototyping, code inspection and more than one cursor on a board are all here and none of them sit behind a paid tier, but the plugin catalogue is small beside Figma's, and nothing in this install imports an existing Figma file. What you already have there stays there.",
+    "Fonts are yours to bring. Penpot ships a snapshot of the Google Fonts catalogue and your own server fetches the font files from Google when a designer picks one, which one flag turns off entirely. Anything else, including whatever typeface your brand licenses, you upload yourself, and a file that used a font this instance does not have opens with a substitute.",
+    "No mail, by choice. This install sets disable-email-verification, which is what lets it run with no SMTP server, and closes registration once the first account exists. It also means there is no password-reset email: the way back into a locked-out account is the backend's own command-line tool over a socket inside its container.",
+    "The backup is two files that only work together. The database holds every board and account; the config archive holds the uploaded assets and the .env with PENPOT_SECRET_KEY in it. Restore the database beside a different key and everyone is logged out; restore it without the assets and every board opens with its images missing."
+  ],
+  "sources": {
+    "compose": "https://help.penpot.app/technical-guide/getting-started/docker/",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://help.penpot.app/technical-guide/configuration/",
+    "flags": "https://github.com/penpot/penpot/blob/2.17.0/common/src/app/common/flags.cljc",
+    "frontend": "https://github.com/penpot/penpot/blob/2.17.0/docker/images/files/nginx-entrypoint.sh",
+    "health": "https://github.com/penpot/penpot/blob/2.17.0/backend/src/app/http/debug.clj",
+    "exporter": "https://github.com/penpot/penpot/blob/2.17.0/exporter/package.json",
+    "firstScreen": "https://github.com/penpot/penpot/blob/2.17.0/frontend/translations/en.po",
+    "sizing": "https://help.penpot.app/technical-guide/getting-started/recommended-settings/"
+  },
+  "related": [
+    "excalidraw",
+    "immich",
+    "nextcloud"
+  ],
+  "pagePriority": 1,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "b1c2ece2ba4cbf8a9f2b8e0a6d63158873aace24cac02f3b82ec0f176e5ea647"
+}

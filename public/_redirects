@@ -2,7 +2,7 @@
 # Cloudflare Workers static assets honor this file (same as public/_headers).
 # GENERATED: node scripts/generate-redirects.mjs . > public/_redirects
 # The validator fails CI when this file drifts from what data/ implies.
-# 40 pairs, 3 rules each (slashed, bare, .md mirror), all 301.
+# 50 pairs, 3 rules each (slashed, bare, .md mirror), all 301.
 /self-host/vaultwarden/          /self-host/1password/  301
 /self-host/vaultwarden           /self-host/1password/  301
 /self-host/vaultwarden.md        /self-host/1password.md  301
@@ -15,6 +15,9 @@
 /self-host/nextcloud/            /self-host/dropbox/  301
 /self-host/nextcloud             /self-host/dropbox/  301
 /self-host/nextcloud.md          /self-host/dropbox.md  301
+/self-host/penpot/               /self-host/figma/  301
+/self-host/penpot                /self-host/figma/  301
+/self-host/penpot.md             /self-host/figma.md  301
 /self-host/immich/               /self-host/google-one/  301
 /self-host/immich                /self-host/google-one/  301
 /self-host/immich.md             /self-host/google-one.md  301
@@ -24,6 +27,9 @@
 /self-host/excalidraw/           /self-host/miro/  301
 /self-host/excalidraw            /self-host/miro/  301
 /self-host/excalidraw.md         /self-host/miro.md  301
+/self-host/audiobookshelf/       /self-host/audible/  301
+/self-host/audiobookshelf        /self-host/audible/  301
+/self-host/audiobookshelf.md     /self-host/audible.md  301
 /self-host/calcom/               /self-host/calendly/  301
 /self-host/calcom                /self-host/calendly/  301
 /self-host/calcom.md             /self-host/calendly.md  301
@@ -39,6 +45,9 @@
 /self-host/freshrss/             /self-host/feedly/  301
 /self-host/freshrss              /self-host/feedly/  301
 /self-host/freshrss.md           /self-host/feedly.md  301
+/self-host/invoice-ninja/        /self-host/freshbooks/  301
+/self-host/invoice-ninja         /self-host/freshbooks/  301
+/self-host/invoice-ninja.md      /self-host/freshbooks.md  301
 /self-host/ghost/                /self-host/ghost-pro/  301
 /self-host/ghost                 /self-host/ghost-pro/  301
 /self-host/ghost.md              /self-host/ghost-pro.md  301
@@ -63,6 +72,9 @@
 /self-host/linkwarden/           /self-host/raindrop/  301
 /self-host/linkwarden            /self-host/raindrop/  301
 /self-host/linkwarden.md         /self-host/raindrop.md  301
+/self-host/glitchtip/            /self-host/sentry/  301
+/self-host/glitchtip             /self-host/sentry/  301
+/self-host/glitchtip.md          /self-host/sentry.md  301
 /self-host/mattermost/           /self-host/slack/  301
 /self-host/mattermost            /self-host/slack/  301
 /self-host/mattermost.md         /self-host/slack.md  301
@@ -78,6 +90,9 @@
 /self-host/coolify/              /self-host/vercel/  301
 /self-host/coolify               /self-host/vercel/  301
 /self-host/coolify.md            /self-host/vercel.md  301
+/self-host/peertube/             /self-host/vimeo/  301
+/self-host/peertube              /self-host/vimeo/  301
+/self-host/peertube.md           /self-host/vimeo.md  301
 /self-host/actual-budget/        /self-host/ynab/  301
 /self-host/actual-budget         /self-host/ynab/  301
 /self-host/actual-budget.md      /self-host/ynab.md  301
@@ -99,6 +114,9 @@
 /self-host/postiz/               /self-host/buffer/  301
 /self-host/postiz                /self-host/buffer/  301
 /self-host/postiz.md             /self-host/buffer.md  301
+/self-host/memos/                /self-host/day-one/  301
+/self-host/memos                 /self-host/day-one/  301
+/self-host/memos.md              /self-host/day-one.md  301
 /self-host/grafana/              /self-host/grafana-cloud/  301
 /self-host/grafana               /self-host/grafana-cloud/  301
 /self-host/grafana.md            /self-host/grafana-cloud.md  301
@@ -114,12 +132,24 @@
 /self-host/linkding/             /self-host/pinboard/  301
 /self-host/linkding              /self-host/pinboard/  301
 /self-host/linkding.md           /self-host/pinboard.md  301
+/self-host/espocrm/              /self-host/pipedrive/  301
+/self-host/espocrm               /self-host/pipedrive/  301
+/self-host/espocrm.md            /self-host/pipedrive.md  301
 /self-host/navidrome/            /self-host/spotify/  301
 /self-host/navidrome             /self-host/spotify/  301
 /self-host/navidrome.md          /self-host/spotify.md  301
+/self-host/fittrackee/           /self-host/strava/  301
+/self-host/fittrackee            /self-host/strava/  301
+/self-host/fittrackee.md         /self-host/strava.md  301
+/self-host/limesurvey/           /self-host/surveymonkey/  301
+/self-host/limesurvey            /self-host/surveymonkey/  301
+/self-host/limesurvey.md         /self-host/surveymonkey.md  301
 /self-host/vikunja/              /self-host/todoist/  301
 /self-host/vikunja               /self-host/todoist/  301
 /self-host/vikunja.md            /self-host/todoist.md  301
+/self-host/kimai/                /self-host/toggl-track/  301
+/self-host/kimai                 /self-host/toggl-track/  301
+/self-host/kimai.md              /self-host/toggl-track.md  301
 /self-host/wekan/                /self-host/trello/  301
 /self-host/wekan                 /self-host/trello/  301
 /self-host/wekan.md              /self-host/trello.md  301

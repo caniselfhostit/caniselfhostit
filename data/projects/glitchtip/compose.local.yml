@@ -1,0 +1,76 @@
+# GlitchTip · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   install guide ....... https://glitchtip.com/documentation/install
+#   sample compose ...... https://glitchtip.com/assets/compose.sample.yml
+#   backend at v6.2.3 ... https://gitlab.com/glitchtip/glitchtip-backend/-/tree/v6.2.3
+#
+# Three services, paths relative to ~/selfhost/glitchtip/ so one file works on
+# macOS, Linux and Windows. SERVER_ROLE all_in_one is upstream's sample shape:
+# one container migrates, maintains the Postgres partitions, then serves with
+# the worker inside it. The database is a named volume, not a bind mount,
+# because the PostgreSQL image chowns its data directory to its own uid and
+# Docker Desktop's Windows file sharing cannot allow that on a home bind mount.
+# Valkey gets no volume, matching upstream. Digests read 2026-08-06, multi-arch.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+name: glitchtip
+
+services:
+  postgres:
+    image: postgres:18.4-alpine@sha256:9a8afca54e7861fd90fab5fdf4c42477a6b1cb7d293595148e674e0a3181de15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: glitchtip
+      POSTGRES_USER: glitchtip
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - glitchtip-pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U glitchtip -d glitchtip"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the web container.
+
+  valkey:
+    image: valkey/valkey:9.1.1-alpine@sha256:ee91f7a174ac4d6a6b0685b3a60e321f0a9dbbb691f9b0e285be2ba1d1be8328
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 10s
+      retries: 12
+    # No volume and no ports: cache and queue, reachable in-network only.
+
+  web:
+    image: glitchtip/glitchtip:6.2.3@sha256:95e0e2d6b1bc18446902ae0cb47910cc55d7c0d6756ee901b0cd8dce9f8ef5a9
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      SERVER_ROLE: all_in_one
+      DATABASE_URL: postgres://glitchtip:${DB_PASSWORD}@postgres:5432/glitchtip
+      VALKEY_URL: redis://valkey:6379
+      # One account can be made while the user table is empty, then
+      # self-signup closes. Step 7 asserts the door shut.
+      ENABLE_USER_REGISTRATION: "False"
+      # Django Admin and the OpenAPI schema default to on in the code, off in
+      # upstream's sample. Off here too: neither is needed to use this.
+      ENABLE_ADMIN: "False"
+      ENABLE_OPENAPI: "False"
+    volumes:
+      - ./uploads:/code/uploads
+    healthcheck:
+      test: ["CMD", "python", "healthcheck.py"]
+      interval: 15s
+      retries: 20
+      start_period: 90s
+    ports:
+      # Loopback only: no other device on the wifi can reach 8123.
+      - "127.0.0.1:8123:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+
+volumes:
+  glitchtip-pgdata:

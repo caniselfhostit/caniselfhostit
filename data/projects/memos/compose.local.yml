@@ -1,0 +1,48 @@
+# Memos · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker compose ....... https://www.usememos.com/docs/deploy/docker-compose
+#   configuration ........ https://www.usememos.com/docs/configuration/environment-variables
+#   security ............. https://www.usememos.com/docs/configuration/security
+#   provisioning ......... https://github.com/usememos/memos/blob/v0.30.0/docs/configuration-provisioning.md
+#
+# One service on the computer you are sitting at. Every path is relative to
+# ~/selfhost/memos/, so one file works on macOS, Linux and Windows and you can
+# open data/ in Finder or Explorer. No named volume and no `user:` line: the
+# image entrypoint starts as root, hands /var/opt/memos to uid 10001 and
+# re-execs as that user, which on Linux leaves ./data owned by 10001, so a
+# host-side backup may need sudo. MEMOS_INSTANCE_URL is absent because upstream
+# treats an instance without one as private. The read-only /etc/secrets bind
+# carries one deployment configuration file, written in step 3, that turns
+# self-registration off before the first request is served. Digest read
+# 2026-08-06; amd64, arm64 and arm/v7.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  memos:
+    image: neosmemo/memos:0.30.0@sha256:71a5b4738d1bed96e92112004054f0888e92791b64eb78afd79077c96e6f9327
+    container_name: memos
+    restart: unless-stopped
+    environment:
+      MEMOS_PORT: "5230"
+      MEMOS_DATA: /var/opt/memos
+      MEMOS_DRIVER: sqlite
+      # No MEMOS_INSTANCE_URL here. Empty means private, and private means an
+      # anonymous visitor gets the sign-in page and nothing else.
+    volumes:
+      # memos_prod.db plus the assets/ folder that attachments land in.
+      - ./data:/var/opt/memos
+      # Deployment configuration, read once at start-up and never written to.
+      - type: bind
+        source: ./config
+        target: /etc/secrets
+        read_only: true
+    ports:
+      # Loopback only: no other device on the wifi can reach 8131.
+      - "127.0.0.1:8131:5230"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:5230/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s

@@ -1,0 +1,29 @@
+# Invoice Ninja · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://invoiceninja.github.io/docs/self-host/self-host-installation and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile with <DOMAIN> replaced by the hostname
+# pointed at this box. It is also APP_URL in .env, which the first boot writes
+# into the company record as the client-portal domain, so it is on every
+# invoice link a client opens.
+
+<DOMAIN> {
+	# A JavaScript admin bundle and a JSON API compress well; the PDFs are
+	# already compressed, and Caddy leaves those alone.
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# 8127 is the loopback port compose publishes, not open in the firewall.
+	# Caddy sets X-Forwarded-Proto, which TRUSTED_PROXIES lets the app read,
+	# so its links say https.
+	reverse_proxy 127.0.0.1:8127
+}

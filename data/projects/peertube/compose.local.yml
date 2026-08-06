@@ -1,0 +1,76 @@
+# PeerTube · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream docs, not copied from a repository:
+#   https://docs.joinpeertube.org/install/docker
+#   https://github.com/Chocobozzz/PeerTube/tree/v8.2.4/support/docker/production
+#
+# Three services, every path relative to ~/selfhost/peertube/ so one file
+# works on macOS, Linux and Windows. Upstream's nginx, certbot, reload-loop
+# and postfix containers have no job here: nothing is published past loopback
+# and there is nothing to certify. The database is a named volume because
+# PostgreSQL chowns its data directory to a uid a home-directory bind mount
+# cannot grant on Windows. PeerTube connects as the superuser that image
+# creates, for CREATE EXTENSION pg_trgm and unaccent. Digests 2026-08-06.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: postgres:17.10-alpine@sha256:742f40ea20b9ff2ff31db5458d127452988a2164df9e17441e191f3b72252193
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: peertube
+      POSTGRES_USER: peertube
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - peertube-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U peertube -d peertube"]
+      interval: 10s
+      retries: 18
+    # No `ports:`: 5432 is reachable only from the other containers.
+
+  redis:
+    image: redis:8.10.0-alpine@sha256:978f0e01593e65eed801f2402944efcd936d43b5027e4908a7897baf88ed6241
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - ./redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 18
+
+  peertube:
+    image: chocobozzz/peertube:v8.2.4@sha256:fee7ff44b9705401d8c228227e770257f088c3f3cb056746493888344a5a0324
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      PEERTUBE_DB_HOSTNAME: postgres
+      PEERTUBE_DB_USERNAME: peertube
+      PEERTUBE_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      PEERTUBE_DB_SSL: "false"
+      PEERTUBE_REDIS_HOSTNAME: redis
+      # Nothing terminates TLS, so PeerTube's links say http.
+      PEERTUBE_WEBSERVER_HTTPS: "false"
+      PEERTUBE_WEBSERVER_PORT: "8124"
+      # Closed registration, stated rather than assumed. No proxy sits in
+      # front of this, so no trust_proxy override either.
+      PEERTUBE_SIGNUP_ENABLED: "false"
+      # Federation off: nobody outside can resolve this name.
+      PEERTUBE_FEDERATION_ENABLED: "false"
+      PEERTUBE_LIVE_ENABLED: "false"
+    volumes:
+      # The folder that grows; a bind mount, so Finder can see it.
+      - ./data:/data
+      - ./config:/config
+    ports:
+      # Loopback only: no other device on the wifi can reach 8124.
+      - "127.0.0.1:8124:9000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  peertube-pgdata:

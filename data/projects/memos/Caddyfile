@@ -1,0 +1,35 @@
+# Memos · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://www.usememos.com/docs/deploy/reverse-proxy and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. Memos runs its own
+# HTTP server and upstream still asks you to put a proxy in front of it that
+# terminates TLS. This is that proxy.
+
+<DOMAIN> {
+	# The app bundle and the JSON API compress well. Caddy's default encode
+	# matcher covers text, JSON, JavaScript and SVG only, so a photo attached
+	# to an entry passes through untouched.
+	encode zstd gzip
+
+	# Memos sets no frame or transport headers of its own on the app routes,
+	# so they are set here. HSTS is on because every request to this host
+	# carries the session cookie for somebody's journal.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8131 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall. Caddy applies no
+	# default request body limit, so a 30 MB attachment upload gets through,
+	# and it flushes text/event-stream as it arrives, which is what the live
+	# timeline updates ride on.
+	reverse_proxy 127.0.0.1:8131
+}
