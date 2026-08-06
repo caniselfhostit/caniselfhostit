@@ -1,0 +1,31 @@
+# Mealie · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.mealie.io/documentation/getting-started/installation/security/ and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed, with
+# <DOMAIN> replaced by the hostname pointed at this box. That hostname is also
+# BASE_URL in .env, which Mealie puts inside the invitation links it generates,
+# so the two have to stay the same string.
+
+<DOMAIN> {
+	# The recipe list is a JavaScript bundle and the API answers JSON. Caddy
+	# leaves the already-compressed recipe photos alone.
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+	# No Content-Security-Policy here: recipe pages embed YouTube and Vimeo
+	# players by design, and a policy written without testing those embeds
+	# breaks them in a way that reads as a broken recipe.
+
+	# 8117 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8117
+}

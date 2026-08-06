@@ -1,0 +1,95 @@
+{
+  "slug": "coolify",
+  "name": "Coolify",
+  "tagline": "A deploy button and a build pipeline for the server you already rent, with no seat price and no usage meter.",
+  "repo": "coollabsio/coolify",
+  "site": "https://coolify.io",
+  "category": "automation-dev",
+  "replaces": [
+    {
+      "saas": "vercel",
+      "plan": "Pro",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 4,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 7
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 30,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 300,
+  "license": "Apache-2.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/coollabsio/coolify/blob/v4.1.2/docker-compose.prod.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Coolify reaches the machine it deploys to over a remote login channel the local path does not open on your own computer, so what you get here is the dashboard and the service catalogue to learn on, and nothing it can deploy to."
+  },
+  "quote": {
+    "text": "Coolify uses SSH to connect to your server and deploy your applications. This is true even when using the localhost server where Coolify is running.",
+    "source": "Coolify documentation, OpenSSH",
+    "url": "https://coolify.io/docs/knowledge-base/server/openssh",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Upstream documents a manual, compose-based installation alongside its one-line installer script, which is the path this install follows: create the directory tree, generate the key, create the coolify network, then start the compose stack.",
+      "url": "https://coolify.io/docs/get-started/installation"
+    },
+    {
+      "claim": "The production stack is four services, the application plus PostgreSQL, Redis and a realtime server, and the application container publishes its dashboard on port 8080 inside the container with a health endpoint at /api/health.",
+      "url": "https://github.com/coollabsio/coolify/blob/v4.1.2/docker-compose.prod.yml"
+    },
+    {
+      "claim": "Coolify reaches the machine it deploys to over SSH even for the server it is installed on, and its documentation asks for PubkeyAuthentication yes with a key that has no passphrase.",
+      "url": "https://coolify.io/docs/knowledge-base/server/openssh"
+    },
+    {
+      "claim": "A server can be set to a Custom (None) proxy, in which case Coolify starts no proxy of its own and the operator supplies the routing; the alternatives, Traefik and Caddy, both bind ports 80 and 443 on the host.",
+      "url": "https://coolify.io/docs/knowledge-base/server/proxies"
+    },
+    {
+      "claim": "Upstream's firewall guidance opens 8000, 6001 and 6002 for a dashboard reached by IP address and states those ports can be closed once the dashboard is reached on a custom domain.",
+      "url": "https://coolify.io/docs/knowledge-base/server/firewall"
+    },
+    {
+      "claim": "Upstream documents running Coolify's host access as a non-root user with a passwordless sudo entry for that account, and marks the arrangement experimental; its default installer enables a root login instead.",
+      "url": "https://coolify.io/docs/knowledge-base/server/non-root-user"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "This one is not sandboxed. Coolify holds a private key into the host and a passwordless sudo line for the account that key opens, because driving Docker on the machine it manages is the entire product. Anyone who reaches the dashboard reaches the server. Treat the admin password the way you would treat the root password, because on this box they amount to the same thing. Upstream marks the non-root arrangement used here experimental; its own installer enables a root login instead.",
+    "You own the proxy decision, and this install makes it one way. Coolify normally runs its own Traefik on ports 80 and 443 and issues a certificate per application domain. Here the server's proxy is set to Custom (None) so the Caddy from Prompt Zero keeps those ports, which means every application you deploy gets a host port and a Caddy site block you write, rather than a domain field in the dashboard.",
+    "It wants its own machine and you are probably not giving it one. Coolify is designed as a control plane that deploys to servers you attach to it; running it on the same box as the applications it deploys is the budget answer, and the cost is that a build can starve the thing running the build.",
+    "No edge network, no preview URL per pull request at team scale, and no serverless functions. You get git push, a build on your box, and one container behind one hostname. That is a smaller product than the one it replaces, and the difference is most of what the bill was buying.",
+    "You own the backups and the updates. The database holds every project, server and stored credential, and it is encrypted with a key that lives in a file next to it, so the dump and the config archive are one backup in two pieces. Automatic updates are switched off here on purpose, which means nobody applies a security fix but you."
+  ],
+  "sources": {
+    "compose": "https://coolify.io/docs/get-started/installation",
+    "caddy": "https://coolify.io/docs/knowledge-base/server/proxies",
+    "install": "https://coolify.io/docs/knowledge-base/server/openssh",
+    "ports": "https://coolify.io/docs/knowledge-base/server/firewall",
+    "env": "https://github.com/coollabsio/coolify/blob/v4.1.2/.env.production",
+    "versions": "https://github.com/coollabsio/coolify/blob/v4.1.2/versions.json",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "activepieces",
+    "plausible",
+    "uptime-kuma"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "54dce146f57c592b4de26e45a6a044a94e332077e2e5b2646417b62743e78059"
+}

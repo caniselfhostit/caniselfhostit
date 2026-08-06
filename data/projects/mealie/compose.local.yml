@@ -1,0 +1,40 @@
+# Mealie · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   install checklist .. https://docs.mealie.io/documentation/getting-started/installation/installation-checklist/
+#   sqlite sample ...... https://docs.mealie.io/documentation/getting-started/installation/sqlite/
+#   variable reference . https://docs.mealie.io/documentation/getting-started/installation/backend-config/
+#
+# One service on the computer you are sitting at. Every path is relative to
+# ~/selfhost/mealie/, so one file works on macOS, Linux and Windows and the
+# recipes stay a folder you can open in Finder or Explorer. Mealie holds
+# everything in SQLite inside its own image, so there is no database container,
+# and it writes its own signing keys into data/ on first start. The 1000M
+# ceiling is upstream's recommendation for Python. The image runs as uid 911 and
+# chowns /app on start: on Linux that leaves ./data owned by 911, readable by
+# you and writable with sudo, and Docker Desktop absorbs it elsewhere. Digest
+# read on 2026-08-06; amd64 and arm64 published.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  mealie:
+    image: ghcr.io/mealie-recipes/mealie:v3.22.0@sha256:36c28f0642fb6c75fae8997a2d55994631b9b4bcffba3016c208fc132a4c1e69
+    container_name: mealie
+    restart: unless-stopped
+    environment:
+      # Compose substitutes both from ./.env, which is mode 600 and is never
+      # mounted. ADMIN_PASSWORD is in that same file and deliberately not listed
+      # here, so no container ever sees it.
+      BASE_URL: ${BASE_URL}
+      TZ: ${TZ}
+      # Nobody can create an account from the login screen.
+      ALLOW_SIGNUP: "false"
+    volumes:
+      - ./data:/app/data
+    deploy:
+      resources:
+        limits:
+          memory: 1000M
+    ports:
+      # Loopback only: no other device on the wifi can reach 8117.
+      - "127.0.0.1:8117:9000"

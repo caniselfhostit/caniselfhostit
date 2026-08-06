@@ -1,0 +1,93 @@
+{
+  "slug": "openproject",
+  "name": "OpenProject",
+  "tagline": "Classic project management with work packages, Gantt charts and time tracking, on a server you own and with no per-seat bill.",
+  "repo": "opf/openproject",
+  "site": "https://www.openproject.org",
+  "category": "work-pm",
+  "replaces": [
+    {
+      "saas": "asana",
+      "plan": "Starter",
+      "seatsAssumed": 5
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 3
+  },
+  "resources": {
+    "ramMinMB": 4096,
+    "ramMeasuredMB": null,
+    "diskGB": 20,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 150,
+  "license": "GPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/opf/openproject-docker-compose/blob/stable/17/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Everything answers at http://localhost:8116, which resolves on this computer and nowhere else, so nobody you invite to a project can open it and neither can your phone: on the local path this is a planner for one person."
+  },
+  "quote": {
+    "text": "the same value must be reused on every container start, otherwise existing sessions and encrypted database content become unreadable.",
+    "source": "OpenProject documentation, Installation with Docker",
+    "url": "https://www.openproject.org/docs/installation-and-operations/installation/docker/",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's own docker-compose file runs nine services, because it is built around the slim image; the all-in-one image this install uses runs the web process, the worker, memcached and the collaborative-editing server under one supervisord instead.",
+      "url": "https://github.com/opf/openproject-docker-compose/blob/stable/17/docker-compose.yml"
+    },
+    {
+      "claim": "The all-in-one container starts a PostgreSQL of its own only when DATABASE_URL points at 127.0.0.1, so pointing that variable at a separate database service leaves the bundled one unused.",
+      "url": "https://github.com/opf/openproject/blob/v17.7.1/docker/prod/supervisord"
+    },
+    {
+      "claim": "A fresh install seeds an account with login admin and password admin, and OPENPROJECT_SEED_ADMIN_USER_PASSWORD sets that password before the seeder runs.",
+      "url": "https://github.com/opf/openproject/blob/v17.7.1/docs/installation-and-operations/configuration/README.md"
+    },
+    {
+      "claim": "Upstream states a minimum of 4096 MB of RAM and 20 GB of disk for a single-server install, PostgreSQL 16 or above, and Docker images for both amd64 and arm64.",
+      "url": "https://www.openproject.org/docs/installation-and-operations/system-requirements/"
+    },
+    {
+      "claim": "The application publishes /health_checks/default as an application-level check that the web workers are running, which is what this install asserts on instead of a green container.",
+      "url": "https://www.openproject.org/docs/installation-and-operations/operation/monitoring/"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "This is not Asana's texture. OpenProject is classic project management: work packages with types, statuses and a work breakdown structure, Gantt charts, time and cost tracking. Creating one item takes more clicks than adding a line to a list, and a team that liked Asana for being light will notice on day one.",
+    "No email. This install configures no SMTP, so every notification OpenProject would have sent about an assignment, a mention or a due date stays inside the web interface and nothing lands in anyone's inbox. On a team install that is the first thing you will want to fix, and it means running or renting a mail sender.",
+    "You own a PostgreSQL and one irreplaceable secret. The database holds every project, work package and comment, and the SECRET_KEY_BASE in .env derives the key for the encrypted columns inside a dump, so a backup taken without that file restores into something nobody can read.",
+    "The first boot is slow enough to look broken. Migrations and the seeder both run before anything answers, which took over four minutes on a 4 GB box, and every version bump repeats some of it.",
+    "You get the Community edition, which is the GPL-3 code. OpenProject sells Enterprise add-ons on top of the same install: single sign-on with OIDC or SAML, LDAP group sync, baseline comparisons, portfolio and resource management. Those stay locked here, and the interface says so where they would have been."
+  ],
+  "sources": {
+    "compose": "https://www.openproject.org/docs/installation-and-operations/installation/docker-compose/",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://www.openproject.org/docs/installation-and-operations/installation/docker/",
+    "configuration": "https://www.openproject.org/docs/installation-and-operations/configuration/",
+    "requirements": "https://www.openproject.org/docs/installation-and-operations/system-requirements/",
+    "health": "https://www.openproject.org/docs/installation-and-operations/operation/monitoring/",
+    "healthText": "https://github.com/okcomputer-ruby/okcomputer/blob/v1.19.2/config/locales/okcomputer.en.yml",
+    "loginScreen": "https://github.com/opf/openproject/blob/v17.7.1/app/views/account/login.html.erb",
+    "backup": "https://www.openproject.org/docs/installation-and-operations/operation/backing-up/"
+  },
+  "related": [
+    "vikunja",
+    "wekan",
+    "grist"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "2b9367e0266a383672f2f18d1bdad6e5c3b2258d0f0dddb2e9a31bfd16499b5d"
+}

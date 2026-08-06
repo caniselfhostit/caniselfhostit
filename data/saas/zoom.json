@@ -1,0 +1,66 @@
+{
+  "slug": "zoom",
+  "name": "Zoom",
+  "domain": "zoom.com",
+  "whyPeoplePay": "Zoom sells a call that connects. Their bandwidth, their global relay network, their client on every laptop and phone and conference-room screen your guests already have, and a dial-in number for the person whose wifi has given up. The 40-minute limit on the free tier is the product working exactly as designed: it is short enough to interrupt a real meeting and long enough to prove the thing is good.",
+  "plans": [
+    {
+      "name": "Basic",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Free. Zoom's pricing page states 40 minutes per meeting and up to 100 participants."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 16.99,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per user per month billed monthly; about $13.33 per user per month billed annually. Zoom's page states 30-hour meetings and up to 100 participants. See pricing.note: the vendor page did not render a figure to us and one secondary source lists the monthly rate as $18.33."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": 21.99,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per user per month billed monthly; about $18.33 per user per month billed annually. Zoom's page states up to 300 participants."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. Zoom's page states up to 1000 participants."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://zoom.us/pricing",
+    "currency": "USD",
+    "confidence": "low",
+    "note": "Zoom's own pricing page renders its plan names, meeting lengths and participant caps as text, and those are what we recorded from it, but the dollar figures are drawn in by a script we could not read. The prices here come from two secondary trackers read on the same day, which agree on Business at $21.99 monthly and $18.33 annually and on Pro at $13.33 annually, and disagree on Pro billed monthly ($16.99 against $18.33). We recorded the lower of the two. Treat every figure on this page as needing a re-check against a signed-in Zoom checkout."
+  },
+  "ranked": [
+    {
+      "project": "jitsi",
+      "rationale": "The only one here that a guest can join by clicking a link in a browser, with no account, no download and no explaining. That is the property Zoom actually sells, and it is the one that decides whether a self-hosted meeting server survives contact with people who did not choose it. What you take on in exchange is the bandwidth: your VPS relays every stream, so call quality stops being someone else's problem and becomes a line on your hosting bill."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "BigBlueButton",
+      "repo": "https://github.com/bigbluebutton/bigbluebutton",
+      "note": "Built for teaching, not for meetings: breakout rooms, a shared whiteboard, polls and a hand-raise queue, with learning-platform integrations as the point. Actively developed and LGPL-3.0. It is also much heavier than Jitsi, expects a dedicated machine running a specific Ubuntu release, and installs through its own script rather than a compose file, which is why it is not the pick for someone replacing a Zoom Pro seat."
+    },
+    {
+      "name": "Galene",
+      "repo": "https://github.com/jech/galene",
+      "note": "A single Go binary under MIT, maintained and deliberately small: one process, no XMPP server, no Java, and it runs usefully on hardware that Jitsi would struggle on. The trade is polish and reach. Fewer client features, a plainer interface, and a much smaller pool of people who have hit your problem before. Worth a serious look if the box is tiny."
+    },
+    {
+      "name": "LiveKit",
+      "repo": "https://github.com/livekit/livekit",
+      "note": "Apache-2.0, very actively developed, and the wrong shape for this page: it is a WebRTC server and SDK you build a product on, not a meeting product you can hand a link to. There is a sample conferencing app, but choosing LiveKit means committing to writing and hosting the front end yourself."
+    }
+  ]
+}

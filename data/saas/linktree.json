@@ -1,0 +1,68 @@
+{
+  "slug": "linktree",
+  "name": "Linktree",
+  "domain": "linktr.ee",
+  "whyPeoplePay": "Linktree sells one URL that never has to change and never goes down, on the day a post goes further than anyone expected. Around that it sells the things a page of links cannot do by itself: click and audience analytics, a checkout for digital products, mailing-list capture, scheduling, and the removal of its own branding. For most subscribers the money buys not thinking about any of it, which is a real product even though the page itself is a list of links.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Unlimited basic links, Linktree branding stays, and digital-product sales carry the highest seller fee."
+    },
+    {
+      "name": "Starter",
+      "priceMonthly": 8,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$6/month equivalent when billed annually. Adds personalisation and basic analytics."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 15,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$12/month equivalent when billed annually. Removes Linktree branding and adds advanced analytics and mailing-list integrations."
+    },
+    {
+      "name": "Premium",
+      "priceMonthly": 35,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$30/month equivalent when billed annually. Adds zero-fee digital product sales, data export and social scheduling."
+    },
+    {
+      "name": "Agency and Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The page lists team seats, SSO, dedicated support and custom contracts, with no figure attached."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://linktr.ee/s/pricing/",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The vendor's pricing page prices by region and injects the figures in the browser. Fetched from our location on 2026-08-06 it returned CAD, at 10, 17 and 39 a month for the three paid tiers, with annual-billed equivalents of 7.50, 13.50 and 33.50. The plan names, the ladder and the annual-discount structure are the vendor's own; the USD figures recorded here (8, 15 and 35 monthly, 6, 12 and 30 annual-billed) come from several third-party pricing summaries read the same day and agreeing with each other. Re-check them from a US connection before quoting them as exact."
+  },
+  "ranked": [
+    {
+      "project": "linkstack",
+      "rationale": "The only one of these that gives you the part people actually pay for beyond the links: an admin panel where you add a link, pick a theme and get a QR code without editing a file or redeploying anything. It is one container with SQLite inside it, so the install is a compose file and a five-screen setup wizard. What it does not replace is Linktree's commerce: no checkout, no affiliate shop, no seller payouts, and per-link click counts rather than audience analytics."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "LittleLink",
+      "repo": "https://github.com/sethcottle/littlelink",
+      "note": "The honest floor of this category: a single static HTML page with more than a hundred branded button styles, no server-side code, no accounts and no database. You add a link by editing index.html and publishing the folder anywhere that serves files. That also means no analytics, no QR generator and no admin panel, and every change is a commit. MIT, actively maintained. If you would rather edit a file than run a service, this is the answer and LinkStack is overkill."
+    },
+    {
+      "name": "LittleLink Server",
+      "repo": "https://github.com/timothystewart6/littlelink-server",
+      "note": "LittleLink packaged as a stateless container configured entirely through environment variables, so the page is defined in your compose file and there is nothing to back up. MIT, actively maintained, and genuinely one command. The trade is the same one twice over: no admin interface and no per-link statistics, and every edit means changing environment variables and recreating the container. Note the repository moved with its author's account rename from techno-tim."
+    }
+  ]
+}

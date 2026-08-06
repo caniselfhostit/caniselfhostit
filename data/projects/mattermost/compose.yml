@@ -1,0 +1,62 @@
+# Mattermost · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   container deploy ... https://docs.mattermost.com/deployment-guide/server/deploy-containers.html
+#   variable reference . https://github.com/mattermost/docker/blob/main/env.example
+#
+# Two services: Mattermost and the PostgreSQL that holds every message. The
+# image is the Team Edition build, the compiled edition Mattermost, Inc.
+# licenses under MIT; upstream's own compose file reaches for the enterprise
+# build instead and runs it with no licence key. That image is distroless and
+# runs as uid 2000, so the four directories it writes are made with that owner
+# in step 2, while PostgreSQL 18 chowns its own cluster on first start.
+# Upstream's /mattermost/logs mount is left out because `docker compose logs`
+# already reads the console log, and an unrotated second copy on the same disk
+# is a slow disk-full rather than a feature. Digests read 2026-08-06;
+# PostgreSQL publishes amd64 and arm64, Mattermost only amd64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: postgres:18.4-alpine@sha256:9a8afca54e7861fd90fab5fdf4c42477a6b1cb7d293595148e674e0a3181de15
+    container_name: mattermost-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: mattermost
+      POSTGRES_USER: mmuser
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - /srv/mattermost/postgres:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mmuser -d mattermost"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 never leaves the compose network.
+
+  mattermost:
+    image: mattermost/mattermost-team-edition:11.9.0@sha256:1c538cf33c2144ba2c825571cd414aaaebf8d8c231d4b18081b811cd0ca0ef2a
+    container_name: mattermost
+    platform: linux/amd64
+    restart: unless-stopped
+    environment:
+      MM_SQLSETTINGS_DRIVERNAME: postgres
+      MM_SQLSETTINGS_DATASOURCE: "postgres://mmuser:${DB_PASSWORD}@postgres:5432/mattermost?sslmode=disable&connect_timeout=10"
+      # Caddy terminates TLS, so this says https although the container
+      # speaks plain http. Every invite link is built from it.
+      MM_SERVICESETTINGS_SITEURL: https://${DOMAIN}
+      # Anonymous signup stays shut; the server exempts the first account.
+      MM_TEAMSETTINGS_ENABLEOPENSERVER: "false"
+      # No SMTP and no telemetry: no mail, nothing reported to Sentry.
+      MM_EMAILSETTINGS_SENDEMAILNOTIFICATIONS: "false"
+      MM_LOGSETTINGS_ENABLEDIAGNOSTICS: "false"
+    volumes:
+      - /srv/mattermost/config:/mattermost/config
+      - /srv/mattermost/data:/mattermost/data
+      - /srv/mattermost/plugins:/mattermost/plugins
+      - /srv/mattermost/client-plugins:/mattermost/client/plugins
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8113.
+      - "127.0.0.1:8113:8065"
+    depends_on:
+      postgres:
+        condition: service_healthy

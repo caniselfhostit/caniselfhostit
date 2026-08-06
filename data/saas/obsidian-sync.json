@@ -1,0 +1,59 @@
+{
+  "slug": "obsidian-sync",
+  "name": "Obsidian Sync",
+  "domain": "obsidian.md",
+  "whyPeoplePay": "Obsidian Sync is the add-on that makes the free app work the way people already assume it does: the same vault on the laptop, the desktop and the phone, encrypted end to end, with dated version history you can walk back through and shared vaults for the people you work with. It is also how Obsidian is funded, and the reason a small team keeps shipping an editor with no account, no telemetry and no upsell inside it. Paying for Sync buys first-party support and somebody else holding the pager, which is a real product and not a tax.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "The Obsidian app itself, free for personal use, with no sign-up. Nothing syncs on this tier."
+    },
+    {
+      "name": "Sync Standard",
+      "priceMonthly": 5,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Billed monthly. $4/mo billed annually. One synced vault, 1 GB of total storage, one month of version history."
+    },
+    {
+      "name": "Sync Plus",
+      "priceMonthly": 10,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Billed monthly. $8/mo billed annually. Ten synced vaults, 10 GB of total storage with a paid upgrade to 100 GB, twelve months of version history."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://obsidian.md/pricing",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "Read from obsidian.md/pricing and obsidian.md/sync on the same day. Monthly-billed figures are recorded with the annual-billed equivalents in each plan note, because the pricing page leads with the annual rate and quoting only that understates what a month-to-month subscriber pays. Obsidian Publish ($10/mo, $8/mo annually, per site), the $25 one-time Catalyst licence and the $50 per user per year Commercial licence are separate products and are not in this ladder."
+  },
+  "ranked": [
+    {
+      "project": "obsidian-livesync",
+      "rationale": "The only option here that is actually Obsidian sync rather than file sync underneath it. It is a community plugin that replicates your vault into a CouchDB you run, with end-to-end encryption you turn on during setup, so the server stores ciphertext and the passphrase never leaves your devices. It merges simple conflicts instead of leaving you two copies of a note, and it works on iOS and Android, which is where every folder-sync answer falls over. What you take on is a database with a certificate pointed at it, and a passphrase nobody can recover for you."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Syncthing",
+      "repo": "https://github.com/syncthing/syncthing",
+      "note": "MPL-2.0, actively maintained, and the most dependable file replicator on this list. It syncs the vault folder, not Obsidian's model of it, so two devices editing the same note leave you a conflict copy sitting next to the original rather than a merge. There is no first-party iOS client and background sync on a phone is the part that does not work, which is the case Obsidian Sync exists to cover."
+    },
+    {
+      "name": "Remotely Save",
+      "repo": "https://github.com/remotely-save/remotely-save",
+      "note": "An Obsidian plugin that syncs the vault to S3-compatible storage, WebDAV, Dropbox or OneDrive, with optional end-to-end encryption. Mixed licensing: the main source is Apache-2.0 and a `pro` folder is under the source-available PolyForm Strict licence. Worth knowing the maintenance state before you trust a vault to it, the repository's last commit was November 2024."
+    },
+    {
+      "name": "Obsidian Git",
+      "repo": "https://github.com/Vinzent03/obsidian-git",
+      "note": "MIT, actively maintained, and a genuinely different trade: commit-and-sync on a timer to any Git remote, which gives you the version history Sync Plus charges for and a diff you can read. Conflicts are Git conflicts, resolved by hand, and mobile support depends on isomorphic-git rather than a native binary, so large vaults are slow on a phone."
+    }
+  ]
+}

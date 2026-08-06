@@ -1,0 +1,97 @@
+# Coolify · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   manual install ..... https://coolify.io/docs/get-started/installation
+#   ports and firewall . https://coolify.io/docs/knowledge-base/server/firewall
+#   host connection .... https://coolify.io/docs/knowledge-base/server/openssh
+#   proxy choices ...... https://coolify.io/docs/knowledge-base/server/proxies
+#
+# Four services on the computer you are sitting at, every path relative to
+# ~/selfhost/coolify/ so one file works on macOS, Linux and Windows. PostgreSQL
+# and Redis keep their data in named volumes, as upstream does, because both
+# chown their data directory to a uid of their own choosing and a bind mount in
+# a home directory cannot allow that on Windows. Digests read 2026-08-06.
+#
+# Read this first: here the dashboard runs and the server entry it makes for
+# this computer stays unreachable, because the application reaches what it
+# deploys to over a remote login channel this path does not open. Nothing
+# deploys from here, which is why the storage directories the server file
+# mounts are absent.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  coolify:
+    image: ghcr.io/coollabsio/coolify:4.1.2@sha256:3a27ba5f7f98ff7763a0a4d6715ec36e564f9622eea8f492c46f90716ea2525f
+    container_name: coolify
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    env_file: ./.env
+    volumes:
+      - ./.env:/var/www/html/.env:ro
+    ports:
+      - "127.0.0.1:8115:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8080/api/health || exit 1"]
+      interval: 10s
+      retries: 30
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      soketi:
+        condition: service_started
+
+  postgres:
+    image: postgres:15.18-alpine@sha256:3d0f7584ed7d04e27fa050d6683a74746608faf21f202be78460d679cc56461f
+    container_name: coolify-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: coolify
+    volumes:
+      - coolify-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U coolify -d coolify"]
+      interval: 10s
+      retries: 30
+
+  redis:
+    image: redis:7.4.10-alpine@sha256:e7723ff73d963f5cc6d9c4643ea3d989527a402a319239054e9472a7fb9219a2
+    container_name: coolify-redis
+    restart: unless-stopped
+    command: ["redis-server", "--save", "20", "1", "--requirepass", "${REDIS_PASSWORD}"]
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    volumes:
+      - coolify-redis:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" ping | grep -q PONG"]
+      interval: 10s
+      retries: 30
+
+  soketi:
+    image: ghcr.io/coollabsio/coolify-realtime:1.0.16@sha256:b5bb9d1c95d9b4ca59773b82d1e1a2bf4ccac5fbed33be19b9b3906574db3629
+    container_name: coolify-realtime
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      SOKETI_DEFAULT_APP_ID: ${PUSHER_APP_ID}
+      SOKETI_DEFAULT_APP_KEY: ${PUSHER_APP_KEY}
+      SOKETI_DEFAULT_APP_SECRET: ${PUSHER_APP_SECRET}
+    ports:
+      - "127.0.0.1:6001:6001"
+      - "127.0.0.1:6002:6002"
+
+networks:
+  default:
+    name: coolify
+
+volumes:
+  coolify-db:
+    name: coolify-db
+  coolify-redis:
+    name: coolify-redis

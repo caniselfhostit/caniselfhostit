@@ -1,0 +1,59 @@
+{
+  "slug": "vercel",
+  "name": "Vercel",
+  "domain": "vercel.com",
+  "whyPeoplePay": "Vercel sells the distance between a git push and a working URL, and it has made that distance shorter than anyone else. You are paying for a global edge network you did not build, a preview deployment for every pull request so review happens on a real site instead of a screenshot, and a build pipeline that already knows what your framework needs. The seat price is the small half of the bill; the usage meter underneath it is the half that surprises people, and it is also the half that means you never think about capacity.",
+  "plans": [
+    {
+      "name": "Hobby",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Free, presented as the plan for a personal project, with monthly allowances on requests, data transfer, function invocations and active CPU."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 20,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$20 per user per month, which includes $20 of usage credit; requests, data transfer and compute past the included amounts are billed on top at published unit rates."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. Adds SCIM, managed WAF, multi-region compute and a 99.99% uptime SLA."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://vercel.com/pricing",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "The seat prices are read straight off the pricing page, but they are only the floor of a Vercel bill: Pro is a per-seat charge plus metered usage for edge requests, fast data transfer, function invocations and active CPU. A savings comparison built on the seat price alone understates what a busy site actually costs, which is the whole reason people go looking for a replacement."
+  },
+  "ranked": [
+    {
+      "project": "coolify",
+      "rationale": "The closest thing to the Vercel loop that you can run yourself: connect a repository, push, and it builds the image and starts the container, with the deployment log in a browser rather than a terminal. What it does not have is the part that costs money, the global edge network and a preview URL per pull request at team scale, and what it adds is a dashboard holding a key to your server. It replaces the workflow, not the infrastructure."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "CapRover",
+      "repo": "https://github.com/caprover/caprover",
+      "note": "Apache-2.0, and still receiving commits. The oldest and plainest of these: a one-click app store, its own nginx, and a captain-definition file per application. GitHub reports its licence as unrecognised because the LICENSE file carries the short Apache notice rather than the full text, not because anything is unclear. The interface shows its age next to the others, which is a real cost only if you are looking at it every day."
+    },
+    {
+      "name": "Dokku",
+      "repo": "https://github.com/dokku/dokku",
+      "note": "MIT, and the most honestly scoped of the four. It is the Heroku git-push experience as a set of shell commands, with no web interface in the free project at all, so administering it means being comfortable on the box. That is a smaller promise than the others make and a smaller thing to go wrong; it is also the wrong answer for anyone who wanted a dashboard."
+    },
+    {
+      "name": "Dokploy",
+      "repo": "https://github.com/Dokploy/dokploy",
+      "note": "Apache-2.0 with a carve-out: the licence file reserves anything under a /proprietary directory for a separate proprietary licence, so read that directory before you assume the whole thing is open. Young, moving fast, and closest in feel to Coolify. We did not test it, and on a tool that holds root on your server, moving fast is a cost as well as a feature."
+    }
+  ]
+}

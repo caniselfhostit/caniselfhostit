@@ -1,0 +1,31 @@
+# Mattermost · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.mattermost.com/deployment-guide/server/deploy-containers.html and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also MM_SERVICESETTINGS_SITEURL in compose.yml, and Mattermost builds every
+# invite link and websocket address from it, so the two have to agree.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	# This server holds a team's messages, so nothing here should be sniffed
+	# or handed to another site in a referrer. X-Frame-Options is absent on
+	# purpose: Mattermost sets SAMEORIGIN and its own Content-Security-Policy,
+	# and one set here would overwrite the application's answer.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# 8113 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall. The webapp holds a
+	# websocket open at /api/v4/websocket for as long as it is on screen, and
+	# Caddy's reverse_proxy performs that upgrade with no extra directive.
+	reverse_proxy 127.0.0.1:8113
+}

@@ -1,0 +1,73 @@
+# LibreChat · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker install ..... https://www.librechat.ai/docs/local/docker
+#   variable reference . https://www.librechat.ai/docs/configuration/dotenv
+#
+# Three services. Paths are relative to ~/selfhost/librechat/, so one file works
+# on macOS, Linux and Windows. Upstream's RAG API and pgvector database are left
+# out: they need an embeddings API key of their own. MongoDB sits in a named
+# volume, because the image chowns /data/db to a uid Docker Desktop cannot grant
+# on Windows, and runs --noauth as upstream ships it, reachable only from the
+# app container. Digests read 2026-08-06.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  mongodb:
+    image: mongo:8.0.20@sha256:098862b1339f031900ca66cf8fef799e616d6324fa41b9a263f2ec899552c1ef
+    restart: unless-stopped
+    command: ["mongod", "--noauth"]
+    volumes:
+      - librechat-mongo:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      retries: 24
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.35.1@sha256:8b57fc3c7f46535ddef3828df1538465ac19d892eb57c9a10da6df0880bd5856
+    restart: unless-stopped
+    environment:
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY}
+      MEILI_NO_ANALYTICS: "true"
+    volumes:
+      - ./meili:/meili_data
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:7700/health"]
+      interval: 10s
+      retries: 24
+    # No `ports:`: only the app container queries this index.
+
+  api:
+    image: ghcr.io/danny-avila/librechat:v0.8.7@sha256:c5db3331b845e1f289f8d04c0c77936c4bbe372f76730a804abc1c37e44d23a9
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      HOST: 0.0.0.0
+      MONGO_URI: mongodb://mongodb:27017/LibreChat
+      MEILI_HOST: http://meilisearch:7700
+      SEARCH: "true"
+      # No TLS here; browsers trust http://localhost anyway.
+      SESSION_COOKIE_SECURE: "false"
+      # No mail server, so the flow that needs one is off.
+      ALLOW_PASSWORD_RESET: "false"
+      # `user_provided`: no credential is stored here. It is asked for in
+      # the browser and encrypted with CREDS_KEY.
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-user_provided}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-user_provided}
+      GOOGLE_KEY: ${GOOGLE_KEY:-user_provided}
+    volumes:
+      - ./images:/app/client/public/images
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+    ports:
+      # Loopback only: no other device on the wifi can reach 8112.
+      - "127.0.0.1:8112:3080"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      meilisearch:
+        condition: service_healthy
+
+volumes:
+  librechat-mongo:

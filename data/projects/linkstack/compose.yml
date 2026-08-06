@@ -1,0 +1,52 @@
+# LinkStack · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker setup ....... https://docs.linkstack.org/docker/setup/
+#   reverse proxies .... https://docs.linkstack.org/docker/reverse-proxies/
+#   image build ........ https://github.com/LinkStackOrg/linkstack-docker/blob/main/Dockerfile
+#   app configuration .. https://github.com/LinkStackOrg/LinkStack/blob/v4.8.6/.env
+#
+# One container: Alpine, Apache 2 and PHP 8.3, carrying LinkStack 4.8.6 and the
+# SQLite file it keeps links and users in. There is no database service here.
+#
+# /htdocs is a named volume and not a bind mount, and that is not a style
+# choice. The image ships the application at /htdocs, and Docker copies image
+# content into an empty named volume only, never into a bind mount, so a bind
+# mount would start the container on an empty document root. Upstream documents
+# that path as downloading the release yourself and giving the files uid 100
+# and gid 101, which this install does not do.
+#
+# The pin is a digest with no tag, because upstream publishes no version tags:
+# linkstackorg/linkstack carries a rolling tag plus four architecture tags from
+# 2023. This is the manifest list digest read from Docker Hub on 2026-08-06.
+# /htdocs/version.json inside it reads 4.8.6, and the list covers linux/amd64,
+# linux/arm/v6, linux/arm/v7 and linux/arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  linkstack:
+    image: linkstackorg/linkstack@sha256:1c8b05399ee459ac601bac3eede7fbe765d1b6b7be725663b57f3220610958bf
+    container_name: linkstack
+    restart: unless-stopped
+    # HTTP_SERVER_NAME and HTTPS_SERVER_NAME are Apache's ServerName. They carry
+    # the hostname, so they live in .env beside this file rather than in it.
+    env_file: /srv/linkstack/.env
+    environment:
+      TZ: UTC
+      # Apache's log level. The image default is info, which narrates every
+      # start-up; warn keeps the container log to lines worth reading.
+      LOG_LEVEL: warn
+      PHP_MEMORY_LIMIT: 256M
+      UPLOAD_MAX_FILESIZE: 8M
+    volumes:
+      - linkstack-htdocs:/htdocs
+    ports:
+      # Loopback only: the host's Caddy is the one thing that reaches 8121, and
+      # it reaches the container's plain HTTP port. The container also listens
+      # on 443 with a self-signed certificate, and this file never publishes it.
+      # The image's own health check is curl against http://localhost, so the
+      # HTTP port is the one upstream tests too.
+      - "127.0.0.1:8121:80"
+
+volumes:
+  linkstack-htdocs:

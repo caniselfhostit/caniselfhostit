@@ -1,0 +1,93 @@
+{
+  "slug": "matomo",
+  "name": "Matomo",
+  "tagline": "The full Google-Analytics-shaped suite on your own hostname, with visitor profiles, funnels and no monthly hit meter.",
+  "repo": "matomo-org/matomo",
+  "site": "https://matomo.org",
+  "category": "analytics",
+  "replaces": [
+    {
+      "saas": "matomo-cloud",
+      "plan": "Business · 100,000 hits/month",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 3,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 120,
+  "license": "GPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/matomo-org/docker/blob/master/.examples/apache/compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "The tracking snippet Matomo gives you loads from http://localhost:8119, which means the reader's own computer in the reader's own browser, so on this path Matomo counts the pages you open on this machine and nothing anyone else ever loads."
+  },
+  "quote": {
+    "text": "Until now, your Matomo interface has been initiating this archiving process in an ad hoc fashion: users were clicking on the browser to view a report and, in many cases, the report needed to be calculated on demand.",
+    "source": "Matomo FAQ, How to set up auto-archiving of your reports",
+    "url": "https://matomo.org/faq/on-premise/how-to-set-up-auto-archiving-of-your-reports/",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Upstream tells you to run archiving on a schedule, every hour, and to set browser_archiving_disabled_enforce so a page load stops computing reports on demand.",
+      "url": "https://matomo.org/faq/on-premise/how-to-set-up-auto-archiving-of-your-reports/"
+    },
+    {
+      "claim": "Upstream's Docker guide runs the archiver as a third container built from the same image, alongside the app and the database, and asks for PHP_MEMORY_LIMIT on both PHP containers.",
+      "url": "https://matomo.org/faq/how-to-install/install-matomo-with-docker/"
+    },
+    {
+      "claim": "The MATOMO_DATABASE_* environment variables the official image documents are read by the installation wizard's database form, which is why they stop mattering once config.ini.php exists.",
+      "url": "https://github.com/matomo-org/docker"
+    },
+    {
+      "claim": "Matomo stores a list of trusted hostnames in config/config.ini.php and checks the Host header against it, which is what stops host-header injection into password-reset links.",
+      "url": "https://matomo.org/faq/on-premise/what-is-the-trusted-host-check-feature-in-matomo/"
+    },
+    {
+      "claim": "Behind a reverse proxy that terminates TLS, upstream asks for assume_secure_protocol together with force_ssl, plus proxy_client_headers[] so the visitor's real IP is read from X-Forwarded-For.",
+      "url": "https://matomo.org/faq/how-to-install/faq_98/"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Archiving is now a job you own. Reports are computed by a container on an hourly loop rather than when you look at them, so today's numbers can be up to an hour behind, and if that container stops your dashboard quietly freezes while the tracker keeps recording. Nobody emails you about it.",
+    "You own a MariaDB, and Matomo is the kind of analytics that fills one. Every hit is a row, the archive tables grow on top of the raw log, and upstream sizes 2 GB of RAM and 50 GB of disk for a site doing 100,000 page views a month. Backups are a dump, restores are a load, and a dump you have never restored is not a backup.",
+    "The first person to open the address becomes the superuser. Matomo ships with no account at all: the browser wizard creates it, so between the container starting and somebody finishing that wizard, the install is a setup form on a public hostname. This install closes it in the same sitting and then checks that it is closed.",
+    "Cookies and consent come back to you. Matomo tracks with a first-party cookie by default and ships the opt-out, anonymisation and consent machinery, but which of those you switch on is a legal decision this install does not make for you, and it is the decision that made the cookieless trackers popular.",
+    "Heatmaps, Funnels, A/B testing, Custom Reports, Media Analytics and the SEO plugins are paid licences on Matomo's Marketplace even when you host it yourself. What is free is the whole core suite: visits, visitors, goals, ecommerce, campaigns, segments, the reporting API, and country-level geolocation from a DB-IP database Matomo downloads for you without a MaxMind account."
+  ],
+  "sources": {
+    "compose": "https://matomo.org/faq/how-to-install/install-matomo-with-docker/",
+    "caddy": "https://matomo.org/faq/how-to-install/faq_98/",
+    "install": "https://github.com/matomo-org/docker",
+    "requirements": "https://matomo.org/docs/requirements/",
+    "archiving": "https://matomo.org/faq/on-premise/how-to-set-up-auto-archiving-of-your-reports/",
+    "trustedHosts": "https://matomo.org/faq/on-premise/what-is-the-trusted-host-check-feature-in-matomo/",
+    "config": "https://github.com/matomo-org/matomo/blob/5.12.0/config/global.ini.php",
+    "installer": "https://github.com/matomo-org/matomo/blob/5.12.0/plugins/Installation/Controller.php",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "plausible",
+    "umami",
+    "ghost"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "c1b251ccd98d8694be3531251c90138f0734cb6b00267f022df083cd23d721c4"
+}

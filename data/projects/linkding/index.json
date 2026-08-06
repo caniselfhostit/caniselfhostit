@@ -1,0 +1,91 @@
+{
+  "slug": "linkding",
+  "name": "linkding",
+  "tagline": "A tag-first bookmark manager in one container: save the link, type the tags, find it again in a year.",
+  "repo": "sissbruecker/linkding",
+  "site": "https://linkding.link",
+  "category": "reading-bookmarks",
+  "replaces": [
+    {
+      "saas": "pinboard",
+      "plan": "Standard",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 512,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 8,
+  "license": "MIT",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/sissbruecker/linkding/blob/v1.45.0/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "On your own computer linkding answers only at http://localhost:8118, so the phone you actually read on cannot reach it and the browser extension works only in a browser running on this machine."
+  },
+  "quote": {
+    "text": "The linkding Docker image does not provide an initial user, so you have to create one after setting up an installation.",
+    "source": "linkding documentation, Installation",
+    "url": "https://linkding.link/installation/",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "The image ships with no user at all, so the install creates the first one from the LD_SUPERUSER_NAME and LD_SUPERUSER_PASSWORD options during container start-up.",
+      "url": "https://linkding.link/installation/"
+    },
+    {
+      "claim": "A superuser created with LD_SUPERUSER_PASSWORD left undefined gets no usable password and cannot authenticate through the login form.",
+      "url": "https://linkding.link/options/"
+    },
+    {
+      "claim": "Archiving pages as HTML snapshots is only available in the latest-plus image, which bundles Chromium and needs at least 1 GB of RAM to run it.",
+      "url": "https://linkding.link/archiving/"
+    },
+    {
+      "claim": "Upstream documents manage.py full_backup as the way to snapshot the data folder, and cautions that copying the SQLite file directly is not transaction safe and may corrupt it.",
+      "url": "https://linkding.link/backups/"
+    },
+    {
+      "claim": "A login that answers 403 CSRF verification failed behind a reverse proxy is fixed by setting LD_CSRF_TRUSTED_ORIGINS to the URL the instance is reached at.",
+      "url": "https://linkding.link/troubleshooting/"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "You own the backups. Everything is one SQLite file plus three folders under /srv/linkding/data, and the safe way to copy it is the full_backup command, not cp: upstream says plainly that copying the database file while it is open is not transaction safe.",
+    "No page archiving in this install. The image that snapshots pages as HTML carries a Chromium and wants at least 1 GB of RAM, so this runs the plain one. You keep the link, the title, the tags and your notes, and the page itself stays wherever it lives, which is the exact thing Pinboard's archival tier sells.",
+    "Nothing phones anywhere by default. Wayback Machine snapshots, favicons and preview images are all off until you switch them on in your own profile, and turning favicons on starts sending every bookmarked hostname to a third-party icon service.",
+    "There is no sign-up page. Accounts exist only because you created them, from the command line or the admin app, so there is no invitation flow, no password-reset mail, and losing the password means running one command on the server to set a new one.",
+    "Nobody is watching the domain for you. Pinboard's yearly fee buys one person's attention to a site that has stayed up since 2009; here the uptime, the certificate and the disk are yours."
+  ],
+  "sources": {
+    "compose": "https://linkding.link/installation/",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://linkding.link/options/",
+    "backup": "https://linkding.link/backups/",
+    "archiving": "https://linkding.link/archiving/",
+    "troubleshooting": "https://linkding.link/troubleshooting/",
+    "image": "https://github.com/sissbruecker/linkding/blob/v1.45.0/docker/default.Dockerfile"
+  },
+  "related": [
+    "linkwarden",
+    "wallabag",
+    "freshrss"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "9e5a5486af4386829fad2327b5d68e186922365c4812cc465f83acec8af578a2"
+}

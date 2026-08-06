@@ -1,0 +1,86 @@
+{
+  "slug": "matomo-cloud",
+  "name": "Matomo Cloud",
+  "domain": "matomo.org",
+  "whyPeoplePay": "Matomo Cloud sells the operational half of a full-fat analytics suite. The software is free to download, so what the subscription buys is somebody else running the database that every hit lands in, keeping the hourly report-building job healthy, applying the schema upgrades, and taking the backups, on servers in Frankfurt with a data-processing story you can hand to a lawyer. The bill is metered on hits rather than seats, which means it grows with the thing you were hoping would grow.",
+  "plans": [
+    {
+      "name": "Free trial",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": null,
+      "note": "The vendor's FAQ says the trial covers all core features and needs no credit card."
+    },
+    {
+      "name": "Business · 50,000 hits/month",
+      "priceMonthly": 26,
+      "unit": "usage",
+      "seatsIncluded": 30,
+      "note": "USD, excluding tax, billed monthly. The vendor's EUR figure for the same tier is 22 EUR. Annual billing is advertised as two months free."
+    },
+    {
+      "name": "Business · 100,000 hits/month",
+      "priceMonthly": 42,
+      "unit": "usage",
+      "seatsIncluded": 30,
+      "note": "USD, excluding tax, billed monthly. A hit is any tracked action: a page view, an event, a download, an outlink, a site search or an ecommerce request."
+    },
+    {
+      "name": "Business · 300,000 hits/month",
+      "priceMonthly": 85,
+      "unit": "usage",
+      "seatsIncluded": 30,
+      "note": "USD, excluding tax, billed monthly."
+    },
+    {
+      "name": "Business · 1 million hits/month",
+      "priceMonthly": 204,
+      "unit": "usage",
+      "seatsIncluded": 30,
+      "note": "USD, excluding tax, billed monthly. Every Business tier caps at 30 websites, 30 team members and 24 months of raw data retention."
+    },
+    {
+      "name": "Business · 5 million hits/month",
+      "priceMonthly": 975,
+      "unit": "usage",
+      "seatsIncluded": 30,
+      "note": "USD, excluding tax, billed monthly. The published ladder continues to 100 million hits at 17,900 USD a month."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The page says contact us for custom pricing and allowances."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://matomo.org/pricing/",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The rendered price on matomo.org/pricing is drawn by JavaScript and the hits selector on the page carries the EUR figures (22, 38, 75, 118, 172, 334, 822). The USD ladder recorded here is the vendor's own, published as schema.org UnitPriceSpecification entries in the same page's structured data, one EUR and one USD price per tier, read on 2026-08-06. Nothing here is a conversion we performed, but we have not seen the USD figures rendered in a checkout, so this is medium rather than high."
+  },
+  "ranked": [
+    {
+      "project": "matomo",
+      "rationale": "It is the same software. Matomo Cloud is a hosted instance of the GPL release you can run yourself, so the feature comparison is not a comparison at all, and the honest question is which half of the job you want: the reports, or the database and the hourly archiving job that produce them. Self-hosting also removes the hit meter, which is the part of the bill that punishes a site for doing well."
+    },
+    {
+      "project": "plausible",
+      "rationale": "Ranked second because it is a genuinely different trade, not a lesser Matomo. Plausible counts without cookies and without personal data, so there is no consent banner to design and no visitor profile to store, and the whole product fits on one screen. You give up what Matomo Cloud subscribers usually pay for: visitor profiles, funnels, heatmap and session tooling, ecommerce attribution, and the ability to answer a question nobody anticipated when the dashboard was built."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "GoatCounter",
+      "repo": "https://github.com/arp242/goatcounter",
+      "note": "One Go binary with an embedded SQLite database, and the smallest honest analytics install on this list: no cookies, no consent surface, and a dashboard you can read in ten seconds. Maintained by a single author, with v2.7.0 tagged in December 2025 and commits continuing through 2026. Licensed under a slightly modified EUPL-1.2 whose Compatible Licenses appendix has been trimmed, which is worth reading before you build on it. We did not test it because it answers a different question from Matomo: it counts pages, it does not analyse behaviour."
+    },
+    {
+      "name": "Open Web Analytics",
+      "repo": "https://github.com/Open-Web-Analytics/Open-Web-Analytics",
+      "note": "The other veteran PHP-and-MySQL analytics package, GPL-2.0, with heatmaps and click tracking built in and 1.10.1 released in August 2026. It sits in the same architectural family as Matomo but with a much smaller contributor base and a plugin ecosystem to match, so the failure mode is a bug you end up fixing yourself. We list it because it is the only other self-hosted suite that tracks individual visitor sessions the way Matomo does, not because we would pick it over Matomo today."
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+# Obsidian LiveSync · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://github.com/vrtmrz/obsidian-livesync/blob/main/docs/setup_own_server.md
+# and https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. CouchDB answers at
+# the root of that hostname on purpose: upstream documents the subdirectory form
+# as needing the proxy path rewritten. Obsidian on a phone refuses a certificate
+# it cannot verify, so the automatic TLS here is the reason mobile sync works.
+
+<DOMAIN> {
+	# CouchDB sets its own CORS headers for the three Obsidian origins, so
+	# nothing here adds or rewrites one: two Access-Control-Allow-Origin
+	# headers on one response is a failure a browser reports as a bare CORS
+	# error with no detail worth reading.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# No `encode`: replication holds a long-lived streaming response open and
+	# moves chunks that are already encrypted.
+	#
+	# 8120 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8120
+}

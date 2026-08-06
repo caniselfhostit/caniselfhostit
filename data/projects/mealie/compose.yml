@@ -1,0 +1,44 @@
+# Mealie · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   install checklist .. https://docs.mealie.io/documentation/getting-started/installation/installation-checklist/
+#   sqlite sample ...... https://docs.mealie.io/documentation/getting-started/installation/sqlite/
+#   variable reference . https://docs.mealie.io/documentation/getting-started/installation/backend-config/
+#   backups ............ https://docs.mealie.io/documentation/getting-started/usage/backups-and-restoring/
+#
+# One service. Mealie ships a single all-in-one image with SQLite inside it, and
+# upstream calls SQLite the right choice at one to twenty users, so there is no
+# second container to run or dump. The image writes its own signing keys to
+# /app/data/.secret and .session_secret on first start, which is why this
+# install generates exactly one secret of its own: the password step 7 puts on
+# the account the image seeds. The 1000M ceiling is upstream's recommendation
+# for Python, which reserves far more than it needs on a large host. The image
+# runs as uid 911 and chowns /app on start, so /srv/mealie/data ends up owned by
+# 911 and is read back with sudo. Its own HEALTHCHECK covers /api/app/about, so
+# none is repeated here. Tag and digest read from ghcr.io on 2026-08-06; the
+# image publishes amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  mealie:
+    image: ghcr.io/mealie-recipes/mealie:v3.22.0@sha256:36c28f0642fb6c75fae8997a2d55994631b9b4bcffba3016c208fc132a4c1e69
+    container_name: mealie
+    restart: unless-stopped
+    environment:
+      # Compose substitutes both from /srv/mealie/.env, which is mode 600 and is
+      # never mounted. ADMIN_PASSWORD is in that same file and deliberately not
+      # listed here, so no container ever sees it.
+      BASE_URL: ${BASE_URL}
+      TZ: ${TZ}
+      # Nobody can create an account from the login screen. The seeded admin
+      # invites the rest of the household instead.
+      ALLOW_SIGNUP: "false"
+    volumes:
+      - /srv/mealie/data:/app/data
+    deploy:
+      resources:
+        limits:
+          memory: 1000M
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8117.
+      - "127.0.0.1:8117:9000"

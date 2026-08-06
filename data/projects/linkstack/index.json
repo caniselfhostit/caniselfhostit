@@ -1,0 +1,91 @@
+{
+  "slug": "linkstack",
+  "name": "LinkStack",
+  "tagline": "Your own link-in-bio page, with an admin panel, themes and a QR code, on a domain you keep.",
+  "repo": "linkstackorg/linkstack",
+  "site": "https://linkstack.org",
+  "category": "marketing-content",
+  "replaces": [
+    {
+      "saas": "linktree",
+      "plan": "Pro",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 0
+  },
+  "resources": {
+    "ramMinMB": 512,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/LinkStackOrg/linkstack-docker/blob/main/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "The page answers at http://localhost:8121, which resolves on this computer and nowhere else, so what you get is your profile exactly as it would look rather than an address anyone can open."
+  },
+  "quote": {
+    "text": "It's also possible to run the image with Docker Bind Mounts instead of Docker Volumes. But you have to download the latest release of linkstack by yourself and place it in the mounted directory if you do that.",
+    "source": "LinkStack documentation, Docker Setup",
+    "url": "https://docs.linkstack.org/docker/setup/",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "The official image exposes HTTP on port 80 and HTTPS on port 443, keeps everything at /htdocs, takes its Apache server name from HTTP_SERVER_NAME, and publishes amd64, arm64 and two 32-bit arm variants.",
+      "url": "https://docs.linkstack.org/docker/setup/"
+    },
+    {
+      "claim": "Upstream's reverse-proxy page tells you to set FORCE_HTTPS to true in the persistent .env once the container sits behind a proxy.",
+      "url": "https://docs.linkstack.org/docker/reverse-proxies/"
+    },
+    {
+      "claim": "FORCE_HTTPS makes the application generate https URLs and send a Content-Security-Policy of upgrade-insecure-requests; the separate FORCE_ROUTE_HTTPS setting is the one that redirects.",
+      "url": "https://github.com/LinkStackOrg/LinkStack/blob/v4.8.6/app/Http/Middleware/Headers.php"
+    },
+    {
+      "claim": "With ALLOW_REGISTRATION off, the /register route returns 404 rather than a sign-up form, which is what makes closed registration checkable from a shell.",
+      "url": "https://github.com/LinkStackOrg/LinkStack/blob/v4.8.6/routes/auth.php"
+    },
+    {
+      "claim": "While the INSTALLING marker file is present the setup routes answer without a login, including one that seeds a default administrator account and signs the caller in.",
+      "url": "https://github.com/LinkStackOrg/LinkStack/blob/v4.8.6/routes/web.php"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The domain is the product. A link-in-bio address gets printed on packaging, read out on stage and typed into phones by people who will never see this server, and keeping it answering is now your registration to renew and your certificate to keep valid. That promise is most of what Linktree actually sells.",
+    "The application updates itself from inside. Upstream's documented update path for this image is the one-click updater in the admin panel, which rewrites the application files in the Docker volume, so the pinned digest describes what you installed on day one rather than what is running in month six.",
+    "Mail leaves through somebody else's relay unless you change it. LinkStack ships with a built-in mail setting pointed at a free service the project runs under its own terms, and that is the path a password-reset message would take.",
+    "Click counts, not marketing analytics. You get visits and per-link clicks in the admin panel. There are no funnels, no audience segments, no scheduled social posts and no mailing-list integrations.",
+    "No selling. Linktree's upper tiers are mostly commerce: digital products, an affiliate shop, checkout, and the seller fee that comes with each. None of that exists here, and adding it is a different product rather than a setting."
+  ],
+  "sources": {
+    "compose": "https://docs.linkstack.org/docker/setup/",
+    "caddy": "https://docs.linkstack.org/docker/reverse-proxies/",
+    "install": "https://github.com/LinkStackOrg/LinkStack/blob/v4.8.6/.env",
+    "image": "https://github.com/LinkStackOrg/linkstack-docker/blob/main/Dockerfile",
+    "registry": "https://hub.docker.com/r/linkstackorg/linkstack/tags",
+    "routes": "https://github.com/LinkStackOrg/LinkStack/blob/v4.8.6/routes/web.php",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "shlink",
+    "ghost",
+    "listmonk"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "fb235f78ca13cb8c4e0895fcd6dee29c75fc43ef76fbf7ba97c9ca96eb30b76c"
+}

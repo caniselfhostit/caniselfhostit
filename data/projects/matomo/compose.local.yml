@@ -1,0 +1,83 @@
+# Matomo · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   image README ....... https://github.com/matomo-org/docker
+#   docker install FAQ . https://matomo.org/faq/how-to-install/install-matomo-with-docker/
+#   archiving cron ..... https://matomo.org/faq/on-premise/how-to-set-up-auto-archiving-of-your-reports/
+#
+# Three services on the computer you are sitting at. Both data mounts are named
+# volumes, not relative binds: MariaDB and the Matomo image each chown their
+# directory to a uid of their own, which Docker Desktop's Windows file sharing
+# cannot grant on a home-directory bind mount. Every ${...} comes from ./.env,
+# mode 600. Digests read 2026-08-06.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  db:
+    image: mariadb:11.8.8@sha256:d9f7eb2637296652f24b484afd5d246f759f49f5babcadc6a9e344c9acb75fbf
+    container_name: matomo-db
+    restart: unless-stopped
+    # Archiving writes wide rows; upstream's example raises this too.
+    command: --max-allowed-packet=64MB
+    environment:
+      MARIADB_DATABASE: matomo
+      MARIADB_USER: matomo
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_DISABLE_UPGRADE_BACKUP: "1"
+    volumes:
+      - matomo-db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      retries: 20
+    # No `ports:` at all: 3306 is reachable only from the other containers.
+
+  app:
+    image: matomo:5.12.0-apache@sha256:85d27206a4acdd43259909aa00cab1913dec88cfba53e1ce66a51e6caa430a55
+    container_name: matomo-app
+    restart: unless-stopped
+    environment:
+      # These six only prefill the wizard's database form, once: after it the
+      # credentials live in config.ini.php and nothing reads these again.
+      MATOMO_DATABASE_HOST: db
+      MATOMO_DATABASE_ADAPTER: mysql
+      MATOMO_DATABASE_TABLES_PREFIX: matomo_
+      MATOMO_DATABASE_USERNAME: matomo
+      MATOMO_DATABASE_PASSWORD: ${MARIADB_PASSWORD}
+      MATOMO_DATABASE_DBNAME: matomo
+      PHP_MEMORY_LIMIT: 512M
+    volumes:
+      - matomo-html:/var/www/html
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS -o /dev/null http://127.0.0.1/index.php || exit 1"]
+      interval: 10s
+      retries: 24
+    ports:
+      # Loopback only: no other device on the wifi can reach 8119.
+      - "127.0.0.1:8119:80"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  archive:
+    image: matomo:5.12.0-apache@sha256:85d27206a4acdd43259909aa00cab1913dec88cfba53e1ce66a51e6caa430a55
+    container_name: matomo-archive
+    restart: unless-stopped
+    # Apache's user, so what this writes stays readable by the web process.
+    # Reports are computed here, hourly, never on a page load.
+    user: www-data
+    environment:
+      PHP_MEMORY_LIMIT: 512M
+    volumes:
+      - matomo-html:/var/www/html
+    entrypoint: ["/bin/sh", "-c", "while true; do [ -s /var/www/html/config/config.ini.php ] && php /var/www/html/console core:archive --no-ansi; sleep 3600; done"]
+    depends_on:
+      app:
+        condition: service_started
+
+volumes:
+  matomo-db:
+  matomo-html:

@@ -1,0 +1,28 @@
+# OpenProject · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://www.openproject.org/docs/installation-and-operations/installation/docker/ and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also OPENPROJECT_HOST__NAME in .env, which OpenProject builds every link and
+# form action from.
+
+<DOMAIN> {
+	# The Angular bundle and the work package tables are worth compressing.
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# 8116 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall. reverse_proxy carries
+	# the /hocuspocus WebSocket upgrade with no extra directive.
+	reverse_proxy 127.0.0.1:8116
+}

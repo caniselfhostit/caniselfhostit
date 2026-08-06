@@ -1,0 +1,63 @@
+# OpenProject · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker install ..... https://www.openproject.org/docs/installation-and-operations/installation/docker/
+#   docker compose ..... https://www.openproject.org/docs/installation-and-operations/installation/docker-compose/
+#   configuration ...... https://www.openproject.org/docs/installation-and-operations/configuration/
+#   health endpoints ... https://www.openproject.org/docs/installation-and-operations/operation/monitoring/
+#
+# Two services. The all-in-one image runs Puma, the worker, memcached, the
+# collaborative-editing server and an Apache under one supervisord, so
+# upstream's nine-service compose file for the slim image collapses to one
+# container here. It starts its own PostgreSQL only when DATABASE_URL points
+# at 127.0.0.1; ours points at the postgres service below. Upstream supports
+# PostgreSQL 16 and above. Digests read on 2026-08-06; both images publish
+# amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: postgres:17.10-alpine@sha256:742f40ea20b9ff2ff31db5458d127452988a2164df9e17441e191f3b72252193
+    container_name: openproject-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: openproject
+      POSTGRES_USER: openproject
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - /srv/openproject/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U openproject -d openproject"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other container.
+
+  openproject:
+    image: openproject/openproject:17.7.1@sha256:bbaaedbe3837097dd189f739565064accb731d23cd87294a21bd07e0be010f6a
+    container_name: openproject
+    restart: unless-stopped
+    # Hostname, HTTPS flag, SECRET_KEY_BASE and the seeded admin password all
+    # arrive from /srv/openproject/.env, mode 600 on the host.
+    env_file: /srv/openproject/.env
+    environment:
+      # No query string: the all-in-one start-up script hands DATABASE_URL to
+      # psql through a shell, where `&` would background the command.
+      DATABASE_URL: postgres://openproject:${DB_PASSWORD}@postgres/openproject
+      RAILS_MIN_THREADS: "4"
+      RAILS_MAX_THREADS: "16"
+      # Inbound mail off: no IMAP poller, no cron process for it.
+      IMAP_ENABLED: "false"
+    volumes:
+      - /srv/openproject/assets:/var/openproject/assets
+    healthcheck:
+      # Migrations and the seeder run before Apache exists: long start period.
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1/health_checks/default || exit 1"]
+      interval: 15s
+      retries: 20
+      start_period: 600s
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8116.
+      - "127.0.0.1:8116:80"
+    depends_on:
+      postgres:
+        condition: service_healthy

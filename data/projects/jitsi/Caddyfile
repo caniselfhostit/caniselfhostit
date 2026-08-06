@@ -1,0 +1,25 @@
+# Jitsi Meet · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-docker/ and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also PUBLIC_URL in .env, and the browser app builds its signalling URL from
+# it, so the two have to agree.
+
+<DOMAIN> {
+	# The signalling WebSocket is upgraded by reverse_proxy on its own.
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8114 is the loopback port compose publishes. No media comes through here.
+	reverse_proxy 127.0.0.1:8114
+}

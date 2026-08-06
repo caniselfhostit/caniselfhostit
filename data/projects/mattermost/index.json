@@ -1,0 +1,94 @@
+{
+  "slug": "mattermost",
+  "name": "Mattermost",
+  "tagline": "Channels, threads and file sharing for a team, on a server you own, with no per-seat meter and no ninety-day history cliff.",
+  "repo": "mattermost/mattermost",
+  "site": "https://mattermost.com",
+  "category": "comms-scheduling",
+  "replaces": [
+    {
+      "saas": "slack",
+      "plan": "Pro",
+      "seatsAssumed": 10
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": false,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 110,
+  "license": "MIT",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/mattermost/docker/blob/main/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "A chat server only this computer can open is not a chat server for a team: nobody you invite can reach http://localhost:8113, and neither can the Mattermost apps on your own phone."
+  },
+  "quote": {
+    "text": "You are licensed to use compiled versions of the Mattermost platform produced by Mattermost, Inc. under an MIT LICENSE",
+    "source": "Mattermost LICENSE.txt",
+    "url": "https://github.com/mattermost/mattermost/blob/v11.9.0/LICENSE.txt",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "GitHub reports no single licence for the repository because Mattermost licenses its source under AGPL-3.0 or a commercial licence, while the compiled builds it publishes carry an MIT licence.",
+      "url": "https://github.com/mattermost/mattermost/blob/v11.9.0/LICENSE.txt"
+    },
+    {
+      "claim": "Upstream's own compose file runs two services and chooses between the team-edition and enterprise-edition images with one variable, which defaults to the enterprise build.",
+      "url": "https://github.com/mattermost/docker/blob/main/env.example"
+    },
+    {
+      "claim": "Mattermost supports 64-bit x86 processors and requires PostgreSQL 14 or later, with 1 vCPU and 2 GB of RAM as the floor for up to 1,000 users.",
+      "url": "https://docs.mattermost.com/deployment-guide/software-hardware-requirements.html"
+    },
+    {
+      "claim": "The server image is distroless, runs as uid 2000, exposes 8065, and declares volumes for its config, data, logs and plugin directories.",
+      "url": "https://github.com/mattermost/mattermost/blob/v11.9.0/server/build/Dockerfile"
+    },
+    {
+      "claim": "The very first account is exempt from the open-server check in the server's own code, so the administrator can be created on first visit while every later anonymous signup is refused.",
+      "url": "https://github.com/mattermost/mattermost/blob/v11.9.0/server/channels/app/user.go"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The licence is two licences, and the one you get depends on which build you run. Mattermost licenses its source under AGPL-3.0 or a commercial agreement, which is why GitHub reports no licence for the repository at all, and it licenses the versions it compiles itself under MIT. This install runs the Team Edition image, the compiled build whose licence is the plain one. Upstream's own compose file defaults to the enterprise image running with no licence key instead.",
+    "Team Edition is where the paid feature ladder starts. Unlimited users, channels, threads, file sharing, search and the official desktop and mobile apps are all here, and your message history has no ninety-day cliff because it is rows in your PostgreSQL. SAML and AD/LDAP sign-on, guest accounts, custom user groups, compliance export, data retention policies, legal hold, Elasticsearch and high-availability clustering are what Professional and Enterprise sell.",
+    "No mail means invitations are links you copy and paste. The chat works fine without SMTP, which is why this install skips it, but nobody gets an invitation email, nobody gets a notification digest, and a forgotten administrator password has no reset link at all. Put that password in a password manager on day one and add mail before the team grows past the people you can hand a link to.",
+    "Intel and AMD only. Mattermost publishes its image for amd64 alone, so the cheap ARM instance and the Raspberry Pi are out on the server path, and on a Mac with Apple Silicon it runs under x86 translation and starts slowly. This is the one constraint here that no amount of configuration works around.",
+    "Two things to back up and both matter. PostgreSQL holds every message and account, the data directory holds every file anyone uploaded, and the config directory holds the at-rest encryption key the server generated on its first boot. A database restored without the other two is a chat history with broken attachments in an install that does not recognise its own tokens."
+  ],
+  "sources": {
+    "compose": "https://docs.mattermost.com/deployment-guide/server/deploy-containers.html",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://github.com/mattermost/docker/blob/main/env.example",
+    "requirements": "https://docs.mattermost.com/deployment-guide/software-hardware-requirements.html",
+    "image": "https://github.com/mattermost/mattermost/blob/v11.9.0/server/build/Dockerfile",
+    "health": "https://github.com/mattermost/mattermost/blob/v11.9.0/server/channels/api4/system.go",
+    "config": "https://github.com/mattermost/mattermost/blob/v11.9.0/server/public/model/config.go",
+    "signup": "https://github.com/mattermost/mattermost/blob/v11.9.0/server/channels/app/user.go",
+    "headers": "https://github.com/mattermost/mattermost/blob/v11.9.0/server/channels/web/handlers.go",
+    "license": "https://github.com/mattermost/mattermost/blob/v11.9.0/LICENSE.txt"
+  },
+  "related": [
+    "chatwoot",
+    "jitsi",
+    "listmonk"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "5d628acd1c4db7093a25d70239688af4a6b2a2d29e657ceef8055e58732d845a"
+}

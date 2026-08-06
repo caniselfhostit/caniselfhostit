@@ -1,0 +1,92 @@
+{
+  "slug": "librechat",
+  "name": "LibreChat",
+  "tagline": "One chat window in front of Anthropic, OpenAI and Google, with the conversation history in a database you own.",
+  "repo": "danny-avila/LibreChat",
+  "site": "https://www.librechat.ai",
+  "category": "ai-tools",
+  "replaces": [
+    {
+      "saas": "chatgpt",
+      "plan": "Plus",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 3,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 5
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "MIT",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/danny-avila/LibreChat/blob/v0.8.7/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Everything answers at http://localhost:8112, which means this computer and nowhere else, so the chat history you build here is not on your phone and is not reachable while the machine is asleep."
+  },
+  "quote": {
+    "text": "The first account you register becomes the admin account. There are no default credentials -- you create your own username and password during registration.",
+    "source": "LibreChat documentation, Docker install",
+    "url": "https://www.librechat.ai/docs/local/docker",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Upstream documents that the first account registered becomes the admin account and that the software ships with no default credentials.",
+      "url": "https://www.librechat.ai/docs/local/docker"
+    },
+    {
+      "claim": "CREDS_KEY is a 32-byte key and CREDS_IV a 16-byte initialisation vector, both written in hex, and upstream states the app will crash on start-up if they are not set.",
+      "url": "https://www.librechat.ai/docs/configuration/dotenv"
+    },
+    {
+      "claim": "Setting a provider variable to user_provided makes LibreChat ask each signed-in person for their own API key in the web interface instead of holding one on the server, and SEARCH plus a Meilisearch master key is what turns on search across messages and conversations.",
+      "url": "https://www.librechat.ai/docs/configuration/dotenv"
+    },
+    {
+      "claim": "Upstream's own compose file runs the app, MongoDB, Meilisearch, a RAG API and a pgvector database, and starts MongoDB with mongod --noauth and no published port.",
+      "url": "https://github.com/danny-avila/LibreChat/blob/v0.8.7/docker-compose.yml"
+    },
+    {
+      "claim": "The server answers GET /health with the literal string OK, and GET /api/config reports appTitle and whether registration is currently enabled.",
+      "url": "https://github.com/danny-avila/LibreChat/blob/v0.8.7/api/server/routes/config.js"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The bill changes shape rather than disappearing. LibreChat is a chat interface, not a model: every answer comes from an API key you hold at Anthropic, OpenAI or Google, metered per token and billed to you. A few conversations a day usually costs less than a subscription, an afternoon of long documents through a frontier model can cost more, and nobody caps it for you.",
+    "You do not get what the subscription bundles. No voice mode, no ChatGPT mobile apps, no image generation or web browsing, no included model access at all, and no chatting with uploaded documents: this install leaves upstream's RAG containers out, because they need a separately billed embeddings key. What you do get is one window over several providers, conversation search, and a history that lives in your database.",
+    "It is three services, and one of them is a MongoDB with no password. That is what upstream ships, and it is defensible only because this install publishes no port for it: the app container is the one thing that can reach it. If you ever expose 27017, you have handed over every conversation.",
+    "One key stands between you and readable data. CREDS_KEY encrypts the provider keys people enter in the browser, so a database dump restored without the .env it lives in comes back with credentials nobody can decrypt. The dump and the config archive are one backup in two files.",
+    "No mail, by design. This install runs with password reset off and no SMTP server, so the first account you register is the whole recovery story: lose that password and the way back in is editing the database."
+  ],
+  "sources": {
+    "compose": "https://www.librechat.ai/docs/local/docker",
+    "caddy": "https://www.librechat.ai/docs/remote/nginx",
+    "install": "https://www.librechat.ai/docs/configuration/dotenv",
+    "health": "https://github.com/danny-avila/LibreChat/blob/v0.8.7/api/server/index.js",
+    "config": "https://github.com/danny-avila/LibreChat/blob/v0.8.7/api/server/routes/config.js",
+    "auth": "https://github.com/danny-avila/LibreChat/blob/v0.8.7/api/server/services/AuthService.js",
+    "image": "https://github.com/danny-avila/LibreChat/blob/v0.8.7/Dockerfile",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "activepieces",
+    "docmost",
+    "nextcloud"
+  ],
+  "pagePriority": 1,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "db1379ed62ee6e372a6ee7559639a365921a6ee6e22970f2b5f0c90bb9f7d7b1"
+}

@@ -1,0 +1,73 @@
+{
+  "slug": "paprika",
+  "name": "Paprika Recipe Manager",
+  "domain": "paprikaapp.com",
+  "whyPeoplePay": "Paprika is one of the few apps on this site that is genuinely cheap and genuinely good. You pay once per platform, there is no subscription, cloud sync between your own devices is included at no extra charge, and the apps are native, fast and work in a kitchen with no signal. What you are buying is a small studio's decade of care about the details of cooking from a screen. The reason to leave is not the money, because there is barely any: it is that your recipe collection lives in an account you do not administer, opens only in their apps, and cannot be handed to anyone in your household who has not bought their own copy.",
+  "plans": [
+    {
+      "name": "iOS",
+      "priceMonthly": null,
+      "unit": "one-time",
+      "seatsIncluded": 1,
+      "note": "$4.99 once on the App Store, covering iPhone, iPad and Apple Watch. There is no monthly price to record because there is no subscription."
+    },
+    {
+      "name": "Mac",
+      "priceMonthly": null,
+      "unit": "one-time",
+      "seatsIncluded": 1,
+      "note": "$29.99 once on the Mac App Store. Buying the iOS app does not unlock it: the vendor states that each version is sold separately."
+    },
+    {
+      "name": "Windows",
+      "priceMonthly": null,
+      "unit": "one-time",
+      "seatsIncluded": 1,
+      "note": "$29.99 once, bought from paprikaapp.com. The caption under the button calls that figure a sale price, while the seasonal discount banner above it was commented out of the page on the day we read it."
+    },
+    {
+      "name": "Android",
+      "priceMonthly": 0,
+      "unit": "one-time",
+      "seatsIncluded": 1,
+      "note": "Free to install, capped at 50 recipes, and cloud sync is off. Google Play lists in-app purchases at $4.99 to $19.99 per item; one of them unlocks unlimited recipes and syncing."
+    },
+    {
+      "name": "Paprika Cloud Sync",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "No charge and no renewal. Syncing recipes, grocery lists and meal plans between the devices you bought the app on is included, which is the part of this ladder most rivals bill monthly for."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://www.paprikaapp.com/windows/",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Paprika is sold once per platform rather than by the month, so every platform row records priceMonthly as null with the one-time figure in its note: printing a monthly number for a one-time purchase would invent a bill nobody has. Mac at $29.99 and iOS at $4.99 were read from their App Store listings on the same day; Windows at $29.99 came from paprikaapp.com/windows/, whose own caption calls that a sale price even though the seasonal banner above it was commented out of the page. The Android unlock is an in-app purchase Google Play publishes only as a range, $4.99 to $19.99 per item, so no single figure is recorded for it."
+  },
+  "ranked": [
+    {
+      "project": "mealie",
+      "rationale": "The only one here that reads a Paprika export directly, so the collection you already have moves in one import rather than being retyped. It matches the parts people actually use daily, the URL clipper, the meal planner and the aisle-sorted shopping list, and it adds the two things a paid app on somebody else's sync service cannot: a web address every device in the house opens, and household accounts you hand out yourself. One container, SQLite inside it, and the seeded admin credential that upstream publishes is rotated during the install."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Tandoor Recipes",
+      "repo": "https://github.com/TandoorRecipes/recipes",
+      "note": "Actively developed and the closest competitor on features, with a meal planner and shopping list at least as capable as Mealie's. Not ranked here for a licensing reason worth saying out loud: GitHub reports no license because the repository's LICENSE.md is AGPL-3.0 with the Commons Clause attached, which withdraws the right to sell a service built on the software and means it is not open source. Nothing in that stops a household running it; it is the kind of fact to know before you build on it."
+    },
+    {
+      "name": "Grocy",
+      "repo": "https://github.com/grocy/grocy",
+      "note": "MIT, maintained, and a different product wearing an overlapping hat. It is a household stock system that tracks what is in the fridge, what expires on Thursday and which chores are due, with recipes as one module among many. It does far more than Mealie around the kitchen and far less inside a recipe, and the web clipping that makes a Paprika swap painless is not what it is for."
+    },
+    {
+      "name": "KitchenOwl",
+      "repo": "https://github.com/TomBursch/kitchenowl",
+      "note": "AGPL-3.0, actively maintained, and the one option here with real native phone apps, which is the thing a self-hosted recipe box usually gives up. It is built around the shared shopping list first and the recipe second, so it is the better pick for a household that shops together and the weaker one for a large clipped collection you want searchable."
+    }
+  ]
+}

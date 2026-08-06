@@ -1,0 +1,78 @@
+# LibreChat · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker install ..... https://www.librechat.ai/docs/local/docker
+#   variable reference . https://www.librechat.ai/docs/configuration/dotenv
+#   reverse proxy ...... https://www.librechat.ai/docs/remote/nginx
+#
+# Three services: the app, the MongoDB holding accounts and conversations, and
+# the Meilisearch that makes those conversations searchable. Upstream's compose
+# file adds a RAG API and a pgvector database for chatting with uploaded
+# documents; both are left out, because they need an embeddings API key of
+# their own and would make this a five-container stack.
+#
+# MongoDB runs with --noauth, as upstream ships it. That is safe here only
+# because it publishes no port: the app container on this private network is
+# the one thing that can reach 27017. Digests read 2026-08-06, all multi-arch.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  mongodb:
+    image: mongo:8.0.20@sha256:098862b1339f031900ca66cf8fef799e616d6324fa41b9a263f2ec899552c1ef
+    restart: unless-stopped
+    command: ["mongod", "--noauth"]
+    volumes:
+      - /srv/librechat/mongo:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      retries: 24
+    # No `ports:`: 27017 never leaves the compose network.
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.35.1@sha256:8b57fc3c7f46535ddef3828df1538465ac19d892eb57c9a10da6df0880bd5856
+    restart: unless-stopped
+    environment:
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY}
+      MEILI_NO_ANALYTICS: "true"
+    volumes:
+      - /srv/librechat/meili:/meili_data
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:7700/health"]
+      interval: 10s
+      retries: 24
+    # No `ports:` either: only the app queries this index.
+
+  api:
+    image: ghcr.io/danny-avila/librechat:v0.8.7@sha256:c5db3331b845e1f289f8d04c0c77936c4bbe372f76730a804abc1c37e44d23a9
+    restart: unless-stopped
+    env_file: /srv/librechat/.env
+    environment:
+      HOST: 0.0.0.0
+      MONGO_URI: mongodb://mongodb:27017/LibreChat
+      MEILI_HOST: http://meilisearch:7700
+      SEARCH: "true"
+      # Caddy terminates TLS and is the only hop in front of this container.
+      TRUST_PROXY: "1"
+      # No mail server here, so the flow that needs one is off.
+      ALLOW_PASSWORD_RESET: "false"
+      # Keep this out of search engine results.
+      NO_INDEX: "true"
+      # `user_provided`: no credential is stored here. LibreChat asks each
+      # signed-in person for theirs in the browser and encrypts it with
+      # CREDS_KEY.
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-user_provided}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-user_provided}
+      GOOGLE_KEY: ${GOOGLE_KEY:-user_provided}
+    volumes:
+      - /srv/librechat/images:/app/client/public/images
+      - /srv/librechat/uploads:/app/uploads
+      - /srv/librechat/logs:/app/logs
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8112.
+      - "127.0.0.1:8112:3080"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      meilisearch:
+        condition: service_healthy

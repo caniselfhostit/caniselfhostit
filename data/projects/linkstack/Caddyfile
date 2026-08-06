@@ -1,0 +1,33 @@
+# LinkStack · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.linkstack.org/docker/reverse-proxies/,
+# https://docs.linkstack.org/docker/setup/ and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also HTTP_SERVER_NAME in .env, and it is the address printed on the profiles
+# and QR codes people scan, so it is the value here worth choosing once.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8121 is the loopback port compose publishes, and it maps to the
+	# container's plain HTTP port. Upstream's own example proxies to the
+	# container's 443 with certificate checking switched off; this block does
+	# not, because that certificate is self-signed and skipping the check on
+	# a hop is worse than not making the hop over TLS at all. The scheme the
+	# application prints in its own pages comes from FORCE_HTTPS in the app's
+	# .env, which step 7 turns on, so nothing here needs the back end to
+	# speak TLS.
+	reverse_proxy 127.0.0.1:8121
+}

@@ -1,0 +1,92 @@
+{
+  "slug": "obsidian-livesync",
+  "name": "Obsidian LiveSync",
+  "tagline": "Your Obsidian vault syncs through a CouchDB you run, end-to-end encrypted, with the server storing nothing it can read.",
+  "repo": "vrtmrz/obsidian-livesync",
+  "site": "https://github.com/vrtmrz/obsidian-livesync",
+  "category": "notes-wikis",
+  "replaces": [
+    {
+      "saas": "obsidian-sync",
+      "plan": "Sync Standard",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "MIT",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/vrtmrz/obsidian-livesync/blob/main/docker-compose.traefik.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Everything answers at http://localhost:8120, which means this computer and nowhere else, so what you get is a versioned copy of every note in a database you own rather than a phone that syncs."
+  },
+  "quote": {
+    "text": "This plug-in is not compatible with the official \"Obsidian Sync\" and cannot synchronise with it.",
+    "source": "Self-hosted LiveSync README",
+    "url": "https://github.com/vrtmrz/obsidian-livesync/blob/main/README.md",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "The plugin is not compatible with Obsidian Sync and cannot synchronise with it, and upstream warns against running it alongside any other synchronisation solution on the same vault.",
+      "url": "https://github.com/vrtmrz/obsidian-livesync/blob/main/README.md"
+    },
+    {
+      "claim": "Upstream's own provisioning tool sets require_valid_user, CORS credentials, the three Obsidian origins, a 50 MB document limit and single-node setup on the CouchDB it configures, which is exactly what this install writes as a config file.",
+      "url": "https://github.com/vrtmrz/obsidian-livesync/blob/main/utils/couchdb/provision.ts"
+    },
+    {
+      "claim": "The manual onboarding path enables end-to-end encryption with a vault passphrase, takes the CouchDB URL, credentials and database name, and creates that database if it does not exist.",
+      "url": "https://github.com/vrtmrz/obsidian-livesync/blob/main/docs/quick_setup.md"
+    },
+    {
+      "claim": "Obsidian on a mobile device requires HTTPS, and upstream says plain HTTP is suitable only for a trusted local connection from a desktop device.",
+      "url": "https://github.com/vrtmrz/obsidian-livesync/blob/main/docs/setup_own_server.md"
+    },
+    {
+      "claim": "CouchDB's require_valid_user refuses every anonymous request, require_valid_user_except_for_up leaves /_up open as the health endpoint, and single_node creates the system databases at startup.",
+      "url": "https://docs.couchdb.org/en/stable/config/http.html"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The install is half a plugin. This page gets you the CouchDB the vault syncs through; the other half is a community plugin you install by hand inside Obsidian, on every device, and Obsidian itself is free-for-personal-use closed-source software that nothing here replaces or modifies.",
+    "The encryption passphrase is yours alone. Turn on end-to-end encryption and the server holds ciphertext, which is the point, and it also means the passphrase is not on the server, not in the backup, and not recoverable. Lose it and the vault in that database is noise.",
+    "One vault, one database, no version history UI. LiveSync replicates changes and merges simple conflicts, and CouchDB keeps the revisions underneath, but there is no dated-snapshot browser like the one Obsidian Sync sells. Restoring a note you wrecked last Tuesday is a different job here.",
+    "Never run two synchronisers on one vault. Upstream says so twice, and it means Obsidian Sync, iCloud, Dropbox and a folder sync tool as well. The failure is duplicated and corrupted notes, and it is not always obvious on the day it happens.",
+    "You own a database now. It is one container, but it is still a service to update, back up and keep a certificate pointed at, and if it is unreachable your phone quietly stops syncing rather than telling you."
+  ],
+  "sources": {
+    "compose": "https://github.com/vrtmrz/obsidian-livesync/blob/main/docs/setup_own_server.md",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://github.com/vrtmrz/obsidian-livesync/blob/main/docs/quick_setup.md",
+    "config": "https://github.com/vrtmrz/obsidian-livesync/blob/main/utils/couchdb/provision.ts",
+    "couchdb": "https://docs.couchdb.org/en/stable/config/couchdb.html",
+    "http": "https://docs.couchdb.org/en/stable/config/http.html",
+    "health": "https://docs.couchdb.org/en/stable/api/server/common.html",
+    "image": "https://github.com/apache/couchdb-docker/blob/main/3.5.2.1/docker-entrypoint.sh"
+  },
+  "related": [
+    "trilium",
+    "docmost",
+    "nextcloud"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "78620906cfdae417adcd22c05b43d0be1085989f1236454a5508f267c53dfd5c"
+}

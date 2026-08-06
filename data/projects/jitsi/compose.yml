@@ -1,0 +1,103 @@
+# Jitsi Meet · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   self-hosting guide . https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-docker/
+#   variable reference . https://github.com/jitsi/docker-jitsi-meet/blob/stable-11146-1/env.example
+#   upstream compose ... https://github.com/jitsi/docker-jitsi-meet/blob/stable-11146-1/docker-compose.yml
+#
+# Four services and no database. Prosody carries the signalling, Jicofo decides
+# who is in which conference, the videobridge forwards media, the web container
+# is nginx plus the browser app. Meetings are never stored, so the only state
+# that outlives a restart is the Prosody account file under /srv/jitsi/prosody,
+# which upstream requires to be writable by uid 1000.
+#
+# Tags and digests read from ghcr.io on 2026-08-06; all four publish amd64 and
+# arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+name: jitsi
+
+services:
+  prosody:
+    image: ghcr.io/jitsi/prosody:stable-11146-1@sha256:0e3d9ada40c03e6eef151348e0872dce7b4b1c16c173ff4a67afeae60aba2404
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /run:size=16M,mode=1750,exec
+      - /tmp:size=16M,mode=1777,noexec
+    volumes:
+      - /srv/jitsi/config/prosody:/config
+      - /srv/jitsi/prosody:/var/lib/prosody
+    environment:
+      # Rooms open only for an account registered in step 7; guests wait.
+      ENABLE_AUTH: "1"
+      AUTH_TYPE: internal
+      ENABLE_GUESTS: "1"
+      JICOFO_AUTH_PASSWORD: ${JICOFO_AUTH_PASSWORD}
+      JVB_AUTH_PASSWORD: ${JVB_AUTH_PASSWORD}
+      # Read by step 7's register command inside this container.
+      MEET_HOST_PASSWORD: ${MEET_HOST_PASSWORD}
+      PUBLIC_URL: ${PUBLIC_URL}
+    # No `ports:`: 5222 and 5280 are reachable only from the other containers.
+
+  jicofo:
+    image: ghcr.io/jitsi/jicofo:stable-11146-1@sha256:a5da296923010dcc2daf6a02e6a183181906cb969a088ae90b97516bdeb9737f
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /run:size=16M,mode=1750,exec
+      - /tmp:size=16M,mode=1777,noexec
+    volumes:
+      - /srv/jitsi/config/jicofo:/config
+    environment:
+      ENABLE_AUTH: "1"
+      AUTH_TYPE: internal
+      JICOFO_AUTH_PASSWORD: ${JICOFO_AUTH_PASSWORD}
+      # Upstream's default heap ceiling is 3072m, larger than the whole box.
+      JICOFO_MAX_MEMORY: 512m
+      XMPP_SERVER: prosody
+    depends_on:
+      - prosody
+
+  jvb:
+    image: ghcr.io/jitsi/jvb:stable-11146-1@sha256:6a7cec66c6a2fdd8ffd3a90101a0f8e3297aff29494f258caf1bcfbd418a17f3
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /run:size=16M,mode=1750,exec
+      - /tmp:size=16M,mode=1777,noexec
+    volumes:
+      - /srv/jitsi/config/jvb:/config
+    environment:
+      JVB_AUTH_PASSWORD: ${JVB_AUTH_PASSWORD}
+      # Behind Docker's NAT. Step 3 writes the address to advertise.
+      JVB_ADVERTISE_IPS: ${JVB_ADVERTISE_IPS}
+      VIDEOBRIDGE_MAX_MEMORY: 1024m
+      XMPP_SERVER: prosody
+    ports:
+      # Media, not web: browsers send RTP straight here.
+      - "10000:10000/udp"
+    depends_on:
+      - prosody
+
+  web:
+    image: ghcr.io/jitsi/web:stable-11146-1@sha256:ff81559621732d3dfc4815f261d41fd826566833016ea772f4d43a77aa88fe9a
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /run:size=16M,mode=1750,exec
+      - /tmp:size=16M,mode=1777,noexec
+    volumes:
+      - /srv/jitsi/config/web:/config
+    environment:
+      PUBLIC_URL: ${PUBLIC_URL}
+      # Caddy holds the certificate, so nginx here serves plain http on 8000.
+      DISABLE_HTTPS: "1"
+      ENABLE_AUTH: "1"
+      ENABLE_GUESTS: "1"
+      XMPP_BOSH_URL_BASE: http://prosody:5280
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8114.
+      - "127.0.0.1:8114:8000"
+    depends_on:
+      - jvb

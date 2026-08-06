@@ -1,0 +1,45 @@
+# LinkStack · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker setup ... https://docs.linkstack.org/docker/setup/
+#   image build .... https://github.com/LinkStackOrg/linkstack-docker/blob/main/Dockerfile
+#
+# One container: Alpine, Apache 2 and PHP 8.3, carrying LinkStack 4.8.6 and the
+# SQLite file it keeps links and users in. It sits in ~/selfhost/linkstack/ and
+# reads ./.env from beside itself, which lets one file work on all three OSes.
+#
+# /htdocs is a named volume, not a relative bind mount: the image ships the
+# application there, and Docker fills an empty named volume from the image but
+# never a bind mount.
+#
+# The pin is a digest with no tag, because upstream publishes no version tags.
+# Manifest list read from Docker Hub on 2026-08-06; /htdocs/version.json inside
+# it reads 4.8.6. It covers amd64, arm64 and two 32-bit arm variants.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  linkstack:
+    image: linkstackorg/linkstack@sha256:1c8b05399ee459ac601bac3eede7fbe765d1b6b7be725663b57f3220610958bf
+    container_name: linkstack
+    restart: unless-stopped
+    # HTTP_SERVER_NAME and HTTPS_SERVER_NAME are Apache's ServerName, and on
+    # this path both are localhost. They live in .env beside this file.
+    env_file: ./.env
+    environment:
+      TZ: UTC
+      # Apache's log level. The image default is info; warn keeps the container
+      # log to lines worth reading.
+      LOG_LEVEL: warn
+      PHP_MEMORY_LIMIT: 256M
+      UPLOAD_MAX_FILESIZE: 8M
+    volumes:
+      - linkstack-htdocs:/htdocs
+    ports:
+      # Loopback only: no other device on this network reaches 8121, not the
+      # user's own phone. The container also listens on 443 with a self-signed
+      # certificate, which this file never publishes. The image's own health
+      # check curls http://localhost, this same port.
+      - "127.0.0.1:8121:80"
+
+volumes:
+  linkstack-htdocs:

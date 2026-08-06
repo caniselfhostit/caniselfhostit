@@ -1,0 +1,30 @@
+# Coolify · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://coolify.io/docs/knowledge-base/server/proxies and
+# https://caddyserver.com/docs/automatic-https
+#
+# Three routes, because one hostname fronts three services, and this is the
+# table upstream's own proxy writes for an instance with a domain. Drop either
+# socket route and the dashboard loads while its live logs and web terminal
+# never connect. Append it to /etc/caddy/Caddyfile with <DOMAIN> replaced by
+# the hostname pointed at this box.
+
+<DOMAIN> {
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	encode zstd gzip
+
+	# Upstream's rules are PathPrefix(`/app`) for live logs and
+	# PathPrefix(`/terminal/ws`) for the web terminal. These are those.
+	reverse_proxy /app* 127.0.0.1:6001
+	reverse_proxy /terminal/ws* 127.0.0.1:6002
+
+	# Everything else is the dashboard. No loopback port is in the firewall.
+	reverse_proxy 127.0.0.1:8115
+}

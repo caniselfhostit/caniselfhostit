@@ -1,0 +1,65 @@
+# Obsidian LiveSync · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   couchdb setup ... https://github.com/vrtmrz/obsidian-livesync/blob/main/docs/setup_own_server.md
+#   settings ........ https://github.com/vrtmrz/obsidian-livesync/blob/main/utils/couchdb/provision.ts
+#   couchdb config .. https://docs.couchdb.org/en/stable/config/http.html
+#
+# One service. Every path is relative to ~/selfhost/obsidian-livesync/, so one
+# file works on macOS, Linux and Windows.
+#
+# The database is a named volume, not a bind mount: the container runs as uid
+# 5984, and making a home-directory bind mount writable by that uid needs root
+# on Linux and cannot be expressed at all through Docker Desktop's Windows file
+# sharing. A fresh volume inherits the image's own 5984 ownership instead.
+#
+# The `configs` block is the set of settings upstream's provisioning tool PUTs
+# into /_node/_local/_config, written as a config file so nothing needs Deno.
+#
+# Digest read from Docker Hub on 2026-08-06; the image publishes amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  couchdb:
+    image: couchdb:3.5.2.1@sha256:b80216f643e99d31df318c740dbc556ac08b56444030ed1d5e6d7b0d4e625213
+    container_name: obsidian-livesync-couchdb
+    restart: unless-stopped
+    user: "5984:5984"
+    env_file: ./.env
+    configs:
+      - source: livesync-ini
+        target: /opt/couchdb/etc/local.d/10-livesync.ini
+    volumes:
+      - couchdb-data:/opt/couchdb/data
+    ports:
+      # Loopback only: no other device on the wifi can reach 8120.
+      - "127.0.0.1:8120:5984"
+
+configs:
+  livesync-ini:
+    content: |
+      [couchdb]
+      ; Creates _users and _replicator at startup: the single-node equivalent
+      ; of the /_cluster_setup call.
+      single_node = true
+      ; A note and its attachments are one document, and CouchDB defaults to
+      ; 8000000 bytes.
+      max_document_size = 50000000
+
+      [chttpd]
+      ; Nothing anonymous reaches anything but /_up, the health endpoint.
+      require_valid_user = true
+      require_valid_user_except_for_up = true
+      ; The CouchDB default, restated: the limit above is reachable only
+      ; while this one stays above it.
+      max_http_request_size = 4294967296
+      enable_cors = true
+
+      [cors]
+      credentials = true
+      ; Obsidian desktop, then mobile under Capacitor. CouchDB rejects a
+      ; wildcard origin while credentials are on.
+      origins = app://obsidian.md,capacitor://localhost,http://localhost
+
+volumes:
+  couchdb-data:

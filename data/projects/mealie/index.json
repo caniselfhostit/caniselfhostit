@@ -1,0 +1,91 @@
+{
+  "slug": "mealie",
+  "name": "Mealie",
+  "tagline": "Your recipe box, meal plans and shopping lists on one container you own, with a Paprika importer and a clipper that reads most recipe sites.",
+  "repo": "mealie-recipes/mealie",
+  "site": "https://docs.mealie.io",
+  "category": "money-home",
+  "replaces": [
+    {
+      "saas": "paprika",
+      "plan": "Mac",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://docs.mealie.io/documentation/getting-started/installation/sqlite/",
+  "local": {
+    "fit": "caveat",
+    "note": "Mealie earns its keep when the phone in the kitchen and the laptop in the study open the same recipe list, and on this path only this computer can open it, so the phone by the stove gets a connection error."
+  },
+  "quote": {
+    "text": "all your data is stored in the /app/data/ folder in the container. You can easily perform entire site backups by stopping the container, and backing up this folder with your chosen tool.",
+    "source": "Mealie documentation, Backups and Restores",
+    "url": "https://docs.mealie.io/documentation/getting-started/usage/backups-and-restoring/",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Upstream publishes the seeded first account in its installation checklist, as changeme@example.com with the password MyPassword, which is why this install rotates it and asserts the published one fails before it reports success.",
+      "url": "https://docs.mealie.io/documentation/getting-started/installation/installation-checklist/"
+    },
+    {
+      "claim": "Upstream calls SQLite the ideal choice for Mealie at one to twenty users and publishes a single-container compose sample for it, which is why this install runs no database container.",
+      "url": "https://docs.mealie.io/documentation/getting-started/installation/sqlite/"
+    },
+    {
+      "claim": "DB_ENGINE defaults to sqlite, ALLOW_SIGNUP has defaulted to false since v1.4.0 after a security review, and the API listens on port 9000 inside the container.",
+      "url": "https://docs.mealie.io/documentation/getting-started/installation/backend-config/"
+    },
+    {
+      "claim": "Upstream's own advice for a SQLite install is to stop the container and copy the /app/data folder whole, which is the backup this install takes.",
+      "url": "https://docs.mealie.io/documentation/getting-started/usage/backups-and-restoring/"
+    },
+    {
+      "claim": "Mealie creates recipes from hundreds of websites by URL, and imports existing collections from Paprika, Tandoor, Nextcloud Cookbooks, Recipe Keeper and others at /group/migrations.",
+      "url": "https://docs.mealie.io/documentation/getting-started/features/"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The account it starts with is public knowledge. Upstream prints the seeded email and its password in the installation guide, and Mealie's own sign-in page repeats them in a banner until you change the address. The install replaces that password and proves the old one is refused; changing the email is the one step left to you.",
+    "URL import works on most recipe sites and not on all of them. A site behind a bot check, or one that draws its ingredients with JavaScript after the page loads, comes back empty. No setting fixes that, and the workaround is pasting the recipe in by hand.",
+    "You own the backups. Everything is one directory holding the SQLite database, your photos and the keys that sign your logins, and the honest way to copy it is with the container stopped. A backup on the same disk is not a backup.",
+    "It is a web app, not the native app you are leaving. You add it to a home screen and it needs your server to be reachable, so a phone with no signal in a shop has no shopping list unless you screenshot it first.",
+    "No cloud sync account, no shared household unless you invite people yourself, and no vendor keeping the lights on. The domain, the certificate and the container are now things you renew."
+  ],
+  "sources": {
+    "compose": "https://docs.mealie.io/documentation/getting-started/installation/sqlite/",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://docs.mealie.io/documentation/getting-started/installation/installation-checklist/",
+    "variables": "https://docs.mealie.io/documentation/getting-started/installation/backend-config/",
+    "backups": "https://docs.mealie.io/documentation/getting-started/usage/backups-and-restoring/",
+    "security": "https://docs.mealie.io/documentation/getting-started/installation/security/",
+    "features": "https://docs.mealie.io/documentation/getting-started/features/"
+  },
+  "related": [
+    "home-assistant",
+    "actual-budget",
+    "vikunja"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "4dcbcd43ac77a6f6c7b4f853cfa65ef1444de373b2a55fc595f7dbf3e93420fb"
+}

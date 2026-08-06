@@ -1,0 +1,32 @@
+# linkding · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://linkding.link/installation/,
+# https://linkding.link/troubleshooting/ and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. Upstream states
+# that Caddy passes the Host header through unchanged and needs no extra
+# directive for it. The same hostname is also LD_CSRF_TRUSTED_ORIGINS in .env,
+# because linkding speaks plain http behind this proxy while the browser sends
+# an https Origin, and Django compares the two.
+
+<DOMAIN> {
+	# The bookmark list and the JSON API compress well.
+	encode zstd gzip
+
+	# linkding sets its own X-Frame-Options: DENY, so this block does not
+	# repeat it and must not weaken it. HSTS is here because every request to
+	# this host carries a session cookie.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8118 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8118
+}

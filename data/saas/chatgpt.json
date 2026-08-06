@@ -1,0 +1,80 @@
+{
+  "slug": "chatgpt",
+  "name": "ChatGPT",
+  "domain": "chatgpt.com",
+  "whyPeoplePay": "Twenty dollars buys a flat rate on a meter that would otherwise be running, and that is most of the product. The subscription bundles the models themselves, voice, image generation, browsing and file analysis into one price, on apps that already exist for every phone in the house, and it means nobody has to think about tokens on a Tuesday afternoon. Self-hosting a chat interface replaces the window, not the models: the meter comes back, and it is now yours to watch.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Limited message and upload allowances. OpenAI began testing advertising on the free tier in 2026."
+    },
+    {
+      "name": "Go",
+      "priceMonthly": 8,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "US price for the lower-cost consumer tier, which OpenAI took worldwide in January 2026. Also carries ads."
+    },
+    {
+      "name": "Plus",
+      "priceMonthly": 20,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "The tier most personal subscribers are on, and the one this page prices against."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 200,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "OpenAI sells two Pro tiers; the $100 one carries lower usage allowances than the $200 one recorded here."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": 25,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per user per month billed monthly, $20 per user per month billed annually, with a two-seat minimum. Adds a contractual commitment not to train on the team's conversations."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. OpenAI publishes no price."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://openai.com/chatgpt/pricing/",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "openai.com returned HTTP 403 to every automated fetch we tried on 2026-08-06, so these figures were corroborated from OpenAI's own announcement pages and from several independent 2026 pricing write-ups rather than read off the vendor page directly. Plus at $20 and Business at $25 monthly / $20 annual are consistent across every source we checked; the Pro line is the least certain, because two Pro tiers ($100 and $200) are sold and sources differ on how they are labelled. Anyone with a browser can settle this in a minute: open the source URL and file a correction."
+  },
+  "ranked": [
+    {
+      "project": "librechat",
+      "rationale": "The only one of these that reads like the thing people are actually cancelling: one window, several providers side by side in the same conversation list, search across everything you have ever asked, and accounts with real password login rather than a shared box on your desk. It is MIT with no branding clause and no commercial carve-out, which matters when the whole point is that the software is yours. What it does not do is give you a model. You supply the provider key, the tokens are metered, and on a heavy month that meter can beat the twenty dollars you were paying."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Open WebUI",
+      "repo": "https://github.com/open-webui/open-webui",
+      "note": "The most popular of the group and the natural pick if a local Ollama model is the point rather than a hosted provider. Check the licence before you plan around it: GitHub reports it as Other, and the LICENSE file is an Open WebUI License, BSD-3 style plus a clause that forbids altering or removing Open WebUI branding above fifty users in any thirty-day window without written permission. Fine for a household, a real constraint for anything else."
+    },
+    {
+      "name": "LobeChat",
+      "repo": "https://github.com/lobehub/lobe-chat",
+      "note": "The best-looking interface of the four and strong on plugins and agent presets. Also not plain open source: from 1.0 it ships under the LobeHub Community License, Apache 2.0 with added conditions that require a commercial licence to develop and distribute a derivative work. Running it as-is is allowed; forking it into a product is not."
+    },
+    {
+      "name": "AnythingLLM",
+      "repo": "https://github.com/Mintplex-Labs/anything-llm",
+      "note": "MIT, actively developed, and aimed at a different job: it is built around document workspaces and retrieval, with a vector database and embeddings in the default install. If chatting with your own files is the reason you are here, start with this one; if you want a ChatGPT-shaped window over provider APIs, it is more machinery than you asked for."
+    }
+  ]
+}

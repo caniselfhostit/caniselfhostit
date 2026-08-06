@@ -1,0 +1,29 @@
+# LibreChat · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://www.librechat.ai/docs/remote/nginx and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also DOMAIN_CLIENT and DOMAIN_SERVER in .env; change it in one place and the
+# login cookie stops matching the address the browser is on.
+
+<DOMAIN> {
+	# Model replies arrive as a stream of events, one piece at a time.
+	# Nothing here compresses or holds that stream: hence no `encode`
+	# line, and a proxy that flushes every write.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8112 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8112 {
+		flush_interval -1
+	}
+}

@@ -1,0 +1,66 @@
+{
+  "slug": "asana",
+  "name": "Asana",
+  "domain": "asana.com",
+  "whyPeoplePay": "Asana sells the part of project management that is not a database: a task list light enough that people who did not choose the tool still update it. You are paying per seat for an interface your least enthusiastic colleague will actually open, for the integrations that push work into it from Slack and email, and for somebody else keeping all of that running while your team grows.",
+  "plans": [
+    {
+      "name": "Personal",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 2,
+      "note": "Free forever. Asana's Personal plan page states up to 2 seats per project and team, and its Starter page describes Starter as the plan for a team of more than 2."
+    },
+    {
+      "name": "Starter",
+      "priceMonthly": 13.49,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per user per month billed monthly. $10.99 per user per month on the annual plan, which is the figure the page leads with. No seat limit."
+    },
+    {
+      "name": "Advanced",
+      "priceMonthly": 30.49,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per user per month billed monthly. $24.99 per user per month on the annual plan. No seat limit."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The page says contact sales for pricing, with unlimited users."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://asana.com/pricing",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "Monthly-billed figures recorded, with the annual-billed equivalents in each plan note, because the page leads with the annual rate and quoting only that understates what a month-to-month subscriber pays. Starter and Advanced are read from asana.com/pricing; the Personal seat cap is corroborated on asana.com/plan/personal, read the same day."
+  },
+  "ranked": [
+    {
+      "project": "openproject",
+      "rationale": "The honest swap for a team that had outgrown Asana's list rather than one that loved it. You get work packages with types and statuses, Gantt charts, a work breakdown structure, time and cost tracking, and no seat counter, all from one container plus a database. What you give up is the lightness: OpenProject asks more of every task you create, and its notifications go nowhere until you configure mail, which Asana does for you."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Plane",
+      "repo": "https://github.com/makeplane/plane",
+      "note": "AGPL-3.0 and actively developed, and the closest thing on this list to Asana's feel: cycles, modules, a fast issue view. Not ranked because a working self-hosted install is a stack of ten-plus services (API, worker, beat worker, web, admin, space, live, proxy, Postgres, Redis, MinIO), which this catalogue's one-compose-file prompt format cannot carry honestly. Surveyed rather than tested."
+    },
+    {
+      "name": "Leantime",
+      "repo": "https://github.com/Leantime/leantime",
+      "note": "AGPL-3.0, maintained, and deliberately aimed at people who do not think in Gantt charts: goals, ideas and a simpler task board on PHP and MySQL. Lighter than OpenProject and closer to Asana in weight, but it is a smaller project with a smaller operational track record, so it is surveyed here rather than ranked."
+    },
+    {
+      "name": "Taiga",
+      "repo": "https://github.com/taigaio/taiga-docker",
+      "note": "MPL-2.0. Still receiving commits on taiga-back, but the rewrite that was going to be Taiga Next has not moved since December 2023 and the docker deployment repository last changed in October 2025. It is agile-first (scrum and kanban boards) rather than Asana-shaped, and the uneven maintenance is why it is listed as evaluated rather than ranked."
+    }
+  ]
+}

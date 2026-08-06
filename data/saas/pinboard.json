@@ -1,0 +1,55 @@
+{
+  "slug": "pinboard",
+  "name": "Pinboard",
+  "domain": "pinboard.in",
+  "whyPeoplePay": "Pinboard is one person. Maciej Ceglowski founded it in 2009, works on it full-time, answers the mail himself, and the links people saved on their first day still resolve. That is the product: a small yearly bill attached to somebody who has kept a boring promise for over fifteen years, plus an archival tier that crawls and keeps its own copy of every page you bookmark. Almost nobody leaves Pinboard to save money, and it would be dishonest to pretend otherwise.",
+  "plans": [
+    {
+      "name": "Standard",
+      "priceMonthly": 1.83,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "source": "https://pinboard.in/faq/",
+      "checkedOn": "2026-08-06",
+      "note": "$22 a year, billed yearly and paid up front. Pinboard sells no monthly plan, so 1.83 is the yearly price divided by twelve."
+    },
+    {
+      "name": "Archival",
+      "priceMonthly": 3.25,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "source": "https://pinboard.in/tour/",
+      "checkedOn": "2026-08-06",
+      "note": "$39 a year, also billed yearly. Adds a stored copy of every page you bookmark, full-text search across those copies and a dead-link check. 3.25 is the yearly price divided by twelve."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://pinboard.in/faq/",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The upgrade page at pinboard.in/upgrade/ is behind a login, so both figures were read from public vendor pages on the same day: the FAQ states $22 a year for the basic service and $39 a year for archiving, and the tour page repeats the $39 archival fee. Both are billed yearly with no monthly option, so priceMonthly is the yearly price divided by twelve. The FAQ also mentions a discount for paying several years up front without naming the amount, so a multi-year subscriber pays less than these figures."
+  },
+  "ranked": [
+    {
+      "project": "linkding",
+      "rationale": "The one that keeps the shape of the thing you are leaving. Open the page, paste a URL, type tags, close the page: no collections to design, no workspace to set up, and a tag list and a search box to get back to it later. It is one container with a SQLite file behind it, its settings page imports the HTML bookmark file that browsers and bookmarking services hand you on the way out, and it does not try to become a read-later app while you are not looking. What it does not do is keep a copy of the page, which is what the archival tier was for."
+    },
+    {
+      "project": "linkwarden",
+      "rationale": "Pick this one instead if the archival tier is what you were actually paying for. Linkwarden's whole point is preservation: it keeps its own copy of each page, so a link that dies is still readable years later, and it sorts them into collections you can share with other people. That costs you a PostgreSQL, a headless Chromium doing the preserving, and more RAM than linkding needs, and saving a link is a heavier act every time. Worth it if you have watched bookmarked pages disappear; overkill if what you want back is the list."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Shaarli",
+      "repo": "https://github.com/shaarli/Shaarli",
+      "note": "PHP, no database server, still receiving commits in the community repo. It is a personal link log with tags rather than a private archive: the default posture is publishing what you save, and the feed is part of the point. Its COPYING file puts the project under the zlib/libpng license with several bundled assets under other terms, which is why GitHub reports no single identifier for it."
+    },
+    {
+      "name": "Shiori",
+      "repo": "https://github.com/go-shiori/shiori",
+      "note": "MIT, a single Go binary or one container, and it does keep a copy of the page content, which linkding's plain image does not. Releases come more slowly than linkding's and the interface is plainer, so it reads as the choice for someone who wants one static binary on a small box rather than the fastest tagging loop."
+    }
+  ]
+}

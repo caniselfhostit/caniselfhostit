@@ -1,0 +1,26 @@
+# Matomo · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://matomo.org/faq/how-to-install/faq_98/ and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also Matomo's trusted host and the address inside the tracking snippet on
+# every page you measure.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	# Matomo sets its own X-Frame-Options and CSP; these are the rest.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# Caddy passes the Host through and adds X-Forwarded-For, which
+	# trusted_hosts[] and proxy_client_headers[] read. 8119 is loopback only.
+	reverse_proxy 127.0.0.1:8119
+}

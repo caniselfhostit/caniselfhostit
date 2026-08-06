@@ -1,0 +1,66 @@
+{
+  "slug": "slack",
+  "name": "Slack",
+  "domain": "slack.com",
+  "whyPeoplePay": "Slack sells the absence of friction around a conversation. The apps are on every device anyone already owns, the search finds the message from eighteen months ago, and the integration your finance team wants was built by the vendor rather than by you. The free plan hides its own bill: history disappears after ninety days, so the archive people actually rely on is the thing the paid tiers unlock.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "No per-user cost. Message and file history is limited to the most recent 90 days."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 8.75,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per active user per month, billed monthly. $7.25 per user per month if billed annually."
+    },
+    {
+      "name": "Business+",
+      "priceMonthly": 18,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per active user per month, billed monthly. $15 per user per month if billed annually."
+    },
+    {
+      "name": "Enterprise+",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The page says contact sales for pricing."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://slack.com/pricing",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "Monthly-billed figures recorded, with the annual-billed equivalents in each plan note, because the pricing page leads with the annual rate and a month-to-month subscriber pays the higher one. The page was also showing a 50% first-three-months promotion for new customers on Pro and Business+; those promotional figures are deliberately not recorded, because a saving built on an introductory rate overstates what year two costs."
+  },
+  "ranked": [
+    {
+      "project": "mattermost",
+      "rationale": "The closest thing to a like-for-like swap. Channels, threads, mentions, file sharing and search behave the way a Slack team expects, the official desktop and mobile apps are real apps rather than a browser tab, and the message history that Slack's free plan deletes after ninety days is rows in a PostgreSQL you own. What you take on is a server with a certificate on it, and a licence ladder of its own: the free Team Edition stops short of SSO, guest accounts and compliance export."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Zulip",
+      "repo": "https://github.com/zulip/zulip",
+      "note": "Apache-2.0, actively developed, and the honest reason it is not first here is that it is not a Slack clone. Every message belongs to a named topic inside a channel, which is a better model for catching up after a week away and a worse one for a team that will not adopt a new habit on day one. Pick it deliberately, not as a substitute."
+    },
+    {
+      "name": "Rocket.Chat",
+      "repo": "https://github.com/RocketChat/Rocket.Chat",
+      "note": "Active and widely deployed, with the same split licence shape as Mattermost: the code outside the ee/ directories is MIT and those directories carry Rocket.Chat's own commercial licence, which is why GitHub reports no single licence. Broader out of the box than Mattermost, with more moving parts to operate, and MongoDB rather than PostgreSQL underneath."
+    },
+    {
+      "name": "Element with Matrix Synapse",
+      "repo": "https://github.com/element-hq/synapse",
+      "note": "AGPL-3.0 and actively maintained, but a different shape of answer: Matrix is a federated protocol, so you are running a homeserver that talks to other people's servers rather than an island for your company. That is the point of it, and it is also why the install, the moderation surface and the failure modes are not comparable to the other three."
+    }
+  ]
+}

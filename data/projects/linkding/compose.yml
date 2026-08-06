@@ -1,0 +1,46 @@
+# linkding · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker install ....... https://linkding.link/installation/
+#   options reference .... https://linkding.link/options/
+#   backups .............. https://linkding.link/backups/
+#   archiving ............ https://linkding.link/archiving/
+#   proxy and CSRF ....... https://linkding.link/troubleshooting/
+#
+# One service. Bookmarks, tags and notes are rows in a SQLite database under
+# /etc/linkding/data, so there is no second container and no database password
+# anywhere. This is the plain image, not the -plus variant, which adds Chromium
+# to snapshot pages as HTML and wants at least 1 GB of RAM. The container starts
+# as root, migrates the database, then hands the web server to www-data and
+# chowns /etc/linkding/data to that uid (33) on every start, which is why the
+# install creates the host folder owned by 33. The image carries its own
+# HEALTHCHECK against /health, so `docker compose ps` reports health with
+# nothing declared here. Tag and digest read from Docker Hub on 2026-08-06; the
+# image publishes amd64, arm64 and armv7.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  linkding:
+    image: sissbruecker/linkding:1.45.0@sha256:61b2eb9eed8e5772a473fb7f1f8923e046cb8cbbeb50e88150afd5ff287d4060
+    container_name: linkding
+    restart: unless-stopped
+    # LD_SUPERUSER_NAME, LD_SUPERUSER_PASSWORD and LD_CSRF_TRUSTED_ORIGINS,
+    # mode 600, never printed.
+    env_file: /srv/linkding/.env
+    environment:
+      # SQLite is upstream's default and the choice here. Nothing to operate.
+      LD_DB_ENGINE: sqlite
+      # Left on (the default). The worker files Wayback Machine snapshots
+      # only for an account whose owner turned that on.
+      LD_DISABLE_BACKGROUND_TASKS: "False"
+      # Every request arrives from Caddy on 127.0.0.1, so without this the
+      # access log records the proxy rather than the browser.
+      LD_LOG_X_FORWARDED_FOR: "true"
+    volumes:
+      # db.sqlite3, plus the assets, favicons and previews folders.
+      - /srv/linkding/data:/etc/linkding/data
+      # Where the backup step writes its zip.
+      - /srv/linkding/backups:/backups
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8118.
+      - "127.0.0.1:8118:9090"

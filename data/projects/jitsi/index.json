@@ -1,0 +1,91 @@
+{
+  "slug": "jitsi",
+  "name": "Jitsi Meet",
+  "tagline": "Video meetings on your own hostname, with no participant tier and no 40-minute cut-off.",
+  "repo": "jitsi/docker-jitsi-meet",
+  "site": "https://jitsi.github.io/handbook/",
+  "category": "comms-scheduling",
+  "replaces": [
+    {
+      "saas": "zoom",
+      "plan": "Pro",
+      "seatsAssumed": 5
+    }
+  ],
+  "tierFactors": {
+    "containers": 4,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 3
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 240,
+  "license": "Apache-2.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/jitsi/docker-jitsi-meet/blob/stable-11146-1/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "A meeting room at http://localhost:8114 is reachable from this computer and nowhere else, so the local path is a place to learn and test Jitsi rather than a room anyone else can join."
+  },
+  "quote": {
+    "text": "If guest access is enabled, unauthenticated users will need to wait until a user authenticates before they can join a room. If guest access is not enabled, every user will need to authenticate before they can join.",
+    "source": "Jitsi Meet handbook, Self-Hosting Guide (Docker)",
+    "url": "https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-docker/",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Upstream lists 80/tcp, 443/tcp and 10000/udp as the ports that must be open, with 10000/udp carrying RTP media, which is why media never passes through the reverse proxy.",
+      "url": "https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-docker/"
+    },
+    {
+      "claim": "JVB_ADVERTISE_IPS replaces the older DOCKER_HOST_ADDRESS and is the setting that tells the videobridge which address to advertise when it runs behind NAT, which every Docker install does.",
+      "url": "https://github.com/jitsi/docker-jitsi-meet/blob/stable-11146-1/env.example"
+    },
+    {
+      "claim": "Only JICOFO_AUTH_PASSWORD and JVB_AUTH_PASSWORD are required for a web, Prosody, Jicofo and videobridge stack; upstream states the Jigasi and Jibri passwords may be skipped when those components are not used.",
+      "url": "https://github.com/jitsi/docker-jitsi-meet/blob/stable-11146-1/env.example"
+    },
+    {
+      "claim": "The containers run as an unprivileged user with uid 1000 and fail fast when a host volume they write to is not writable by that uid.",
+      "url": "https://github.com/jitsi/docker-jitsi-meet/blob/stable-11146-1/base/rootfs/usr/bin/check-writable"
+    },
+    {
+      "claim": "With ENABLE_AUTH and ENABLE_GUESTS both on, the generated browser config declares an authenticated domain and a separate anonymous guest domain, which is what makes the browser ask for a login before a room can be opened.",
+      "url": "https://github.com/jitsi/docker-jitsi-meet/blob/stable-11146-1/web/rootfs/defaults/system-config.js"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Call quality is now your server's uplink. Every participant's audio and video is relayed by the videobridge on your box, so a four-person call is four streams in and up to twelve out, and a cheap VPS with a shared network interface is where that shows up first. This is the number Zoom is really selling.",
+    "Media rides UDP straight to the machine, on port 10000, not through the reverse proxy. That means one firewall rule that no other install on this site needs, and a class of failure where the page loads perfectly and the call is silent.",
+    "End-to-end encryption is not what most people assume. Calls are encrypted in transit, but the videobridge decrypts and forwards them, so your server sees the media. Jitsi ships an end-to-end mode for multi-party calls, and it is browser-dependent and turns off several features.",
+    "No cloud recording and no dial-in numbers. Recording means running Jibri, another container with a headless browser in it, and dial-in means buying a phone number from a SIP provider. Neither is in this install.",
+    "You own the moderator account. There is no database and no user directory here: the account file under /srv/jitsi/prosody is the whole authentication system, and the day it is gone nobody can open a meeting until you register one again."
+  ],
+  "sources": {
+    "compose": "https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-docker/",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://github.com/jitsi/docker-jitsi-meet/blob/stable-11146-1/env.example",
+    "upstreamCompose": "https://github.com/jitsi/docker-jitsi-meet/blob/stable-11146-1/docker-compose.yml",
+    "auth": "https://github.com/jitsi/docker-jitsi-meet/blob/stable-11146-1/prosody/rootfs/defaults/conf.d/jitsi-meet.cfg.lua",
+    "clientConfig": "https://github.com/jitsi/docker-jitsi-meet/blob/stable-11146-1/web/rootfs/defaults/system-config.js",
+    "containerUser": "https://github.com/jitsi/docker-jitsi-meet/blob/stable-11146-1/base/rootfs/usr/bin/check-writable"
+  },
+  "related": [
+    "mattermost",
+    "calcom",
+    "chatwoot"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "94ce5bd109707c509789b7fcdb9d8c9cf53172545de7930d0ea2ebcdea449697"
+}
