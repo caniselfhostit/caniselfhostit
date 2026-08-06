@@ -60,7 +60,8 @@ body:
         than flatter — "one command" projects that take an evening are how a site gets called
         AI slop. Leave a value blank if you don't know.
       value: |
-        containers:          (how many services in the compose file, app + db + proxy all count)
+        containers:          (services in the compose file — app, db, workers all count, but NOT
+                              the shared Caddy proxy: it exists once per server, not per app)
         externalDb:          (true/false — needs Postgres/MySQL/Redis as a separate service)
         needsSmtp:           (true/false — useless without outbound mail)
         needsOauth:          (true/false — requires registering an OAuth app elsewhere)
