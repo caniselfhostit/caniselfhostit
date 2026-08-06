@@ -1,0 +1,45 @@
+# Vikunja · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   installing ......... https://vikunja.io/docs/installing/
+#   docker examples .... https://vikunja.io/docs/full-docker-example/
+#   config reference ... https://vikunja.io/docs/config-options/
+#   what to backup ..... https://vikunja.io/docs/what-to-backup/
+#
+# One service on the computer you are sitting at. Every path is relative to
+# ~/selfhost/vikunja/, which lets one file work on macOS, Linux and Windows.
+# There is no named volume here: nothing in this stack chowns its own data
+# directory, so both mounts stay ordinary bind mounts and your tasks and your
+# attachments stay visible in Finder or Explorer.
+#
+# The image is built FROM scratch and runs as uid 1000 with no group. There is
+# no shell in it, which is why this file declares no healthcheck. On Linux that
+# uid also has to own ./db and ./files; on macOS and Windows, Docker Desktop's
+# file sharing handles it. Step 3 of the prompt covers both.
+#
+# Tag and digest were read from Docker Hub on 2026-08-05; the manifest list
+# publishes linux/amd64 and linux/arm64. Same pin as the server file.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  vikunja:
+    image: vikunja/vikunja:2.5.0@sha256:22df4c1bc8843c28d383bc5f52b59e7b601bf5f6560b36b29c0a500833c77fa3
+    container_name: vikunja
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      # SQLite, written out even though it is the image default, because this
+      # file is what you read to find out where the data actually is.
+      VIKUNJA_DATABASE_TYPE: sqlite
+      VIKUNJA_DATABASE_PATH: /db/vikunja.db
+      VIKUNJA_FILES_BASEPATH: /app/vikunja/files
+      # No outbound mail. Upstream's reminder job only delivers over mail or a
+      # webhook, so with this false a due date is something you see when you
+      # open the app, not something that arrives. Block 10 says so out loud.
+      VIKUNJA_MAILER_ENABLED: "false"
+    volumes:
+      - ./db:/db
+      - ./files:/app/vikunja/files
+    ports:
+      # Loopback only: no other device on the wifi can reach 8097.
+      - "127.0.0.1:8097:3456"

@@ -1,0 +1,66 @@
+{
+  "slug": "ghost-pro",
+  "name": "Ghost(Pro)",
+  "domain": "ghost.org",
+  "whyPeoplePay": "Ghost(Pro) is the company that writes Ghost running Ghost for you, and the money goes back into the software everyone else self-hosts. What you rent is the boring half: a database somebody else backs up, a CDN in front of your images, deliverability for a newsletter that has to land in inboxes rather than spam folders, and upgrades that happen without you reading migration notes. The editor is identical either way. The pager is not.",
+  "plans": [
+    {
+      "name": "Starter",
+      "priceMonthly": 18,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$180 a year on the annual plan, shown on the page as $15/month billed yearly. Covers 1,000 members and one staff user, on official themes only."
+    },
+    {
+      "name": "Publisher",
+      "priceMonthly": 35,
+      "unit": "flat",
+      "seatsIncluded": 3,
+      "note": "The $35 figure is the 1,000-member tier; the member slider raises it to $55 at 2,500, $105 at 10,000 and $329 at 100,000. $348 a year on the annual plan, shown as $29/month billed yearly. Adds custom themes and paid subscriptions."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": 239,
+      "unit": "flat",
+      "seatsIncluded": 15,
+      "note": "The $239 figure holds to 10,000 members, then rises to $319 at 25,000 and $479 at 100,000. $2,388 a year on the annual plan, shown as $199/month billed yearly. Adds priority support and higher usage limits."
+    },
+    {
+      "name": "Custom",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The page lists unlimited members and staff, a dedicated IP address and a 99.9% uptime SLA."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-05",
+    "source": "https://ghost.org/pricing/",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The pricing page opens on yearly billing and computes every figure in JavaScript, so the monthly-billed numbers recorded here were read from the price table the page itself loads (ghost.org/js/pricing.min.js) on the same day, and the yearly figures on the page match it. Confidence is medium rather than high for one reason: Publisher and Business are not single prices. Both climb with a member-count slider, so the numbers above are the lowest tier of each plan and every plan note says where the ladder goes."
+  },
+  "ranked": [
+    {
+      "project": "ghost",
+      "rationale": "The cleanest answer on this site, because it is not an alternative: it is the same software. Ghost is MIT-licensed and Ghost(Pro) runs the identical codebase, so the editor, the themes, the members list, the Stripe integration and the newsletter engine all come with you. What does not come with you is the part you were paying for. You now operate a MySQL 8 you have to dump, you pick and pay an SMTP provider before a single newsletter sends, and you decide which morning to apply a major version that migrates its own database."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "WordPress",
+      "repo": "https://github.com/WordPress/WordPress",
+      "note": "The obvious elephant, and an honest option: the GitHub repository is a read-only mirror updated at every core release, with development in WordPress/wordpress-develop, and neither is going anywhere. It does everything Ghost does and a great deal more. The difference is where the work lands. Ghost ships members, paid subscriptions and email newsletters in the box; on WordPress each of those is a plugin you choose, pay for, update and trust, and that plugin surface is the thing you are actually taking on. Not tested by us."
+    },
+    {
+      "name": "WriteFreely",
+      "repo": "https://github.com/writefreely/writefreely",
+      "note": "Actively maintained, AGPL-3.0, and much smaller: a Go binary and a database, publishing plain writing and federating over ActivityPub. It is a better fit than Ghost if what you want is words on a page with no dashboard. It has no members list, no email newsletter and no paid subscriptions, so if the newsletter is the reason you pay Ghost(Pro), this does not replace it. Not tested by us."
+    },
+    {
+      "name": "Publii",
+      "repo": "https://github.com/GetPublii/Publii",
+      "note": "A maintained GPL-3.0 desktop application that builds a static site on your own computer and uploads the result. It answers a different question well: there is no server to run, no database to back up and no attack surface at all, because the published site is files. There is also no members list, no signup form and no newsletter, and every change means opening the app on the one computer that has it. Not tested by us."
+    }
+  ]
+}

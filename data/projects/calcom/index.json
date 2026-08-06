@@ -1,0 +1,91 @@
+{
+  "slug": "calcom",
+  "name": "Cal.com",
+  "tagline": "Send someone a link, they pick a slot, the invite lands in both calendars, and none of it runs on a domain you are renting.",
+  "repo": "calcom/cal.diy",
+  "site": "https://cal.com",
+  "category": "comms-scheduling",
+  "replaces": [
+    {
+      "saas": "calendly",
+      "plan": "Standard",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": true,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 3
+  },
+  "resources": {
+    "ramMinMB": 4096,
+    "ramMeasuredMB": null,
+    "diskGB": 15,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 300,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/calcom/cal.diy/blob/v6.2.0/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Nobody but you can open http://localhost:8094, so on this path you get a scheduling app you drive yourself rather than a link you can hand to the person you are trying to meet."
+  },
+  "quote": {
+    "text": "Use at your own risk. Cal.diy is the open source community edition of Cal.com and it is intended for users who want to self-host their own Cal.diy instance. It is strictly recommended for personal, non-production use.",
+    "source": "Cal.diy README, upstream's own warning banner",
+    "url": "https://github.com/calcom/cal.diy",
+    "checkedOn": "2026-08-05"
+  },
+  "citations": [
+    {
+      "claim": "The published image's entrypoint, scripts/start.sh, replaces the URL compiled into the build with whatever NEXT_PUBLIC_WEBAPP_URL is set to at container start, then applies the Prisma migrations and seeds the app store before the server listens.",
+      "url": "https://github.com/calcom/cal.diy/blob/v6.2.0/scripts/start.sh"
+    },
+    {
+      "claim": "The image is built with NEXT_PUBLIC_WEBAPP_URL baked to http://localhost:3000, records that value as BUILT_NEXT_PUBLIC_WEBAPP_URL for the entrypoint to replace, and exposes port 3000.",
+      "url": "https://github.com/calcom/cal.diy/blob/v6.2.0/Dockerfile"
+    },
+    {
+      "claim": "Upstream publishes no multi-architecture manifest for the release: ARM users are told to pull the same version with a -arm suffix on the tag.",
+      "url": "https://github.com/calcom/cal.diy/blob/v6.2.0/docs/self-hosting/docker.mdx"
+    },
+    {
+      "claim": "NEXTAUTH_SECRET is documented as openssl rand -base64 32, and CALENDSO_ENCRYPTION_KEY as openssl rand -base64 24, which is the 32-character key the AES-256 encryption of saved credentials requires.",
+      "url": "https://github.com/calcom/cal.diy/blob/v6.2.0/.env.example"
+    },
+    {
+      "claim": "The 6.2.0 release this install pins is licensed AGPLv3 except for the packages/features/ee and apps/api/v2/src/ee directories, which carry a separate commercial licence.",
+      "url": "https://github.com/calcom/cal.diy/blob/v6.2.0/LICENSE"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "You are installing 6.2.0, which is Cal.com under AGPLv3 with a commercially licensed ee directory inside it. Since that release the project renamed its repository to cal.diy, relicensed everything MIT and deleted the enterprise code, but it has cut no release and pushed no image under the new name, so the newest thing you can honestly pin is still the old one.",
+    "You own a PostgreSQL and one key. Every booking, event type and calendar credential is a row in that database, and the credentials are encrypted with CALENDSO_ENCRYPTION_KEY from your .env. Back the two up together, because a dump restored beside a freshly generated key is a table of unreadable tokens.",
+    "Mail is the product, not a nicety. An invitee only learns their booking exists because your server emailed them, so this install stops and asks for relay credentials before it starts anything.",
+    "Calendar sync is a separate afternoon. Cal.com keeps its own calendar and books fine without Google or Outlook, but until you register an OAuth client in your own Google Cloud or Azure tenant it does not know about the meetings already in your work calendar, and catching the double bookings is your job.",
+    "No teams, no round-robin routing, no insights dashboards, no SSO. Those live in the ee directory behind a commercial licence key, and they are most of what the paid Teams tier sells."
+  ],
+  "sources": {
+    "compose": "https://github.com/calcom/cal.diy/blob/v6.2.0/docs/self-hosting/docker.mdx",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://github.com/calcom/cal.diy/blob/v6.2.0/.env.example",
+    "image": "https://github.com/calcom/cal.diy/blob/v6.2.0/Dockerfile",
+    "entrypoint": "https://github.com/calcom/cal.diy/blob/v6.2.0/scripts/start.sh",
+    "license": "https://github.com/calcom/cal.diy/blob/v6.2.0/LICENSE",
+    "registry": "https://hub.docker.com/r/calcom/cal.com"
+  },
+  "related": [
+    "listmonk",
+    "vikunja",
+    "healthchecks"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "0fa3a7ce59b9d86944f898a5b17cd1f04fd8cae1d0192299fad8377c11c05e89"
+}

@@ -1,0 +1,90 @@
+{
+  "slug": "listmonk",
+  "name": "listmonk",
+  "tagline": "Your mailing list, your campaigns and your click stats out of one Go binary, with the sending handed to an SMTP relay you pick.",
+  "repo": "knadh/listmonk",
+  "site": "https://listmonk.app",
+  "category": "marketing-content",
+  "replaces": [
+    {
+      "saas": "mailchimp",
+      "plan": "Standard",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": true,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 240,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/knadh/listmonk/blob/master/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "The unsubscribe link in every campaign this sends is built from http://localhost:8096, which means the recipient's own computer, so anybody you mail from here gets a message they cannot unsubscribe from."
+  },
+  "quote": {
+    "text": "listmonk is a self-hosted, high performance one-way mailing list and newsletter manager. It comes as a standalone binary and the only dependency is a Postgres database.",
+    "source": "listmonk documentation, introduction",
+    "url": "https://listmonk.app/docs/",
+    "checkedOn": "2026-08-05"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's compose file runs two services, publishes port 9000, and drives the app with a three-phase command that installs the schema once on an empty database, applies migrations, then serves.",
+      "url": "https://github.com/knadh/listmonk/blob/master/docker-compose.yml"
+    },
+    {
+      "claim": "Setting LISTMONK_ADMIN_USER and LISTMONK_ADMIN_PASSWORD before the first start creates the Super Admin during installation, so the login page is never an open account-creation form on a public hostname.",
+      "url": "https://listmonk.app/docs/installation/"
+    },
+    {
+      "claim": "Apart from the database connection and the listen address, every setting is managed from the Settings dashboard in the admin UI rather than from config.toml or environment variables, and upstream warns that some hosting providers block outbound SMTP ports 25 and 465.",
+      "url": "https://listmonk.app/docs/configuration/"
+    },
+    {
+      "claim": "A fresh install seeds an enabled SMTP server pointing at smtp.yoursite.com with placeholder credentials, a root URL of http://localhost:9000 and an example from-address, so all three have to be replaced before the first campaign leaves.",
+      "url": "https://github.com/knadh/listmonk/blob/v6.2.0/schema.sql"
+    },
+    {
+      "claim": "listmonk serves an unauthenticated /health route that returns a small JSON object, while every /api/* route sits behind the session middleware and answers 403 to a caller with no session.",
+      "url": "https://github.com/knadh/listmonk/blob/v6.2.0/cmd/handlers.go"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Deliverability becomes your job, and it is the job. listmonk composes, queues and hands messages to an SMTP relay you sign up for; whether they land in an inbox depends on that relay, on SPF, DKIM and DMARC records you write yourself, and on a sending reputation that starts at nothing. This is the part Mailchimp's price is actually attached to, and moving the software does not move the work.",
+    "You own a PostgreSQL, and the row that matters most in it is consent. Every subscriber's opt-in and its timestamp live in that database, so a list restored from a backup you never took is a list you are no longer allowed to mail.",
+    "The database dump is a credential. SMTP relay settings live in the settings table, which means a pg_dump of this install contains a live sending password. Keep backups where you would keep a password-manager export, not in a repository.",
+    "Nothing is configured for you. A fresh install ships an enabled SMTP entry pointing at a placeholder host, a root URL of http://localhost:9000 and an example from-address, and every one of those ends up inside a message a stranger reads unless you change it first.",
+    "No landing pages, no A/B testing, no deliverability dashboard, no audience insights, and nobody to call at 2am on send day. Those are what the paid tiers are selling on top of the mailing list."
+  ],
+  "sources": {
+    "compose": "https://listmonk.app/docs/installation/",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://listmonk.app/docs/configuration/",
+    "health": "https://github.com/knadh/listmonk/blob/v6.2.0/cmd/handlers.go",
+    "settings": "https://github.com/knadh/listmonk/blob/v6.2.0/schema.sql",
+    "upgrade": "https://listmonk.app/docs/upgrade/"
+  },
+  "related": [
+    "ghost",
+    "activepieces",
+    "calcom"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "1c65921aae0c0710c90e4d031241feb36d153726ca91705a8efc2f9fdf998cdd"
+}

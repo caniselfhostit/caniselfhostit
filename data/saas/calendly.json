@@ -1,0 +1,61 @@
+{
+  "slug": "calendly",
+  "name": "Calendly",
+  "domain": "calendly.com",
+  "whyPeoplePay": "Calendly sells the end of the scheduling email thread, and it works because the other person never has to sign up for anything. What you are renting is a link that stays alive, a page that renders correctly on a stranger's phone, and connectors into Google, Outlook, Zoom and Salesforce that keep working after those vendors change something. The free tier deliberately stops at one event type, which is exactly where a working habit starts costing money.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "One event type, one calendar connection. Advertised as always free."
+    },
+    {
+      "name": "Standard",
+      "priceMonthly": 12,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$10 per seat per month on annual billing, which is the figure the pricing page shows by default under a Save 16% label."
+    },
+    {
+      "name": "Teams",
+      "priceMonthly": 20,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$16 per seat per month on annual billing, shown under a Save 20% label. This is the tier that adds round robin and shared team pages."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "The pricing page states it starts at $15,000 a year and sends you to sales for a number."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-05",
+    "source": "https://calendly.com/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The pricing page renders its annual-billed figures by default: we read $10 and $16 per seat per month with Save 16% and Save 20% labels beside them, and Enterprise starting at $15k a year. We record the monthly-billed rates because that is what a month-to-month subscriber actually pays, and those two numbers ($12 and $20) come from the page's own discount percentages rather than from a toggle we were able to click, corroborated against third-party pricing summaries on the same day. Confidence is medium until someone re-reads the page with monthly billing selected."
+  },
+  "ranked": [
+    {
+      "project": "calcom",
+      "rationale": "The only one here that is the same product rather than a smaller cousin: event types with buffers and minimum notice, a public booking page, calendar sync, webhooks and an API. The costs are honest ones. It is the heaviest install in this category, wanting 4 GB and a PostgreSQL, its first boot genuinely looks broken for ten minutes, and the teams and routing features that justify Calendly's Teams tier sit behind a commercial licence key you will not have. Take it if you want your own booking domain and one person's calendar; look elsewhere if you came for round robin."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Rallly",
+      "repo": "https://github.com/lukevella/rallly",
+      "note": "Actively developed, AGPL-3.0, releasing steadily through 2026. It answers the other scheduling question: not \"book a slot on my calendar\" but \"which of these times works for all eight of us\", which is Doodle's job rather than Calendly's. Lighter to run than Cal.com and a genuinely better fit if group polls are what you actually do, but it will not give you a personal booking page."
+    },
+    {
+      "name": "Easy!Appointments",
+      "repo": "https://github.com/alextselegidis/easyappointments",
+      "note": "GPL-3.0 PHP and MySQL, still maintained, 1.6.0 released in May 2026. Built for businesses booking customers into staff schedules, with services, providers and working plans, so the model is a barber's diary rather than a knowledge worker's link in an email signature. Simpler to host than Cal.com; the booking page looks like the software it is."
+    }
+  ]
+}

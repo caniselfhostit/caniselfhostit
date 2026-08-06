@@ -1,0 +1,29 @@
+# Activepieces · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://www.activepieces.com/docs/install/configure-operate/setup-ssl and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed, with
+# <DOMAIN> replaced by the hostname pointed at this box. That hostname is also
+# AP_FRONTEND_URL in .env, and every webhook URL this instance hands out is built
+# from it, so it is the value here you cannot change once flows are running.
+
+<DOMAIN> {
+	# The flow editor holds a websocket open for live run output. Upstream's proxy
+	# example passes the upgrade headers by hand; Caddy does it without being told.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		# Not no-referrer: connecting a piece sends the user out to a third-party
+		# OAuth consent screen and back, and some providers check the origin.
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	encode zstd gzip
+
+	# 8095 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8095
+}

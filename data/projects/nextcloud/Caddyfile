@@ -1,0 +1,26 @@
+# Nextcloud · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.nextcloud.com/server/34/admin_manual/configuration_server/reverse_proxy_configuration.html
+# and https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also NEXTCLOUD_TRUSTED_DOMAINS in .env, which Nextcloud reads once, at first
+# install. Changing it later is an occ command, not an edit here.
+
+<DOMAIN> {
+	# Nextcloud sets its own X-Content-Type-Options, X-Frame-Options and
+	# Referrer-Policy on every response. The one header it cannot set for
+	# itself is HSTS, because it does not terminate the TLS, and its own
+	# security check asks for it by name. That is the whole list. No
+	# `encode`: what moves through here is compressed already.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+	}
+
+	# 8099 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8099
+}

@@ -1,0 +1,92 @@
+{
+  "slug": "immich",
+  "name": "Immich",
+  "tagline": "Your camera roll uploads itself to a server you own, and search still finds the dog on the beach.",
+  "repo": "immich-app/immich",
+  "site": "https://immich.app",
+  "category": "photos-media",
+  "replaces": [
+    {
+      "saas": "google-one",
+      "plan": "Google AI Plus (2 TB)",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 4,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 6144,
+    "ramMeasuredMB": null,
+    "diskGB": 20,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 300,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/immich-app/immich/releases/download/v3.1.0/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "On your own computer Immich answers only at http://localhost:8098, so your phone cannot reach it and the automatic camera backup does not happen: photos arrive when you drag them into the browser on that machine."
+  },
+  "quote": {
+    "text": "We do not backport patches to earlier versions. We encourage all users to run the most recent stable release of Immich. Downgrading to an earlier version, even within the same minor version, is not supported.",
+    "source": "Immich documentation, Upgrading",
+    "url": "https://docs.immich.app/install/upgrading",
+    "checkedOn": "2026-08-05"
+  },
+  "citations": [
+    {
+      "claim": "Upstream publishes a hardware floor of 6 GB of RAM with 8 GB recommended, and notes that 4 GB works only with machine learning disabled.",
+      "url": "https://docs.immich.app/install/requirements"
+    },
+    {
+      "claim": "The release's own compose file runs four services and uses a PostgreSQL image upstream builds itself, carrying the VectorChord extension, rather than a stock postgres image.",
+      "url": "https://github.com/immich-app/immich/releases/download/v3.1.0/docker-compose.yml"
+    },
+    {
+      "claim": "Immich listens on port 2283 and does not support being served on a sub-path, so it needs a hostname of its own behind the reverse proxy.",
+      "url": "https://docs.immich.app/administration/reverse-proxy"
+    },
+    {
+      "claim": "A database backup contains metadata only, not photos or video, so the files under UPLOAD_LOCATION have to be copied separately for the backup to mean anything.",
+      "url": "https://docs.immich.app/administration/backup-and-restore"
+    },
+    {
+      "claim": "Setting IMMICH_ALLOW_SETUP to false disables the admin-sign-up endpoint, which is how the first-account window is closed once the administrator exists.",
+      "url": "https://docs.immich.app/install/environment-variables"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Two things to back up, not one. The database knows where every photo is and the directory holds every photo, and restoring one without the other rebuilds nothing. Upstream says this plainly: a database dump contains no pictures. Immich takes a nightly dump for you and puts it on the same disk as the library, which is a convenience, not a backup.",
+    "A real server, not the cheapest one. Upstream's floor is 6 GB of RAM and this install runs four containers, one of which does machine learning on the CPU. Budget 20 GB of disk before your first photo, then the size of your library on top, plus 10 to 20 percent for the thumbnails and transcodes it generates.",
+    "You are the one who reads the release notes. Immich ships often, calls out breaking changes on its own releases, and states that downgrading is not supported even within a minor version. Pinning a digest is the easy half; deciding when to move off it is the part that stays yours.",
+    "The phone app is the product. Background camera upload is what you are actually replacing, and it needs the server reachable from wherever the phone is, which means a domain and a certificate. On the local-only path that part does not work, and the honest version of this page says so rather than pretending a laptop is a photo service.",
+    "No shared 15 GB with Gmail, no family plan management, no Gemini. This gets you the photo library. The rest of what Google One meters is a different problem."
+  ],
+  "sources": {
+    "compose": "https://docs.immich.app/install/docker-compose",
+    "caddy": "https://docs.immich.app/administration/reverse-proxy",
+    "install": "https://docs.immich.app/install/environment-variables",
+    "requirements": "https://docs.immich.app/install/requirements",
+    "backup": "https://docs.immich.app/administration/backup-and-restore",
+    "upgrading": "https://docs.immich.app/install/upgrading",
+    "health": "https://github.com/immich-app/immich/blob/v3.1.0/server/bin/immich-healthcheck",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "nextcloud",
+    "stirling-pdf",
+    "vaultwarden"
+  ],
+  "pagePriority": 1,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "fda6f789581f1f96237ee9179a29ceb272ca1bc37a11a136d9a9e01b600d4c79"
+}

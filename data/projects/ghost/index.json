@@ -1,0 +1,91 @@
+{
+  "slug": "ghost",
+  "name": "Ghost",
+  "tagline": "The same publishing platform Ghost(Pro) hosts, on your own box, with the editor, the themes and the members list intact.",
+  "repo": "TryGhost/Ghost",
+  "site": "https://ghost.org",
+  "category": "marketing-content",
+  "replaces": [
+    {
+      "saas": "ghost-pro",
+      "plan": "Starter",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "MIT",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/TryGhost/ghost-docker/blob/main/compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Every link this Ghost builds starts with http://localhost:8100, so the site you publish is readable on this computer and nowhere else, which makes the local path a drafting desk rather than a publication."
+  },
+  "quote": {
+    "text": "MySQL 8 is the only supported database in production.",
+    "source": "Ghost documentation, Supported databases",
+    "url": "https://docs.ghost.org/faq/supported-databases/",
+    "checkedOn": "2026-08-05"
+  },
+  "citations": [
+    {
+      "claim": "Upstream states MySQL 8 is the only database Ghost supports in production, which is why this install runs MySQL rather than the SQLite the image can use in development mode.",
+      "url": "https://docs.ghost.org/faq/supported-databases/"
+    },
+    {
+      "claim": "The official image exposes port 2368, keeps site files in /var/lib/ghost/content, defaults to NODE_ENV=production, and states that production needs MySQL 8, https and a reverse proxy.",
+      "url": "https://hub.docker.com/_/ghost"
+    },
+    {
+      "claim": "Ghost reads nested configuration keys from environment variables with two underscores between the levels, and the url option is what a production site builds its public links from.",
+      "url": "https://docs.ghost.org/config/"
+    },
+    {
+      "claim": "Caddy's reverse_proxy sets X-Forwarded-For, X-Forwarded-Proto and X-Forwarded-Host itself and ignores the values a client sent, which is exactly what the Ghost image asks a proxy in front of it to provide.",
+      "url": "https://caddyserver.com/docs/caddyfile/directives/reverse_proxy"
+    },
+    {
+      "claim": "Ghost's own maintained Docker setup runs the app beside a MySQL container, supplies the database passwords from a .env file, and pins both images by digest.",
+      "url": "https://github.com/TryGhost/ghost-docker/blob/main/compose.yml"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Mail is yours now, and this install configures none. The site publishes, the RSS feed works and readers can read it, but member signup links, newsletters and password resets stay silent until you sign up with an SMTP provider and add its DNS records. A single-author blog is complete without that step. A paid newsletter does not exist until you take it.",
+    "You own a MySQL 8. Upstream supports nothing else in production, so this is a real database that has to be dumped rather than copied, and the dump has to leave the box on a schedule you set.",
+    "Members and paid subscriptions are in the software, not in the plan. Neither Ghost(Pro) nor this install takes a cut of subscription revenue, so what you stop paying for is hosting, backups, the CDN and the person who notices at 3am. That person is now you.",
+    "Ghost migrates its own database when it starts, and it ships breaking changes between major versions. A pinned digest means you choose the morning that happens, and also that nobody chooses it for you.",
+    "No CDN, no image-resizing service in front of your uploads, no uptime commitment. Your publication is exactly as fast and as available as one VPS on one provider."
+  ],
+  "sources": {
+    "compose": "https://docs.ghost.org/install/docker/",
+    "caddy": "https://caddyserver.com/docs/caddyfile/directives/reverse_proxy",
+    "install": "https://hub.docker.com/_/ghost",
+    "config": "https://docs.ghost.org/config/",
+    "database": "https://docs.ghost.org/faq/supported-databases/",
+    "mysql": "https://hub.docker.com/_/mysql",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "listmonk",
+    "plausible",
+    "freshrss"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "6039af614ed83d453d265c379b485191d049bffba25cbd8b764420ed279b9ccd"
+}

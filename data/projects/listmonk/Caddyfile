@@ -1,0 +1,33 @@
+# listmonk · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://listmonk.app/docs/configuration/ and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed, with
+# <DOMAIN> replaced by the hostname pointed at this box. That same hostname goes
+# into listmonk's Root URL setting after the first login: unsubscribe links and
+# archive URLs are built from that setting, not from the request. Upstream splits
+# its routes into private admin paths (/admin/*, /api/*) and public ones
+# (/subscription/*, /link/*, /campaign/*, /archive) that subscribers have to
+# reach; both halves answer on this one hostname.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		# SAMEORIGIN rather than DENY: the campaign editor previews a campaign
+		# in an iframe served from this same origin.
+		X-Frame-Options "SAMEORIGIN"
+		# A subscription URL carries the subscriber's UUID in the path, so a
+		# full Referer on an outbound click hands that UUID to a third party.
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8096 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8096
+}

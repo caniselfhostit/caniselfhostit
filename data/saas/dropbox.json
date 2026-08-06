@@ -1,0 +1,73 @@
+{
+  "slug": "dropbox",
+  "name": "Dropbox",
+  "domain": "dropbox.com",
+  "whyPeoplePay": "Dropbox sells the part of a file server that is genuinely hard: a link you hand to somebody in another country that opens in two seconds, on bandwidth you do not pay for, from a machine that has never been down while you were asleep. The sync client is old enough to be boring, and for the folder that holds your work that is the highest compliment there is.",
+  "plans": [
+    {
+      "name": "Basic",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Free, 2 GB, one person."
+    },
+    {
+      "name": "Plus",
+      "priceMonthly": 11.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "2 TB for one person. Roughly $9.99 a month on the annual plan. The vendor page read CA$12.99 a month from our location."
+    },
+    {
+      "name": "Standard",
+      "priceMonthly": 18,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Team plan, storage pooled and starting at 3 TB, one user or more. Roughly $15 per user per month on the annual plan. The vendor page read CA$21 per user per month from our location."
+    },
+    {
+      "name": "Advanced",
+      "priceMonthly": 30,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Pooled storage starting at 15 TB, three users minimum. Roughly $24 per user per month on the annual plan. The vendor page read CA$33 per user per month from our location."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The page says contact sales for pricing."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-05",
+    "source": "https://www.dropbox.com/plans",
+    "currency": "USD",
+    "confidence": "low",
+    "note": "We read dropbox.com/plans on 2026-08-05 and it served Canadian dollars from where we read it: CA$12.99 a month for Plus, CA$21 per user per month for Standard, CA$33 per user per month for Advanced, and contact-sales for Enterprise. The plan names, the storage figures and the seat minimums here are the vendor's own. The USD figures are corroborated from secondary sources rather than read off dropbox.com, so treat them as indicative and re-check them from a US connection before quoting a saving. Dropbox also renamed its team tiers, so anything you read calling them Business and Business Plus is describing the same ladder under older names."
+  },
+  "ranked": [
+    {
+      "project": "nextcloud",
+      "rationale": "The only replacement here that keeps the whole shape of what you were paying for: a folder that syncs both ways through official desktop and mobile clients, plus share links, versions, and calendars and contacts your phone can subscribe to. What you take on is the operating: four containers, a database dump and a file tree that have to be backed up at the same moment, and a major upgrade about twice a year that will not let you skip a version."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Seafile",
+      "repo": "https://github.com/haiwen/seafile",
+      "note": "The one built for exactly this job rather than for a platform, and the fastest of the three at syncing a tree with a lot of small files. We did not test it because the server is split across repositories carrying different licence texts, GPLv2 with an OpenSSL exception in haiwen/seafile and AGPLv3 with the same exception in haiwen/seafile-server, and the community edition's releases are announced on the vendor's site rather than in GitHub releases, which made pinning an image honestly slower than the entry was worth. Actively developed: commits through July 2026."
+    },
+    {
+      "name": "OpenCloud",
+      "repo": "https://github.com/opencloud-eu/opencloud",
+      "note": "The fork that ownCloud's Infinite Scale developers started after the ownCloud business changed hands, and as of 2026-08-05 it is the busier of the two: OpenCloud shipped v7.4.0 on 3 August while owncloud/ocis sits on v8.1.0 from early July, and both still take commits, so calling either dead would be wrong. A single Go binary instead of PHP plus a database, which is genuinely less to run. The trade is a much younger app ecosystem and far fewer people who have hit your problem before you."
+    },
+    {
+      "name": "Syncthing",
+      "repo": "https://github.com/syncthing/syncthing",
+      "note": "A different model, and the honest one to put on this list: no server, no web interface for your files, no share links you can send to anyone. It keeps folders identical across machines that can reach each other, which is the half of Dropbox most people actually use, and there is no hub to back up because every copy is a copy. If you never needed a URL to hand a stranger, it is less to run than anything else here."
+    }
+  ]
+}

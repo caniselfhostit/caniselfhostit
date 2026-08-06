@@ -1,0 +1,74 @@
+# Docmost · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   installation ....... https://docmost.com/docs/installation
+#   variable reference . https://docmost.com/docs/self-hosting/environment-variables
+#   reverse proxy ...... https://docmost.com/docs/self-hosting/reverse-proxy
+#   caddy notes ........ https://docmost.com/docs/self-hosting/reverse-proxy/caddy
+#   image ............. https://github.com/docmost/docmost/blob/main/Dockerfile
+#
+# Three services: Docmost, the PostgreSQL that holds every page, and the Redis
+# that carries the collaborative editor and the job queue. Upstream lists
+# DATABASE_URL and REDIS_URL as required, so neither is a nice-to-have here.
+# The PostgreSQL 18 image keeps its cluster under /var/lib/postgresql and
+# chowns that directory itself on first start, and the Redis image chowns /data
+# on every start, so step 2 leaves both root-owned and lets the images sort it
+# out. Docmost runs as the node user of its base image, uid 1000, so the
+# storage bind mount is created with that owner instead. Tags and digests were
+# read from the registries on 2026-08-05; all three images publish amd64 and
+# arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: postgres:18.4-alpine@sha256:9a8afca54e7861fd90fab5fdf4c42477a6b1cb7d293595148e674e0a3181de15
+    container_name: docmost-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: docmost
+      POSTGRES_USER: docmost
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - /srv/docmost/postgres:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U docmost -d docmost"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other containers.
+
+  redis:
+    image: redis:8.10.0-alpine@sha256:978f0e01593e65eed801f2402944efcd936d43b5027e4908a7897baf88ed6241
+    container_name: docmost-redis
+    restart: unless-stopped
+    # appendonly writes every change to disk, and noeviction makes Redis refuse
+    # writes rather than silently drop a queued job when memory runs out.
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory-policy", "noeviction"]
+    volumes:
+      - /srv/docmost/redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 6379 never leaves the compose network.
+
+  docmost:
+    image: docmost/docmost:0.95.0@sha256:41c8d777cf23c74e78f94e676aec328b7d7856f48df5e573543dac68d371e37c
+    container_name: docmost
+    restart: unless-stopped
+    env_file: /srv/docmost/.env
+    environment:
+      DATABASE_URL: postgresql://docmost:${DB_PASSWORD}@postgres:5432/docmost
+      REDIS_URL: redis://redis:6379
+      # Attachments land on this disk, under the bind mount below. No S3
+      # bucket, no Azure account, nothing extra to sign up for.
+      STORAGE_DRIVER: local
+    volumes:
+      - /srv/docmost/storage:/app/data/storage
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8092.
+      - "127.0.0.1:8092:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy

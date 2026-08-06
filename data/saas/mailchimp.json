@@ -1,0 +1,66 @@
+{
+  "slug": "mailchimp",
+  "name": "Mailchimp",
+  "domain": "mailchimp.com",
+  "whyPeoplePay": "Mailchimp sells the hard half of email, which is arrival. Behind the drag-and-drop editor sits a sending reputation built across millions of senders, warm IP pools, bounce and complaint handling that runs without you, and a signup form that works the first time you paste it into a page. The bill is attached to how many contacts you store rather than how often you mail them, which is why it grows on a list nobody has touched in a year, and that pricing shape is the most common reason a small sender goes looking for somewhere else to put their audience.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Up to 250 contacts and 500 sends a month, capped at 250 a day."
+    },
+    {
+      "name": "Essentials",
+      "priceMonthly": 13,
+      "unit": "flat",
+      "seatsIncluded": null,
+      "note": "The figure is the 500-contact tier, which is where this plan starts. The monthly send limit is 10 times the contact limit, and the price rises with the tier you pick."
+    },
+    {
+      "name": "Standard",
+      "priceMonthly": 20,
+      "unit": "flat",
+      "seatsIncluded": null,
+      "note": "Also quoted at the 500-contact tier. Monthly send limit is 12 times the contact limit."
+    },
+    {
+      "name": "Premium",
+      "priceMonthly": 350,
+      "unit": "flat",
+      "seatsIncluded": null,
+      "note": "Premium's contact slider starts at 10,000 rather than 500, so this figure is not comparable to the two above. Send limit is 15 times the contact limit, and above the top contact tier the page switches to a contact-sales button."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-05",
+    "source": "https://mailchimp.com/pricing/marketing/",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The pricing page renders its numbers client-side from a contact-count slider, so a fetch of the page on 2026-08-05 returned the plan structure but no dollar figures. What we read directly off mailchimp.com that day: the slider's default contact tiers (250 for Free, 500 for Essentials and Standard, 10,000 for Premium) and the send-limit multipliers of 10x, 12x and 15x the contact limit. The prices recorded here are the widely published US list prices at those anchor tiers, corroborated against independent price trackers checked in July 2026, not read off the vendor's own page. Treat the anchor tier as part of the number: this ladder is priced per contact stored, so a plan name on its own says nothing about the bill."
+  },
+  "ranked": [
+    {
+      "project": "listmonk",
+      "rationale": "The closest thing to a straight swap for the mailing-list half of the product. Lists, segments, templates, a public archive, open and click tracking and a documented REST API all come out of one Go binary and one PostgreSQL, and the bill stops being a function of how many contacts you are storing. What it does not hand you is the half Mailchimp is actually charging for: listmonk composes and queues, and the sending, the reputation and the bounce handling belong to an SMTP relay you sign up for yourself. The day a campaign lands in spam is a day you spend on SPF, DKIM and DMARC instead of on a support ticket."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Mautic",
+      "repo": "https://github.com/mautic/mautic",
+      "note": "Marketing automation rather than a newsletter tool: lead scoring, drip campaigns, landing pages and forms, on PHP with MySQL and a cron schedule you have to keep running. Actively developed, GPL-3.0 by its own LICENSE.txt even though GitHub reports the license as undetected, with 7.1.3 released in July 2026. It replaces more of Mailchimp than listmonk does and asks for several times the operational attention, which is why it is not the pick for someone who wants their newsletter back."
+    },
+    {
+      "name": "Keila",
+      "repo": "https://github.com/pentacent/keila",
+      "note": "AGPL-3.0, Elixir and PostgreSQL, genuinely maintained: v0.30.2 landed in June 2026. Smaller than listmonk in the dimensions that matter here, with fewer templating options, a thinner API and a much smaller pool of people who have already hit whatever breaks at a hundred thousand subscribers. A fair second look if listmonk feels heavier than the list you actually have."
+    },
+    {
+      "name": "Mailtrain",
+      "repo": "https://github.com/Mailtrain-org/mailtrain",
+      "note": "Still the third name people suggest, and we would not install it today. The last tagged release is v2.20210609.0 from June 2021, the default branch's last commit is December 2022, 114 issues are open, and the only recent movement in the repository is dependabot branches. GPL-3.0 and self-hostable, but an internet-facing app that sends mail and has had no patch since 2022 is a security decision rather than a shortlist entry."
+    }
+  ]
+}

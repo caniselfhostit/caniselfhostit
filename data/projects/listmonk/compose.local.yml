@@ -1,0 +1,64 @@
+# listmonk · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker install ..... https://listmonk.app/docs/installation/
+#   variable reference . https://listmonk.app/docs/configuration/
+#   upgrade path ....... https://listmonk.app/docs/upgrade/
+#   health route ....... https://github.com/knadh/listmonk/blob/v6.2.0/cmd/handlers.go
+#
+# Two services on the computer you are sitting at, every path relative to
+# ~/selfhost/listmonk/. The database is a named volume, not a bind mount,
+# because the PostgreSQL image chowns its data directory to its own uid, which
+# a home-directory bind mount cannot allow on Windows. The command is
+# upstream's three-phase form; --config '' means "env vars, no TOML file".
+# Digests read on 2026-08-05; both images publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  db:
+    image: postgres:17.10-alpine@sha256:742f40ea20b9ff2ff31db5458d127452988a2164df9e17441e191f3b72252193
+    container_name: listmonk-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: listmonk
+      POSTGRES_USER: listmonk
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - listmonk-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U listmonk -d listmonk"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other container.
+
+  app:
+    image: listmonk/listmonk:v6.2.0@sha256:f535d59e14991337a9f2d570273685378ae86b0d7698c3e00da444e3bc205286
+    container_name: listmonk-app
+    restart: unless-stopped
+    env_file: ./.env
+    command: [sh, -c, "./listmonk --install --idempotent --yes --config '' && ./listmonk --upgrade --yes --config '' && ./listmonk --config ''"]
+    environment:
+      LISTMONK_app__address: 0.0.0.0:9000
+      LISTMONK_db__host: db
+      LISTMONK_db__port: 5432
+      LISTMONK_db__user: listmonk
+      LISTMONK_db__database: listmonk
+      LISTMONK_db__password: ${POSTGRES_PASSWORD}
+      LISTMONK_db__ssl_mode: disable
+      LISTMONK_db__max_open: 25
+      LISTMONK_db__max_idle: 25
+      LISTMONK_db__max_lifetime: 300s
+      TZ: Etc/UTC
+    volumes:
+      # Admin -> Media uploads. The entrypoint chowns /listmonk to 0:0 by
+      # default, so on Linux this folder ends up root-owned but readable.
+      - ./uploads:/listmonk/uploads
+    ports:
+      # Loopback only: no other device on the wifi can reach 8096.
+      - "127.0.0.1:8096:9000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  listmonk-pgdata:

@@ -1,0 +1,66 @@
+{
+  "slug": "airtable",
+  "name": "Airtable",
+  "domain": "airtable.com",
+  "whyPeoplePay": "Airtable sells the thing a spreadsheet is worst at: one shared table that a whole team edits at the same time, with nobody emailing a file around and nobody wondering which copy is current. On top of that it stacks views, forms, linked records and interfaces, so a team with no engineer can assemble something that behaves like an internal app in an afternoon and keep it running for years. The bill is per editor per month, which means it grows with the number of people allowed to change anything rather than with the amount of data, and the pieces teams come to depend on fastest, the automations and the two-way sync connectors, are the pieces that sit above the free plan.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": null,
+      "note": "The page describes it as available to teams at no charge. Its per-base record, automation-run and attachment caps are listed on the same page and are not reproduced here."
+    },
+    {
+      "name": "Team",
+      "priceMonthly": 20,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "The page prints $20/user/month when billed annually, and says it charges for all users who have edit permissions for at least one base. No monthly-billed rate appears on the page."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": 45,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "The page prints $45/user/month when billed annually, on the same edit-permission seat count. No monthly-billed rate appears on the page."
+    },
+    {
+      "name": "Enterprise Scale",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The page says pricing is custom, based on the organization's needs."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://airtable.com/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The vendor's pricing page quotes per-seat rates billed annually and carries no monthly-billed figure and no billing toggle, so the two paid figures recorded here are the annual-billed rates exactly as the page prints them. Month-to-month rates are quoted by third-party sites but do not appear on the vendor page, so nothing is recorded for them. Confidence is medium for that reason: a reader who pays month to month pays more than these numbers say."
+  },
+  "ranked": [
+    {
+      "project": "grist",
+      "rationale": "Gives you the part of Airtable that holds the data, and is honest that it is not the rest. Grids, column types, linked records across tables, formulas written in Python rather than a bespoke expression language, and access rules that reach down to the individual row. It runs from one container with its documents as SQLite files you can copy, which is why it installs in an evening rather than a weekend. What you take on is the login: grist-core ships no username-and-password screen of its own, so the install puts one in front of it, and what you do not get is Automations, Interfaces, the app marketplace or the sync connectors."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "NocoDB",
+      "repo": "https://github.com/nocodb/nocodb",
+      "note": "The closest thing here to Airtable's feel, and the reason it is not the ranked pick is the licence rather than the software. A commit dated 2026-01-08 moved the project to the source-available Sustainable Use License, and the LICENSE.md in the repository, updated 29 January 2026, applies that licence to both the master and develop branches. Releases are still landing monthly, so it is maintained; it is no longer open source."
+    },
+    {
+      "name": "Baserow",
+      "repo": "https://github.com/baserow/baserow",
+      "note": "GitHub's licence API reports NOASSERTION because the LICENSE file splits the tree: the core is MIT, the premium/ and enterprise/ directories carry their own separate licences, and the docs are CC BY-SA. The MIT core is real and the project is releasing (2.3.3 in July 2026). It expects PostgreSQL, Redis and its own web server, so it is a larger install than the one ranked above."
+    },
+    {
+      "name": "Teable",
+      "repo": "https://github.com/teableio/teable",
+      "note": "Also NOASSERTION on GitHub, for a different reason: the two core applications are AGPL-3.0 with additional Section 7 brand-protection terms, and the packages/ directory is MIT. Development is fast, with releases published daily in August 2026, and it wants a PostgreSQL of its own rather than running from a single container."
+    }
+  ]
+}

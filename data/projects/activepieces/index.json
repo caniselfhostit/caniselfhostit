@@ -1,0 +1,93 @@
+{
+  "slug": "activepieces",
+  "name": "Activepieces",
+  "tagline": "Trigger-and-action automation with a visual builder, run on your own box, with no task meter.",
+  "repo": "activepieces/activepieces",
+  "site": "https://www.activepieces.com",
+  "category": "automation-dev",
+  "replaces": [
+    {
+      "saas": "zapier",
+      "plan": "Professional",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 3,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 3
+  },
+  "resources": {
+    "ramMinMB": 4096,
+    "ramMeasuredMB": null,
+    "diskGB": 20,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 105,
+  "license": "MIT",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/activepieces/activepieces/blob/main/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Webhook triggers need a URL the outside world can reach, and on this path every URL begins with http://localhost:8095, so what you get is the scheduled and polling half of the tool, running only while the computer is awake."
+  },
+  "quote": {
+    "text": "The engine SSRF guard is best-effort, in-process protection. It is not a hard boundary against deliberately malicious code: worker_threads, child_process, native addons, and process.binding can all sidestep the JavaScript-level monkey-patches.",
+    "source": "Activepieces documentation, Network Security",
+    "url": "https://www.activepieces.com/docs/install/architecture/network-security",
+    "checkedOn": "2026-08-05"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's own compose file runs the API and five worker replicas as separate containers, but AP_CONTAINER_TYPE defaults to WORKER_AND_APP, so one container can run both roles.",
+      "url": "https://www.activepieces.com/docs/install/reference/environment-variables"
+    },
+    {
+      "claim": "AP_ENCRYPTION_KEY is a 32-character hexadecimal key used to encrypt connections, and AP_FRONTEND_URL is the public URL every webhook and redirect URL is built from.",
+      "url": "https://www.activepieces.com/docs/install/reference/environment-variables"
+    },
+    {
+      "claim": "Upstream sizes a worker at roughly 0.5 vCPU and 1 GB per concurrent flow, with a 1 vCPU and 2 GB API tier in front, which is where this install's 4 GB floor comes from.",
+      "url": "https://www.activepieces.com/docs/install/configure-operate/production-setup"
+    },
+    {
+      "claim": "Upstream's guidance is no sandboxing for a single-tenant install, which is also the image default, so flow code runs with the container's own privileges.",
+      "url": "https://www.activepieces.com/docs/install/configure-operate/sandboxing"
+    },
+    {
+      "claim": "Without SMTP configured there is no password-reset email, and the documented recovery is updating a bcrypt hash directly in the user_identity table.",
+      "url": "https://www.activepieces.com/docs/install/troubleshooting/reset-password"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The core is MIT, but the repository carries a packages/ee tree under a separate commercial licence, and the feature split is real: agents and chat, projects, API access, SSO, user roles, audit logs, secret managers, branding and Git Sync are what the paid editions sell. The community edition you install here is uncapped on runs, users and flows, and stops short of that list.",
+    "Flow code runs unsandboxed, because that is upstream's own guidance for a single-tenant install and the image default. A flow can reach anything this container can reach, including your provider's metadata endpoint. The flows you write are the security boundary, so treat one copied from a stranger the way you would treat a shell script from a stranger.",
+    "One key stands between you and every credential you connect. AP_ENCRYPTION_KEY encrypts the tokens for every service a flow touches, and a database restored without it comes back with every flow intact and nothing able to run. The database dump and the config archive are one backup in two files.",
+    "No mail means no password reset. This install configures no SMTP, so the documented way back into a locked-out account is editing a bcrypt hash in PostgreSQL by hand. Put the account password in a password manager on day one.",
+    "Webhooks are the part that needs a real hostname. Polling triggers work anywhere, but an app that calls you back needs a URL it can resolve, which is why the cloud path wants DNS and the local path honestly gives you half the tool."
+  ],
+  "sources": {
+    "compose": "https://www.activepieces.com/docs/install/options/docker-compose",
+    "caddy": "https://www.activepieces.com/docs/install/configure-operate/setup-ssl",
+    "install": "https://www.activepieces.com/docs/install/reference/environment-variables",
+    "sizing": "https://www.activepieces.com/docs/install/configure-operate/production-setup",
+    "sandboxing": "https://www.activepieces.com/docs/install/configure-operate/sandboxing",
+    "health": "https://github.com/activepieces/activepieces/blob/main/Dockerfile",
+    "flags": "https://github.com/activepieces/activepieces/blob/0.86.3-hotfix.1/packages/server/api/src/app/flags/flag.service.ts",
+    "signup": "https://github.com/activepieces/activepieces/blob/0.86.3-hotfix.1/packages/server/api/src/app/authentication/authentication.service.ts",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "listmonk",
+    "healthchecks",
+    "grist"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "e456458f2af261697fedc4020748670fbc6068db484b6dc8caed0d9ccc4d439a"
+}

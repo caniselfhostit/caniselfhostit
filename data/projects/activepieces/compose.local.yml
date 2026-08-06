@@ -1,0 +1,82 @@
+# Activepieces · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   compose install ..... https://www.activepieces.com/docs/install/options/docker-compose
+#   variable reference .. https://www.activepieces.com/docs/install/reference/environment-variables
+#   sizing and sandbox .. https://www.activepieces.com/docs/install/configure-operate/production-setup
+#
+# Three services, every path relative to ~/selfhost/activepieces/ so one file
+# works on macOS, Linux and Windows. One image runs the API and the worker;
+# PostgreSQL is the pgvector image because the knowledge base asks for that
+# extension at boot. AP_EXECUTION_MODE is upstream's choice for single-tenant and
+# the image default: flow code runs with this container's reach, home network
+# included. 8095 binds to loopback and AP_FRONTEND_URL is http://localhost:8095,
+# this computer only. Digests read 2026-08-05; all three publish amd64 and arm64.
+#
+# Two named volumes rather than bind mounts: PostgreSQL chowns its data directory
+# to its own uid and Redis chowns /data to the redis user, and Docker Desktop's
+# Windows file sharing grants neither on a home-directory bind mount. The piece
+# cache stays a relative bind, visible in Finder or Explorer.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: pgvector/pgvector:0.8.6-pg16@sha256:a36250871de0833b8757561c72f2477ef1ddd1101afa4e617fb552e0de514c6b
+    container_name: activepieces-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: activepieces
+      POSTGRES_USER: activepieces
+      POSTGRES_PASSWORD: ${AP_POSTGRES_PASSWORD}
+    volumes:
+      - activepieces-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U activepieces -d activepieces"]
+      interval: 10s
+      retries: 12
+
+  redis:
+    image: redis:7.4.10-alpine@sha256:e7723ff73d963f5cc6d9c4643ea3d989527a402a319239054e9472a7fb9219a2
+    container_name: activepieces-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - activepieces-redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 12
+
+  activepieces:
+    image: ghcr.io/activepieces/activepieces:0.86.3-hotfix.1@sha256:4da6910cf46dbc38857c8c4fac6ba867ab804b8a3a8551d672d4490cb1245566
+    container_name: activepieces
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      AP_ENVIRONMENT: prod
+      AP_CONTAINER_TYPE: WORKER_AND_APP
+      AP_DB_TYPE: POSTGRES
+      AP_POSTGRES_HOST: postgres
+      AP_POSTGRES_PORT: "5432"
+      AP_POSTGRES_DATABASE: activepieces
+      AP_POSTGRES_USERNAME: activepieces
+      AP_REDIS_TYPE: STANDALONE
+      AP_REDIS_HOST: redis
+      AP_REDIS_PORT: "6379"
+      AP_EXECUTION_MODE: UNSANDBOXED
+      AP_WORKER_CONCURRENCY: "1"
+      AP_QUEUE_UI_ENABLED: "false"
+      AP_TELEMETRY_ENABLED: "false"
+    volumes:
+      - ./cache:/usr/src/app/cache
+    ports:
+      - "127.0.0.1:8095:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  activepieces-pgdata:
+  activepieces-redisdata:

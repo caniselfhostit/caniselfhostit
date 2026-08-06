@@ -1,0 +1,66 @@
+{
+  "slug": "plausible",
+  "name": "Plausible",
+  "domain": "plausible.io",
+  "whyPeoplePay": "Plausible sells a traffic number you can publish without a cookie banner, and the fact that somebody else keeps the column store behind it alive. The bill scales with monthly pageviews rather than seats, so a small site stays cheap, and what the subscription buys at every tier is a script under a kilobyte, a dashboard a marketing team can read without training, and a company whose only revenue is that subscription. They also write the self-hosted release themselves, which is unusual enough to say out loud.",
+  "plans": [
+    {
+      "name": "Starter",
+      "priceMonthly": 9,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Entry price at up to 10k monthly pageviews. One site, one team member, 3 years of data retention. The price rises with the pageview slider. Annual billing is advertised as 2 months free."
+    },
+    {
+      "name": "Growth",
+      "priceMonthly": 14,
+      "unit": "flat",
+      "seatsIncluded": 3,
+      "note": "Entry price at up to 10k monthly pageviews. Up to 3 sites and 3 team members, 3 years of retention. Annual billing is advertised as 2 months free."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": 19,
+      "unit": "flat",
+      "seatsIncluded": 10,
+      "note": "Entry price at up to 10k monthly pageviews. Up to 10 sites and 10 team members, 5 years of retention, and the tier that adds funnels, user journeys, ecommerce revenue goals and the stats API."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only, from 10M monthly pageviews. Adds SSO, a managed proxy, raw data export and priority support."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-05",
+    "source": "https://plausible.io/#pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The pricing page is a slider: every figure recorded here is the monthly-billed price at the lowest step, up to 10k monthly pageviews, and each plan costs more as the slider moves. The annual figures are rendered client-side and did not read reliably, so the plan notes carry only the page's own claim of 2 months free on annual billing rather than a number we could not confirm. A 30-day trial with no card is offered on all tiers."
+  },
+  "ranked": [
+    {
+      "project": "plausible",
+      "rationale": "The same company writes it, from the same repository, under AGPL, and points its own documentation at the compose file. That makes this the rare case where self-hosting is the vendor-sanctioned path rather than a workaround: the dashboard, the script and the numbers are the ones you were paying for, and what is missing is named out loud (funnels, user journeys, ecommerce revenue goals, SSO, the sites API). What you take on instead of the bill is a ClickHouse, a PostgreSQL, three backup artifacts and roughly two upgrades a year."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Umami",
+      "repo": "https://github.com/umami-software/umami",
+      "note": "MIT, actively developed, and one container plus PostgreSQL or MySQL instead of Plausible's three, which makes it the lighter answer on a 1 GB box and the one to pick if ClickHouse is the part you do not want to operate. The trade is a smaller dashboard and a project that has reshaped its data model across major versions, so upgrades are a read-the-notes affair rather than a pull."
+    },
+    {
+      "name": "Matomo",
+      "repo": "https://github.com/matomo-org/matomo",
+      "note": "GPL-3.0, the oldest and busiest project here, and the only one whose feature list is aimed at replacing Google Analytics rather than escaping it: heatmaps, session recordings and A/B testing all exist, several sold as paid plugins by the same company. PHP and MySQL, so it runs on shared hosting, at the cost of being heavier to operate and much heavier to read."
+    },
+    {
+      "name": "GoatCounter",
+      "repo": "https://github.com/arp242/goatcounter",
+      "note": "One Go binary with SQLite, still shipping releases, and by far the smallest thing on this page. It is licensed under a modified EUPL 1.2 rather than a plain SPDX identifier, and it is maintained by one person, which is the reason it sits here rather than in the catalogue. The right answer for counts on a personal site and nothing beyond that."
+    }
+  ]
+}

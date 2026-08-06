@@ -1,0 +1,73 @@
+# Plausible CE · the deterministic fallback for the local path, authored by
+# caniselfhostit from https://plausible.io/docs/self-hosting , the quick start
+# at https://github.com/plausible/community-edition and its wiki page
+# https://github.com/plausible/community-edition/wiki/configuration . Not
+# copied from a repository.
+#
+# Three services, paths relative to ~/selfhost/plausible/ so one file works on
+# macOS, Linux and Windows. Data lives in named volumes because Postgres,
+# ClickHouse and the app each want a uid Docker Desktop on Windows cannot grant
+# on a home-directory bind. Digests read 2026-08-05, amd64 and arm64 both.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  plausible_db:
+    image: postgres:16.14-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: plausible_db
+      POSTGRES_USER: plausible
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - plausible-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U plausible -d plausible_db"]
+      interval: 10s
+      retries: 18
+    # No `ports:`: 5432 is reachable only from the other containers.
+
+  plausible_events_db:
+    image: clickhouse/clickhouse-server:24.12.6.70-alpine@sha256:cd450891db46cc6ffe313ca2b0fb7dbfb897a6873ca74a724cbe050a2cf62621
+    restart: unless-stopped
+    environment:
+      CLICKHOUSE_SKIP_USER_SETUP: "1"
+    volumes:
+      - plausible-chdata:/var/lib/clickhouse
+      - ./clickhouse/plausible-ce.xml:/etc/clickhouse-server/config.d/plausible-ce.xml:ro
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://127.0.0.1:8123/ping || exit 1"]
+      interval: 10s
+      retries: 18
+    # No `ports:`: 8123 stays inside.
+
+  plausible:
+    image: ghcr.io/plausible/community-edition:v3.2.1@sha256:33e60bfb40f2df5da00f8753b76fad04f67dba3abe6d73eb516e440e3fb62985
+    restart: unless-stopped
+    command: sh -c "/entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh run"
+    env_file: ./.env
+    environment:
+      TMPDIR: /var/lib/plausible/tmp
+      HTTP_PORT: "8000"
+      DISABLE_REGISTRATION: "true"
+      DATABASE_URL: postgres://plausible:${POSTGRES_PASSWORD}@plausible_db:5432/plausible_db
+      CLICKHOUSE_DATABASE_URL: http://plausible_events_db:8123/plausible_events_db
+    volumes:
+      - plausible-appdata:/var/lib/plausible
+    ports:
+      # Loopback only: this computer, nothing else on the wifi.
+      - "127.0.0.1:8093:8000"
+    depends_on:
+      plausible_db:
+        condition: service_healthy
+      plausible_events_db:
+        condition: service_healthy
+
+volumes:
+  plausible-pgdata:
+  plausible-chdata:
+  plausible-appdata:

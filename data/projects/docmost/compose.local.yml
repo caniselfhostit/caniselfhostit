@@ -1,0 +1,72 @@
+# Docmost · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   installation ....... https://docmost.com/docs/installation
+#   variable reference . https://docmost.com/docs/self-hosting/environment-variables
+#   image ............. https://github.com/docmost/docmost/blob/main/Dockerfile
+#
+# Three services on the computer you are sitting at. Paths are relative to
+# ~/selfhost/docmost/, so one file works on macOS, Linux and Windows. The
+# database and Redis are named volumes rather than folders you can open,
+# because both images chown their own data directory and a home-directory
+# bind mount cannot grant that on Windows. Attachments stay a real folder,
+# ./storage, owned by uid 1000, the node user Docmost runs as. Digests read
+# on 2026-08-05; all three images publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: postgres:18.4-alpine@sha256:9a8afca54e7861fd90fab5fdf4c42477a6b1cb7d293595148e674e0a3181de15
+    container_name: docmost-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: docmost
+      POSTGRES_USER: docmost
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - docmost-pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U docmost -d docmost"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 stays on the compose network.
+
+  redis:
+    image: redis:8.10.0-alpine@sha256:978f0e01593e65eed801f2402944efcd936d43b5027e4908a7897baf88ed6241
+    container_name: docmost-redis
+    restart: unless-stopped
+    # appendonly persists every change; noeviction makes Redis refuse writes
+    # rather than silently drop a queued job when memory runs out.
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory-policy", "noeviction"]
+    volumes:
+      - docmost-redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 6379 stays on the compose network.
+
+  docmost:
+    image: docmost/docmost:0.95.0@sha256:41c8d777cf23c74e78f94e676aec328b7d7856f48df5e573543dac68d371e37c
+    container_name: docmost
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      DATABASE_URL: postgresql://docmost:${DB_PASSWORD}@postgres:5432/docmost
+      REDIS_URL: redis://redis:6379
+      # Attachments land in ./storage. No S3 or Azure account.
+      STORAGE_DRIVER: local
+    volumes:
+      - ./storage:/app/data/storage
+    ports:
+      # Loopback only: no other device can reach 8092.
+      - "127.0.0.1:8092:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  docmost-pgdata:
+  docmost-redis:

@@ -1,0 +1,71 @@
+{
+  "slug": "notion",
+  "name": "Notion",
+  "domain": "notion.com",
+  "whyPeoplePay": "Notion sells one surface for everything a team writes down. Docs, tables, tasks and the wiki are the same object underneath, so a meeting note can become a database row and a project board without anyone deciding which tool owns it. The bill buys that plus the parts nobody wants to run: sync that works on a phone on a train, sharing that a client can open without an account, and search across the whole workspace. Most of the money is per seat, which is why the invoice grows on the day someone joins rather than on the day anyone uses a feature.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$0 per member per month. Priced per member like the paid tiers, with trial AI credits and a limit on collaborative blocks for teams."
+    },
+    {
+      "name": "Plus",
+      "priceMonthly": 12,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$12 per member per month billed monthly. $120 per member per year on annual billing, which the page shows as $10 per member per month."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": 24,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$24 per member per month billed monthly. $240 per member per year on annual billing, shown as $20 per member per month. This is the tier that carries SAML SSO, private teamspaces and the bundled AI features."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The pricing card reads Custom pricing and links to Contact Sales rather than a per-seat figure."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-05",
+    "source": "https://www.notion.com/pricing",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "The pricing page's billing toggle defaults to Pay yearly, so the $10 and $20 a visitor sees first are annual-billed rates. We record the monthly-billed figures, $12 and $24, which the same page carries in its own price data alongside the yearly ones. Agent credits and other add-ons bill on top of seats and are not in this ladder."
+  },
+  "ranked": [
+    {
+      "project": "docmost",
+      "rationale": "The closest thing to the half of Notion most teams actually live in: spaces, nested pages, a real-time editor two people can type in at once, comments, and search. It imports a Notion export ZIP directly, so the migration is an upload rather than a rewrite. What it does not replace is the database half. Bases, Docmost's table-and-board feature, is a paid commercial add-on and is absent from the AGPL build this install runs, so if your Notion is mostly linked databases with rollups, you are moving half your workspace and leaving the other half behind."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Outline",
+      "repo": "https://github.com/outline/outline",
+      "note": "Actively developed and the nicest wiki editor of the group, but two things kept it off the tested list. It is Business Source License 1.1, not open source, converting to Apache-2.0 in 2030, and its self-hosted install expects an outside identity provider, so the first login is a Google or OIDC app you register somewhere else before anything works."
+    },
+    {
+      "name": "AFFiNE",
+      "repo": "https://github.com/toeverything/AFFiNE",
+      "note": "The one project here aiming at both halves of Notion, pages and a whiteboard in the same canvas, and it is moving quickly. The licensing is split rather than single: the backend directory carries its own license and the rest is MIT, which is a paragraph to read before you commit a company wiki to it. Self-hosting is documented but the release cadence is fast enough that pinning matters more than usual."
+    },
+    {
+      "name": "BookStack",
+      "repo": "https://github.com/BookStackApp/BookStack",
+      "note": "MIT, PHP, and the most boring install on this list, which is a compliment. Shelves, books, chapters and pages is a rigid hierarchy that suits documentation and fits a Notion workspace badly, and there is no real-time co-editing. Pick it if what you want out of Notion is a manual, not a workspace."
+    },
+    {
+      "name": "AppFlowy",
+      "repo": "https://github.com/AppFlowy-IO/AppFlowy",
+      "note": "AGPL-3.0 and the only one that ships Notion-style databases as a first-class free feature, with native desktop and mobile apps. It is a local-first app first and a server second: self-hosting is a separate cloud component with its own moving parts, which is a bigger commitment than a wiki and the reason it is not the pick here."
+    }
+  ]
+}

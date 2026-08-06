@@ -1,0 +1,92 @@
+{
+  "slug": "vikunja",
+  "name": "Vikunja",
+  "tagline": "One container holding every task, project and due date, with no project cap and no per-seat bill.",
+  "repo": "go-vikunja/vikunja",
+  "site": "https://vikunja.io",
+  "category": "work-pm",
+  "replaces": [
+    {
+      "saas": "todoist",
+      "plan": "Pro",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 512,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 9,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://vikunja.io/docs/full-docker-example/",
+  "local": {
+    "fit": "caveat",
+    "note": "The list answers on http://localhost:8097, which means this computer and no other, so your phone cannot open it and no CalDAV client anywhere else can sync with it."
+  },
+  "quote": {
+    "text": "Default is a random secret which will be generated at each startup of Vikunja. (This means all already issued tokens will be invalid once you restart Vikunja)",
+    "source": "Vikunja documentation, Configuration options",
+    "url": "https://vikunja.io/docs/config-options/",
+    "checkedOn": "2026-08-05"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's own quick start runs a single container with SQLite, mounting one directory at /db and another at /app/vikunja/files, and states the container runs as user 1000 with no group.",
+      "url": "https://vikunja.io/docs/installing/"
+    },
+    {
+      "claim": "The API and the web interface are one binary in one image, so there is no second container and no separate frontend to route.",
+      "url": "https://vikunja.io/docs/docker-walkthrough/"
+    },
+    {
+      "claim": "service.publicurl is required whenever CORS is enabled, which it is by default, and service.secret regenerates on every start unless it is set.",
+      "url": "https://vikunja.io/docs/config-options/"
+    },
+    {
+      "claim": "The register endpoint returns 404 once service.enableregistration is false, which is the assert this install uses to prove signups are shut.",
+      "url": "https://github.com/go-vikunja/vikunja/blob/v2.5.0/pkg/routes/api/v1/user_register.go"
+    },
+    {
+      "claim": "The reminder job is only scheduled when email reminders or webhooks are enabled, so an install with the mailer off delivers no reminders by mail.",
+      "url": "https://github.com/go-vikunja/vikunja/blob/v2.5.0/pkg/models/task_reminder.go"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "No reminder will find you. Upstream only schedules the reminder job when mail or webhooks can carry it, and this install has neither, so a due date is something you see when you open the app. That is the single habit a Todoist subscriber loses on day one, and it is worth deciding about before you migrate rather than after.",
+    "Three features sit behind a paid Vikunja Pro key: the admin panel, time tracking and audit logs. The code is AGPL and everything else works without a key, but if time tracking is why you are here, that is a subscription, not a saving.",
+    "You own the backups, and there is exactly one file that matters. Every task, project, comment and label is in db/vikunja.db, every attachment is a file next to it, and SQLite copied mid-write is not a backup, so the container has to stop for the five seconds it takes.",
+    "Importing your Todoist history means registering a developer app in your own Todoist account for a client id and secret, and upstream states your Vikunja has to be publicly reachable for the handshake. The import is real and it works; it is not one click.",
+    "SQLite does not take concurrent writes, which Vikunja reports to its own clients. One person, or a household, is the shape this install fits. A team hammering it wants PostgreSQL, and that is a different compose file."
+  ],
+  "sources": {
+    "compose": "https://vikunja.io/docs/full-docker-example/",
+    "caddy": "https://vikunja.io/docs/reverse-proxy/",
+    "install": "https://vikunja.io/docs/installing/",
+    "config": "https://vikunja.io/docs/config-options/",
+    "image": "https://github.com/go-vikunja/vikunja/blob/v2.5.0/Dockerfile",
+    "backup": "https://vikunja.io/docs/what-to-backup/",
+    "registration": "https://github.com/go-vikunja/vikunja/blob/v2.5.0/pkg/routes/api/v1/user_register.go",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "docmost",
+    "grist",
+    "actual-budget"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "c4c6094c713522a030c1d2e2fac31d3c037de83b282fb8107998d02720280ea5"
+}

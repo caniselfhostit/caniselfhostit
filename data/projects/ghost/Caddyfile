@@ -1,0 +1,36 @@
+# Ghost · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.ghost.org/config/,
+# https://hub.docker.com/_/ghost,
+# https://caddyserver.com/docs/caddyfile/directives/reverse_proxy and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also the `url` value in .env, and Ghost builds every canonical link, RSS item
+# and newsletter footer from it, so the two must always say the same thing.
+
+<DOMAIN> {
+	# Ghost serves HTML, JSON feeds and theme assets, all of which compress well.
+	encode zstd gzip
+
+	# Upstream asks the proxy in front of Ghost for X-Forwarded-For,
+	# X-Forwarded-Host and X-Forwarded-Proto. Caddy's reverse_proxy sets all
+	# three itself and ignores whatever the client sent, so there is nothing to
+	# add here and nothing a visitor can spoof.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# No frame-blocking header: the Ghost editor previews posts and the members
+	# portal renders its signup form in same-origin iframes, and a blanket DENY
+	# breaks both.
+
+	# 8100 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8100
+}

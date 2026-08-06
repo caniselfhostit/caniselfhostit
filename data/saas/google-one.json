@@ -1,0 +1,91 @@
+{
+  "slug": "google-one",
+  "name": "Google One",
+  "domain": "one.google.com",
+  "whyPeoplePay": "Almost nobody sets out to buy Google One. You take a few thousand photos, the free 15 GB fills up, and one morning Gmail stops accepting mail and your phone stops backing up until you pick a plan. What the money buys is real: storage shared across Photos, Drive and Gmail, a camera roll that uploads itself without you thinking about it, search that finds a picture of a dog on a beach in 2014, and a copy of everything you own sitting in somebody else's datacentre with an operator on call. Since 2026 the middle and upper tiers are sold as AI plans, so the same subscription now carries Gemini limits whether or not the storage was the reason you subscribed.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "15 GB shared across Google Drive, Gmail and Google Photos. This is the tier people are on when the bill starts."
+    },
+    {
+      "name": "Basic (100 GB)",
+      "priceMonthly": 1.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Storage only. Shareable with up to 5 other people. The plans page advertises up to 16% off for annual billing."
+    },
+    {
+      "name": "Google AI Plus (400 GB)",
+      "priceMonthly": 4.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "The lower of two plans sold under the AI Plus name, listed on the Google AI subscriptions page rather than the storage plans page."
+    },
+    {
+      "name": "Google AI Plus (2 TB)",
+      "priceMonthly": 9.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "The 2 TB tier, formerly sold as Premium. This is the one a full phone camera roll usually lands on."
+    },
+    {
+      "name": "Google AI Pro (5 TB)",
+      "priceMonthly": 19.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "5 TB, bundled with YouTube Premium Lite and other Google subscriptions."
+    },
+    {
+      "name": "Google AI Ultra (20 TB)",
+      "priceMonthly": 99.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Introduced at Google I/O 2026 as a $100 tier between AI Pro and the top plan, with roughly 5x the AI usage limits of AI Pro."
+    },
+    {
+      "name": "Google AI Ultra (highest limits)",
+      "priceMonthly": 199.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "The top plan, cut from $250 to $200 a month at I/O 2026, with roughly 20x the AI usage limits of AI Pro."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-05",
+    "source": "https://one.google.com/about/plans",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The plan ladder and its structure were read from one.google.com/about/plans and gemini.google/subscriptions on 2026-08-05, but both pages rendered Canadian dollars for us and neither would serve USD, so the USD figures here are corroborated rather than read off the vendor page. The two AI Ultra prices come from Google's own I/O 2026 announcement post, which names a $100 tier and a top plan reduced from $250 to $200. The others are the USD equivalents of the CA prices we did read (CA$2.79, CA$6.99, CA$13.99 and CA$26.99), matched against third-party trackers. Two plans carry the Google AI Plus name at different storage amounts, which is how Google currently sells them and not a transcription error. Re-check against a US-rendered page before quoting these."
+  },
+  "ranked": [
+    {
+      "project": "immich",
+      "rationale": "This is the half of the bill you are actually paying. Photos are what fills 15 GB, and Immich is the only self-hosted option with a phone app that does the thing Google Photos does without being asked: background upload of the camera roll, including video, with the originals kept. On top of that you get search by what is in the picture, face grouping, albums and a map, all running on your own CPU rather than a service that reads your library. The trade is honest and it is not small. It wants 6 GB of RAM, four containers, and a backup habit for both a database and a growing directory of files, and if you drop the phone app on the local-only path you lose the automatic part that made you pay in the first place."
+    },
+    {
+      "project": "nextcloud",
+      "rationale": "Second place because it replaces the other half. Google One is one meter across Photos, Drive and Gmail, and Nextcloud takes the Drive side: the files, the desktop sync client, the shared folders, the documents two people edit at once. Its photo timeline exists and is not Immich, so if the camera roll is the reason your storage filled up, install Immich first and let Nextcloud have everything else. The storage arithmetic is identical either way, because the disk you have to buy and back up is the same disk."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "PhotoPrism",
+      "repo": "https://github.com/photoprism/photoprism",
+      "note": "Actively developed and the strongest browser-first library manager on this list, with good indexing of an existing folder tree you already organise yourself. It is not the pick here because the mobile story is the weak point: there is no first-party background-upload app of the kind that replaces Google Photos, and that automatic upload is the habit people are paying for. GitHub reports its license as NOASSERTION; the LICENSE file in the repository is AGPL-3.0, and parts of the project are sold under a separate membership."
+    },
+    {
+      "name": "Ente Photos",
+      "repo": "https://github.com/ente/ente",
+      "note": "AGPL-3.0, released frequently, and the only option here that is end-to-end encrypted, with polished apps on every platform. Self-hosting is genuinely supported and genuinely more involved: the server expects object storage and the project's own energy goes into its hosted service, so you are running the same software as a paying customer without being one. Worth choosing over Immich if encryption-at-rest that the server itself cannot read is the requirement."
+    },
+    {
+      "name": "LibrePhotos",
+      "repo": "https://github.com/LibrePhotos/librephotos",
+      "note": "MIT, still maintained, with releases through mid-2026 and regular dependency work. It is the smallest project of the four by a wide margin and it shows in the pace of change and the size of the community you can ask for help. A reasonable choice if MIT matters to you or the machine is small, and not the one to hand a family's only copy of twenty years of photographs."
+    }
+  ]
+}

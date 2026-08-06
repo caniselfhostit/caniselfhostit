@@ -1,0 +1,32 @@
+# Docmost · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docmost.com/docs/self-hosting/reverse-proxy/caddy and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also APP_URL in .env, and Docmost builds its invitation links and its shared
+# page links from APP_URL, so the two have to say the same thing.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	# No X-Frame-Options here on purpose. Docmost decides its own frame
+	# header from IFRAME_EMBED_ALLOWED, and one set at this layer would
+	# override the application's answer without the application knowing.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# 8092 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall. Upstream states the
+	# real-time editor rides WebSockets and stays read-only if the proxy
+	# does not pass the Upgrade and Connection headers. Caddy's reverse_proxy
+	# performs that upgrade with no extra directive, which is the reason this
+	# block is three lines rather than thirty.
+	reverse_proxy 127.0.0.1:8092
+}

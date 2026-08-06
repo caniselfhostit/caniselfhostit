@@ -1,0 +1,41 @@
+# Grist · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://support.getgrist.com/install/forwarded-headers/,
+# https://support.getgrist.com/self-managed/ and
+# https://caddyserver.com/docs/caddyfile/directives/basic_auth
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. grist-core has no
+# username-and-password login of its own, so this block is the login: Caddy
+# checks the credential and then tells Grist which address it verified. Needs
+# Caddy 2.8 or newer, which is where the directive is spelled basic_auth.
+
+<DOMAIN> {
+	# Grist ships a large JavaScript bundle, so compression is worth having.
+	# WebSocket upgrades pass through untouched.
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# The credential is not in this file, because this file is published. The
+	# install writes /etc/caddy/grist-auth.conf with one basic_auth block: the
+	# username, and a bcrypt hash of the password it generated. That file is
+	# mode 640, owned by root and readable by the caddy group.
+	import /etc/caddy/grist-auth.conf
+
+	# 8101 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8101 {
+		# Set, not add. Whatever a browser sent under this name is replaced by
+		# the username basic_auth has verified, so the header cannot be
+		# spoofed, which is the one thing this whole arrangement depends on.
+		header_up X-Forwarded-User {http.auth.user.id}
+	}
+}

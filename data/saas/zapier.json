@@ -1,0 +1,71 @@
+{
+  "slug": "zapier",
+  "name": "Zapier",
+  "domain": "zapier.com",
+  "whyPeoplePay": "Zapier sells the integrations, not the automation engine. Someone else has already read eight thousand APIs, kept up with every one of their breaking changes, and holds the OAuth client registrations that let you connect an account by clicking a button instead of filling in a developer form. The if-this-then-that part is the easy half; the half you are renting is a maintenance contract on other people's APIs, plus a queue that keeps running while you sleep.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "100 tasks a month, one seat, two-step Zaps only."
+    },
+    {
+      "name": "Professional",
+      "priceMonthly": 29.99,
+      "unit": "usage",
+      "seatsIncluded": 1,
+      "note": "The entry task tier, 750 tasks a month, billed monthly. $19.99/mo billed annually. The plan price climbs with the task tier you pick, so this is a floor rather than a price."
+    },
+    {
+      "name": "Team",
+      "priceMonthly": 103.5,
+      "unit": "usage",
+      "seatsIncluded": 25,
+      "note": "The entry task tier, 2,000 tasks a month, billed monthly, 25 users included. $69/mo billed annually. Same task-tier ladder as Professional."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only, unlimited users, advanced admin."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-05",
+    "source": "https://zapier.com/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Read from the pricing page on 2026-08-05 and corroborated by search, because the page renders its numbers in JavaScript behind a task-volume slider. The recorded figures are the monthly-billed price at the lowest task tier of each plan; move the slider up and the same plan name costs several times this. Annual-billed equivalents are in each plan note. What a given reader actually pays depends on task volume, and a Zap with five steps spends five tasks per run, so the tier is easier to outgrow than the plan name suggests."
+  },
+  "ranked": [
+    {
+      "project": "activepieces",
+      "rationale": "The closest thing to a like-for-like swap that you can actually run on one small server. It keeps the shape people are paying for, a visual builder with triggers, actions and branching plus a large catalogue of prebuilt pieces, and it drops the task meter entirely: the community edition is uncapped on runs, users and flows. What you take on is the half Zapier was really selling. Your own OAuth registration for each service you connect, your own encryption key standing between a backup and every token in it, and flow code that runs unsandboxed with your container's network reach. Three containers, one evening, and the bill stops."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "n8n",
+      "repo": "https://github.com/n8n-io/n8n",
+      "note": "The best-known option and the most capable, with a node editor that will do things Activepieces will not. It is not open source: the code is under n8n's Sustainable Use License, which restricts commercial use, and files marked .ee need a paid enterprise licence on top. Actively developed, releasing weekly. We ranked Activepieces first on licence clarity rather than on features, and if that trade does not bother you, n8n is the stronger tool."
+    },
+    {
+      "name": "Windmill",
+      "repo": "https://github.com/windmill-labs/windmill",
+      "note": "AGPL-3.0 and Apache-2.0 with a proprietary enterprise tier, released almost daily, and fast. It is a different product though: scripts in Python, TypeScript, Go or Bash turned into workflows and internal UIs, aimed at somebody who would rather write the integration than click it. A person leaving Zapier for the visual builder will not find it here."
+    },
+    {
+      "name": "Automatisch",
+      "repo": "https://github.com/automatisch/automatisch",
+      "note": "AGPL-3.0 with a .ee carve-out, and the closest in spirit to what Zapier looks like. The reason it is not ranked is cadence: the last tagged release was v0.15.0 in August 2025 and the last commit to the repository was February 2026, so a connector that breaks may stay broken. Worth watching rather than installing today."
+    },
+    {
+      "name": "Huginn",
+      "repo": "https://github.com/huginn/huginn",
+      "note": "MIT, still receiving commits, and the oldest idea on this list: agents that watch things and act, configured as JSON rather than drawn on a canvas. Two problems for us. The last tagged release was in 2022, so there is no version number to pin an image to, and the mental model is far enough from a Zap that most people arriving from Zapier will bounce off it."
+    }
+  ]
+}

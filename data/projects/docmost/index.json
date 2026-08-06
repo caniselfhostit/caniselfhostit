@@ -1,0 +1,91 @@
+{
+  "slug": "docmost",
+  "name": "Docmost",
+  "tagline": "Spaces, nested pages and an editor two people can type in at once, with every word in a Postgres you can dump.",
+  "repo": "docmost/docmost",
+  "site": "https://docmost.com",
+  "category": "notes-wikis",
+  "replaces": [
+    {
+      "saas": "notion",
+      "plan": "Business",
+      "seatsAssumed": 5
+    }
+  ],
+  "tierFactors": {
+    "containers": 3,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/docmost/docmost/blob/main/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Only this computer can open the wiki, and every share link it generates starts with http://localhost:8092, so on the local path a team of one is the honest use."
+  },
+  "quote": {
+    "text": "Bases is a commercial feature available on all self-hosted paid plans. An active Business or Enterprise license is required. Bases is not available in the free, open source edition.",
+    "source": "Docmost documentation, Bases",
+    "url": "https://docmost.com/docs/user-guide/bases",
+    "checkedOn": "2026-08-05"
+  },
+  "citations": [
+    {
+      "claim": "Bases, the Notion-style database inside Docmost, is a commercial feature that requires a Business or Enterprise license and is absent from the free open source edition.",
+      "url": "https://docmost.com/docs/user-guide/bases"
+    },
+    {
+      "claim": "The open source edition is AGPL-3.0 and covers the core documentation and collaboration features; enterprise features are unlocked by a license key entered under Settings.",
+      "url": "https://docmost.com/docs/editions"
+    },
+    {
+      "claim": "APP_SECRET must be replaced with a random secret of at least 32 characters or the app will not start, DATABASE_URL and REDIS_URL are both required, and a health endpoint answers at /api/health.",
+      "url": "https://docmost.com/docs/installation"
+    },
+    {
+      "claim": "The real-time editor relies on WebSockets, and a reverse proxy that does not forward the Upgrade and Connection headers leaves the page editor in read-only mode.",
+      "url": "https://docmost.com/docs/self-hosting/reverse-proxy"
+    },
+    {
+      "claim": "A Notion workspace export ZIP can be imported straight into a Docmost space, preserving the page structure.",
+      "url": "https://docmost.com/docs/user-guide/import-export"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "You get the wiki half of Notion, not the database half. Bases, the tables, boards and formulas Notion users think of as databases, is a paid commercial feature that the free AGPL-3.0 build does not include. If your workspace is mostly linked databases with rollups, half of it has nowhere to land.",
+    "The license is AGPL-3.0, which is open source, but the same image also carries enterprise features that stay locked without a key you buy: SSO, AI, audit logs, SCIM provisioning and Bases. Nothing expires and nothing phones home, and the free feature set is the one you keep.",
+    "You own a PostgreSQL and a Redis. The pages are rows, so a backup is a pg_dump plus the attachments directory, not a folder you can copy. Redis is not backed up at all, because it holds live editor sessions and a job queue rather than content.",
+    "No mail until you set it up. Docmost runs without SMTP and invitations can be handed out as links copied from the members page, but password reset email is the thing you do not have until you add a mail provider.",
+    "A Notion export ZIP imports directly, which makes the move an upload rather than a rewrite. What does not come across is anything Notion does that a wiki does not: forms, the template gallery, synced database views, and the automations built on top of them."
+  ],
+  "sources": {
+    "compose": "https://docmost.com/docs/installation",
+    "caddy": "https://docmost.com/docs/self-hosting/reverse-proxy/caddy",
+    "install": "https://docmost.com/docs/self-hosting/environment-variables",
+    "proxy": "https://docmost.com/docs/self-hosting/reverse-proxy",
+    "editions": "https://docmost.com/docs/editions",
+    "image": "https://github.com/docmost/docmost/blob/main/Dockerfile",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "vikunja",
+    "nextcloud",
+    "linkwarden"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "23444d042849c325d67bc92160d1ca99e7931438f15c871f143e9bd86a1ad384"
+}

@@ -1,0 +1,26 @@
+# Cal.com · the Caddy site block for this service. Authored by caniselfhostit
+# from https://github.com/calcom/cal.diy/blob/v6.2.0/docs/self-hosting/docker.mdx
+# and https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy Prompt Zero installed, with
+# <DOMAIN> replaced by the hostname pointed at this box. That hostname is also
+# NEXT_PUBLIC_WEBAPP_URL in .env: the container rewrites its own built-in URL to
+# match on every fresh start, so the two have to agree exactly.
+
+<DOMAIN> {
+	# Every invitee lands on a page from here, so a downgrade has a real
+	# audience. No X-Frame-Options on purpose: booking pages are meant to be
+	# embedded in other people's sites.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	encode zstd gzip
+
+	# 8094 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8094
+}

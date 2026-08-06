@@ -1,0 +1,92 @@
+{
+  "slug": "plausible",
+  "name": "Plausible CE",
+  "tagline": "The same privacy-first analytics dashboard the vendor sells, on your own domain, with no pageview meter counting against you.",
+  "repo": "plausible/analytics",
+  "site": "https://plausible.io",
+  "category": "analytics",
+  "replaces": [
+    {
+      "saas": "plausible",
+      "plan": "Growth",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 3,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 3
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 120,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/plausible/community-edition/blob/v3.2.1/compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Every event has to reach http://localhost:8093, which is a different computer in every visitor's browser, so on this path it counts sites you run on this machine and nothing you have published."
+  },
+  "quote": {
+    "text": "Our only source of funding is the managed cloud service: subscribers pay us directly, and we use that revenue to pay our team and develop Plausible.",
+    "source": "Plausible self-hosting documentation",
+    "url": "https://plausible.io/docs/self-hosting",
+    "checkedOn": "2026-08-05"
+  },
+  "citations": [
+    {
+      "claim": "Community Edition is the free, self-hosted, AGPL-licensed release of the same product, and the vendor documents self-hosting itself rather than treating it as unsupported.",
+      "url": "https://plausible.io/docs/self-hosting"
+    },
+    {
+      "claim": "Upstream's own compose file runs three services, the app plus PostgreSQL plus ClickHouse, and the quick start asks for at least 2 GB of RAM and a CPU with SSE 4.2 or NEON.",
+      "url": "https://github.com/plausible/community-edition"
+    },
+    {
+      "claim": "SECRET_KEY_BASE must be at least a 64-byte string, TOTP_VAULT_KEY is a 32-byte value encrypting two-factor secrets with AES256-GCM, and HTTP_PORT defaults to 8000.",
+      "url": "https://github.com/plausible/community-edition/wiki/configuration"
+    },
+    {
+      "claim": "From version 2.1.2 a reverse proxy is optional because the image can request its own certificate, and the documented Caddy setup is a single reverse_proxy line to the HTTP port.",
+      "url": "https://github.com/plausible/community-edition/wiki/reverse-proxy"
+    },
+    {
+      "claim": "ClickHouse assumes a machine with 16 GB or more, and the documented fix for smaller ones is to cut the mark cache and the memory ceiling in a config file.",
+      "url": "https://clickhouse.com/docs/en/operations/tips"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "You own a ClickHouse. It is the piece that makes the dashboard fast and it is also the piece that assumes a bigger machine than you rented, so this install ships a config file that cuts its caches and its memory ceiling. Delete that file and the kernel eventually kills the container.",
+    "Three things to back up, not one. Accounts and sites are in PostgreSQL, every event is in ClickHouse, and the third archive holds the secrets that decrypt the first two. A dump of only the database you remembered is a restore that loses a year of traffic.",
+    "Two releases a year. Upstream ships Community Edition on a slower cadence than the cloud, so a fix you read about in a changelog may be months from a tag you can pin. The AGPL means nothing is withheld from what does ship.",
+    "No funnels, no user journeys, no ecommerce revenue goals, no SSO and no sites API. Those are the cloud-only features, the vendor says so plainly, and they are a real part of what the paid tiers sell.",
+    "Nothing is counted until you paste the snippet. The install ends with an empty dashboard, and the domain in that snippet is the one you chose at step 1, on every page, permanently. The register page also works exactly once: the same switch that closes it to strangers blocks invited users too, so adding a teammate later means changing DISABLE_REGISTRATION to invite_only in compose.yml and running docker compose up -d again."
+  ],
+  "sources": {
+    "compose": "https://github.com/plausible/community-edition/wiki/configuration",
+    "caddy": "https://github.com/plausible/community-edition/wiki/reverse-proxy",
+    "install": "https://plausible.io/docs/self-hosting",
+    "quickstart": "https://github.com/plausible/community-edition",
+    "clickhouse": "https://clickhouse.com/docs/en/operations/tips",
+    "health": "https://github.com/plausible/analytics/blob/v3.2.1/lib/plausible_web/router.ex",
+    "upgrade": "https://github.com/plausible/community-edition/wiki/upgrade",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "ghost",
+    "shlink",
+    "uptime-kuma"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "1eb8790e5d53d0c12a543317624247d5cd347d0813b1d5e0fddbef4245800675"
+}

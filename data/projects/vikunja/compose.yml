@@ -1,0 +1,46 @@
+# Vikunja · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   installing ......... https://vikunja.io/docs/installing/
+#   docker examples .... https://vikunja.io/docs/full-docker-example/
+#   config reference ... https://vikunja.io/docs/config-options/
+#   reverse proxy ...... https://vikunja.io/docs/reverse-proxy/
+#   what to backup ..... https://vikunja.io/docs/what-to-backup/
+#
+# One service. Upstream's own quick start runs this image with SQLite and two
+# mounts, and the image ships VIKUNJA_DATABASE_PATH=/db/vikunja.db already set,
+# so a single container is the documented shape here rather than a shortcut.
+# The API and the web interface are the same binary on the same port, 3456.
+#
+# The image is built FROM scratch and runs as uid 1000 with no group. There is
+# no shell in it, which is why this file declares no healthcheck: nothing in the
+# image could run one. It is also why /srv/vikunja/db and /srv/vikunja/files
+# have to be owned by uid 1000 on the host, which is what step 2 of the prompt
+# does. Everything else about this container is unwritable by design.
+#
+# Tag and digest were read from Docker Hub on 2026-08-05; the manifest list
+# publishes linux/amd64 and linux/arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  vikunja:
+    image: vikunja/vikunja:2.5.0@sha256:22df4c1bc8843c28d383bc5f52b59e7b601bf5f6560b36b29c0a500833c77fa3
+    container_name: vikunja
+    restart: unless-stopped
+    env_file: /srv/vikunja/.env
+    environment:
+      # SQLite, written out even though it is the image default, because this
+      # file is what a reviewer reads to find out where the data actually is.
+      VIKUNJA_DATABASE_TYPE: sqlite
+      VIKUNJA_DATABASE_PATH: /db/vikunja.db
+      VIKUNJA_FILES_BASEPATH: /app/vikunja/files
+      # No outbound mail. Upstream's reminder job only delivers over mail or a
+      # webhook, so with this false a due date is something you see when you
+      # open the app, not something that arrives. Block 10 says so out loud.
+      VIKUNJA_MAILER_ENABLED: "false"
+    volumes:
+      - /srv/vikunja/db:/db
+      - /srv/vikunja/files:/app/vikunja/files
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8097.
+      - "127.0.0.1:8097:3456"

@@ -1,0 +1,64 @@
+# listmonk · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker install ..... https://listmonk.app/docs/installation/
+#   variable reference . https://listmonk.app/docs/configuration/
+#   upgrade path ....... https://listmonk.app/docs/upgrade/
+#   health route ....... https://github.com/knadh/listmonk/blob/v6.2.0/cmd/handlers.go
+#
+# Two services: listmonk and the PostgreSQL it keeps subscribers, campaigns and
+# click records in. Upstream states Postgres 12 or newer is the only dependency.
+# The three-phase command is upstream's own: --install --idempotent lays the
+# schema down once on an empty database, --upgrade applies migrations when the
+# image moves, the third invocation runs the server, and --config '' means "no
+# TOML file, read the LISTMONK_ environment variables". The root URL and the
+# SMTP relay are settings rows a human fills in from the admin UI. Digests read
+# on 2026-08-05; both images publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  db:
+    image: postgres:17.10-alpine@sha256:742f40ea20b9ff2ff31db5458d127452988a2164df9e17441e191f3b72252193
+    container_name: listmonk-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: listmonk
+      POSTGRES_USER: listmonk
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - /srv/listmonk/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U listmonk -d listmonk"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other container.
+
+  app:
+    image: listmonk/listmonk:v6.2.0@sha256:f535d59e14991337a9f2d570273685378ae86b0d7698c3e00da444e3bc205286
+    container_name: listmonk-app
+    restart: unless-stopped
+    env_file: /srv/listmonk/.env
+    command: [sh, -c, "./listmonk --install --idempotent --yes --config '' && ./listmonk --upgrade --yes --config '' && ./listmonk --config ''"]
+    environment:
+      # Every interface inside the container; the way in is the port below.
+      LISTMONK_app__address: 0.0.0.0:9000
+      LISTMONK_db__host: db
+      LISTMONK_db__port: 5432
+      LISTMONK_db__user: listmonk
+      LISTMONK_db__database: listmonk
+      LISTMONK_db__password: ${POSTGRES_PASSWORD}
+      LISTMONK_db__ssl_mode: disable
+      LISTMONK_db__max_open: 25
+      LISTMONK_db__max_idle: 25
+      LISTMONK_db__max_lifetime: 300s
+      TZ: Etc/UTC
+    volumes:
+      # Images uploaded through Admin -> Media. The entrypoint chowns /listmonk
+      # to PUID:PGID, default 0:0, so this ends up root-owned on the host.
+      - /srv/listmonk/uploads:/listmonk/uploads
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8096.
+      - "127.0.0.1:8096:9000"
+    depends_on:
+      db:
+        condition: service_healthy

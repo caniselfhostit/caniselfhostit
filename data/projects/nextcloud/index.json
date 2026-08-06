@@ -1,0 +1,92 @@
+{
+  "slug": "nextcloud",
+  "name": "Nextcloud",
+  "tagline": "Files, calendars and contacts on hardware you control, with the desktop and mobile clients pointed at it instead of somebody else's cloud.",
+  "repo": "nextcloud/server",
+  "site": "https://nextcloud.com",
+  "category": "files-docs",
+  "replaces": [
+    {
+      "saas": "dropbox",
+      "plan": "Plus",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 4,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 3
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 300,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/nextcloud/docker/blob/master/.examples/docker-compose/insecure/mariadb/apache/compose.yaml",
+  "local": {
+    "fit": "caveat",
+    "note": "Only this computer can reach it, so the phone app and the desktop client sync from here and nowhere else, and only while the machine is awake."
+  },
+  "quote": {
+    "text": "Nextcloud needs a minimum of 128MB RAM per process, and we recommend a minimum of 512MB RAM per process.",
+    "source": "Nextcloud 34 admin manual, System requirements",
+    "url": "https://docs.nextcloud.com/server/34/admin_manual/installation/system_requirements.html",
+    "checkedOn": "2026-08-05"
+  },
+  "citations": [
+    {
+      "claim": "The image runs the install itself when NEXTCLOUD_ADMIN_USER and NEXTCLOUD_ADMIN_PASSWORD are set before the first launch, and that same branch is the only place NEXTCLOUD_TRUSTED_DOMAINS is ever applied.",
+      "url": "https://github.com/nextcloud/docker/blob/master/docker-entrypoint.sh"
+    },
+    {
+      "claim": "Upstream's own compose example runs the scheduler as a second copy of the same image with its entrypoint set to /cron.sh, and notes that its volumes must match the app container's.",
+      "url": "https://github.com/nextcloud/docker/blob/master/.examples/docker-compose/insecure/mariadb/apache/compose.yaml"
+    },
+    {
+      "claim": "Nextcloud 34 lists MariaDB 11.8 as its recommended database version and asks for a minimum of 512 MB of RAM per PHP process.",
+      "url": "https://docs.nextcloud.com/server/34/admin_manual/installation/system_requirements.html"
+    },
+    {
+      "claim": "Behind a proxy that terminates TLS, overwriteprotocol sets the scheme Nextcloud builds its URLs with, and trusted_proxies accepts IPv4 ranges in CIDR notation.",
+      "url": "https://docs.nextcloud.com/server/34/admin_manual/configuration_server/reverse_proxy_configuration.html"
+    },
+    {
+      "claim": "Nextcloud always treats localhost as a trusted domain whatever the trusted_domains list contains, which is why the local path needs no hostname registered anywhere.",
+      "url": "https://github.com/nextcloud/server/blob/v34.0.2/lib/private/Security/TrustedDomainHelper.php"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "You own the backups, and here that means two artifacts taken at one moment: a MariaDB dump and the file tree. Restore one without the other and Nextcloud shows an index full of files the disk does not have.",
+    "Four containers, and one of them exists only to run a scheduler every five minutes. When background jobs stop, nothing errors: previews stop appearing, shares stop expiring, and you find out weeks later from a line in the admin overview.",
+    "It is a platform with an app store, and the temptation is to switch everything on. Every app you enable is code you now run, memory you now spend, and one more thing that can block the next major upgrade.",
+    "Major versions land about twice a year and the container refuses to skip one, so an instance left alone for two years is a staircase of upgrades rather than a single pull.",
+    "What Dropbox was selling that you now do yourself: the uptime, the bandwidth bill when someone downloads a 4 GB share, and the promise that a link you sent last year still opens for a stranger on the other side of the world."
+  ],
+  "sources": {
+    "compose": "https://github.com/nextcloud/docker",
+    "caddy": "https://docs.nextcloud.com/server/34/admin_manual/configuration_server/reverse_proxy_configuration.html",
+    "install": "https://docs.nextcloud.com/server/34/admin_manual/installation/system_requirements.html",
+    "entrypoint": "https://github.com/nextcloud/docker/blob/master/docker-entrypoint.sh",
+    "cron": "https://docs.nextcloud.com/server/34/admin_manual/configuration_server/background_jobs_configuration.html",
+    "image": "https://github.com/nextcloud/docker/blob/master/34/apache/Dockerfile",
+    "database": "https://mariadb.com/docs/server/server-management/automated-mariadb-deployment-and-administration/docker-and-mariadb/using-healthcheck-sh",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "immich",
+    "docmost",
+    "stirling-pdf"
+  ],
+  "pagePriority": 1,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "a97b157de8d0ed95bf4484fbeca44deedd18bc3f5df6068179bb66afa4c07765"
+}

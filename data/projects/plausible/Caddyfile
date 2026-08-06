@@ -1,0 +1,26 @@
+# Plausible CE · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://github.com/plausible/community-edition/wiki/reverse-proxy and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy Prompt Zero installed, with
+# <DOMAIN> replaced by the hostname pointed at this box, which is also BASE_URL
+# in .env and is baked into the tracking snippet on every page you measure. The
+# dashboard is a LiveView: reverse_proxy passes its WebSocket upgrade unaided.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+	# No X-Frame-Options: Plausible's shared dashboards are meant to be iframed.
+
+	# 8093 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8093
+}

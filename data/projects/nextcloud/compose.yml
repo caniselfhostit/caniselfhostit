@@ -1,0 +1,98 @@
+# Nextcloud · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   image README ..... https://github.com/nextcloud/docker
+#   requirements ..... https://docs.nextcloud.com/server/34/admin_manual/installation/system_requirements.html
+#   reverse proxy .... https://docs.nextcloud.com/server/34/admin_manual/configuration_server/reverse_proxy_configuration.html
+#
+# Four services. `app` is Apache with PHP; `cron` is the same image with its
+# entrypoint replaced by the /cron.sh it ships, sharing a volume because the
+# jobs must see the tree the web process writes. MariaDB 11.8 is what the
+# Nextcloud 34 requirements page recommends; Redis holds the file lock. Every
+# ${...} comes from /srv/nextcloud/.env, mode 600. Digests read 2026-08-05.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  db:
+    image: mariadb:11.8.8@sha256:d9f7eb2637296652f24b484afd5d246f759f49f5babcadc6a9e344c9acb75fbf
+    container_name: nextcloud-db
+    restart: unless-stopped
+    command: --transaction-isolation=READ-COMMITTED
+    environment:
+      MARIADB_DATABASE: nextcloud
+      MARIADB_USER: nextcloud
+      MARIADB_PASSWORD: ${MYSQL_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_DISABLE_UPGRADE_BACKUP: "1"
+    volumes:
+      - /srv/nextcloud/mariadb:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      retries: 20
+    # No `ports:` at all: 3306 is reachable only from the other containers.
+
+  redis:
+    image: redis:8.10.0-alpine@sha256:978f0e01593e65eed801f2402944efcd936d43b5027e4908a7897baf88ed6241
+    container_name: nextcloud-redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 12
+    # No `ports:` and no volume: locks and cache, on a private network.
+
+  app:
+    image: nextcloud:34.0.2-apache@sha256:d7666d54d87c58d52869ddda36d1acbd4a7f53faf8ab6b91293daf204f3434e8
+    container_name: nextcloud-app
+    restart: unless-stopped
+    environment:
+      MYSQL_HOST: db
+      MYSQL_DATABASE: nextcloud
+      MYSQL_USER: nextcloud
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      REDIS_HOST: redis
+      # Present before the first launch, these three make the entrypoint
+      # install Nextcloud itself, so no setup wizard ever sits open.
+      NEXTCLOUD_ADMIN_USER: ${NEXTCLOUD_ADMIN_USER}
+      NEXTCLOUD_ADMIN_PASSWORD: ${NEXTCLOUD_ADMIN_PASSWORD}
+      NEXTCLOUD_TRUSTED_DOMAINS: ${NEXTCLOUD_TRUSTED_DOMAINS}
+      # Caddy terminates TLS and speaks plain http here. Without these,
+      # every link Nextcloud builds points at http and login loops.
+      OVERWRITEPROTOCOL: https
+      OVERWRITECLIURL: ${OVERWRITECLIURL}
+      # The only client address this container sees is Docker's bridge
+      # gateway. Trust it and the visitor arrives in X-Forwarded-For.
+      TRUSTED_PROXIES: 172.16.0.0/12
+    volumes:
+      # NOTE: the `volumes` of `app` and `cron` have to match.
+      - /srv/nextcloud/html:/var/www/html
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8099.
+      - "127.0.0.1:8099:80"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  cron:
+    image: nextcloud:34.0.2-apache@sha256:d7666d54d87c58d52869ddda36d1acbd4a7f53faf8ab6b91293daf204f3434e8
+    container_name: nextcloud-cron
+    restart: unless-stopped
+    # /cron.sh and a crontab running cron.php every five minutes ship in
+    # the image; the entrypoint swap makes this copy the scheduler.
+    entrypoint: /cron.sh
+    environment:
+      # cron.php reads the same runtime config the web process reads: let
+      # these drift and jobs take another lock and build dead links.
+      REDIS_HOST: redis
+      OVERWRITEPROTOCOL: https
+      OVERWRITECLIURL: ${OVERWRITECLIURL}
+    volumes:
+      - /srv/nextcloud/html:/var/www/html
+    depends_on:
+      app:
+        condition: service_started

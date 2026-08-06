@@ -1,0 +1,75 @@
+# Immich · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker compose install . https://docs.immich.app/install/docker-compose
+#   variable reference ..... https://docs.immich.app/install/environment-variables
+#   backup and restore ..... https://docs.immich.app/administration/backup-and-restore
+#
+# Four services, because that is what Immich is: the server, a machine-learning
+# worker doing search and faces on the CPU, a Valkey job queue, and PostgreSQL.
+# The database is upstream's own build, not stock postgres, because Immich
+# keeps one vector per photo in the VectorChord extension. Every tag and digest
+# is upstream's pin for v3.1.0, re-read from the registries on 2026-08-05; the
+# valkey `9` tag has moved since. All four images publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+name: immich
+
+services:
+  database:
+    image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23
+    container_name: immich_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_INITDB_ARGS: "--data-checksums"
+    volumes:
+      - /srv/immich/postgres:/var/lib/postgresql/data
+    shm_size: 128mb
+    # The image ships its own tuned postgresql.conf and health script, so
+    # nothing here overrides either. No `ports:`: 5432 stays container-only.
+
+  redis:
+    image: docker.io/valkey/valkey:9@sha256:8e8d64b405ce18f41b8e5ee20aa4687a8ed0022d1298f2ce31cdcf3a76e09411
+    container_name: immich_redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping || exit 1"]
+      interval: 10s
+      retries: 12
+    # No `ports:` either. The queue is spoken between containers only.
+
+  immich-machine-learning:
+    image: ghcr.io/immich-app/immich-machine-learning:v3.1.0@sha256:5a0839dc5303cd7215bcd2180a26aed3af41675aefb3e75e5157e9f10ad16e6e
+    container_name: immich_machine_learning
+    restart: unless-stopped
+    volumes:
+      - model-cache:/cache
+    # No env_file: it reads no DB_ or REDIS_ variable, so the password needs no
+    # third copy. The service name is load-bearing: the server looks for the
+    # models at immich-machine-learning:3003.
+
+  immich-server:
+    image: ghcr.io/immich-app/immich-server:v3.1.0@sha256:b434cb9287eea1471c9974845914d4dd328c9c2d652e446ed4930f99944f0ceb
+    container_name: immich_server
+    restart: unless-stopped
+    env_file: /srv/immich/.env
+    environment:
+      DB_HOSTNAME: database
+      REDIS_HOSTNAME: redis
+    volumes:
+      # Originals, thumbnails, transcodes and the nightly dumps all land here.
+      - /srv/immich/data:/data
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8098.
+      - "127.0.0.1:8098:2283"
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  model-cache:

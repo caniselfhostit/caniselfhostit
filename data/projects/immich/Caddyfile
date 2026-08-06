@@ -1,0 +1,31 @@
+# Immich · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.immich.app/administration/reverse-proxy,
+# https://caddyserver.com/docs/automatic-https and
+# https://caddyserver.com/docs/caddyfile/directives/encode
+#
+# Append this to /etc/caddy/Caddyfile, with <DOMAIN> replaced by the hostname
+# pointed at this box. Upstream states Immich cannot be served from a sub-path.
+
+<DOMAIN> {
+	# Caddy's encode touches only the text-like content types in its default
+	# matcher, so the web app is compressed and photos go through untouched.
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8098 is the loopback port compose publishes here. It is not a container
+	# port and it is not open in the firewall. Caddy sets three of the four
+	# headers upstream asks for, so only X-Real-IP is written. It also applies no
+	# request-body limit and no proxy read timeout, which is what an nginx install
+	# has to fix before the first 4 GB video upload.
+	reverse_proxy 127.0.0.1:8098 {
+		header_up X-Real-IP {remote_host}
+	}
+}

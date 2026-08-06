@@ -1,0 +1,91 @@
+{
+  "slug": "grist",
+  "name": "Grist",
+  "tagline": "A spreadsheet with a real database underneath: Python formulas, linked records and row-level access rules, in one container.",
+  "repo": "gristlabs/grist-core",
+  "site": "https://www.getgrist.com",
+  "category": "work-pm",
+  "replaces": [
+    {
+      "saas": "airtable",
+      "plan": "Team",
+      "seatsAssumed": 5
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "Apache-2.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/gristlabs/grist-core/blob/v1.7.17/docker-compose-examples/grist-traefik-basic-auth/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Everything answers at http://localhost:8101, which means this computer and nowhere else, so the colleague you wanted to share a table with cannot open it and neither can your phone."
+  },
+  "quote": {
+    "text": "It is imperative that this header cannot be spoofed by the user, since Grist will trust whatever is in it.",
+    "source": "grist-core README, forward authentication variables",
+    "url": "https://github.com/gristlabs/grist-core/blob/v1.7.17/README.md",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "grist-core is released under the Apache License, Version 2.0, which upstream describes as an OSI-approved free software license.",
+      "url": "https://github.com/gristlabs/grist-core/blob/v1.7.17/README.md"
+    },
+    {
+      "claim": "Grist expects to know who is modifying a document and runs in a limited anonymous mode until it does, so upstream directs anyone accessing it across the public internet to connect a sign-on service.",
+      "url": "https://support.getgrist.com/self-managed/"
+    },
+    {
+      "claim": "The second forward-auth mode upstream documents is HTTP Basic Auth at the proxy plus a header set to the logged-in user, with GRIST_IGNORE_SESSION set so the header is checked on every request.",
+      "url": "https://support.getgrist.com/install/forwarded-headers/"
+    },
+    {
+      "claim": "Upstream ships a compose example that authenticates Grist with a reverse proxy's basic auth middleware, calls that setup acceptable on the public internet, and notes it gives no way to sign out.",
+      "url": "https://github.com/gristlabs/grist-core/blob/v1.7.17/docker-compose-examples/grist-traefik-basic-auth/README.md"
+    },
+    {
+      "claim": "Documents are .grist SQLite files under /persist/docs and the account table is /persist/home.sqlite3, so a single-server install runs no separate database process.",
+      "url": "https://support.getgrist.com/self-managed/"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The authentication is the install. grist-core ships no username-and-password login of its own, so the login box in front of it is Caddy's, checking one credential this install generates. That works and upstream documents it, and it also means there is no sign-out button, because browsers do not offer one for this kind of login: closing every window of the browser is the sign-out.",
+    "You get the spreadsheet-database, not the rest of Airtable. Grids, column types, formulas written in Python, linked records between tables, and access rules down to the row are all here. Automations, Interfaces, the app marketplace and the two-way sync connectors are not, and no setting turns them on.",
+    "Formulas are Python that runs on your server. This install turns on the gvisor sandbox upstream ships, which needs a kernel that will host it, and the container refuses to start rather than run formulas unsandboxed if it will not. That is the correct failure, and it is the one most likely to interrupt your evening.",
+    "One credential is one person. Everything signed in through that login box is the same Grist user, so a second colleague means handing over your password, not adding an account. Real per-person accounts need an identity provider, which is a different install than this one.",
+    "You own the backups, and they need the container stopped. The documents are SQLite files under /srv/grist/persist, and a copy taken while Grist is writing is not a backup."
+  ],
+  "sources": {
+    "compose": "https://support.getgrist.com/self-managed/",
+    "caddy": "https://support.getgrist.com/install/forwarded-headers/",
+    "install": "https://github.com/gristlabs/grist-core/blob/v1.7.17/README.md",
+    "auth": "https://github.com/gristlabs/grist-core/blob/v1.7.17/docker-compose-examples/grist-traefik-basic-auth/README.md",
+    "health": "https://github.com/gristlabs/grist-core/blob/v1.7.17/app/server/lib/FlexServer.ts",
+    "image": "https://github.com/gristlabs/grist-core/blob/v1.7.17/Dockerfile",
+    "basicauth": "https://caddyserver.com/docs/caddyfile/directives/basic_auth"
+  },
+  "related": [
+    "vikunja",
+    "activepieces",
+    "docmost"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "226d0825c064b50300eaf5aa006215a5a1333e746c5c3a01f0df5a12d3cf812d"
+}

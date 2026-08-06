@@ -1,0 +1,33 @@
+# Vikunja · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://vikunja.io/docs/reverse-proxy/ and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also VIKUNJA_SERVICE_PUBLICURL in .env and the two have to agree: Vikunja
+# refuses to start when the public URL is empty, and it builds the links it
+# hands out from that value.
+
+<DOMAIN> {
+	# One origin serves the web interface and the JSON API, so there is no
+	# second route and no CORS to arrange. Frames are denied because nothing
+	# here is meant to be embedded, and the referrer is trimmed because task
+	# and project names travel inside these URLs.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	encode zstd gzip
+
+	# Caddy imposes no request body limit of its own, so attachments up to
+	# Vikunja's own 20MB ceiling pass through with no size directive here.
+	# 8097 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8097
+}

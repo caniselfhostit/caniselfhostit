@@ -1,0 +1,59 @@
+{
+  "slug": "todoist",
+  "name": "Todoist",
+  "domain": "todoist.com",
+  "whyPeoplePay": "Todoist sells the moment of capture. The thing arrives in your head on a train platform, and there is a box on the phone in your hand that takes it in two seconds and files it somewhere you will see it again. Everything on the paid tiers, the project ceiling, the filter views, the reminders, exists to protect that reflex, and the reason people renew is that they have stopped thinking about where a task goes.",
+  "plans": [
+    {
+      "name": "Beginner",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Free. Up to 5 active personal projects, 3 filter views, 5 MB uploads and 7 days of activity history."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 7,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$60 a year on the annual plan, which the pricing page shows as $5 a month billed yearly. Raised from $5 monthly on 10 December 2025; anyone continuously subscribed since before that sits on the Pro Legacy price."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": 10,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$8 per user per month on the annual plan, $96 per user per year. Raised from $8 monthly on 10 December 2025."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-05",
+    "source": "https://www.todoist.com/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The pricing page renders its figures client-side and serves no numbers in the HTML, so the amounts here were read the same day from Todoist's own help centre, which states the Pro plan at $7 a month or $60 a year and the Business plan at $10 per user a month or $8 billed yearly, both effective 10 December 2025. Monthly-billed figures are recorded because the annual rates are a roughly 30 percent discount and quoting only those understates what a month-to-month subscriber pays. Confidence is medium rather than high because the vendor's own pricing page could not be read directly."
+  },
+  "ranked": [
+    {
+      "project": "vikunja",
+      "rationale": "The only one here that is a to-do list first and a project board second, which is what a Todoist subscriber is actually replacing. It is one container with an embedded database, so the install is short, and the project ceiling and the filter limit that push people onto Pro are not there at all. Two things do not come across. Reminders will not chase you unless you give it a mail server or a webhook, and there is no voice capture. Its Todoist importer is real, and turning it on means registering a developer app in your own Todoist account first."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "PLANKA",
+      "repo": "https://github.com/plankanban/planka",
+      "note": "A Trello-shaped kanban board, actively developed, but no longer open source: since version 2 it ships under the PLANKA Community License, a fair-use licence with files marked Pro/Enterprise carved out for a paid commercial licence. It is also a board rather than a personal task list, so it answers a different question than Todoist does."
+    },
+    {
+      "name": "Donetick",
+      "repo": "https://github.com/donetick/donetick",
+      "note": "AGPL-3.0, moving fast, and built around recurring chores and who is next in the rotation rather than around a single person's inbox. Still on 0.x version numbers with beta tags between stable releases, which is fine for a household board and early for the list your working week depends on."
+    },
+    {
+      "name": "Tracks",
+      "repo": "https://github.com/TracksApp/tracks",
+      "note": "GPL-2.0, and the closest thing here to a straight Getting Things Done implementation, with contexts and next actions rather than boards. Commits continue through 2026, but the last tagged release was v2.7.1 in July 2024, so it is a Rails application being maintained rather than developed."
+    }
+  ]
+}

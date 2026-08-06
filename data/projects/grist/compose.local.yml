@@ -1,0 +1,43 @@
+# Grist · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   self-managed ....... https://support.getgrist.com/self-managed/
+#   env var reference .. https://github.com/gristlabs/grist-core/blob/v1.7.17/README.md
+#   upstream examples .. https://github.com/gristlabs/grist-core/tree/v1.7.17/docker-compose-examples
+#
+# One service on the computer you are sitting at. Every path is relative to
+# ~/selfhost/grist/, which lets one file work on macOS, Linux and Windows.
+# ./persist stays a bind mount rather than a named volume, because upstream's
+# own documented command mounts a home directory there and because a reader
+# should be able to see their .grist files in Finder or Explorer. Nothing here
+# is reachable from another device, so there is no proxy to authenticate at and
+# no forward-auth header: GRIST_DEFAULT_EMAIL is the single identity Grist
+# attributes edits to, which is the mode upstream documents for a machine with
+# no sign-in configured. Digest read from Docker Hub on 2026-08-06; the image
+# publishes amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  grist:
+    image: gristlabs/grist-oss:1.7.17@sha256:b87ec1c3b62ca99f872611a9aa71ca33ee5fef9f40e0921e0beed878e5083473
+    container_name: grist
+    restart: unless-stopped
+    environment:
+      # Read from ./.env, which is mode 600 and holds the one generated secret.
+      GRIST_SESSION_SECRET: ${GRIST_SESSION_SECRET}
+      # The address edits are attributed to. Upstream's own default, kept
+      # because nothing off this computer can reach the port below.
+      GRIST_DEFAULT_EMAIL: you@example.com
+      APP_HOME_URL: http://localhost:8101
+      # One team site, so no /o/<team> prefix turns up in any URL.
+      GRIST_SINGLE_ORG: grist
+      # Skip the first-run Quick setup gate, which would otherwise ask for a
+      # boot key pasted out of the container log.
+      GRIST_IN_SERVICE: "true"
+    volumes:
+      # The image chowns everything under /persist to its own user on start,
+      # then drops out of root, so this directory is left alone after step 3.
+      - ./persist:/persist
+    ports:
+      # Loopback only: no other device on the wifi can reach 8101.
+      - "127.0.0.1:8101:8484"

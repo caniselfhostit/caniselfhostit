@@ -1,0 +1,65 @@
+# Ghost · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker install ..... https://docs.ghost.org/install/docker/
+#   image reference .... https://hub.docker.com/_/ghost
+#   config reference ... https://docs.ghost.org/config/
+#   supported databases  https://docs.ghost.org/faq/supported-databases/
+#   mysql image ........ https://hub.docker.com/_/mysql
+#
+# Two services on your own computer, every path relative to ~/selfhost/ghost/ so
+# one file works on macOS, Linux and Windows. SQLite is not an option: upstream
+# states MySQL 8 is the only database it supports in production. MySQL's data
+# directory is a named volume because the image chowns it to its own uid, which
+# a home-directory bind mount cannot allow on Windows; Ghost's content stays a
+# bind mount so images and themes show up in Finder or Explorer. Secrets come
+# from ./.env, read when Compose runs from this folder. `url` is
+# http://localhost:8100, so links resolve here and nowhere else. Digests read
+# 2026-08-05; both images publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  mysql:
+    image: mysql:8.4.11@sha256:b3b90af2a6552ae30c266fdb7d5dd55f3afb72404bb78d37fe8a23eb857fd3fb
+    container_name: ghost-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ghost
+      MYSQL_USER: ghost
+      MYSQL_PASSWORD: ${GHOST_DB_PASSWORD}
+    volumes:
+      - ghost-mysql-data:/var/lib/mysql
+    healthcheck:
+      # `$$` sends a literal dollar to the container instead of interpolating.
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 10s
+      retries: 30
+      start_period: 60s
+    # No `ports:`: 3306 is reachable only from the other container.
+
+  ghost:
+    image: ghost:6.56.0-alpine@sha256:57cd95050d3ca05a098c9ae1275c8d62ace1c844aa653494204d1c0e77c0900a
+    container_name: ghost
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      url: ${GHOST_URL}
+      # Two underscores separate nested config levels. Documented mapping.
+      database__client: mysql
+      database__connection__host: mysql
+      database__connection__user: ghost
+      database__connection__password: ${GHOST_DB_PASSWORD}
+      database__connection__database: ghost
+    volumes:
+      # Posts live in MySQL. Images, themes and uploads live here.
+      - ./content:/var/lib/ghost/content
+    ports:
+      # Loopback only: no other device on the wifi can reach 8100.
+      - "127.0.0.1:8100:2368"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  ghost-mysql-data:
