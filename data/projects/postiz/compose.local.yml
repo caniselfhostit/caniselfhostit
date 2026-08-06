@@ -1,0 +1,117 @@
+# Postiz · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   compose install ....... https://docs.postiz.com/installation/docker-compose
+#   variable reference .... https://docs.postiz.com/configuration/reference
+#   system requirements ... https://docs.postiz.com/installation/system-requirements
+#   temporal, sql only .... https://github.com/temporalio/docker-compose/blob/main/docker-compose-postgres.yml
+#
+# Five services on the computer you are sitting at, every path relative to
+# ~/selfhost/postiz/ so one file works on macOS, Linux and Windows. Temporal has
+# been required since v2.12.0 and keeps its workflow history in a database of
+# its own, so the two PostgreSQL services differ. Three named volumes, because
+# PostgreSQL and Redis chown their data directory to a uid of their own and
+# Docker Desktop cannot grant that on a Windows home-directory bind mount;
+# uploads and config stay relative binds. Digests read 2026-08-06, multi-arch.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+name: postiz
+
+services:
+  postiz-postgres:
+    image: postgres:16.14-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: postiz
+      POSTGRES_USER: postiz
+      POSTGRES_PASSWORD: ${POSTIZ_DB_PASSWORD}
+    volumes:
+      - postiz-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postiz -d postiz"]
+      interval: 10s
+      retries: 12
+    # No `ports:`: 5432 is reachable only from the other containers.
+
+  postiz-redis:
+    image: redis:7.4.10-alpine@sha256:e7723ff73d963f5cc6d9c4643ea3d989527a402a319239054e9472a7fb9219a2
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - postiz-redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 12
+
+  temporal-postgres:
+    image: postgres:16.14-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: temporal
+      POSTGRES_PASSWORD: ${TEMPORAL_DB_PASSWORD}
+    volumes:
+      - temporal-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U temporal"]
+      interval: 10s
+      retries: 12
+
+  temporal:
+    image: temporalio/auto-setup:1.28.1@sha256:607d68caa111338d754771efb876c92dfcdae06d056e4530bb31cd0f37406e6a
+    restart: unless-stopped
+    environment:
+      # postgres12 names the driver, not a version floor.
+      DB: postgres12
+      DB_PORT: "5432"
+      POSTGRES_USER: temporal
+      POSTGRES_PWD: ${TEMPORAL_DB_PASSWORD}
+      POSTGRES_SEEDS: temporal-postgres
+    # No dynamic-config mount: the image ships its own, and Postiz overrides
+    # nothing in it.
+    healthcheck:
+      test: ["CMD", "temporal", "operator", "cluster", "health", "--address", "temporal:7233"]
+      interval: 10s
+      retries: 30
+    depends_on:
+      temporal-postgres:
+        condition: service_healthy
+
+  postiz:
+    image: ghcr.io/gitroomhq/postiz-app:v2.23.0@sha256:785f97312f66a347fb96cdccc4ded5a33ced69a672c89a9adc8054e7d6a21dc5
+    restart: unless-stopped
+    environment:
+      # /api because the container's nginx routes /api/ to the backend.
+      FRONTEND_URL: "http://localhost:8111"
+      NEXT_PUBLIC_BACKEND_URL: "http://localhost:8111/api"
+      BACKEND_INTERNAL_URL: "http://localhost:3000"
+      DATABASE_URL: "postgresql://postiz:${POSTIZ_DB_PASSWORD}@postiz-postgres:5432/postiz"
+      REDIS_URL: "redis://postiz-redis:6379"
+      JWT_SECRET: ${JWT_SECRET}
+      TEMPORAL_ADDRESS: "temporal:7233"
+      # RUN_CRON registers the workflows that post on a schedule.
+      IS_GENERAL: "true"
+      RUN_CRON: "true"
+      # One signup while the database is empty, then the page shuts.
+      DISABLE_REGISTRATION: "true"
+      STORAGE_PROVIDER: "local"
+      UPLOAD_DIRECTORY: "/uploads"
+      NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY: "/uploads"
+    volumes:
+      - ./config:/config
+      - ./uploads:/uploads
+    ports:
+      # Loopback only: no other device on the wifi can reach 8111.
+      - "127.0.0.1:8111:5000"
+    depends_on:
+      postiz-postgres:
+        condition: service_healthy
+      postiz-redis:
+        condition: service_healthy
+      temporal:
+        condition: service_healthy
+
+volumes:
+  postiz-pgdata:
+  postiz-redisdata:
+  temporal-pgdata:

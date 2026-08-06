@@ -1,0 +1,32 @@
+# WeKan · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://github.com/wekan/wekan/blob/v10.71/docs/Webserver/Caddy.md and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also ROOT_URL in .env and the two have to say exactly the same thing: WeKan
+# is a Meteor application, so the browser opens its live data socket at
+# whatever ROOT_URL claims, and a mismatch gives a sign-in screen that works
+# above boards that never finish loading.
+
+<DOMAIN> {
+	# Nothing here is meant to be embedded in another site, and board and
+	# card names travel inside these URLs, so the referrer is trimmed.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	encode zstd gzip
+
+	# 8104 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall. The live data socket
+	# rides the same route: Caddy performs the WebSocket upgrade with no extra
+	# directive, which is why there is no websocket stanza here.
+	reverse_proxy 127.0.0.1:8104
+}

@@ -1,0 +1,73 @@
+{
+  "slug": "intercom",
+  "name": "Intercom",
+  "domain": "intercom.com",
+  "whyPeoplePay": "Intercom sells one inbox for every way a customer might reach you, and a messenger that has been on enough websites that people recognise it and expect an answer. The seat price buys the shared inbox, the workflows and the help center; the part they are betting on now is Fin, an AI agent that closes tickets before a human sees them, billed per resolution rather than per seat. You are paying for an answering service that scales without hiring.",
+  "plans": [
+    {
+      "name": "Essential",
+      "priceMonthly": 39,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$29 per seat/mo on annual billing, which is the figure the pricing page leads with. Fin outcomes are billed on top."
+    },
+    {
+      "name": "Advanced",
+      "priceMonthly": 99,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$85 per seat/mo on annual billing. Adds multiple inboxes, workflow automation, round robin assignment and a multilingual help center, and includes 20 free Lite seats."
+    },
+    {
+      "name": "Expert",
+      "priceMonthly": 139,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$132 per seat/mo on annual billing. Adds SSO, HIPAA support, SLAs and multibrand, and includes 50 free Lite seats."
+    },
+    {
+      "name": "Fin AI Agent",
+      "priceMonthly": null,
+      "unit": "usage",
+      "seatsIncluded": null,
+      "note": "Not a seat plan. The pricing page states $0.99 per outcome, meaning a conversation Fin resolves, on every tier and also standalone against another helpdesk. Standalone carries a minimum monthly commitment the page does not name and routes you to sales."
+    },
+    {
+      "name": "Copilot",
+      "priceMonthly": 35,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "An add-on stacked on a seat, not a plan of its own. $29 per agent/mo on annual billing, after a free allowance of 10 conversations a month per agent."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://www.intercom.com/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Read from the pricing page on 2026-08-06 and corroborated by search, because the page renders its numbers in JavaScript and leads with the annual-billed rate for the three seat plans. The recorded figures are the monthly-billed prices; the annual equivalents are in each plan note. What a reader actually pays is a seat price plus Fin usage, and the Fin half is the one that moves: a busy month of resolved conversations can exceed the seat bill, and the pricing page names no cap."
+  },
+  "ranked": [
+    {
+      "project": "chatwoot",
+      "rationale": "The closest thing to a like-for-like swap that runs on one server you rent. You keep the shape people are paying for, a website messenger feeding a shared agent inbox with canned replies, labels, automation rules and a help center, and the per-seat meter stops: the community edition puts no limit on agents or conversations. What you take on is the four containers, the PostgreSQL you now back up, and the honest gap where Fin used to be, because the AI agent, the SLA policies, custom roles and SAML are on the other side of Chatwoot's own enterprise licence."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Zammad",
+      "repo": "https://github.com/zammad/zammad",
+      "note": "AGPL-3.0, released steadily, and the strongest of these at the ticketing half: email threading, escalation rules and a text module system that people who run real service desks are attached to. It is a different centre of gravity, though. Zammad starts from the ticket and adds chat; Intercom starts from the messenger, and so does Chatwoot. Someone leaving Intercom for the inbox will find Zammad heavier than the thing they left, and it wants Elasticsearch to be pleasant, which is a fifth container."
+    },
+    {
+      "name": "Libredesk",
+      "repo": "https://github.com/abhinavxd/libredesk",
+      "note": "AGPL-3.0, a single Go binary plus PostgreSQL, tagging releases most months, and genuinely nice to operate: two containers instead of four. It is younger than everything else here, and the live-chat widget and the help center are not yet the finished product Chatwoot ships. Worth watching closely, and a fair pick if your Intercom use was really shared email rather than the messenger."
+    },
+    {
+      "name": "Papercups",
+      "repo": "https://github.com/papercups-io/papercups",
+      "note": "MIT, an Elixir messenger that was the obvious open answer to Intercom in 2021, and dormant since: the last commit lands in May 2022 and the only tagged release is v1.0.0 from 2020. The repository is not archived, so it still turns up in comparisons. Do not start here. An unmaintained chat widget embedded on your public site is a security surface you have stopped patching."
+    }
+  ]
+}

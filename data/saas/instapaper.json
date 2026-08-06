@@ -1,0 +1,56 @@
+{
+  "slug": "instapaper",
+  "name": "Instapaper",
+  "domain": "instapaper.com",
+  "whyPeoplePay": "Instapaper sells the calmest reading surface anyone has built for the web, and then sells the memory behind it. The free tier already saves unlimited articles and syncs them across devices; Premium is bought for full-text search, a permanent archive of the pages themselves, and the text-to-speech and Kindle handoff that turn a saved article into something you can finish while driving. What you are really paying for is that the copy is still there in five years, which is a promise about the company rather than about the software.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Unlimited saved articles, sync across devices, folders and third-party app access, with notes capped at five a month.",
+      "source": "https://www.instapaper.com/premium",
+      "checkedOn": "2026-08-06"
+    },
+    {
+      "name": "Premium",
+      "priceMonthly": 5.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Monthly-billed figure. The page also sells it at $59.99 a year, which works out at about $5.00 a month. Adds full-text search, the permanent archive, unlimited notes, PDF reading, Kindle delivery, speed reading and an ad-free site.",
+      "source": "https://www.instapaper.com/premium",
+      "checkedOn": "2026-08-06"
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://www.instapaper.com/premium",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "Both figures read off instapaper.com/premium on 2026-08-06. The monthly-billed price is the one recorded, with the annual rate in the plan note, because a subscriber who pays month to month pays $5.99 and a savings claim built on the annual rate would understate that."
+  },
+  "ranked": [
+    {
+      "project": "wallabag",
+      "rationale": "The only one of these built for the same job, which is reading later rather than filing links. It keeps its own parsed copy of every article, so a page that goes behind a paywall or disappears is still readable, and it has the client story that makes a read-later tool usable at all: an Android app, browser extensions, an ePub and Kindle-format export, and a plugin shipped inside KOReader so a Kobo or Kindle running it syncs directly. It also ships an importer that takes the CSV export from your Instapaper settings page, so the move is an upload rather than a rewrite. What you give up is Instapaper's text-to-speech and its ad-free hosted reader, and what you take on is a PHP application that rebuilds its cache on every restart and makes you wait for it. Worth remembering while you compare: Omnivore's hosted read-later service closed in November 2024 and the software carried on as a self-hosted-only project, which is the entire argument for a reading list you can run yourself."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Readeck",
+      "repo": "https://codeberg.org/readeck/readeck",
+      "note": "The closest thing to a modern Instapaper in feel: a single Go binary, AGPL-3.0, with highlights, labels and collections, and a released 0.22.3 in April 2026. It is developed on Codeberg rather than GitHub, and the readeck/readeck repository on GitHub is an empty placeholder pointing at readeck.org, so judge it by the Codeberg history. Not tested here mainly because the mobile and e-reader client story is thinner than wallabag's."
+    },
+    {
+      "name": "Shiori",
+      "repo": "https://github.com/go-shiori/shiori",
+      "note": "MIT, a single Go binary, and its README describes it as a simple clone of Pocket. It archives readable content by default and has beta Firefox and Chrome extensions. Development is real but unhurried: v1.8.0 shipped in September 2025 and the repository was still being pushed to in mid-2026. Closer to a bookmark manager with a reader than to a reading app."
+    },
+    {
+      "name": "Karakeep",
+      "repo": "https://github.com/karakeep-app/karakeep",
+      "note": "AGPL-3.0, and the busiest project on this list, with v0.33.1 in August 2026. It was called Hoarder until the rename and its own README still says so. It bookmarks links, notes, images and PDFs, tags them with an AI model you point it at, and full-text searches the lot, which makes it a bigger and heavier thing than a reading list. Left off the ranked list because the install is a stack, not a container."
+    }
+  ]
+}

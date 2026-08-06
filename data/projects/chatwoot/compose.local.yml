@@ -1,0 +1,87 @@
+# Chatwoot · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker deployment .. https://developers.chatwoot.com/self-hosted/deployment/docker
+#   variable reference . https://developers.chatwoot.com/self-hosted/configuration/environment-variables
+#   requirements ....... https://developers.chatwoot.com/self-hosted/deployment/requirements
+#
+# Four services, every path relative to ~/selfhost/chatwoot/, so one file works
+# on macOS, Linux and Windows. The database is a named volume because the
+# PostgreSQL image chowns its data directory to its own uid, which a
+# home-directory bind mount cannot allow on Windows; that image is pgvector's
+# because Chatwoot's schema turns on `vector`; -ce is the community edition,
+# built with enterprise/ deleted. Digests read 2026-08-06, amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+# Rails and Sidekiq share an image and an environment; compose ignores x- keys.
+x-chatwoot: &chatwoot
+  image: chatwoot/chatwoot:v4.16.2-ce@sha256:7ee85a208147a86188ffc0e7fafafd2e1c0403b4ad6aea9e31f566662cce1d2f
+  restart: unless-stopped
+  env_file: ./.env
+  environment:
+    RAILS_ENV: production
+    NODE_ENV: production
+    INSTALLATION_ENV: docker
+    POSTGRES_HOST: postgres
+    POSTGRES_USERNAME: chatwoot
+    POSTGRES_DATABASE: chatwoot_production
+    REDIS_URL: redis://redis:6379
+    # Signup stays shut: one account, made once through the onboarding screen.
+    ENABLE_ACCOUNT_SIGNUP: "false"
+    ACTIVE_STORAGE_SERVICE: local
+  volumes:
+    - ./storage:/app/storage
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
+services:
+  postgres:
+    image: pgvector/pgvector:0.8.6-pg16@sha256:a36250871de0833b8757561c72f2477ef1ddd1101afa4e617fb552e0de514c6b
+    container_name: chatwoot-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: chatwoot_production
+      POSTGRES_USER: chatwoot
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - chatwoot-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chatwoot -d chatwoot_production"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other containers.
+
+  redis:
+    image: redis:8.10.0-alpine@sha256:978f0e01593e65eed801f2402944efcd936d43b5027e4908a7897baf88ed6241
+    container_name: chatwoot-redis
+    restart: unless-stopped
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    # Doubled dollar: compose leaves it, the container's own shell expands it.
+    command: ["sh", "-c", "exec redis-server --appendonly yes --requirepass $$REDIS_PASSWORD"]
+    volumes:
+      - ./redis:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli --no-auth-warning -a $$REDIS_PASSWORD ping | grep -q PONG"]
+      interval: 10s
+      retries: 12
+
+  rails:
+    <<: *chatwoot
+    container_name: chatwoot-rails
+    entrypoint: docker/entrypoints/rails.sh
+    command: ["bundle", "exec", "rails", "s", "-p", "3000", "-b", "0.0.0.0"]
+    ports:
+      # Loopback only: no other device on the wifi can reach 8102.
+      - "127.0.0.1:8102:3000"
+
+  sidekiq:
+    <<: *chatwoot
+    container_name: chatwoot-sidekiq
+    command: ["bundle", "exec", "sidekiq", "-C", "config/sidekiq.yml"]
+
+volumes:
+  chatwoot-pgdata:

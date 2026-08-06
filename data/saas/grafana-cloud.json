@@ -1,0 +1,59 @@
+{
+  "slug": "grafana-cloud",
+  "name": "Grafana Cloud",
+  "domain": "grafana.com",
+  "whyPeoplePay": "Grafana Cloud sells the half of observability that nobody enjoys operating. The dashboards are free software you can run yourself in an afternoon; the metrics store that keeps 13 months of series without falling over, the log store that ingests a terabyte on a bad day, the trace backend, the alerting that still pages you when your own datacentre is the thing on fire, and the retention promise attached to all of it are the parts you are actually renting. The bill is usage-shaped rather than seat-shaped, which is honest about where the cost comes from and also means it moves when your traffic does, and the free tier is generous enough that most people meet the pricing page only after something they built started mattering.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": null,
+      "note": "The page describes it as always free, with all Grafana Cloud services at limited usage and community support. The quotas printed alongside it include 10k active metrics series, 50 GB of logs ingested per month, 50 GB of traces, 3 active Grafana visualization users, and 14 days of retention for metrics, logs, traces and profiles."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 19,
+      "unit": "usage",
+      "seatsIncluded": null,
+      "note": "The page prints 'From $19 / month + usage with volume discounts': a $19 platform fee, 8x5 email support, and then per-product rates above the included tiers. The examples on the page are $6.50 per 1k metrics series with 13 months of retention, $0.400/GB to write logs and $0.100/GB to retain them with 30 days of retention, and $8.00 per active Grafana visualization user. The $19 is a floor, not a bill."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The page says it starts at a $25,000 per year spend commitment and adds premium support, custom retention, and deployment on public cloud, federal cloud or the customer's own cloud, with unit prices scaling down against the annual commit."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://grafana.com/pricing/",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Confidence is medium because of the shape of the product, not the source. The vendor page is clear that Pro is a $19 monthly platform fee plus usage across more than a dozen separately metered products, so the single priceMonthly figure recorded here is the floor and not what anyone with real traffic pays; the per-unit rates that decide the actual bill are in the Pro plan note. The page is also a JavaScript-rendered pricing matrix, so the figures here were read from its extracted text rather than a static price list."
+  },
+  "ranked": [
+    {
+      "project": "grafana",
+      "rationale": "The same dashboards, the same alert rules, the same query editors, from the same repository, in one container with an embedded SQLite database and no active-series quota. What it is honest about is the boundary: Grafana OSS is the window, and Grafana Cloud sells the window bundled with the warehouse. Point this at a metrics store, a SQL database or a log store you already run and you have replaced the expensive part of the product for the price of a small VPS. Have nothing for it to query and you have installed an empty dashboard, which is why this is an evening rather than a command."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Netdata",
+      "repo": "https://github.com/netdata/netdata",
+      "note": "GitHub reports GPL-3.0, and that is accurate for the agent that collects and stores the metrics. The repository's own REDISTRIBUTED.md is the part worth reading before deciding it is fully open source: the dashboard the agent serves is the Netdata Cloud UI, redistributed under the proprietary Netdata Cloud UI License v1.0 rather than the GPL. Actively maintained, v2.10.4 in July 2026. It is also a different shape from the pick above, because it collects its own metrics rather than querying yours, so it answers 'what is this machine doing' rather than 'draw me the data I already have'."
+    },
+    {
+      "name": "VictoriaMetrics",
+      "repo": "https://github.com/VictoriaMetrics/VictoriaMetrics",
+      "note": "Apache-2.0, releasing constantly, v1.149.0 on 5 August 2026. It is the other half of the problem rather than a competitor for this one: a time-series database that ingests Prometheus metrics and answers PromQL, which Grafana then draws. If the reason you are on this page is the metrics quota rather than the dashboard, this is the piece that replaces it. Enterprise features sit behind a separate commercial licence; the open source single-node build is what most self-hosters run."
+    },
+    {
+      "name": "Beszel",
+      "repo": "https://github.com/henrygd/beszel",
+      "note": "MIT, and the smallest honest answer here. A hub plus a small agent per machine gives CPU, memory, disk, network and container charts with alerts and a web interface, which is what a fair number of people actually wanted when they went looking for Grafana. Commits were still landing in August 2026, though the last tagged release, v0.18.7, is from April 2026. It watches servers; it will not query an arbitrary data source, and there is no dashboard builder."
+    }
+  ]
+}

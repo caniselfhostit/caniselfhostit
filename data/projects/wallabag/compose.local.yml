@@ -1,0 +1,37 @@
+# wallabag · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   image README ....... https://github.com/wallabag/docker/blob/master/README.md
+#   entrypoint ......... https://github.com/wallabag/docker/blob/master/root/entrypoint.sh
+#
+# One service, every path relative to ~/selfhost/wallabag/, so one file works on
+# macOS, Linux and Windows. Both mounts are bind mounts rather than named
+# volumes, keeping the SQLite file and the saved images visible in Finder or
+# Explorer. Digest read 2026-08-06; amd64, arm64 and armv7 are published.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  wallabag:
+    image: wallabag/wallabag:2.6.14@sha256:4a527e027e0d59e87c14225ef11e005af3d4890374202ad319ce5e63dfc66709
+    container_name: wallabag
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      # SQLite is the image default and the whole database: one file under
+      # data/db, no second container and no dump to schedule.
+      SYMFONY__ENV__DATABASE_DRIVER: pdo_sqlite
+      # Public sign-up stays off, written here so a reviewer sees the posture.
+      SYMFONY__ENV__FOSUSER_REGISTRATION: "false"
+      # The issuer name an authenticator app shows for two-factor.
+      SYMFONY__ENV__SERVER_NAME: wallabag
+      # Nothing terminates TLS here, so the links wallabag builds say http.
+      SYMFONY__ENV__DOMAIN_NAME: http://localhost:8109
+      # Upstream's default is 128M, which is where long pages start failing.
+      PHP_MEMORY_LIMIT: 256M
+    volumes:
+      - ./data:/var/www/wallabag/data
+      - ./images:/var/www/wallabag/web/assets/images
+    ports:
+      # Loopback only: no other device on the wifi can reach 8109.
+      - "127.0.0.1:8109:80"
+    # The image already carries a HEALTHCHECK polling /api/info.

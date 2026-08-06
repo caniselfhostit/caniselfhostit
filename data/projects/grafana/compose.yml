@@ -1,0 +1,50 @@
+# Grafana OSS · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker install ..... https://grafana.com/docs/grafana/latest/setup-grafana/installation/docker/
+#   docker config ...... https://grafana.com/docs/grafana/latest/setup-grafana/configure-docker/
+#   settings reference . https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/
+#   health endpoint .... https://github.com/grafana/grafana/blob/v13.1.2/docs/sources/developer-resources/api-reference/http-api/api-legacy/other.md
+#
+# One container. Grafana keeps dashboards, users and data-source settings in an
+# embedded SQLite database under /var/lib/grafana, so nothing else runs here.
+# The image is grafana/grafana, not grafana/grafana-oss: upstream's docker page
+# says the grafana-oss repository stopped being updated at the 12.4.0 release
+# and that grafana/grafana is now the OSS image. Tag and digest were read from
+# Docker Hub on 2026-08-06; the manifest list covers linux/amd64, linux/arm64
+# and linux/arm/v7. The image runs as uid 472 in group 0, which is why step 2
+# hands the data directory to that uid before the first start.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  grafana:
+    image: grafana/grafana:13.1.2@sha256:d177053ab62253815f130d81504f77063baf5fd4ca93299d6048453bd31e047a
+    container_name: grafana
+    restart: unless-stopped
+    # The hostname and the two generated values live here, mode 600.
+    env_file: /srv/grafana/.env
+    environment:
+      # Caddy terminates TLS in front of this, so the session cookie can carry
+      # the secure flag. Upstream ships it off because it cannot know.
+      GF_SECURITY_COOKIE_SECURE: "true"
+      # Already the upstream default. Written out because it is the setting
+      # that decides whether a stranger who finds the hostname can enrol.
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      # Upstream ships all three on: usage counters to stats.grafana.org every
+      # 24 hours, plus version checks against grafana.com. Off here.
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+      GF_ANALYTICS_CHECK_FOR_PLUGIN_UPDATES: "false"
+    volumes:
+      # grafana.db, the plugin directory and rendered exports all land here.
+      - /srv/grafana/data:/var/lib/grafana
+    healthcheck:
+      # curl is in the alpine image upstream builds. /api/health answers 200
+      # while the database responds and 503 when it does not.
+      test: ["CMD-SHELL", "curl -fsS http://localhost:3000/api/health || exit 1"]
+      interval: 15s
+      retries: 10
+      start_period: 30s
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8106.
+      - "127.0.0.1:8106:3000"

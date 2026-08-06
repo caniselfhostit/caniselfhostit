@@ -1,0 +1,99 @@
+{
+  "slug": "formbricks",
+  "name": "Formbricks",
+  "tagline": "Link surveys and in-product feedback on your own domain, with no monthly response cap deciding your bill.",
+  "repo": "formbricks/formbricks",
+  "site": "https://formbricks.com",
+  "category": "marketing-content",
+  "replaces": [
+    {
+      "saas": "typeform",
+      "plan": "Business",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 7,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 6
+  },
+  "resources": {
+    "ramMinMB": 4096,
+    "ramMeasuredMB": null,
+    "diskGB": 20,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 240,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/formbricks/formbricks/blob/5.3.0/docker/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Every survey link this makes begins with http://localhost:8110, which resolves on this computer and nowhere else, so the people you wanted to answer the survey get a connection error instead of your first question."
+  },
+  "quote": {
+    "text": "Starting with Formbricks v5, the production Docker Compose stack includes Formbricks Hub and Cube as part of the baseline.",
+    "source": "Formbricks documentation, Docker Setup",
+    "url": "https://formbricks.com/docs/self-hosting/setup/docker",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "The baseline self-hosted stack for version 5 is five long-running services, Formbricks Web, PostgreSQL, Redis/Valkey, Formbricks Hub and Cube, plus two migration jobs that run in order and exit.",
+      "url": "https://formbricks.com/docs/self-hosting/setup/docker"
+    },
+    {
+      "claim": "WEBAPP_URL, NEXTAUTH_URL, DATABASE_URL, NEXTAUTH_SECRET, ENCRYPTION_KEY, CRON_SECRET, REDIS_URL, HUB_API_KEY, HUB_API_URL, CUBEJS_API_URL and CUBEJS_API_SECRET are all marked required, and the application will not start without a Redis URL.",
+      "url": "https://formbricks.com/docs/self-hosting/configuration/environment-variables"
+    },
+    {
+      "claim": "Upstream's own compose file sets EMAIL_VERIFICATION_DISABLED and PASSWORD_RESET_DISABLED to 1, which is what lets a self-hosted install run with no SMTP server configured.",
+      "url": "https://github.com/formbricks/formbricks/blob/5.3.0/docker/docker-compose.yml"
+    },
+    {
+      "claim": "Self-hosted instances have user signup disabled by default, and only organization owners or admins can invite new users afterwards.",
+      "url": "https://formbricks.com/docs/self-hosting/auth-behavior"
+    },
+    {
+      "claim": "The Hub image that pairs with this release is pinned by digest in upstream's Helm chart, alongside the Cube tag the same chart uses.",
+      "url": "https://github.com/formbricks/formbricks/blob/5.3.0/charts/formbricks/values.yaml"
+    },
+    {
+      "claim": "The two Cube configuration files fetched at tag 5.3.0 hashed, when read on 2026-08-06, to 723eea0f581200a686f854ff47b38f2e92bbfe5d802338049afaa061f154a335 (cube.js) and c3322a3739ee1cc57224139f502395a20dcbe4dd71e331be41d687ffdfe140f8 (schema/FeedbackRecords.js), the digests every install verifies with sha256sum -c before mounting either file.",
+      "url": "https://github.com/formbricks/formbricks/tree/5.3.0/docker/cube"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "This is a stack, not an app. Version 5 runs five services that stay up plus two migration jobs, and upstream makes Hub, Cube and Valkey mandatory rather than optional. On any given morning one of the five can be the unhappy one, and you are the only person who will notice.",
+    "The licence has a carve-out. Everything outside apps/web/modules/ee is AGPLv3 and the JavaScript, mobile and API packages are MIT, but the ee directory is under a separate commercial licence, and that is where the paid edition's features live: SSO and SAML, teams and roles, audit logging, dashboards, white-labelling. The community edition you install here has no response cap and no user cap, and stops short of that list.",
+    "One key stands between you and readable data. ENCRYPTION_KEY encrypts two-factor secrets and single-use survey links and hashes the audit log, so a database dump restored without the .env it lives in comes back with rows nobody can read. The dump and the config archive are one backup in two files.",
+    "No mail, by design and by upstream's default. This install sets EMAIL_VERIFICATION_DISABLED and PASSWORD_RESET_DISABLED, which is what lets it run with no SMTP server. It also means the one administrator account is the whole recovery story: lose that password and the way back in is editing the database.",
+    "No file uploads. Image questions, file-upload questions and workspace logos need S3-compatible storage on a second hostname, and this install configures none, so upstream switches those features off."
+  ],
+  "sources": {
+    "compose": "https://formbricks.com/docs/self-hosting/setup/docker",
+    "caddy": "https://formbricks.com/docs/self-hosting/configuration/domain-configuration",
+    "install": "https://formbricks.com/docs/self-hosting/configuration/environment-variables",
+    "auth": "https://formbricks.com/docs/self-hosting/auth-behavior",
+    "sizing": "https://github.com/formbricks/formbricks/blob/5.3.0/charts/formbricks/values.yaml",
+    "health": "https://github.com/formbricks/formbricks/blob/5.3.0/apps/web/app/health/route.ts",
+    "setup": "https://github.com/formbricks/formbricks/blob/5.3.0/apps/web/app/page.tsx",
+    "cubeConfig": "https://raw.githubusercontent.com/formbricks/formbricks/5.3.0/docker/cube/cube.js",
+    "cubeSchema": "https://raw.githubusercontent.com/formbricks/formbricks/5.3.0/docker/cube/schema/FeedbackRecords.js",
+    "storage": "https://formbricks.com/docs/self-hosting/configuration/file-uploads",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "listmonk",
+    "umami",
+    "calcom"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "2f7038ab153696643c08123742830bdaf73f242fe64c41d8f10e4f19fd414b01"
+}

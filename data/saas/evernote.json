@@ -1,0 +1,66 @@
+{
+  "slug": "evernote",
+  "name": "Evernote",
+  "domain": "evernote.com",
+  "whyPeoplePay": "Evernote sells the search box more than the editor. Twenty years of clippings, receipts, scanned pages and half-finished lists, findable from any device without you ever having decided where to put them, on a service you do not keep running. The free tier stopped being somewhere to live: on the comparison table today it holds 50 notes in 1 notebook on 1 device, which is a demo of the search box rather than a place to keep an archive, so the ladder above it is where the actual product starts.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "The comparison table read on 2026-08-06 lists 50 notes, 1 notebook, 1 synced device and 1 GB of storage."
+    },
+    {
+      "name": "Starter",
+      "priceMonthly": 14.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$99 a year on the annual plan, which the page's own pricing data presents as $8.25 a month. A weekly option at $3.99 is offered as well. The table lists 1,000 notes, 20 notebooks, 3 synced devices and 5 GB."
+    },
+    {
+      "name": "Advanced",
+      "priceMonthly": 24.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$249.99 a year on the annual plan, which the page's own pricing data presents as $20.83 a month. A weekly option at $6.99 is offered as well. The table lists unlimited notes, notebooks and synced devices, with a footnote about safeguard limits."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. Every row of the comparison table reads Custom and the button says Choose rather than showing a price. The feature list mentions 20 GB monthly uploads plus 2 GB per user."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://evernote.com/compare-plans",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The comparison page renders its prices from JavaScript, so the visible text carries none. These figures come from the pricing data the same page embeds, read on 2026-08-06 and filtered to the USD entries: monthly-billed amounts recorded as priceMonthly, annual-billed equivalents in each plan note. Confidence is medium for one reason: that data also still carries the retired Personal, Professional, Plus, Business and Teams levels, so mapping the four tiers the table displays onto their entries is our reading rather than a label the vendor prints. Enterprise is recorded as quote-only because the table shows no price for it."
+  },
+  "ranked": [
+    {
+      "project": "trilium",
+      "rationale": "The closest thing to Evernote's shape that one container can honestly be. A tree of notes rather than a flat list, attachments and images kept with them, search across all of it, a browser clipper that exists as a real Firefox and Chrome extension, and an ENEX importer that reads your notebooks back one file at a time with formatting, tables and attachments intact. What you take on is the part Evernote never asks you about: it is one person's notebook with no accounts to add, it serves itself to anyone until you finish the setup wizard and set a password, and the copy of the database that leaves the machine is a copy you scheduled."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Joplin Server",
+      "repo": "https://github.com/laurent22/joplin",
+      "note": "The strongest Evernote replacement on this list by client coverage, and the reason it is not the ranked pick is a license rather than a shortcoming: the sync server under packages/server carries a Joplin Server Personal Use License, read in the repository on 2026-08-06, which is not an open source license. The project is actively maintained, with v3.7.10 released on 2026-07-28. Worth knowing that the Joplin apps sync to plain WebDAV or S3 without that server at all, which is the path this catalogue would take."
+    },
+    {
+      "name": "SiYuan",
+      "repo": "https://github.com/siyuan-note/siyuan",
+      "note": "AGPL-3.0, actively maintained, v3.7.3 released on 2026-07-21, and it publishes its own Docker image. It covers the same ground with a block-referencing editor and daily notes, which is a different way of thinking about a note than Evernote's list of pages. Surveyed here, not installed or tested by us."
+    },
+    {
+      "name": "Memos",
+      "repo": "https://github.com/usememos/memos",
+      "note": "MIT, actively maintained, v0.30.0 released on 2026-07-26, and about as small as self-hosting gets: one Go binary or one container over SQLite. It is built for quick capture, a timeline of short markdown notes rather than a tree of long ones with attachments hanging off them, so it replaces the Evernote habit of jotting and not the Evernote archive. Surveyed here, not installed or tested by us."
+    }
+  ]
+}

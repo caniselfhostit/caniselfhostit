@@ -1,0 +1,47 @@
+{
+  "slug": "home-assistant-cloud",
+  "name": "Home Assistant Cloud",
+  "domain": "nabucasa.com",
+  "whyPeoplePay": "Home Assistant Cloud is sold by Nabu Casa, the company the founders of Home Assistant run, and it is not a hosted version of the software: your Home Assistant still runs on your own hardware. What the subscription buys is the three things that are genuinely hard to do yourself. A remote URL that works without opening a port on your router or owning a domain. Alexa and Google Assistant integration in a few clicks, where the manual route means an AWS Lambda function or a Google Home Developer Console project. And text-to-speech that sounds like a person. The fourth thing it buys is the payroll of the people writing Home Assistant, ESPHome and Z-Wave JS, which is stated on the vendor's own page and is a real part of what the money does.",
+  "plans": [
+    {
+      "name": "Home Assistant Cloud",
+      "priceMonthly": 6.5,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "source": "https://www.nabucasa.com/pricing/",
+      "checkedOn": "2026-08-06",
+      "note": "One tier, no ladder. $6.50 a month or $65 a year for the USA and international customers, excluding local sales tax. The same page lists regional prices: EUR 7.50 a month or 75 a year and GBP 6.50 or 65, both including VAT, and CAD 8.70 or 87 excluding VAT. Nabu Casa's home page advertises a 31-day trial before the first charge."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://www.nabucasa.com/pricing/",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The vendor's pricing page was read on 2026-08-06 and gives $6.50 a month or $65 a year for the USA and international customers. Confidence is medium rather than high for two reasons: the page renders its price table client-side, and a third-party review published in 2026 quotes roughly $8 a month, a figure we could not reproduce anywhere on nabucasa.com. Nabu Casa's own support article on subscription cost returns 403 to us, so we could not use it as a second vendor source. Anyone holding a recent invoice should send us the number on it."
+  },
+  "ranked": [
+    {
+      "project": "home-assistant",
+      "rationale": "It is the same software. Home Assistant Cloud does not host anything, so the question is never which program to run, only which half of the subscription you can replace. Putting Home Assistant behind your own domain and your own Caddy replaces the remote-access half completely, and that is most of what people use the subscription for. The voice half is a different story: connecting Alexa or Google Assistant without Nabu Casa means an AWS Lambda function or a Google Home Developer Console project, and upstream's own documentation calls it considerable effort. Take this option for the remote access, and go in knowing the voice assistants are work you are choosing to do."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "openHAB",
+      "repo": "https://github.com/openhab/openhab-core",
+      "note": "The other long-running open source home automation platform, Java rather than Python, EPL-2.0, actively developed with commits this week. Its rules engine and text-based configuration go deeper than Home Assistant's, and the tradeoff is a smaller integration catalogue and a much smaller pool of people who have already hit your problem. Nothing in it corresponds to Home Assistant Cloud, so remote access and voice are entirely yours to build either way."
+    },
+    {
+      "name": "Domoticz",
+      "repo": "https://github.com/domoticz/domoticz",
+      "note": "A lightweight C++ home automation server, GPL-3.0, still actively committed to, that runs comfortably on hardware Home Assistant would struggle on. It covers Z-Wave, Zigbee, MQTT and a long list of devices, and it is the honest pick for an old Raspberry Pi. The interface and the automation model both feel a decade older, and there is no equivalent of the Home Assistant mobile app or its cloud."
+    },
+    {
+      "name": "Gladys Assistant",
+      "repo": "https://github.com/GladysAssistant/Gladys",
+      "note": "A privacy-first home assistant in Node.js under Apache-2.0, actively maintained, aimed squarely at being simpler to set up than the alternatives. It supports far fewer devices, and it sells its own paid remote-access plan, so choosing it to avoid a subscription means checking first whether the feature you wanted is on the free side of that line."
+    }
+  ]
+}

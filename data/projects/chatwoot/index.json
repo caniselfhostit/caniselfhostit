@@ -1,0 +1,93 @@
+{
+  "slug": "chatwoot",
+  "name": "Chatwoot",
+  "tagline": "A website chat widget feeding a shared agent inbox you run yourself, with no per-seat meter and no per-resolution bill.",
+  "repo": "chatwoot/chatwoot",
+  "site": "https://www.chatwoot.com",
+  "category": "comms-scheduling",
+  "replaces": [
+    {
+      "saas": "intercom",
+      "plan": "Essential",
+      "seatsAssumed": 5
+    }
+  ],
+  "tierFactors": {
+    "containers": 4,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 3
+  },
+  "resources": {
+    "ramMinMB": 4096,
+    "ramMeasuredMB": null,
+    "diskGB": 20,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 240,
+  "license": "MIT",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/chatwoot/chatwoot/blob/v4.16.2/docker-compose.production.yaml",
+  "local": {
+    "fit": "caveat",
+    "note": "The chat widget loads its script from http://localhost:8102, so no visitor on another machine can open it: what you get on this path is the agent dashboard, the help center and the API to learn on, not a live chat your customers can reach."
+  },
+  "quote": {
+    "text": "All content that resides under the \"enterprise/\" directory of this repository, if that directory exists, is licensed under the license defined in \"enterprise/LICENSE\".",
+    "source": "Chatwoot LICENSE file",
+    "url": "https://github.com/chatwoot/chatwoot/blob/v4.16.2/LICENSE",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's own production compose file runs four services, rails, sidekiq, postgres and redis, and publishes only the Rails port on loopback.",
+      "url": "https://github.com/chatwoot/chatwoot/blob/v4.16.2/docker-compose.production.yaml"
+    },
+    {
+      "claim": "Chatwoot's schema enables the PostgreSQL vector extension for its embedding columns, which is why the database image here is pgvector's rather than a stock postgres.",
+      "url": "https://github.com/chatwoot/chatwoot/blob/v4.16.2/db/schema.rb"
+    },
+    {
+      "claim": "Upstream states 4 GB of RAM as the required minimum, supporting up to 10,000 conversations a day, and asks for 5 to 10 GB of PostgreSQL storage.",
+      "url": "https://developers.chatwoot.com/self-hosted/deployment/requirements"
+    },
+    {
+      "claim": "The documented deployment runs rails db:chatwoot_prepare before the containers start, and again after every image update.",
+      "url": "https://developers.chatwoot.com/self-hosted/deployment/docker"
+    },
+    {
+      "claim": "Account signup ships disabled in the installation config, so the account-creation endpoint answers 404 until somebody deliberately turns it on.",
+      "url": "https://github.com/chatwoot/chatwoot/blob/v4.16.2/config/installation_config.yml"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Everything outside the enterprise/ directory is MIT Expat, and that directory carries Chatwoot's own commercial licence, which is why GitHub reports no single licence for the repository. This install runs the -ce image, built with that directory deleted, and the feature split is real: Captain (the AI agent and copilot), SLA policies, custom agent roles, capacity limits, SAML SSO and audit logs are what the paid editions sell. What you get is uncapped on agents and conversations and stops short of that list.",
+    "No mail means no invitations and no password resets. The live-chat core works without SMTP, which is why this install skips it, but the day you add a second agent you either configure mail or edit the database by hand, and a forgotten administrator password has no reset link. Put that password in a password manager on day one.",
+    "You own four containers, and the one that matters at 2am is PostgreSQL. Every conversation, contact and note is a row in it. The config archive is the other half of the same backup, because the Rails key in .env is what verifies session cookies, and a database restored without it signs everybody out of an install that no longer recognises its own tokens.",
+    "The widget only works where the browser can reach you. The messenger script loads from whatever you set as FRONTEND_URL, so the cloud path needs a real hostname with a certificate on it, and the local path honestly gives you the dashboard without a widget your customers can open.",
+    "Every channel except the website widget is a separate signup. Email, WhatsApp, Instagram, Facebook and SMS inboxes all exist in the community edition, and each one needs an app registered and a webhook verified at that provider's console. This install gives you the widget, the shared inbox and the help center, and stops there."
+  ],
+  "sources": {
+    "compose": "https://developers.chatwoot.com/self-hosted/deployment/docker",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://developers.chatwoot.com/self-hosted/configuration/environment-variables",
+    "requirements": "https://developers.chatwoot.com/self-hosted/deployment/requirements",
+    "schema": "https://github.com/chatwoot/chatwoot/blob/v4.16.2/db/schema.rb",
+    "health": "https://github.com/chatwoot/chatwoot/blob/v4.16.2/app/controllers/health_controller.rb",
+    "onboarding": "https://github.com/chatwoot/chatwoot/blob/v4.16.2/app/views/installation/onboarding/index.html.erb",
+    "signup": "https://github.com/chatwoot/chatwoot/blob/v4.16.2/config/installation_config.yml",
+    "license": "https://github.com/chatwoot/chatwoot/blob/v4.16.2/LICENSE"
+  },
+  "related": [
+    "listmonk",
+    "calcom",
+    "healthchecks"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "539bc44a07433fbf150aa333473c4d421b69bbfe87fd742f41d1f09601310970"
+}

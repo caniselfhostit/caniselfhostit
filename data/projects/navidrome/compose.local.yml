@@ -1,0 +1,54 @@
+# Navidrome · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker install ...... https://www.navidrome.org/docs/installation/docker/
+#   config options ...... https://www.navidrome.org/docs/usage/configuration/options/
+#   security ............ https://www.navidrome.org/docs/usage/admin/security/
+#   automated backup .... https://www.navidrome.org/docs/usage/admin/backup/
+#
+# One service on the computer you are sitting at. Every path is relative to
+# ~/selfhost/navidrome/, so one file works on macOS, Linux and Windows and you
+# can open data/, music/ and backups/ in Finder or Explorer. No named volume is
+# needed: nothing here chowns its own data dir, so the uid is pinned below. The
+# library is read-only, as upstream asks. Digest read 2026-08-06, amd64+arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  navidrome:
+    image: deluan/navidrome:0.63.2@sha256:9012939114fbb1bb641b81cf96dec5ded15f0aafefe8d47a511d7cb919658e40
+    container_name: navidrome
+    restart: unless-stopped
+    # The uid owning ./data and ./backups; step 3 chowns them on Linux.
+    user: "1000:1000"
+    read_only: true
+    tmpfs:
+      - /tmp
+    env_file: ./.env
+    environment:
+      ND_MUSICFOLDER: /music
+      ND_DATAFOLDER: /data
+      ND_PORT: "4533"
+      # Refuse to start as root on a Unix host.
+      ND_ENFORCENONROOTUSER: "true"
+      # Upstream disables this screen: it edits a command line the host runs.
+      ND_ENABLETRANSCODINGCONFIG: "false"
+      # No anonymous usage reports leave this computer.
+      ND_ENABLEINSIGHTSCOLLECTOR: "false"
+      # Nightly database snapshot at 04:00, seven kept. No music in it.
+      ND_BACKUP_PATH: /backups
+      ND_BACKUP_SCHEDULE: "0 4 * * *"
+      ND_BACKUP_COUNT: "7"
+    volumes:
+      - ./data:/data
+      - ./backups:/backups
+      # Read-only. Nothing Navidrome does needs write access to your library.
+      - ./music:/music:ro
+    ports:
+      # Loopback only: no other device on the wifi can reach 8108.
+      - "127.0.0.1:8108:4533"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:4533/ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s

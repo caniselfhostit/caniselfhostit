@@ -1,0 +1,37 @@
+# Home Assistant · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   container install .. https://www.home-assistant.io/installation/linux/
+#   http integration ... https://www.home-assistant.io/integrations/http/
+#   remote access ...... https://www.home-assistant.io/docs/configuration/remote/
+#
+# One container on the computer you are sitting at. Every path is relative to
+# ~/selfhost/home-assistant/, which lets one file work on macOS, Linux and
+# Windows. There is no named volume here: nothing in this install chowns its
+# own data directory, so ./config stays a bind mount and you can open it in
+# Finder or Explorer. Upstream's example sets network_mode: host and
+# privileged: true to reach devices on the local network; this file keeps the
+# bridge and one loopback port, because host networking would put Home
+# Assistant on every network this machine joins and does nothing at all under
+# Docker Desktop, where the container runs inside a virtual machine. Same
+# 2026.7.4 tag and digest as the server file, read from ghcr.io on 2026-08-06,
+# published for linux/amd64 and linux/arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:2026.7.4@sha256:5a531753cea96444200158fc2b0ac7ccd739291ec50414877b396de6e0bb29b3
+    container_name: homeassistant
+    restart: unless-stopped
+    environment:
+      # This labels the container's log timestamps. Home Assistant's own time
+      # zone is a separate setting, chosen during onboarding.
+      TZ: UTC
+    volumes:
+      # The image runs as root, so on Linux the files under ./config belong to
+      # root on the host. Docker Desktop handles that for macOS and Windows.
+      - ./config:/config
+    ports:
+      # Loopback only: no other device on the wifi can reach 8107, and 8123 is
+      # the port Home Assistant listens on inside the container.
+      - "127.0.0.1:8107:8123"

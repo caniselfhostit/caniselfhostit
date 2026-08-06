@@ -1,0 +1,94 @@
+{
+  "slug": "trilium",
+  "name": "Trilium",
+  "tagline": "A personal knowledge base with a note tree, relations and scripting, keeping every note in one SQLite file you can copy.",
+  "repo": "TriliumNext/Trilium",
+  "site": "https://triliumnotes.org",
+  "category": "notes-wikis",
+  "replaces": [
+    {
+      "saas": "evernote",
+      "plan": "Advanced",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/TriliumNext/Trilium/blob/v0.104.1/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Everything answers at http://localhost:8103, which means this computer and nowhere else, so your phone cannot open these notes and a Trilium desktop app on another machine has nothing here to sync with."
+  },
+  "quote": {
+    "text": "Avoid using the \"latest\" tag, as it may automatically upgrade your instance to a new minor version, potentially disrupting sync setups or causing other issues.",
+    "source": "Trilium documentation, Using Docker",
+    "url": "https://docs.triliumnotes.org/user-guide/setup/server/installation/docker",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Trilium does not support multiple users, so two people means two server instances, each with its own port and its own data directory.",
+      "url": "https://docs.triliumnotes.org/user-guide/setup/server/installation/multiple-instances"
+    },
+    {
+      "claim": "The official images are published on Docker Hub for AMD64, ARMv7 and ARM64/v8, the server listens on 8080, and everything it keeps lives in the directory mounted at /home/node/trilium-data.",
+      "url": "https://docs.triliumnotes.org/user-guide/setup/server/installation/docker"
+    },
+    {
+      "claim": "Behind a reverse proxy, trustedReverseProxy makes Trilium read the visitor's address from the left-most entry of X-Forwarded-For, which is what its authentication and rate limiting count.",
+      "url": "https://docs.triliumnotes.org/user-guide/setup/server/reverse-proxy/trusted-proxy"
+    },
+    {
+      "claim": "Trilium's own backup is at most four rolling copies of the database, daily, weekly, monthly and one before each migration, written into the same data directory as the live file.",
+      "url": "https://docs.triliumnotes.org/user-guide/setup/backup"
+    },
+    {
+      "claim": "Trilium imports Evernote ENEX files, one file per notebook, with a 250 MB limit per import and every non-image resource landing as a note attachment.",
+      "url": "https://github.com/TriliumNext/Trilium/blob/v0.104.1/docs/User%20Guide/User%20Guide/Basic%20Concepts%20and%20Features/Import%20%26%20Export/Importing%20data%20from%20other%20applications/Evernote.md"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "One account, and upstream says so in one sentence: Trilium does not support multiple users. Sharing a notebook with somebody means handing over your password or running a second container on a second hostname. There are no invites, no permissions and no shared-with-me.",
+    "A new instance has no lock on it. Trilium serves every request without authentication until a human opens a browser and finishes the setup wizard, so the install and the first login belong in the same sitting. The install asserts that the instance refuses anonymous access before it reports success.",
+    "You own the backups. Trilium keeps four rolling copies of the database and writes all four into the same directory as the live one, so they cover a bad edit and not a dead disk. The copy that leaves the machine is the one you schedule.",
+    "Getting out of Evernote is an import, not a migration. Trilium reads ENEX, one file per notebook, 250 MB at a time, and it carries formatting, tables, images and attachments across. Notebook stacks, reminders, saved searches and the links between separate imports are not part of that.",
+    "The Evernote features that do not come across: no email-into-notebook address, no shared notebooks, no handwriting search. The web clipper does exist, as a Firefox and Chrome extension. Text extraction exists since 0.103, but you turn it on yourself, Tesseract runs on your own CPU, and a scanned PDF stays unsearchable because PDFs are text extraction only."
+  ],
+  "sources": {
+    "compose": "https://docs.triliumnotes.org/user-guide/setup/server/installation/docker",
+    "caddy": "https://docs.triliumnotes.org/user-guide/setup/server/reverse-proxy/trusted-proxy",
+    "install": "https://docs.triliumnotes.org/user-guide/advanced-usage/configuration",
+    "backup": "https://docs.triliumnotes.org/user-guide/setup/backup",
+    "data": "https://docs.triliumnotes.org/user-guide/setup/data-directory",
+    "health": "https://github.com/TriliumNext/Trilium/blob/v0.104.1/apps/server/src/routes/routes.ts",
+    "bootstrap": "https://github.com/TriliumNext/Trilium/blob/v0.104.1/apps/server/src/routes/index.ts",
+    "screens": "https://github.com/TriliumNext/Trilium/blob/v0.104.1/apps/client/src/translations/en/translation.json",
+    "image": "https://github.com/TriliumNext/Trilium/blob/v0.104.1/apps/server/Dockerfile",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "docmost",
+    "linkwarden",
+    "freshrss"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "ed59a3f0eb16873c819f3b73d469bd1170fec4b6272c22bf7c8d8019b9bac62f"
+}

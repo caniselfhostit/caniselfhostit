@@ -1,0 +1,65 @@
+{
+  "slug": "umami-cloud",
+  "name": "Umami Cloud",
+  "domain": "umami.is",
+  "whyPeoplePay": "Umami Cloud sells the operating, not the software. The dashboard is MIT and the vendor publishes the compose file itself, so what a subscription buys is a collector that keeps answering while you sleep, a database somebody else vacuums and upgrades, and a plan that starts at nothing. The free tier is real rather than a trial: 100,000 events a month on one website, which is more than most personal sites will produce in a year. Paid tiers buy headroom on the event count, more sites and teammates, longer retention, and the two features the vendor states are hosted-only, email reports and the streaming API.",
+  "plans": [
+    {
+      "name": "Hobby",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Free. Up to 100K events per month, 1 website, 6 months of data retention, community support. No card and no trial clock."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 20,
+      "unit": "flat",
+      "seatsIncluded": 10,
+      "note": "1 million events per month included and $0.00003 per event above that, up to 20 websites, up to 10 team members, 2 years of retention, API access and email support. Offered with a 14-day free trial."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": 200,
+      "unit": "flat",
+      "seatsIncluded": null,
+      "note": "10 million events per month included and $0.00002 per event above that, unlimited websites and members, 5 years of retention, session replays, heatmaps, white-labeling and the streaming API. Offered with a 14-day free trial."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only, by mail to the vendor's sales address. Adds SAML single sign-on, an audit log, an uptime SLA, onboarding help and invoice billing."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://umami.is/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The pricing page renders its plan cards in the browser, so the prices, event allowances and per-event overage rates here were read out of the plan definition inside the page's own JavaScript bundle on umami.is rather than off the rendered page, and corroborated against third-party listings on the same day. The vendor's FAQ states that billing is monthly with no long-term contract, so no annual-billed figures are recorded; there is no annual discount advertised. Every figure is the entry price for its tier, and the overage rate applies once the included events run out rather than cutting collection off."
+  },
+  "ranked": [
+    {
+      "project": "umami",
+      "rationale": "The same code the paid plans run, MIT, from the vendor's own repository, and the compose file is upstream's. Two containers on a 1 GB box give you the whole dashboard: funnels, user journeys, goals, revenue and attribution are all in the open release, and the vendor names only email reports and the streaming API as things hosting keeps for itself. The two costs are honest ones. You own a PostgreSQL that has to be dumped rather than copied, and the image creates an admin account whose password is printed in the public documentation, so an install that does not close that in its first minute is a login anybody can look up."
+    },
+    {
+      "project": "plausible",
+      "rationale": "Second place, and the heavier install of the two: ClickHouse alongside PostgreSQL, three containers instead of two, and 2 GB of RAM where Umami wants one. What that buys is depth on the reporting side and a larger community around the self-hosted build. If the smallest honest analytics container is what you came for, Umami is the pick and this page says so; if you would rather run the column store and get the funnels-and-goals treatment that comes with it, Plausible CE is the one to install."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Matomo",
+      "repo": "https://github.com/matomo-org/matomo",
+      "note": "GPL-3.0, and the busiest project in this category by a wide margin: 5.12.0 landed in July 2026 and commits land daily. It aims to replace Google Analytics feature for feature rather than to be smaller than it, so heatmaps, session recordings, A/B testing and ecommerce reporting all exist, several of them sold as paid plugins by the same company. PHP and MySQL, which means it will run on shared hosting, at the cost of a much larger surface to operate and a dashboard that takes training to read."
+    },
+    {
+      "name": "GoatCounter",
+      "repo": "https://github.com/arp242/goatcounter",
+      "note": "A single Go binary with SQLite, and the smallest thing you could honestly call analytics. v2.7.0 shipped in December 2025 and the repository is still moving, but it is one person's project and the license is a modified EUPL 1.2 rather than a plain SPDX identifier, which is why it is surveyed here rather than carried in the catalogue. The right answer if a hit counter with referrers is the whole requirement."
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+# Chatwoot · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://developers.chatwoot.com/self-hosted/deployment/docker and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also FRONTEND_URL in .env, so changing it later means editing .env too.
+
+<DOMAIN> {
+	# The dashboard holds customer conversations, so nothing here should be
+	# framed, sniffed or leaked in a referrer.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	encode zstd gzip
+
+	# 8102 is the loopback port compose publishes on this host, not a container
+	# port and not open in the firewall. Caddy upgrades the /cable websocket on
+	# this same route and sets X-Forwarded-Proto, which is what lets Rails
+	# accept that websocket as same-origin rather than rejecting it.
+	reverse_proxy 127.0.0.1:8102
+}

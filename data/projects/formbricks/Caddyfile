@@ -1,0 +1,21 @@
+# Formbricks · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://formbricks.com/docs/self-hosting/configuration/domain-configuration
+# and https://caddyserver.com/docs/automatic-https
+
+<DOMAIN> {
+	# No X-Frame-Options and no frame-ancestors on purpose: link surveys are
+	# meant to be embedded in other people's pages.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	encode zstd gzip
+
+	# 8110 is the loopback port compose publishes. Not open in the firewall.
+	reverse_proxy 127.0.0.1:8110
+}

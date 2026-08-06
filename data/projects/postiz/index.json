@@ -1,0 +1,93 @@
+{
+  "slug": "postiz",
+  "name": "Postiz",
+  "tagline": "One calendar for every social account, on your server, with the network API keys registered in your own name.",
+  "repo": "gitroomhq/postiz-app",
+  "site": "https://postiz.com",
+  "category": "marketing-content",
+  "replaces": [
+    {
+      "saas": "buffer",
+      "plan": "Team",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 5,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": true,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 3
+  },
+  "resources": {
+    "ramMinMB": 4096,
+    "ramMeasuredMB": null,
+    "diskGB": 20,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 300,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/gitroomhq/postiz-docker-compose/blob/main/docker-compose.yaml",
+  "local": {
+    "fit": "caveat",
+    "note": "Everything answers at http://localhost:8111, so a post scheduled for 9am goes out only if the computer is awake at 9am, and the redirect URI you hand a developer portal is a localhost address that several of them refuse."
+  },
+  "quote": {
+    "text": "Please note that no providers are configured by default. You will need to configure them all in your .env file, or as environment variables.",
+    "source": "Postiz documentation, Providers Overview",
+    "url": "https://docs.postiz.com/providers/overview",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Postiz has required a Temporal workflow cluster since v2.12.0, and upstream's own compose file ships PostgreSQL, Redis and Temporal pre-wired.",
+      "url": "https://docs.postiz.com/installation/system-requirements"
+    },
+    {
+      "claim": "No social providers are configured by default: every network needs its own client id and secret set as environment variables before Postiz can post to it.",
+      "url": "https://docs.postiz.com/providers/overview"
+    },
+    {
+      "claim": "Connecting X means creating an app in the X developer portal, setting it to Read and Write and to Native App type, and copying the consumer key and secret into the environment.",
+      "url": "https://docs.postiz.com/providers/x-twitter"
+    },
+    {
+      "claim": "DISABLE_REGISTRATION allows a single user signup and then disables the sign-up page, which is how a self-hosted install closes its own front door.",
+      "url": "https://docs.postiz.com/configuration/reference"
+    },
+    {
+      "claim": "Behind a reverse proxy, FRONTEND_URL and NEXT_PUBLIC_BACKEND_URL are set to the public hostname with the backend at /api, and one container port is what the proxy sits in front of.",
+      "url": "https://docs.postiz.com/reverse-proxies/caddy"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "You become the developer, at every network. Buffer's price buys their standing with X, Meta, LinkedIn and TikTok. Self-hosting means you register an app in each of those portals yourself, paste its keys into a file, and keep them working. Some of those registrations need a verified business and a human reviewer at the other company, which takes days, and no prompt on this site can shorten that.",
+    "X in particular is the hard one. Its free API tier is thin, image upload still goes through the old v1 endpoint so the app has to be set up for OAuth 1.0a, and upstream documents a specific app type because the other one fails authentication outright. Read that page before you plan a launch around it.",
+    "This is a workflow stack, not one container. Since v2.12.0 upstream requires Temporal, so the install is Postiz, its PostgreSQL, its Redis, a Temporal server and the separate PostgreSQL Temporal keeps its history in. Five services on a 4 GB box, and on any given morning one of them is the one that is unhappy.",
+    "Tokens expire, quietly. Every connected channel is an OAuth token that a network can revoke, expire or invalidate when its terms change. Postiz refreshes what it can, but a channel that has gone stale looks exactly like a channel that is fine until a post does not appear, so check the calendar after anything you actually care about.",
+    "No aggregator support desk. When a platform changes an endpoint or suspends your app, there is nobody to escalate to. That is the whole trade: no per-channel bill, and no phone number."
+  ],
+  "sources": {
+    "compose": "https://docs.postiz.com/installation/docker-compose",
+    "caddy": "https://docs.postiz.com/reverse-proxies/caddy",
+    "install": "https://docs.postiz.com/configuration/reference",
+    "requirements": "https://docs.postiz.com/installation/system-requirements",
+    "architecture": "https://docs.postiz.com/howitworks",
+    "providers": "https://docs.postiz.com/providers/overview",
+    "storage": "https://docs.postiz.com/configuration/uploads",
+    "temporal": "https://github.com/temporalio/docker-compose/blob/main/docker-compose-postgres.yml",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "listmonk",
+    "ghost",
+    "plausible"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "4a994cffad5519eda1e572a63a6d62048a1739b6ae2144df192c027d21eb9170"
+}

@@ -1,0 +1,66 @@
+{
+  "slug": "trello",
+  "name": "Trello",
+  "domain": "trello.com",
+  "whyPeoplePay": "Trello sells a board anyone can be handed. A person who has never used it drags one card and understands the whole system, and that is why it spreads sideways through a company without anybody deciding to adopt it. What the paid tiers actually add is the machinery a board grows into once it is load-bearing: unlimited boards, the extra views, Butler automation, guest and permission controls, and the Atlassian account plumbing that ties it to the rest of the work.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 10,
+      "note": "Free for up to 10 collaborators per Workspace, with unlimited cards and a limit on boards per Workspace."
+    },
+    {
+      "name": "Standard",
+      "priceMonthly": 6,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Billed monthly. $5 per user a month if billed annually, which is how the pricing page leads."
+    },
+    {
+      "name": "Premium",
+      "priceMonthly": 12.5,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Billed monthly. $10 per user a month if billed annually."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": 17.5,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Billed annually only: $17.50 per user a month, which the page states as $210.00 a year per user. That figure is the rate at the seat band the page shows by default, and the per-user price falls as the seat count rises."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://trello.com/pricing",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "Read from trello.com/pricing on the date above. Monthly-billed figures are recorded for Standard and Premium because the page leads with the annual rate, and quoting only that understates what a month-to-month subscriber pays. Enterprise has no monthly option at all: the figure recorded is the per-user annual rate the page shows at its default seat band, and it moves with the number of users, so treat it as a starting point rather than a quote."
+  },
+  "ranked": [
+    {
+      "project": "wekan",
+      "rationale": "The closest thing here to the Trello object model, and the only one that ships the pieces people quietly depend on: swimlanes, checklists inside cards, labels, due dates, per-board members and file attachments. It also has the migration path, an importer that takes a board's Trello JSON export and maps its members onto WeKan accounts, though upstream's own page for it currently lists an open fix, so treat the import as a first attempt rather than a guarantee. What it costs you is a MongoDB to operate and a release cadence that runs to several tagged versions a day, and Butler automation, Power-Ups and the calendar and timeline views do not come across at all."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "PLANKA",
+      "repo": "https://github.com/plankanban/planka",
+      "note": "The best-looking Trello clone on this list and actively developed, but no longer open source: since version 2 it ships under the PLANKA Community License, a fair-use licence that carves out any file marked Pro/Enterprise for a paid commercial licence. If the licence does not bother you it is a strong pick; we rank on what you can keep."
+    },
+    {
+      "name": "Kanboard",
+      "repo": "https://github.com/kanboard/kanboard",
+      "note": "MIT, still shipping releases in 2026, and the lightest install of the four: PHP with an SQLite file, one container, no database process to operate. The board is a work-in-progress-limit kanban tool rather than a Trello lookalike, so cards, swimlanes and the drag-and-drop feel are all recognisably different, which is the reason it is not ranked first for someone leaving Trello."
+    },
+    {
+      "name": "Focalboard",
+      "repo": "https://github.com/mattermost-community/focalboard",
+      "note": "Was the obvious answer for years and is not any more. The repository's own README opens with a warning that it is currently unmaintained and asks for volunteers, and the last tagged release is v8.0.0 from June 2024. The living code moved into Mattermost's boards plugin, which is a Mattermost install, not a standalone board."
+    }
+  ]
+}

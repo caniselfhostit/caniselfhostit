@@ -1,0 +1,91 @@
+{
+  "slug": "grafana",
+  "name": "Grafana OSS",
+  "tagline": "Dashboards and alert rules over data you already have, from one container, with no active-series quota and no per-user bill.",
+  "repo": "grafana/grafana",
+  "site": "https://grafana.com/oss/grafana/",
+  "category": "monitoring",
+  "replaces": [
+    {
+      "saas": "grafana-cloud",
+      "plan": "Pro",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 512,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 70,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/grafana/grafana/blob/v13.1.2/docs/sources/setup-grafana/configure-docker.md",
+  "local": {
+    "fit": "caveat",
+    "note": "Grafana draws only while this computer is awake, so an alert rule that would fire at 3am on a closed laptop fires nowhere, and the dashboard opens on this machine and no other."
+  },
+  "quote": {
+    "text": "Grafana open source software enables you to query, visualize, alert on, and explore your metrics, logs, and traces wherever they are stored.",
+    "source": "Grafana documentation, Introduction to Grafana",
+    "url": "https://github.com/grafana/grafana/blob/v13.1.2/docs/sources/introduction/_index.md",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Upstream stopped updating the grafana/grafana-oss Docker Hub repository at the 12.4.0 release and now publishes the OSS build as grafana/grafana, which is the image this install pins.",
+      "url": "https://github.com/grafana/grafana/blob/v13.1.2/docs/sources/setup-grafana/installation/docker/index.md"
+    },
+    {
+      "claim": "Grafana Cloud is a managed platform that bundles Grafana with metrics, logs and traces backends, so a self-hosted Grafana replaces the dashboard and not the storage underneath it.",
+      "url": "https://github.com/grafana/grafana/blob/v13.1.2/docs/sources/introduction/_index.md"
+    },
+    {
+      "claim": "Upstream documents a minimum of 512 MB of memory and one CPU core, and states that Grafana uses an embedded SQLite database by default, which is why this install runs one container.",
+      "url": "https://github.com/grafana/grafana/blob/v13.1.2/docs/sources/setup-grafana/installation/_index.md"
+    },
+    {
+      "claim": "The shipped configuration creates an admin account whose password defaults to the literal word admin, and signs data-source secrets with a secret_key whose default is a fixed string in the public repository.",
+      "url": "https://github.com/grafana/grafana/blob/v13.1.2/conf/defaults.ini"
+    },
+    {
+      "claim": "GET /api/health returns 200 with a JSON body whose database field reads ok, and 503 when Grafana cannot reach its database, which is the verification gate this install uses.",
+      "url": "https://github.com/grafana/grafana/blob/v13.1.2/docs/sources/developer-resources/api-reference/http-api/api-legacy/other.md"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Grafana is the window, not the warehouse. It holds no metrics, no logs and no traces of its own: every panel queries something else, and that something else is a separate install you also run and back up. The day this finishes you have a working, empty dashboard.",
+    "The part of the Grafana Cloud bill this does not replace is the bigger part. Cloud sells hosted metrics, logs and traces with retention attached, and bundles the dashboard on top. This install is the dashboard. What stores your data, and for how long, becomes your disk.",
+    "One account, one password. There is a single administrator here and no identity provider, so a second person means sharing that credential or doing a separate sign-on install. Teams, folders and permissions all exist in Grafana; they need real user accounts, and real user accounts need a way to sign in.",
+    "You own the encryption key. Data-source passwords are encrypted inside grafana.db with a key generated during the install and kept in .env, so a copy of the database without that file is a store of secrets nobody can open, including you.",
+    "No outside vantage point, no synthetic checks, no hosted alert delivery, no support contract, and nobody but you watching the machine this runs on. Those are what the paid tiers are actually selling."
+  ],
+  "sources": {
+    "compose": "https://grafana.com/docs/grafana/latest/setup-grafana/configure-docker/",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://grafana.com/docs/grafana/latest/setup-grafana/installation/docker/",
+    "config": "https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/",
+    "defaults": "https://github.com/grafana/grafana/blob/v13.1.2/conf/defaults.ini",
+    "health": "https://github.com/grafana/grafana/blob/v13.1.2/docs/sources/developer-resources/api-reference/http-api/api-legacy/other.md",
+    "image": "https://github.com/grafana/grafana/blob/v13.1.2/Dockerfile"
+  },
+  "related": [
+    "uptime-kuma",
+    "healthchecks",
+    "plausible"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "59e7bcccb7967d0442b4cadc2ac10922a181f226a15a8f948ca9062cc34ce491"
+}

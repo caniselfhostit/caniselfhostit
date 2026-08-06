@@ -1,0 +1,35 @@
+# Home Assistant · the deterministic fallback. Authored by caniselfhostit from
+# the upstream documentation, not copied from a repository:
+#   container install .. https://www.home-assistant.io/installation/linux/
+#   http integration ... https://www.home-assistant.io/integrations/http/
+#   remote access ...... https://www.home-assistant.io/docs/configuration/remote/
+#
+# One container. Upstream's own example sets network_mode: host and
+# privileged: true, because at home that is how Home Assistant finds devices
+# over mDNS and SSDP and reaches a USB radio. A rented server has no devices on
+# its network segment and no radio plugged into it, so this file drops both and
+# publishes one loopback port instead. Everything lives under /config: the
+# configuration file, the .storage directory holding the accounts, and the
+# recorder database. Upstream pins the floating :stable tag; this file pins the
+# 2026.7.4 release and the digest read from ghcr.io on 2026-08-06, published
+# for linux/amd64 and linux/arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:2026.7.4@sha256:5a531753cea96444200158fc2b0ac7ccd739291ec50414877b396de6e0bb29b3
+    container_name: homeassistant
+    restart: unless-stopped
+    environment:
+      # This labels the container's log timestamps. Home Assistant's own time
+      # zone is a separate setting, chosen during onboarding.
+      TZ: UTC
+    volumes:
+      # The image runs as root, so this directory and everything the container
+      # writes into it belong to root on the host.
+      - /srv/home-assistant/config:/config
+    ports:
+      # Loopback only. The host's Caddy is the only thing that reaches 8107.
+      # 8123 is the port Home Assistant listens on inside the container.
+      - "127.0.0.1:8107:8123"

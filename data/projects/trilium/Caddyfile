@@ -1,0 +1,37 @@
+# Trilium · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.triliumnotes.org/user-guide/setup/server/reverse-proxy/trusted-proxy,
+# https://caddyserver.com/docs/caddyfile/directives/reverse_proxy and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. Trilium speaks
+# plain http on loopback and Caddy terminates TLS in front of it; the browser
+# and the server also hold a WebSocket open for live updates, which Caddy
+# upgrades without any extra directive.
+
+<DOMAIN> {
+	# The client is a large JavaScript bundle, so compression pays for itself
+	# on the first load. WebSocket upgrades pass through untouched.
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8103 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8103 {
+		# Set, not append. Caddy's default is to add the client address to
+		# whatever X-Forwarded-For arrived, and Trilium trusts the left-most
+		# entry, so without this line a visitor could put any address at the
+		# front and the login rate limiter would count their attempts against
+		# a stranger.
+		header_up X-Forwarded-For {remote_host}
+	}
+}

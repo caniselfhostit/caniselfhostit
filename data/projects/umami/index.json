@@ -1,0 +1,93 @@
+{
+  "slug": "umami",
+  "name": "Umami",
+  "tagline": "Pageviews, referrers and custom events on a hostname you own, from one container and a PostgreSQL, with no monthly event meter.",
+  "repo": "umami-software/umami",
+  "site": "https://umami.is",
+  "category": "analytics",
+  "replaces": [
+    {
+      "saas": "umami-cloud",
+      "plan": "Pro",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 3
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "MIT",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/umami-software/umami/blob/v3.2.0/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "The tracking script has to load from http://localhost:8105, which is a visitor's own computer in a visitor's own browser, so this path counts pages you open on this machine and nothing anyone else ever loads."
+  },
+  "quote": {
+    "text": "Your Umami installation will create a default administrator account with the username admin and the password umami.",
+    "source": "Umami documentation, Login",
+    "url": "https://docs.umami.is/docs/login",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "The install creates a default administrator account with the username admin and a password published in the documentation, which upstream tells you to change immediately after the first login.",
+      "url": "https://docs.umami.is/docs/install"
+    },
+    {
+      "claim": "Version 3 of the image is a PostgreSQL-only build: the Dockerfile installs the Prisma Postgres adapter, so the tag no longer carries the postgresql- prefix that version 2 tags did.",
+      "url": "https://github.com/umami-software/umami/blob/v3.2.0/Dockerfile"
+    },
+    {
+      "claim": "Upstream's own compose file runs two services, the app and PostgreSQL, publishes the app on port 3000 and health-checks it at /api/heartbeat.",
+      "url": "https://github.com/umami-software/umami/blob/v3.2.0/docker-compose.yml"
+    },
+    {
+      "claim": "DATABASE_URL is the only required variable, and APP_SECRET is a random string that secures authentication tokens and should be unique per installation.",
+      "url": "https://docs.umami.is/docs/environment-variables"
+    },
+    {
+      "claim": "A major version upgrade leaves PostgreSQL's query planner with stale statistics, and upstream's documented fix is to run ANALYZE against the database afterwards.",
+      "url": "https://docs.umami.is/docs/updates"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The account the image ships with is a published credential. Umami's first start creates a user named admin whose password is printed in the upstream documentation, so it is a known login on a public hostname from the second the container answers. This install replaces it during setup and then checks that the old one is refused; if you install Umami any other way, that is the first minute's work and it is not optional.",
+    "You own a PostgreSQL. Every account, website, session and pageview is a row in it and there is no file anywhere to copy instead. Backups are a pg_dump, restores are a psql, and a dump you have never restored is not a backup.",
+    "Nothing is counted until the snippet is on the page. The install ends with an empty dashboard, and the hostname you picked at step 1 is baked into the tracking snippet on every page you measure, so moving it later means editing all of them.",
+    "Email reports and the streaming API are the two things the vendor names as hosted-only. Everything else on the pricing page's feature table, including funnels, user journeys, goals, revenue and attribution, is in this MIT release, and the country data works without a MaxMind account because the image builds a geo database in.",
+    "Two outbound calls outlive this install. The dashboard fetches site icons from DuckDuckGo unless you set PRIVATE_MODE, and Umami asks upstream whether a newer version exists unless you set DISABLE_UPDATES. The anonymous telemetry is the one we turn off in the compose file."
+  ],
+  "sources": {
+    "compose": "https://docs.umami.is/docs/install",
+    "caddy": "https://docs.umami.is/docs/guides/hosting",
+    "install": "https://docs.umami.is/docs/environment-variables",
+    "credentials": "https://docs.umami.is/docs/login",
+    "auth": "https://docs.umami.is/docs/api/authentication",
+    "health": "https://github.com/umami-software/umami/blob/v3.2.0/src/app/api/heartbeat/route.ts",
+    "image": "https://github.com/umami-software/umami/blob/v3.2.0/Dockerfile",
+    "upgrade": "https://docs.umami.is/docs/updates",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "plausible",
+    "shlink",
+    "ghost"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "329e3d7d19a08f0abe54c7fc4b8dedfaaff34b120d9e5ede4ed05fb1d8916941"
+}

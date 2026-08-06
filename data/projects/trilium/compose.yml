@@ -1,0 +1,43 @@
+# Trilium · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker install ..... https://docs.triliumnotes.org/user-guide/setup/server/installation/docker
+#   configuration ...... https://docs.triliumnotes.org/user-guide/advanced-usage/configuration
+#   trusted proxy ...... https://docs.triliumnotes.org/user-guide/setup/server/reverse-proxy/trusted-proxy
+#   data directory ..... https://docs.triliumnotes.org/user-guide/setup/data-directory
+#   image definition ... https://github.com/TriliumNext/Trilium/blob/v0.104.1/apps/server/Dockerfile
+#
+# One service. Everything Trilium owns lives in one directory: document.db, the
+# config.ini it writes on first start, the automatic backup copies and the logs.
+# There is no database process here and nothing to dump. The container starts as
+# root, chowns that directory to the node user inside it and then drops to that
+# user, which is why /srv/trilium/data is created once at mode 700 and left
+# alone afterwards. No env_file: nothing this container needs is a secret. The
+# one credential this install generates is the password a human types into the
+# browser, and it is kept out of the application's environment on purpose.
+# Tag and digest were read from Docker Hub on 2026-08-06; the image publishes
+# amd64 and arm64, plus armv7 and armv8 on a best-effort basis.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  trilium:
+    image: triliumnext/trilium:v0.104.1@sha256:3332fa03198f0b3ecddf11fcf37f3aace352a664728d669a1ffa7a5594a6f2d6
+    container_name: trilium
+    restart: unless-stopped
+    environment:
+      # The single directory this service writes to, inside the container.
+      TRILIUM_DATA_DIR: /home/node/trilium-data
+      # Caddy is in front, so the visitor's address arrives in X-Forwarded-For
+      # and Trilium reads the left-most entry from it. The Caddyfile overwrites
+      # that header rather than appending to it, so the entry is Caddy's own
+      # measurement and the login rate limiter counts the right address.
+      TRILIUM_NETWORK_TRUSTEDREVERSEPROXY: "true"
+      # Day notes roll over at midnight in this zone, and the daily automatic
+      # backup follows it. UTC is the choice here; another tz database name is
+      # a one-line edit.
+      TZ: UTC
+    volumes:
+      - /srv/trilium/data:/home/node/trilium-data
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8103.
+      - "127.0.0.1:8103:8080"

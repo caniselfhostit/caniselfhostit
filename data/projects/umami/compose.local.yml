@@ -1,0 +1,58 @@
+# Umami · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   install ............ https://docs.umami.is/docs/install
+#   variable reference . https://docs.umami.is/docs/environment-variables
+#   heartbeat route .... https://github.com/umami-software/umami/blob/v3.2.0/src/app/api/heartbeat/route.ts
+#
+# Two services driven from ~/selfhost/umami/, so one file works on macOS, Linux
+# and Windows. Version 3 is a PostgreSQL-only build, so the tag carries no
+# database flavour. The database is a named volume rather than a bind mount:
+# PostgreSQL chowns its data directory to its own uid, which Windows cannot
+# grant on a home-directory mount. Umami itself writes nothing to disk. Digests
+# read 2026-08-06; both images publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: postgres:16.14-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
+    container_name: umami-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: umami
+      POSTGRES_USER: umami
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - umami-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U umami -d umami"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other container.
+
+  umami:
+    image: ghcr.io/umami-software/umami:3.2.0@sha256:8edfe4beaef13f9d1300619fa264ef250a3688df9cc54d24ca830ca31cb475ec
+    container_name: umami
+    restart: unless-stopped
+    # init reaps the child processes the migration step leaves behind.
+    init: true
+    environment:
+      # Docker Compose substitutes both values from ./.env, which is mode 600
+      # and is never mounted into the container.
+      DATABASE_URL: postgresql://umami:${DB_PASSWORD}@postgres:5432/umami
+      APP_SECRET: ${APP_SECRET}
+      # No anonymous usage pings leave this computer.
+      DISABLE_TELEMETRY: "1"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:3000/api/heartbeat || exit 1"]
+      interval: 10s
+      retries: 18
+    ports:
+      # Loopback only: no other device on the wifi can reach 8105.
+      - "127.0.0.1:8105:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  umami-pgdata:

@@ -1,0 +1,92 @@
+{
+  "slug": "home-assistant",
+  "name": "Home Assistant",
+  "tagline": "Open source home automation on hardware you own, where the automations, the history and every device credential stay put.",
+  "repo": "home-assistant/core",
+  "site": "https://www.home-assistant.io",
+  "category": "money-home",
+  "replaces": [
+    {
+      "saas": "home-assistant-cloud",
+      "plan": "Home Assistant Cloud",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 0
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "Apache-2.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://www.home-assistant.io/installation/linux/#docker-compose",
+  "local": {
+    "fit": "caveat",
+    "note": "Home Assistant answers only at http://localhost:8107 on this computer, so your phone and the companion app cannot reach it, and every automation stops the moment the machine goes to sleep."
+  },
+  "quote": {
+    "text": "It takes considerable effort to configure. Your Home Assistant instance must be accessible from the Internet, and you need to create an Amazon Developer account and an Amazon Web Services (AWS) account.",
+    "source": "Home Assistant documentation, Amazon Alexa Smart Home Skill",
+    "url": "https://www.home-assistant.io/integrations/alexa.smart_home/",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "A reverse proxy has to be trusted before Home Assistant will answer it: upstream states that requests from a proxy are blocked by design until Home Assistant is configured to trust it.",
+      "url": "https://www.home-assistant.io/docs/configuration/remote/"
+    },
+    {
+      "claim": "Trusting a proxy means turning on X-Forwarded-For and listing the proxy under trusted proxies, and a masked entry has to be a network address rather than a host address.",
+      "url": "https://www.home-assistant.io/integrations/http/"
+    },
+    {
+      "claim": "Home Assistant Container listens on port 8123, and upstream's own example runs it with host networking and privileged mode so it can reach devices and radios on the machine's own network.",
+      "url": "https://www.home-assistant.io/installation/linux/"
+    },
+    {
+      "claim": "Connecting Alexa without Home Assistant Cloud takes considerable effort and needs both an Amazon Developer account and an AWS account for the Lambda function that fronts the skill.",
+      "url": "https://www.home-assistant.io/integrations/alexa.smart_home/"
+    },
+    {
+      "claim": "The manual Google Assistant route needs a Google Home Developer Console project with account linking pointed at your own hostname, and the Cloud alternative is a paid subscription after a 30-day free trial.",
+      "url": "https://www.home-assistant.io/integrations/google_assistant/"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "You replace the remote access, not the voice assistants. Putting Home Assistant behind your own domain and your own Caddy gives you everything the subscription's remote URL gave you. Alexa and Google Assistant are a different matter: upstream's manual route needs an AWS Lambda function or a Google Home Developer Console project, its own documentation calls that considerable effort, and this install does not attempt it. If Alexa is the reason you were paying, the honest saving here is smaller than the price tag suggests.",
+    "A rented server has nothing to discover. Home Assistant finds most devices by listening on the network it is sitting on, and a datacenter network has none of your things on it, so mDNS and SSDP discovery, Bluetooth and USB radios are all out of reach. Integrations that reach a device over the internet, or over an address you type in, work exactly as they do at home. A hub for the sensors in your house belongs in your house, which is what the local path is for.",
+    "The reverse-proxy setting is the install. Home Assistant answers 400 to every request from a proxy it has not been told to trust, so the configuration file is written before the first start rather than after it. This install pins 2026.7.4 because releases from the 2026.8 series move that setting out of the file and into the interface, where it has to be confirmed in a browser within a few minutes of the upgrade or it reverts.",
+    "The subscription was also paying salaries. Nabu Casa is the company the Home Assistant founders run, and it states plainly that the subscription funds Home Assistant, ESPHome and Z-Wave JS. Self-hosting is not a betrayal of that, but the money you stop sending was going somewhere real.",
+    "You own the backups, and taking one means stopping the container. Everything is under /srv/home-assistant/config, including the .storage directory that holds your account and the token for every integration you ever link, and a SQLite recorder database copied while it is being written is not a backup."
+  ],
+  "sources": {
+    "compose": "https://www.home-assistant.io/installation/linux/",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://www.home-assistant.io/integrations/http/",
+    "proxy": "https://www.home-assistant.io/docs/configuration/remote/",
+    "http-schema": "https://github.com/home-assistant/core/blob/2026.7.4/homeassistant/components/http/__init__.py",
+    "proxy-behaviour": "https://github.com/home-assistant/core/blob/2026.7.4/homeassistant/components/http/forwarded.py",
+    "onboarding": "https://github.com/home-assistant/core/blob/2026.7.4/homeassistant/components/onboarding/views.py",
+    "default-config": "https://github.com/home-assistant/core/blob/2026.7.4/homeassistant/config.py"
+  },
+  "related": [
+    "uptime-kuma",
+    "vaultwarden",
+    "actual-budget"
+  ],
+  "pagePriority": 1,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "3b8d05a2fd739d63d5f1b0f5d3d8cf856cf2a6ee6a4591f31dab87d5fee3c83f"
+}

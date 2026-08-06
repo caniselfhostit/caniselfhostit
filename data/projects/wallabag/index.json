@@ -1,0 +1,93 @@
+{
+  "slug": "wallabag",
+  "name": "wallabag",
+  "tagline": "Saves the readable article, not the link, and hands it to the phone or e-reader you actually read on.",
+  "repo": "wallabag/wallabag",
+  "site": "https://wallabag.org",
+  "category": "reading-bookmarks",
+  "replaces": [
+    {
+      "saas": "instapaper",
+      "plan": "Premium",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "MIT",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/wallabag/docker/blob/master/README.md",
+  "local": {
+    "fit": "caveat",
+    "note": "Everything answers at http://localhost:8109, which is this computer and nowhere else, so the phone app, an e-reader and the browser extension on any other machine cannot reach your articles."
+  },
+  "quote": {
+    "text": "Default login is wallabag:wallabag.",
+    "source": "wallabag Docker image README",
+    "url": "https://github.com/wallabag/docker/blob/master/README.md",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "The image documents a default login of wallabag:wallabag and names /var/www/wallabag/data and /var/www/wallabag/web/assets/images as the two paths worth persisting.",
+      "url": "https://github.com/wallabag/docker/blob/master/README.md"
+    },
+    {
+      "claim": "SQLite is the image's default database driver, and the entrypoint creates the file at data/db/wallabag.sqlite, which is why a personal install runs one container and no database process.",
+      "url": "https://github.com/wallabag/docker/blob/master/root/entrypoint.sh"
+    },
+    {
+      "claim": "The image ships a published default value for the Symfony application secret, so an install that never sets SYMFONY__ENV__SECRET signs its remember-me cookies with a string anyone can read.",
+      "url": "https://github.com/wallabag/docker/blob/master/root/etc/wallabag/parameters.template.yml"
+    },
+    {
+      "claim": "With public registration off, wallabag redirects a request to /register back to the login page, and the anonymous /api/info endpoint reports allowed_registration as false.",
+      "url": "https://github.com/wallabag/wallabag/blob/2.6.14/src/Wallabag/UserBundle/EventListener/RegistrationListener.php"
+    },
+    {
+      "claim": "wallabag imports an Instapaper library from the CSV export you download on your Instapaper settings page.",
+      "url": "https://doc.wallabag.org/user/import/instapaper/"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The clients are the reason to pick this, and they are not all equally alive. The Android app and the Firefox and Chrome extension are maintained, KOReader ships a wallabag plugin so a Kobo or Kindle running it syncs on its own, and articles export as epub, mobi, pdf or plain text. The official iOS app is the weak link: its repository is archived on GitHub, so an iPhone reader should check what is currently on the App Store before moving their library.",
+    "Fetching is the part that breaks, and it breaks quietly. wallabag ships a canned message for the case where it cannot retrieve an article, because paywalls, consent walls and pages that assemble themselves in JavaScript all produce it. Most sites work, a stubborn minority never will, and you are the one who notices rather than a support desk.",
+    "You own the backups, and taking one costs a restart. Everything is a single SQLite file under /srv/wallabag/data, which has to be copied with the container stopped, and starting it again makes the image rebuild its cache for a couple of minutes before the site answers. That pause is the tax on this image, and it is paid on every restart and every reboot.",
+    "One account, and no mail to fall back on. This install turns public sign-up off and configures no SMTP, so there is no password-reset link: the password the installer generated is the only copy, and it belongs in a password manager before you close the terminal.",
+    "No text-to-speech, no speed reading, no hosted reader with somebody else's uptime. Instapaper's Premium tier is mostly those, plus a promise to keep your archive alive, and that promise is now yours."
+  ],
+  "sources": {
+    "compose": "https://github.com/wallabag/docker/blob/master/README.md",
+    "caddy": "https://github.com/wallabag/docker/blob/master/root/etc/nginx/nginx.conf",
+    "install": "https://doc.wallabag.org/admin/parameters/",
+    "entrypoint": "https://github.com/wallabag/docker/blob/master/root/entrypoint.sh",
+    "image": "https://github.com/wallabag/docker/blob/master/Dockerfile",
+    "health": "https://github.com/wallabag/wallabag/blob/2.6.14/src/Wallabag/ApiBundle/Entity/ApplicationInfo.php",
+    "registration": "https://github.com/wallabag/wallabag/blob/2.6.14/src/Wallabag/UserBundle/EventListener/RegistrationListener.php",
+    "cli": "https://github.com/FriendsOfSymfony/FOSUserBundle/blob/v3.4.0/docs/command_line_tools.rst",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "linkwarden",
+    "freshrss",
+    "trilium"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "52718a75b0693f848de2fecd9e1d7cfdbeda7b9353cc6f87105d4527f182861f"
+}

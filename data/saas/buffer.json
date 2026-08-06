@@ -1,0 +1,59 @@
+{
+  "slug": "buffer",
+  "name": "Buffer",
+  "domain": "buffer.com",
+  "whyPeoplePay": "Buffer holds the API relationships so you do not have to. One account connects to X, Instagram, LinkedIn, TikTok and the rest, and when one of those companies changes its rules, deprecates an endpoint or suspends an app, Buffer is the one filing the paperwork. The scheduling interface is the part you see; the part you are renting is a company that stays in good standing with a dozen platforms on your behalf.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Up to 3 connected channels and 10 scheduled posts per channel at a time."
+    },
+    {
+      "name": "Essentials",
+      "priceMonthly": 5,
+      "unit": "usage",
+      "seatsIncluded": 1,
+      "note": "$5 per connected channel per month, or $60 per channel per year, which the page presents as saving two months. Five channels is $25 a month."
+    },
+    {
+      "name": "Team",
+      "priceMonthly": 10,
+      "unit": "usage",
+      "seatsIncluded": 1,
+      "note": "$10 per connected channel per month, or $120 per channel per year. Adds unlimited team members and draft approvals, so the seat count is not what moves this bill."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://buffer.com/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The unit is recorded as usage rather than per-seat because Buffer meters connected channels, not people: the Team plan explicitly includes unlimited team members, so a five-person team on five channels pays the same as one person on five channels. Monthly-billed figures are recorded with the annual equivalents in each plan note. Confidence is medium because the page also states that channels above the tenth are priced lower per channel without naming that rate, so a large account's real bill cannot be computed from these numbers."
+  },
+  "ranked": [
+    {
+      "project": "postiz",
+      "rationale": "The only one here that is both actively developed and honest about the trade. You get the calendar, the per-network post variants, the media library and a public API, on AGPL-3.0, with no channel count and no per-channel bill. What you take on is the thing Buffer's price actually buys: every network you post to needs a developer app you register yourself, some of those registrations are reviewed by a human at Meta or X and take days, and when a platform changes its terms you are the one who reads the email. Budget a weekend for the stack and a second sitting for the paperwork."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Mixpost",
+      "repo": "https://github.com/inovector/mixpost",
+      "note": "MIT-licensed and genuinely open: the repository is Mixpost Lite, a Laravel package you mount inside your own app, and the Pro and Enterprise editions with teams, workspaces and the richer analytics are paid products sold separately. Not relicensed and not abandoned, but slower moving than it looks: the newest tagged release is 2.6.0 from March 2026, which is also the date of the last commit on main."
+    },
+    {
+      "name": "BrightBean Studio",
+      "repo": "https://github.com/brightbeanxyz/brightbean-studio",
+      "note": "AGPL-3.0, Django, and the closest thing to a full agency tool on this list: multiple workspaces, client approval stages and direct first-party API integrations with no aggregator in the middle. It is also new. The repository was created in March 2026 and has no tagged release at all, so anyone self-hosting it is pinning a commit and reading diffs."
+    },
+    {
+      "name": "Socioboard",
+      "repo": "https://github.com/socioboard/Socioboard-5.0",
+      "note": "The oldest option here and the one to be careful with. GitHub reports the license as Other because the LICENSE file wraps GPL-3.0 text in the project's own preamble, and the last commit to the 5.0 repository was September 2025. A social scheduler that has not tracked a year of platform API changes is a maintenance project, not an install."
+    }
+  ]
+}

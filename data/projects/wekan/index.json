@@ -1,0 +1,95 @@
+{
+  "slug": "wekan",
+  "name": "WeKan",
+  "tagline": "Trello-shaped boards with swimlanes, checklists and attachments, on a hostname you own and a database you can dump.",
+  "repo": "wekan/wekan",
+  "site": "https://wekan.fi",
+  "category": "work-pm",
+  "replaces": [
+    {
+      "saas": "trello",
+      "plan": "Standard",
+      "seatsAssumed": 5
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 0
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "MIT",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/wekan/wekan/blob/v10.71/docker-compose-mongodb-v7.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Everything answers at http://localhost:8104, which means this computer and nowhere else, so a board built to be shared with other people is a board only you can open."
+  },
+  "quote": {
+    "text": "First registered user will be admin, and next ones normal users.",
+    "source": "WeKan documentation, Adding users",
+    "url": "https://github.com/wekan/wekan/blob/v10.71/docs/Login/Adding-users.md",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "The first account registered becomes the administrator and later ones are ordinary users, and upstream states in the same page that a working email server is not required for WeKan to run.",
+      "url": "https://github.com/wekan/wekan/blob/v10.71/docs/Login/Adding-users.md"
+    },
+    {
+      "claim": "ROOT_URL is written with no quotes and is the address WeKan is reached at, which upstream documents separately for Docker and for the Snap package.",
+      "url": "https://github.com/wekan/wekan/blob/v10.71/docs/Webserver/Settings.md"
+    },
+    {
+      "claim": "The Self-Registration checkbox in the admin panel is stored inverted, as a disableRegistration flag, and unticking it makes the instance invite-only.",
+      "url": "https://github.com/wekan/wekan/blob/v10.71/docs/Features/Admin-Panel/People/Login.md"
+    },
+    {
+      "claim": "Upstream ships a MongoDB 7 compose file that runs a one-member replica set named rs0 and points MONGO_OPLOG_URL at it, which is the configuration this install reproduces.",
+      "url": "https://github.com/wekan/wekan/blob/v10.71/docker-compose-mongodb-v7.yml"
+    },
+    {
+      "claim": "Without the oplog, Meteor falls back to polling, which upstream measures as three to five times the CPU and a jump from about 50 ms to about 2000 ms before a change reaches another browser.",
+      "url": "https://github.com/wekan/wekan/blob/v10.71/docs/Databases/MongoDB/Oplog-Configuration.md"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "You own a MongoDB. It is a real database process with its own dump-and-restore path, the attachments live outside it on a separate volume, and a backup here is three artifacts rather than one folder you can copy.",
+    "Adding a colleague is now your job. This install closes self-registration once your own account exists, which is the correct posture for a hostname on the public internet, and it means every later account is one you create for someone. Without a mail server there is no invitation email to send, so you hand them a username and password yourself.",
+    "Upstream releases fast. Several tagged releases in a single day is normal for this project, so a pinned digest is a claim about one of them and the update step is one you will use more often here than on most of this catalogue.",
+    "No Power-Ups, no Butler automation, no calendar or timeline views, no Atlassian sign-on. Boards, lists, swimlanes, cards, checklists, labels, due dates, members and attachments are what you get, and no setting adds the rest.",
+    "The code is MIT and genuinely open, but the help is not free. Upstream states that its issue tracker is for developers rather than for support and points users at a paid commercial support page, so when something breaks the forum is you."
+  ],
+  "sources": {
+    "compose": "https://github.com/wekan/wekan/blob/v10.71/docker-compose-mongodb-v7.yml",
+    "caddy": "https://github.com/wekan/wekan/blob/v10.71/docs/Webserver/Caddy.md",
+    "install": "https://github.com/wekan/wekan/blob/v10.71/docs/Webserver/Settings.md",
+    "accounts": "https://github.com/wekan/wekan/blob/v10.71/docs/Login/Adding-users.md",
+    "registration": "https://github.com/wekan/wekan/blob/v10.71/docs/Features/Admin-Panel/People/Login.md",
+    "database": "https://github.com/wekan/wekan/blob/v10.71/docs/Databases/MongoDB/Oplog-Configuration.md",
+    "backup": "https://github.com/wekan/wekan/blob/v10.71/docs/Backup/Backup.md",
+    "image": "https://github.com/wekan/wekan/blob/v10.71/Dockerfile",
+    "cpu": "https://github.com/wekan/wekan/blob/v10.71/docs/Databases/MongoDB/avx-qemu.md",
+    "import": "https://github.com/wekan/wekan/blob/v10.71/docs/ImportExport/trello/Migrating-from-Trello.md",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "vikunja",
+    "grist",
+    "docmost"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "67b62b68ea21e91614475272908b88595d7ed937c8b90e5eeba09febe4277369"
+}

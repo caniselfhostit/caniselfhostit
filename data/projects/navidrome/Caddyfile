@@ -1,0 +1,34 @@
+# Navidrome · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://www.navidrome.org/docs/usage/admin/security/,
+# https://caddyserver.com/docs/caddyfile/directives/reverse_proxy and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. Upstream ships an
+# HTTP server inside Navidrome and still asks you to put a reverse proxy in
+# front of it that terminates TLS. This is that proxy.
+
+<DOMAIN> {
+	# The UI bundle and the JSON API compress well. Audio does not, and Caddy's
+	# default encode matcher covers text, JSON, JavaScript and SVG only, so the
+	# audio streams pass through untouched.
+	encode zstd gzip
+
+	# Navidrome sets its own X-Frame-Options: DENY, so this block does not
+	# repeat it. HSTS is here because every request to this host carries a
+	# session cookie or a Subsonic credential.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8108 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall. Server-sent events on
+	# /api/events need no extra configuration: Caddy flushes text/event-stream
+	# responses immediately whatever flush_interval says.
+	reverse_proxy 127.0.0.1:8108
+}

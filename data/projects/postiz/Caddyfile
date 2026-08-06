@@ -1,0 +1,26 @@
+# Postiz · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from https://docs.postiz.com/reverse-proxies/caddy
+# and https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. It is also
+# POSTIZ_DOMAIN in .env, and the host every OAuth redirect URI points back at.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		# Not no-referrer: connecting a channel bounces out to a provider.
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# 8111 is the loopback port compose publishes here. It is not a container
+	# port and it is not open in the firewall. One upstream serves both halves
+	# of the app: the nginx inside the container sends /api/ to the backend and
+	# everything else to the frontend.
+	reverse_proxy 127.0.0.1:8111
+}

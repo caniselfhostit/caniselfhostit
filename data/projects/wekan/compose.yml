@@ -1,0 +1,66 @@
+# WeKan · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   mongodb compose .... https://github.com/wekan/wekan/blob/v10.71/docker-compose-mongodb-v7.yml
+#   root url and proxy . https://github.com/wekan/wekan/blob/v10.71/docs/Webserver/Settings.md
+#   oplog reactivity ... https://github.com/wekan/wekan/blob/v10.71/docs/Databases/MongoDB/Oplog-Configuration.md
+#   image and port ..... https://github.com/wekan/wekan/blob/v10.71/Dockerfile
+#
+# Two services: WeKan and the MongoDB 7 that holds every board. Both data
+# directories are named volumes, because MongoDB chowns /data/db to its own
+# uid and the WeKan image chowns /data to a system user made at image build
+# time. ROOT_URL arrives from /srv/wekan/.env because it carries the hostname,
+# and a Meteor application opens its live data socket at whatever ROOT_URL
+# says. Digests read on 2026-08-06; both images publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  wekandb:
+    image: mongo:7.0.39@sha256:35a5926f71f8b6cb19206bee928c5a85f241a8be99f20c81abe35ae78a73415d
+    container_name: wekan-db
+    restart: unless-stopped
+    # A one-member replica set, which is what makes the oplog exist. Meteor
+    # tails it instead of re-reading whole collections on a timer: upstream
+    # measures 50 ms rather than 2000 ms before another person's card move
+    # lands on screen. Step 7 initiates the set once.
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--quiet"]
+    volumes:
+      - wekan-db:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "try { quit(db.hello().isWritablePrimary ? 0 : 1) } catch (e) { quit(1) }"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 30s
+    # No `ports:` at all: 27017 is reachable only from the other container.
+
+  wekan:
+    image: wekanteam/wekan:v10.71@sha256:5ccfd900c9b68fd9ebd9eb194d286119fdee000ba1e907df583ce942bad54fdc
+    container_name: wekan-app
+    restart: unless-stopped
+    env_file: /srv/wekan/.env
+    environment:
+      # The image can also start a FerretDB it carries inside itself; naming
+      # the backend takes that decision away from the entrypoint.
+      WEKAN_DB: mongodb
+      MONGO_URL: mongodb://wekandb:27017/wekan
+      MONGO_OPLOG_URL: mongodb://wekandb:27017/local?replicaSet=rs0
+      METEOR_REACTIVITY_ORDER: changeStreams,oplog,polling
+      # SockJS rather than uws, upstream's own default, and it puts a plain
+      # http endpoint at /sockjs/info that step 7 checks.
+      DDP_TRANSPORT: sockjs
+      # Attachments and avatars are files under this path, not database rows.
+      WRITABLE_PATH: /data
+      WITH_API: "true"
+    volumes:
+      - wekan-files:/data
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8104.
+      - "127.0.0.1:8104:8080"
+    depends_on:
+      wekandb:
+        condition: service_healthy
+
+volumes:
+  wekan-db:
+  wekan-files:

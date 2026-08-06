@@ -1,0 +1,87 @@
+{
+  "slug": "typeform",
+  "name": "Typeform",
+  "domain": "typeform.com",
+  "whyPeoplePay": "Typeform sells completion rate. One question at a time, on a page that looks like somebody designed it, is measurably easier to finish than a wall of fields, and the people who buy it are buying answers rather than software. The bill is metered on the thing you cannot control: how many people reply. A form that does well takes you up a tier, which is a strange incentive to be on the wrong side of.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Described in the pricing page FAQ as a way to explore Typeform with basic features and a limited number of responses per month. No plan card and no response figure on the page we read."
+    },
+    {
+      "name": "Basic",
+      "priceMonthly": 39,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "100 responses a month, 1 seat. $28/mo billed annually ($336/yr), which the page advertises as a $132/yr saving."
+    },
+    {
+      "name": "Plus",
+      "priceMonthly": 79,
+      "unit": "flat",
+      "seatsIncluded": 3,
+      "note": "1,000 responses a month, 3 seats. $56/mo billed annually ($672/yr), advertised as a $276/yr saving."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": 129,
+      "unit": "flat",
+      "seatsIncluded": 5,
+      "note": "10,000 responses a month, 5 seats. $91/mo billed annually ($1,092/yr), advertised as a $456/yr saving."
+    },
+    {
+      "name": "Talent",
+      "priceMonthly": 169,
+      "unit": "flat",
+      "seatsIncluded": 3,
+      "note": "The hiring-focused tier: 3,000 responses a month, 3 seats. $119/mo billed annually ($1,428/yr)."
+    },
+    {
+      "name": "Growth Flow",
+      "priceMonthly": 379,
+      "unit": "flat",
+      "seatsIncluded": 5,
+      "note": "10,000 responses a month, 5 seats, adding enrichment, automations and SMS follow-ups. $266/mo billed annually, after a 14-day trial."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The page lists custom response limits, SSO, HIPAA and custom domains here."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://www.typeform.com/pricing/",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The pricing page renders its plan cards in JavaScript and two reads of it disagreed about which figure was the monthly rate and which the annual one. We record the monthly-billed number in each row, because the advertised annual savings reconcile against it exactly: 39 and 28 differ by the $132/yr the page claims for Basic, 79 and 56 by $276 for Plus, 129 and 91 by $456 for Business. A web search corroborated Basic, Plus, Business and Enterprise but not Talent or Growth Flow, and the free tier is referenced only in the page's FAQ with no response allowance given, so its current limit is unknown to us."
+  },
+  "ranked": [
+    {
+      "project": "formbricks",
+      "rationale": "The closest match to what people actually buy Typeform for: one-question-at-a-time link surveys, a builder with logic and hidden fields, and an in-app widget for surveying people who are already using your product. Self-hosted it has no response cap at all, which removes the meter that decides your Typeform bill. The price is the install: version 5 is a seven-service stack, and Hub and Cube are not optional parts of it."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "LimeSurvey",
+      "repo": "https://github.com/LimeSurvey/LimeSurvey",
+      "note": "The survey-research heavyweight, GPL-2.0-or-later, actively developed, and the one to pick if you need question types nobody else has: quotas, randomisation blocks, panel integration, offline data collection. It comes from a different design era than Typeform and looks it, so choose it when the questionnaire logic matters more than the impression the form makes. PHP and MySQL or PostgreSQL, no container from us yet."
+    },
+    {
+      "name": "HeyForm",
+      "repo": "https://github.com/heyform/heyform",
+      "note": "AGPL-3.0, actively developed, and the nearest thing to Typeform's conversational one-question flow in a much smaller install than Formbricks. It is a form builder rather than an experience-management suite, so there is no in-product survey widget and no analytics layer, which is exactly why it is lighter. We have not tested it."
+    },
+    {
+      "name": "SurveyJS",
+      "repo": "https://github.com/surveyjs/survey-library",
+      "note": "MIT, actively developed, and honestly not an app: it is the JavaScript form-rendering library that several of these tools are built on. Self-hosting it means writing the application around it, including storage, accounts and analytics. Listed because it turns up in every search for a Typeform alternative and it is worth knowing that it answers a different question."
+    }
+  ]
+}

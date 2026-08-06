@@ -1,0 +1,35 @@
+# wallabag · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://github.com/wallabag/docker/blob/master/root/etc/nginx/nginx.conf and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also SYMFONY__ENV__DOMAIN_NAME in .env, and wallabag builds its feed and
+# sharing links from it, so the two have to stay the same string.
+
+<DOMAIN> {
+	# The nginx inside the container maps X-Forwarded-Proto onto the HTTPS
+	# fastcgi parameter, and Caddy sets that header on every proxied request,
+	# so PHP sees an https request and wallabag generates https links.
+	# Nothing else has to be configured for that to happen.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		# Every article page links out to the site it was saved from. Without
+		# this, each of those sites learns the hostname of a private reading
+		# list and roughly what is in it.
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# Article pages are HTML and the reading view is text, so compression is
+	# worth more here than it is in front of an API.
+	encode zstd gzip
+
+	# 8109 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8109
+}

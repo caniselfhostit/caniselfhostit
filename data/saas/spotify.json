@@ -1,0 +1,73 @@
+{
+  "slug": "spotify",
+  "name": "Spotify Premium",
+  "domain": "spotify.com",
+  "whyPeoplePay": "The catalog is the product. Spotify pays the labels so that roughly a hundred million tracks are one search box away, on a phone, a car, a speaker and a laptop, with the queue in the same place on all four. Ten years of listening history turns into a weekly mixtape nobody had to make. None of that is software you can install: it is licensing, and it is the part a subscription actually buys. What the subscription also buys, and what you can take back, is a player, a library that syncs, and a month without ads.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Ad-supported listening, with limits on skipping and on-demand playback."
+    },
+    {
+      "name": "Premium Individual",
+      "priceMonthly": 12.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "One account. The page advertises a first month at $0 for new subscribers, then this rate."
+    },
+    {
+      "name": "Premium Student",
+      "priceMonthly": 6.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "One verified account, sold with Hulu access. Three months at $0 up front, then this rate. Eligibility is re-verified each year."
+    },
+    {
+      "name": "Premium Duo",
+      "priceMonthly": 18.99,
+      "unit": "flat",
+      "seatsIncluded": 2,
+      "note": "Two accounts at the same address."
+    },
+    {
+      "name": "Premium Family",
+      "priceMonthly": 21.99,
+      "unit": "flat",
+      "seatsIncluded": 6,
+      "note": "Up to six accounts at the same address."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://www.spotify.com/us/premium/",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "US prices, read from the plan cards on spotify.com/us/premium and corroborated against the trade-press reporting of the early-2026 increase. Every plan here is billed monthly, so there is no annual rate to convert; the $0 intro periods on Individual and Student are recorded in the plan notes rather than in the price, because an introductory month is not what the plan costs."
+  },
+  "ranked": [
+    {
+      "project": "navidrome",
+      "rationale": "The honest answer to a narrower question. Navidrome does not replace the catalog and nothing self-hosted does; it replaces the player. Point it at music you already own and you get a web player, per-user play counts, playlists and ratings from one container, and, because it speaks the Subsonic and OpenSubsonic APIs, the 82 client apps in its own directory work with it on Android, iOS, desktop and CarPlay. That client ecosystem is why this is first: a music server nobody can reach from a phone is a folder with extra steps."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Jellyfin",
+      "repo": "https://github.com/jellyfin/jellyfin",
+      "note": "GPL-2.0, released v10.11.11 in June 2026, one of the most actively maintained projects in this category. It is a whole media server: film, television, live TV and music in one install, with its own apps on phones, tablets and TV boxes. If you also have a video library, it answers both questions at once, which is a real argument for it. As a music player it is the weaker choice, because the music half is served by Jellyfin's own clients rather than by the Subsonic app ecosystem, and browsing a large tagged music collection is not what the interface was designed around."
+    },
+    {
+      "name": "Funkwhale",
+      "repo": "https://dev.funkwhale.audio/funkwhale/funkwhale",
+      "note": "AGPL-3.0, developed on the project's own GitLab rather than GitHub, with 2.0.4 released in June 2026 and commits landing this week. It is the only one here that federates: pods speak ActivityPub, so you can subscribe to a library somebody else hosts, which is a genuinely different idea from the rest of this list. The install is a different weight class, though, adding a PostgreSQL, a Redis and several application containers where Navidrome is one, so it lands in a much harder setup tier for the same personal use."
+    },
+    {
+      "name": "Koel",
+      "repo": "https://github.com/koel/koel",
+      "note": "MIT, v9.11.0 in July 2026, actively maintained. A Laravel and Vue web player with a well-regarded interface, plus an official mobile app of its own. Two things to know before choosing it: it needs a PHP runtime and a database rather than a single container, and the features that matter to a household, multi-user libraries and SSO among them, sit behind Koel Plus, a paid licence on top of the MIT core."
+    }
+  ]
+}

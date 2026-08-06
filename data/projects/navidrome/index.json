@@ -1,0 +1,94 @@
+{
+  "slug": "navidrome",
+  "name": "Navidrome",
+  "tagline": "A music server for the files you already own, and the phone apps that make them worth owning.",
+  "repo": "navidrome/navidrome",
+  "site": "https://www.navidrome.org",
+  "category": "photos-media",
+  "replaces": [
+    {
+      "saas": "spotify",
+      "plan": "Premium Individual",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 512,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "GPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/navidrome/navidrome/blob/v0.63.2/contrib/docker-compose/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "On your own computer Navidrome answers only at http://localhost:8108, so the phone in your pocket cannot reach it and the Subsonic apps that make a music server worth having stay unused: the browser on that one machine is the whole player."
+  },
+  "quote": {
+    "text": "Navidrome only needs read-only access to the Music Folder, and read-write permissions to the Data Folder.",
+    "source": "Navidrome documentation, Security Considerations",
+    "url": "https://www.navidrome.org/docs/usage/admin/security/",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Upstream asks for read-only access to the music folder and read-write only on the data folder, and says plainly that Navidrome should not run as root.",
+      "url": "https://www.navidrome.org/docs/usage/admin/security/"
+    },
+    {
+      "claim": "The published image sets ND_MUSICFOLDER to /music, ND_DATAFOLDER to /data and ND_PORT to 4533, and declares both paths as volumes.",
+      "url": "https://github.com/navidrome/navidrome/blob/v0.63.2/Dockerfile"
+    },
+    {
+      "claim": "PasswordEncryptionKey re-encrypts every stored password the first time it is set, and upstream states it cannot be changed afterwards without locking users out.",
+      "url": "https://www.navidrome.org/docs/usage/admin/security/"
+    },
+    {
+      "claim": "The first screen after install is an admin-user creation form filled in from a browser, so there is no default account and no shipped password.",
+      "url": "https://www.navidrome.org/docs/getting-started/"
+    },
+    {
+      "claim": "Any app that supports the OpenSubsonic API works with Navidrome, and the project's own directory lists 82 of them across Android, iOS, desktop and web.",
+      "url": "https://www.navidrome.org/apps/"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "You bring the music. This streams audio files that are already on the disk, and nothing appears in it that you did not put there. Spotify's catalog is the actual product and no self-hosted server replaces it. What you get back is the player, the library and the bill.",
+    "The client apps are the reason this works. Navidrome speaks Subsonic API v1.16.1 plus the OpenSubsonic extensions, and the project's directory lists 82 apps that talk to it on Android, iOS, desktop, CarPlay and the web. You pick your player instead of being handed one, and none of them can take an album away from you.",
+    "One key you cannot change your mind about. The passphrase that encrypts stored passwords is written once during install, and upstream is explicit that changing it later locks every account out. It lives in .env next to the database, and the two have to be backed up together or neither is worth anything.",
+    "Your library is not in the backup. The install backs up the database, the key and the config, which is small and quick. The music is tens of gigabytes and belongs in whatever protects the machine you copied it from. It is also the half that no download can replace.",
+    "No Spotify Connect, no Discover Weekly, no podcasts, no offline sync managed for you, and no way to hand a friend a link to a track you do not own. Those are the paid product, not the missing features of this one."
+  ],
+  "sources": {
+    "compose": "https://www.navidrome.org/docs/installation/docker/",
+    "caddy": "https://caddyserver.com/docs/caddyfile/directives/reverse_proxy",
+    "install": "https://www.navidrome.org/docs/usage/configuration/options/",
+    "security": "https://www.navidrome.org/docs/usage/admin/security/",
+    "backup": "https://www.navidrome.org/docs/usage/admin/backup/",
+    "firstRun": "https://www.navidrome.org/docs/getting-started/",
+    "image": "https://github.com/navidrome/navidrome/blob/v0.63.2/Dockerfile",
+    "health": "https://github.com/navidrome/navidrome/blob/v0.63.2/server/server.go",
+    "clients": "https://www.navidrome.org/apps/",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "immich",
+    "nextcloud",
+    "freshrss"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-06",
+  "contentHash": "40fbf1e66fe746dea7230e464d3446df3a404edf833b68952caea704ea7be118"
+}
