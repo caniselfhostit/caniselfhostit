@@ -1,0 +1,43 @@
+# draw.io · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   image, ports, env vars .. https://github.com/jgraph/docker-drawio/blob/v31.1.8/README.md
+#   entrypoint behaviour .... https://github.com/jgraph/docker-drawio/blob/v31.1.8/main/docker-entrypoint.sh
+#   image build ............. https://github.com/jgraph/docker-drawio/blob/v31.1.8/main/Dockerfile
+#
+# One container: Tomcat 9 on JDK 11 serving the compiled draw.io editor at the
+# root path on container port 8080, as a non-root tomcat user. This file lives
+# in ~/selfhost/drawio/ and holds no absolute path, so it works on all three.
+#
+# There is no volume here, and that is not an omission: a diagram is written to
+# this computer's disk or into the browser that drew it, never to the server.
+#
+# The entrypoint switches every cloud backend off when its credentials are
+# absent: with no DRAWIO_GOOGLE_CLIENT_ID, DRAWIO_MSGRAPH_CLIENT_ID or
+# DRAWIO_GITLAB_ID it writes gapi, od and gl to 0, and it always writes db, gh
+# and tr to 0. This file sets none of them, so none of them are on.
+#
+# KEYSTORE_PASS arrives from ./.env. Left alone, the image falls back to a
+# keystore value printed in its own documentation, on a self-signed certificate
+# it makes at every start for container port 8443, which this file never
+# publishes. The generated value replaces a documented default.
+#
+# Tag and digest read from Docker Hub on 2026-08-06; the manifest list covers
+# linux/amd64 and linux/arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  drawio:
+    image: jgraph/drawio:31.1.8@sha256:0c8910ea14dfbccb17c784ee17d995317a8d753479f5ec0f21b2ab2213153100
+    container_name: drawio
+    restart: unless-stopped
+    env_file: ./.env
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/ >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    ports:
+      # Loopback only: no other device on the wifi can reach 8158.
+      - "127.0.0.1:8158:8080"

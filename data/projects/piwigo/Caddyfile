@@ -1,0 +1,27 @@
+# Piwigo · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://piwigo.org/guides/install/docker and
+# https://caddyserver.com/docs/caddyfile/directives/reverse_proxy
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. Piwigo decides
+# whether the absolute links it prints say https by reading X-Forwarded-Proto,
+# and reverse_proxy sets that header on every request without being asked.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	# Piwigo serves its own pages and the photo files. These four are the
+	# headers a reverse proxy is the right place for.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# 8159 is the loopback port compose publishes here, not a container port
+	# and not open in the firewall.
+	reverse_proxy 127.0.0.1:8159
+}

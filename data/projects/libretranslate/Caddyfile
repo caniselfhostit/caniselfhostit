@@ -1,0 +1,29 @@
+# LibreTranslate · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.libretranslate.com/guides/installation/ and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. The application
+# runs with LT_API_KEYS and LT_UNDER_ATTACK set, so it refuses a translation
+# request carrying no key of its own. This block terminates TLS in front of that
+# and adds no second credential: a browser password box would stop the API
+# clients this install exists to serve.
+
+<DOMAIN> {
+	# The web page is HTML and the API answers JSON, and both compress well.
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8154 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8154
+}

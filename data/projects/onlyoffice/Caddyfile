@@ -1,0 +1,38 @@
+# ONLYOFFICE Docs · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://helpcenter.onlyoffice.com/docs/installation/docs-community-install-docker.aspx and
+# https://caddyserver.com/docs/caddyfile/directives/reverse_proxy and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# the address you type into the application that uses this editor, and it has
+# to be reachable from your users' browsers and from that application's own
+# server, because both talk to it.
+
+<DOMAIN> {
+	# The editor ships tens of megabytes of JavaScript. The container
+	# pre-compresses its own static bundles, so this mostly covers the API
+	# traffic on top of them.
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		-Server
+	}
+
+	# There is deliberately no X-Frame-Options and no frame-ancestors rule.
+	# This whole product is an iframe: the application that owns the document
+	# embeds the editor in its own page, and a frame-blocking header would
+	# leave the user looking at a blank box. The shared token secret, not the
+	# browser, is what keeps strangers out.
+
+	# reverse_proxy sets X-Forwarded-Proto and X-Forwarded-Host on the way
+	# through, which is how the editor builds https URLs while speaking plain
+	# http here, and it upgrades WebSocket connections without extra
+	# configuration. Co-editing is WebSockets. 8157 is the loopback port
+	# compose publishes on this host; it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8157
+}

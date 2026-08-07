@@ -1,0 +1,56 @@
+# Easy!Appointments · the deterministic fallback. Authored by caniselfhostit
+# from the upstream documentation, not copied from a repository:
+#   server image ... https://github.com/alextselegidis/easyappointments-docker/blob/master/README.md
+#   entrypoint ..... https://github.com/alextselegidis/easyappointments-docker/blob/master/assets/docker-entrypoint.sh
+#   install guide .. https://github.com/alextselegidis/easyappointments/blob/1.6.0/docs/installation-guide.md
+#
+# Two services: the PHP application and the MySQL holding every appointment,
+# customer, service and setting. Upstream's own docker-compose.yml adds
+# phpMyAdmin, Mailpit, Baikal and OpenLDAP, and their docs call that stack
+# development only, so this file runs the image the same author publishes for
+# servers. The app container gets no volume: its entrypoint rewrites config.php
+# from these variables at every start. Digests read from Docker Hub on
+# 2026-08-06; both images publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  easyappointments-db:
+    image: mysql:8.4.11@sha256:b3b90af2a6552ae30c266fdb7d5dd55f3afb72404bb78d37fe8a23eb857fd3fb
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: easyappointments
+      MYSQL_USER: easyappointments
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - /srv/easyappointments/mysql:/var/lib/mysql
+    healthcheck:
+      # -h 127.0.0.1 forces TCP: the first start runs a socket-only server.
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 --silent"]
+      interval: 10s
+      start_period: 60s
+      timeout: 5s
+      retries: 18
+    # No `ports:` at all: 3306 is reachable only from the other container.
+
+  easyappointments:
+    image: alextselegidis/easyappointments:1.6.0@sha256:ab35b8872d5d3328fa3afb641a89a75f3c6f96f3fb98d6d6d3447fff9d357fa1
+    restart: unless-stopped
+    environment:
+      # BASE_URL is the address printed inside every booking, reschedule and
+      # cancel link, so it carries the https Caddy terminates out front.
+      BASE_URL: ${BASE_URL}
+      DEBUG_MODE: "FALSE"
+      DB_HOST: easyappointments-db
+      DB_NAME: easyappointments
+      DB_USERNAME: easyappointments
+      DB_PASSWORD: ${DB_PASSWORD}
+      # Off: turning it on means an OAuth client in your own Google project.
+      GOOGLE_SYNC_FEATURE: "FALSE"
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8160.
+      - "127.0.0.1:8160:80"
+    depends_on:
+      easyappointments-db:
+        condition: service_healthy

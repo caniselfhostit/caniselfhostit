@@ -1,0 +1,43 @@
+# draw.io · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   image, ports, env vars .. https://github.com/jgraph/docker-drawio/blob/v31.1.8/README.md
+#   entrypoint behaviour .... https://github.com/jgraph/docker-drawio/blob/v31.1.8/main/docker-entrypoint.sh
+#   image build ............. https://github.com/jgraph/docker-drawio/blob/v31.1.8/main/Dockerfile
+#
+# One container: Tomcat 9 on JDK 11 serving the compiled draw.io editor at the
+# root path on container port 8080, as a non-root tomcat user. There is no
+# database and no account system, and this file mounts no volume, because the
+# server holds no diagram. A diagram is written to the reader's own device or
+# into the storage of the browser that drew it.
+#
+# The entrypoint switches every cloud backend off when its credentials are
+# absent: with no DRAWIO_GOOGLE_CLIENT_ID, DRAWIO_MSGRAPH_CLIENT_ID or
+# DRAWIO_GITLAB_ID it writes gapi, od and gl to 0, and it always writes db, gh
+# and tr to 0. This file sets none of them, so none of them are on.
+#
+# KEYSTORE_PASS arrives from /srv/drawio/.env. Left alone, the image falls back
+# to a keystore password printed in its own documentation and puts it on a
+# self-signed certificate it regenerates at every start. Container port 8443 is
+# never published here, so nothing outside can reach that certificate; the
+# generated value is what keeps a documented default from standing behind it.
+#
+# Tag and digest read from Docker Hub on 2026-08-06; the manifest list covers
+# linux/amd64 and linux/arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  drawio:
+    image: jgraph/drawio:31.1.8@sha256:0c8910ea14dfbccb17c784ee17d995317a8d753479f5ec0f21b2ab2213153100
+    container_name: drawio
+    restart: unless-stopped
+    env_file: /srv/drawio/.env
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/ >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8158.
+      - "127.0.0.1:8158:8080"

@@ -1,0 +1,59 @@
+# Zipline · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker install ..... https://zipline.diced.sh/docs/get-started/docker
+#   variable reference . https://zipline.diced.sh/docs/config
+#   hardening guide .... https://zipline.diced.sh/docs/guides/hardening
+#
+# Two services, every path relative to ~/selfhost/zipline/ so one file works on
+# macOS, Linux and Windows. Uploads stay a bind mount you can open in Finder;
+# the database is a named volume, because PostgreSQL chowns its data directory
+# to its own uid and a home-directory bind mount cannot allow that on Windows.
+# Digests read on 2026-08-07; both images publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: postgres:16.14-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
+    container_name: zipline-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: zipline
+      POSTGRES_USER: zipline
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - zipline-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U zipline -d zipline"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other container.
+
+  zipline:
+    image: ghcr.io/diced/zipline:4.6.5@sha256:bfd5b0f7b5b8b3ed058a81667c78a14a7f997115d8433bec273620ec81be51d4
+    container_name: zipline
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      DATABASE_URL: postgres://zipline:${DB_PASSWORD}@postgres:5432/zipline
+      # No proxy and no certificate here, so plain http. Registration stays
+      # closed once the wizard has made the first account. The file type is
+      # read off the file rather than believed, and the two that execute in a
+      # browser are served as a download.
+      CORE_TRUST_PROXY: "false"
+      CORE_RETURN_HTTPS_URLS: "false"
+      FEATURES_USER_REGISTRATION: "false"
+      FILES_ASSUME_MIMETYPES: "true"
+      FILES_DISABLED_TYPES: text/html,application/javascript
+      FILES_DISABLED_TYPES_DEFAULT: application/octet-stream
+    volumes:
+      - ./uploads:/zipline/uploads
+    ports:
+      # Loopback only: no other device on the wifi can reach 8156.
+      - "127.0.0.1:8156:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  zipline-pgdata:

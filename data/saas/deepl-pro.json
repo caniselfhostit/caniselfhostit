@@ -1,0 +1,87 @@
+{
+  "slug": "deepl-pro",
+  "name": "DeepL Pro",
+  "domain": "deepl.com",
+  "whyPeoplePay": "DeepL sells one thing and sells it well: translations that read as though a person wrote them. That is not a feature list, it is the output itself, and it is why people with a free translator open in another tab still pay for this one. The subscription then adds what turns a demo into a working tool, which its own page summarises as translating text, Word docs and other docs securely: whole documents that come back looking like the file you uploaded, glossaries that hold your product names steady across a team, and an API your systems can call without anyone pasting anything.",
+  "plans": [
+    {
+      "name": "Individual",
+      "priceMonthly": 8.74,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "The vendor page describes this tier as professional-grade translations for single users. Figure recorded is the annual-billed rate per month as reported by independent pricing trackers; month-to-month is roughly a fifth higher."
+    },
+    {
+      "name": "Team",
+      "priceMonthly": 28.74,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Described by the vendor as increased translation productivity and control for teams. Annual-billed rate per user per month, per the same trackers."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": 57.49,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Described by the vendor as multilingual communication management for businesses. Annual-billed rate per user per month, per the same trackers."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The vendor page sends this tier to contact sales and describes it as scalability, control and security for organizations."
+    },
+    {
+      "name": "Developer",
+      "priceMonthly": 0,
+      "unit": "usage",
+      "seatsIncluded": 1,
+      "note": "The free API tier, described on the vendor page as testing out the API for free. It carries a character allowance we did not record, because the page renders that figure in JavaScript and we do not publish numbers we could not read."
+    },
+    {
+      "name": "Growth",
+      "priceMonthly": 26,
+      "unit": "usage",
+      "seatsIncluded": 1,
+      "note": "The paid API tier, described by the vendor as advanced capabilities and higher usage for growing teams. Trackers report about $26 a month on annual billing with an included yearly character volume and a per-million-character rate above it, which is the billing shape self-hosting removes entirely."
+    },
+    {
+      "name": "Enterprise API",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. Described by the vendor as being for large-scale, long-term API projects."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://www.deepl.com/en/pro",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The plan ladder and the plan descriptions here come from the vendor's own pricing page read on 2026-08-07, where they are published as structured data in the page itself. The prices are not: that page renders every figure in JavaScript and the served HTML contains no number at all. The amounts recorded are what two independent pricing trackers read on the same day agree on, and they present them as annual-billed rates per month, with month-to-month roughly a fifth higher. Treat every figure here as approximate, and open the page in a browser with the billing period visible before quoting anyone a saving. DeepL Voice is sold as a separate product with its own ladder and is deliberately not listed above."
+  },
+  "ranked": [
+    {
+      "project": "libretranslate",
+      "rationale": "The only option here with the shape of the thing you are cancelling: a translation API and a web text box you point your own tools at, running models on hardware you own. Be clear-eyed about what changes. The engine is Argos Translate on OpenNMT models, and on most pairs the output sits a tier below DeepL's, further below on languages with less training data behind them, and further still on pairs that have to pivot through English. What you get in exchange is that nothing you translate leaves the building, no meter runs per character, and the API answers with the network unplugged. For gist, internal documents and anything a person edits afterwards, that is a fair trade. For a contract or a customer-facing page, it is not, and this is the wrong page for that job."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Argos Translate",
+      "repo": "https://github.com/argosopentech/argos-translate",
+      "note": "MIT, actively maintained, and already inside the option above: it is the library LibreTranslate's translation engine is built on, so ranking it separately would be ranking the same models twice. Worth knowing anyway, because it is a Python package and a command line tool as well, and a script that only needs to translate a file can import it and skip running a server at all. It is not ranked here because there is no HTTP API and no web page in it, which is most of what a DeepL replacement has to supply."
+    },
+    {
+      "name": "translateLocally",
+      "repo": "https://github.com/XapaJIaMnu/translateLocally",
+      "note": "MIT, and a different answer to the same question: a desktop application built on Marian and the Bergamot models Firefox uses for its built-in page translation, fast enough on a laptop CPU to translate while you type. Its last commit is from March 2025, so read it as quiet rather than abandoned. It is not ranked because it is an application rather than a service: there is nothing for your other tools to call and nothing to run on a server for the rest of the household."
+    },
+    {
+      "name": "NLLB-serve",
+      "repo": "https://github.com/thammegowda/nllb-serve",
+      "note": "Serves Meta's No Language Left Behind models over a REST API and a small web page, covering roughly 200 languages, including many that the Argos index has no model for at all. Two things keep it off the ranked list. The repository publishes no license file, which makes deploying it inside an organisation a question for somebody else, and its last commit is from May 2025. Check the licence terms on the model weights themselves before any commercial use."
+    }
+  ]
+}

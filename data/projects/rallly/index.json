@@ -1,0 +1,94 @@
+{
+  "slug": "rallly",
+  "name": "Rallly",
+  "tagline": "Send a group a link, let them tick the times that work, and pick the winner, with no cap on how many people answer.",
+  "repo": "lukevella/rallly",
+  "site": "https://rallly.co",
+  "category": "comms-scheduling",
+  "replaces": [
+    {
+      "saas": "doodle",
+      "plan": "Pro",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": true,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 210,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/lukevella/rallly-selfhosted/blob/main/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Every poll link this makes begins with http://localhost:8153, which resolves on this computer and nowhere else, so the group you wanted to poll gets a connection error instead of a list of times."
+  },
+  "quote": {
+    "text": "Rallly is open-source and always free for personal use. If you want to run a multi-user setup, we ask that you purchase a license key.",
+    "source": "Rallly self-hosting documentation, Licensing",
+    "url": "https://support.rallly.co/self-hosting/licensing",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's own self-hosted stack is four containers, a Traefik, the app, PostgreSQL and a Garage object store, and setting PROXY_MODE=external drops the Traefik so an existing reverse proxy can serve the app on a loopback port.",
+      "url": "https://support.rallly.co/self-hosting/installation/docker"
+    },
+    {
+      "claim": "SECRET_PASSWORD must be at least 32 characters and SUPPORT_EMAIL is required, while every S3 object-storage variable is optional and unset means no bucket at all.",
+      "url": "https://support.rallly.co/self-hosting/configuration"
+    },
+    {
+      "claim": "The published image exposes port 3000, carries a health check against /api/status, and runs its own Prisma migrations from an entrypoint script before the server listens.",
+      "url": "https://github.com/lukevella/rallly/blob/v4.12.1/apps/web/Dockerfile"
+    },
+    {
+      "claim": "Signing in sends a six-digit one-time code by email, and with registration disabled that request becomes an email-verification one that only reaches accounts which already exist.",
+      "url": "https://github.com/lukevella/rallly/blob/v4.12.1/apps/web/src/app/%5Blocale%5D/%28auth%29/login/components/login-email-form.tsx"
+    },
+    {
+      "claim": "Multi-user licences are perpetual for the 4.x line, run on an honour system rather than a hard limit, and guest voters never count towards the user total.",
+      "url": "https://support.rallly.co/self-hosting/licensing"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The code is AGPL-3.0 and the multi-user tiers are sold. Upstream says Rallly is free for personal use and asks you to buy a licence key for a multi-user setup: $49 for up to five people, $299 for up to fifty, from $999 above that, each perpetual for the 4.x line. It is an honour system, nothing stops working if you go over, and guest voters never count. The branding variables that rename the app, swap the logo and hide the attribution are the ones that need a licence to take effect.",
+    "Mail is the product, not a nicety. Signing in is a six-digit code emailed to you, there is no password to fall back on, and a relay that silently refuses your messages is a locked front door. This install stops and asks for relay credentials before it starts anything, and upstream is explicit that a Gmail or Proton mailbox is not a relay.",
+    "You own a PostgreSQL and one key. Every poll, option, vote and comment is a row in that database, and SECRET_PASSWORD from your .env seals every signed-in session. Back the dump and the .env up together, because a database restored beside a freshly generated key logs everyone out at once.",
+    "No avatar or logo uploads. Upstream's own stack runs a Garage object store for those; this install leaves the S3 variables unset and runs two containers instead of four. Polls, votes and comments are untouched by that trade.",
+    "The image checks in with rallly.co. The published self-hosted build ships with an API base URL pointing at Rallly's own service, which a cloud or development build does not have, so a running instance makes outbound calls yours would otherwise never make."
+  ],
+  "sources": {
+    "compose": "https://support.rallly.co/self-hosting/installation/docker",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://support.rallly.co/self-hosting/configuration",
+    "image": "https://github.com/lukevella/rallly/blob/v4.12.1/apps/web/Dockerfile",
+    "entrypoint": "https://github.com/lukevella/rallly/blob/v4.12.1/scripts/docker-start.sh",
+    "health": "https://github.com/lukevella/rallly/blob/v4.12.1/apps/web/src/app/api/status/route.ts",
+    "registration": "https://github.com/lukevella/rallly/blob/v4.12.1/apps/web/src/lib/feature-flags/config.ts",
+    "licensing": "https://support.rallly.co/self-hosting/licensing",
+    "admin": "https://support.rallly.co/self-hosting/control-panel",
+    "registry": "https://hub.docker.com/r/lukevella/rallly"
+  },
+  "related": [
+    "calcom",
+    "jitsi",
+    "mattermost"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "f80b62786529ee47b29a110078a8eb539f161017a9964251e615b5c3c1029f6b"
+}

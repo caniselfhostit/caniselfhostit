@@ -1,0 +1,93 @@
+{
+  "slug": "firefly-iii",
+  "name": "Firefly III",
+  "tagline": "A full transaction ledger for household money, with budgets, rules and reports, and imports you drive yourself.",
+  "repo": "firefly-iii/firefly-iii",
+  "site": "https://www.firefly-iii.org",
+  "category": "money-home",
+  "replaces": [
+    {
+      "saas": "monarch-money",
+      "plan": "Core",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 3,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 3
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/firefly-iii/docker/blob/main/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "On your own computer the ledger answers at http://localhost:8155 and nowhere else, so no phone can log a purchase at the shop, and the daily job that fires recurring transactions and auto-budgets only runs on the nights the machine is awake."
+  },
+  "quote": {
+    "text": "The Docker image does not support cron jobs, but the Docker Compose file includes a cron job container.",
+    "source": "Firefly III documentation, How to configure cron jobs",
+    "url": "https://docs.firefly-iii.org/how-to/firefly-iii/advanced/cron/",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "Firefly III has no bank connection of its own: automated feeds run through the Data Importer, a separate application the author keeps as its own tool, pointed at a third-party provider such as SimpleFIN, GoCardless or Salt Edge.",
+      "url": "https://docs.firefly-iii.org/explanation/data-importer/separate-tool/"
+    },
+    {
+      "claim": "The Docker image runs no scheduler, so recurring transactions, auto-budgets, exchange rates and bill warnings fire only when something calls the cron endpoint, and STATIC_CRON_TOKEN has to be exactly 32 characters.",
+      "url": "https://docs.firefly-iii.org/how-to/firefly-iii/advanced/cron/"
+    },
+    {
+      "claim": "APP_KEY must be a random string of exactly 32 characters, generated on the machine, with characters like = and # avoided.",
+      "url": "https://docs.firefly-iii.org/how-to/firefly-iii/installation/docker/"
+    },
+    {
+      "claim": "Upstream's backup page asks for the Docker variables used to launch the containers, and especially APP_KEY, alongside the upload and database volumes, and says the first thing to do after a backup is restore it.",
+      "url": "https://docs.firefly-iii.org/how-to/firefly-iii/advanced/backup/"
+    },
+    {
+      "claim": "The /health route answers with the plain text OK after counting users, so it fails whenever the database is unreachable, and registration closes itself once the database holds one user because single-user mode is the default.",
+      "url": "https://github.com/firefly-iii/firefly-iii/blob/v6.6.6/app/Http/Controllers/Auth/RegisterController.php"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "No bank feeds. This is the trade, and it is the whole trade: Monarch's product is logging into your accounts overnight, and Firefly III does not log into anything. Transactions arrive as CSV files you export and import, or you type them in. Automated imports mean running the separate Data Importer on a second hostname and paying a data provider yourself, and SimpleFIN Bridge, the usual United States answer, is $1.50 a month or $15 a year for up to 25 institutions.",
+    "You own a MariaDB and a 32-character key. The backup is three files that travel together, because APP_KEY in .env is what makes the dump readable, and a database restored without it is a ledger nobody can open. Losing that key is worse than losing the server.",
+    "Nothing happens on a schedule unless a third container is running. Recurring transactions, auto-budgets, exchange rates and bill warnings all ride one daily job, and upstream states the application image runs no scheduler of its own, which is why this install ships a small cron container beside it.",
+    "No mail, so no password reset. The first account's password is the only way back in, and every other account is created by hand from inside the interface. The phone story is third-party apps written against the API rather than anything the project ships.",
+    "No investment holdings, no retirement projection, no advice. Firefly III tracks what money did, not what a portfolio is worth this morning, and the forecasting and tax-prep exports on the paid tier you are leaving are not features hiding in a settings page here."
+  ],
+  "sources": {
+    "compose": "https://docs.firefly-iii.org/how-to/firefly-iii/installation/docker/",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://github.com/firefly-iii/firefly-iii/blob/v6.6.6/.env.example",
+    "cron": "https://docs.firefly-iii.org/how-to/firefly-iii/advanced/cron/",
+    "backup": "https://docs.firefly-iii.org/how-to/firefly-iii/advanced/backup/",
+    "health": "https://github.com/firefly-iii/firefly-iii/blob/v6.6.6/app/Http/Controllers/System/HealthcheckController.php",
+    "registration": "https://github.com/firefly-iii/firefly-iii/blob/v6.6.6/app/Http/Controllers/Auth/RegisterController.php",
+    "image": "https://serversideup.net/open-source/docker-php/docs/getting-started/default-configurations",
+    "importer": "https://docs.firefly-iii.org/how-to/data-importer/installation/docker/"
+  },
+  "related": [
+    "actual-budget",
+    "akaunting",
+    "kimai"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "95b39b6d19386fa2b4c3a3ab7d682373e81259e0562a14eb0f63142534eb4b15"
+}

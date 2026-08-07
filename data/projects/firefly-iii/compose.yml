@@ -1,0 +1,74 @@
+# Firefly III · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker install ..... https://docs.firefly-iii.org/how-to/firefly-iii/installation/docker/
+#   variable reference . https://github.com/firefly-iii/firefly-iii/blob/v6.6.6/.env.example
+#   cron jobs .......... https://docs.firefly-iii.org/how-to/firefly-iii/advanced/cron/
+#
+# Three services. `app` is nginx and PHP-FPM in one image, running as www-data,
+# uid 33, which never chowns a mount, so step 2 hands it /srv/firefly-iii/upload
+# already owned by 33. `db` is the MariaDB upstream's compose file uses, pinned
+# to a version instead of the moving `lts` tag. `cron` is BusyBox crond calling
+# the application's own cron endpoint daily, because upstream states the image
+# runs no scheduler; upstream's cron container installs tzdata at every start,
+# dropped here in favour of one fixed timezone. Every ${...} comes from
+# /srv/firefly-iii/.env, mode 600. Digests read 2026-08-07, all three multi-arch.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  db:
+    image: mariadb:11.8.8@sha256:d9f7eb2637296652f24b484afd5d246f759f49f5babcadc6a9e344c9acb75fbf
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: firefly
+      MARIADB_USER: firefly
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      # Upstream's database.env has the image invent a root password rather
+      # than store one. It lands in this container's log once and is never used.
+      MARIADB_RANDOM_ROOT_PASSWORD: "true"
+      MARIADB_AUTO_UPGRADE: "1"
+    volumes:
+      - /srv/firefly-iii/mariadb:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      retries: 20
+    # No `ports:` at all: 3306 is reachable only from the other containers.
+
+  app:
+    image: fireflyiii/core:version-6.6.6@sha256:ae69fdd95cdef9038cd7a460a5aec731f14813973e4f096511d5a4ea9ff0e972
+    restart: unless-stopped
+    env_file: /srv/firefly-iii/.env
+    environment:
+      APP_ENV: production
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_DATABASE: firefly
+      DB_USERNAME: firefly
+      # Laravel's log mailer, upstream's own default: nothing waits on SMTP.
+      MAIL_MAILER: log
+      # The image's health check curls the path this names. Its default,
+      # /healthcheck, is not a route here; /health answers with `OK`.
+      HEALTHCHECK_PATH: /health
+    volumes:
+      - /srv/firefly-iii/upload:/var/www/html/storage/upload
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8155.
+      - "127.0.0.1:8155:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  cron:
+    image: alpine:3.24.1@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b
+    restart: unless-stopped
+    env_file: /srv/firefly-iii/.env
+    # 03:00 daily: recurring transactions, auto-budgets, rates, bill warnings.
+    # The doubled $$ is compose's escape for one $, so the token is read inside
+    # the container and never appears here. TZ is UTC, so BusyBox needs no tzdata.
+    command: ["sh", "-c", "echo '0 3 * * * wget -qO- http://app:8080/api/v1/cron/'$$STATIC_CRON_TOKEN | crontab - && crond -f -L /dev/stdout"]
+    depends_on:
+      app:
+        condition: service_started

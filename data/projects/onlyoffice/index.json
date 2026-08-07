@@ -1,0 +1,96 @@
+{
+  "slug": "onlyoffice",
+  "name": "ONLYOFFICE Docs",
+  "tagline": "The Word, Excel and PowerPoint half of an office subscription, as a server your own file app hands documents to.",
+  "repo": "ONLYOFFICE/DocumentServer",
+  "site": "https://www.onlyoffice.com",
+  "category": "files-docs",
+  "replaces": [
+    {
+      "saas": "microsoft-365-personal",
+      "plan": "Personal",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 4096,
+    "ramMeasuredMB": null,
+    "diskGB": 40,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/ONLYOFFICE/Docker-DocumentServer/blob/master/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "The editor answers only at http://localhost:8157, so the app you point at it has to be on this same computer, and nobody else can open a document alongside you."
+  },
+  "quote": {
+    "text": "Removed dependency on databases due to component consolidation",
+    "source": "ONLYOFFICE Docs 9.4.0 change log",
+    "url": "https://github.com/ONLYOFFICE/DocumentServer/blob/master/CHANGELOG.md",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "The 9.4.0 change log records the back-end consolidated into a single process, with the RabbitMQ and the database dependencies both removed, which is why this install runs one container and operates no database.",
+      "url": "https://github.com/ONLYOFFICE/DocumentServer/blob/master/CHANGELOG.md"
+    },
+    {
+      "claim": "Token validation is enabled by default from version 7.2 onward, and when no JWT_SECRET is supplied the container generates a fresh random secret at every start.",
+      "url": "https://helpcenter.onlyoffice.com/docs/installation/docs-community-install-docker.aspx"
+    },
+    {
+      "claim": "Upstream's Docker system requirements are 4 GB of RAM, at least 40 GB of free disk and at least 4 GB of swap, on amd64 or arm64.",
+      "url": "https://helpcenter.onlyoffice.com/docs/installation/docs-community-sys-reqs-docker.aspx"
+    },
+    {
+      "claim": "A conversion request that carries no valid token is refused with error code -8, which is what makes an unsigned request a usable check that the shared secret is in force.",
+      "url": "https://api.onlyoffice.com/docs/docs-api/additional-api/conversion-api/error-codes/"
+    },
+    {
+      "claim": "The Nextcloud connector is installed from the Nextcloud app store and configured at /settings/admin/onlyoffice, where the same secret key has to be entered as the one the document server was started with.",
+      "url": "https://github.com/ONLYOFFICE/onlyoffice-nextcloud"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "This replaces half of what the subscription sells. You get the editors for Word, Excel and PowerPoint files, working on the OOXML formats natively rather than converting to something else and back. You do not get the terabyte of OneDrive, Outlook, or the desktop applications. The storage half is a second install, and the pairing upstream documents is Nextcloud with the ONLYOFFICE connector.",
+    "On its own it edits nothing. A document server with no application in front of it is a correctly running server with an empty queue: it opens, renders and saves documents that something else hands it, and that something else is a separate install with its own hostname and its own backups.",
+    "One shared secret is the whole security model. Every request between the editor and the application that uses it is signed with the same key. Lose it and every connected application has to be reconfigured; leak it and a stranger can ask your server to fetch and convert any URL it can reach, which is why this install leaves the private-address and unverified-certificate switches off.",
+    "Four gigabytes of RAM for one container, and over a gigabyte to download before it starts. This is an office suite compiled to run on a server, and the cheapest VPS tier will not do.",
+    "The image is the community edition: AGPL-3.0 throughout, with the 20-simultaneously-open-document limit removed in 9.4.0, and without the admin panel, the external database and message broker options that make clustering possible, or a support contract. Those are what the paid editions sell."
+  ],
+  "sources": {
+    "compose": "https://helpcenter.onlyoffice.com/docs/installation/docs-community-install-docker.aspx",
+    "caddy": "https://caddyserver.com/docs/caddyfile/directives/reverse_proxy",
+    "install": "https://github.com/ONLYOFFICE/Docker-DocumentServer/blob/master/README.md",
+    "sysreqs": "https://helpcenter.onlyoffice.com/docs/installation/docs-community-sys-reqs-docker.aspx",
+    "entrypoint": "https://github.com/ONLYOFFICE/Docker-DocumentServer/blob/master/run-document-server.sh",
+    "health": "https://github.com/ONLYOFFICE/server/blob/master/DocService/sources/server.js",
+    "welcome": "https://github.com/ONLYOFFICE/document-server-package/blob/master/common/documentserver-example/welcome/docker.html",
+    "routes": "https://github.com/ONLYOFFICE/document-server-package/blob/master/common/documentserver/nginx/includes/ds-docservice.conf.m4",
+    "errors": "https://api.onlyoffice.com/docs/docs-api/additional-api/conversion-api/error-codes/",
+    "changelog": "https://github.com/ONLYOFFICE/DocumentServer/blob/master/CHANGELOG.md",
+    "connector": "https://github.com/ONLYOFFICE/onlyoffice-nextcloud",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "nextcloud",
+    "stirling-pdf",
+    "docuseal"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "4226a8b77870c2fbf1d8ed7553751f761b453fe4bf251b81003bfe505eae9033"
+}

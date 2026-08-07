@@ -1,0 +1,66 @@
+{
+  "slug": "microsoft-365-personal",
+  "name": "Microsoft 365 Personal",
+  "domain": "microsoft.com",
+  "whyPeoplePay": "Microsoft 365 Personal is four purchases on one line item: the desktop Office applications, a terabyte of OneDrive, an ad-free Outlook mailbox, and the file formats everyone else's employer standardised on. The last one is why people renew. A spreadsheet that opens correctly on a colleague's laptop, with the conditional formatting and the pivot table intact, is worth more than any single feature, and the company that defines the format is the safest place to buy it from.",
+  "plans": [
+    {
+      "name": "Basic",
+      "priceMonthly": 1.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$19.99 a year on the annual plan. Web and mobile Word, Excel and PowerPoint, 100 GB of storage, and no desktop applications."
+    },
+    {
+      "name": "Personal",
+      "priceMonthly": 9.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$99.99 a year on the annual plan. The desktop applications plus 1 TB of OneDrive, for one person."
+    },
+    {
+      "name": "Family",
+      "priceMonthly": 12.99,
+      "unit": "flat",
+      "seatsIncluded": 6,
+      "note": "$129.99 a year on the annual plan. The page sells it for 1 to 6 people, with up to 6 TB of storage, 1 TB each."
+    },
+    {
+      "name": "Premium",
+      "priceMonthly": 19.99,
+      "unit": "flat",
+      "seatsIncluded": 6,
+      "note": "$199.99 a year on the annual plan. The page describes it as everything in Family plus higher AI limits, on the same storage."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://www.microsoft.com/en-us/microsoft-365/buy/compare-all-microsoft-365-products",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "Monthly-billed figures recorded, with the annual-billed equivalents in each plan note, because paying monthly costs more than a twelfth of the annual price on every tier. Read on the comparison page and confirmed the same day against microsoft.com/en-us/microsoft-365/explore-microsoft-365-for-individuals, which lists the same four figures. The one-time Office Home purchases are left out of this ladder: they are not subscriptions, and Microsoft's own pages quoted different figures for them on the day we looked."
+  },
+  "ranked": [
+    {
+      "project": "onlyoffice",
+      "rationale": "The only one here that edits .docx, .xlsx and .pptx as its own native formats rather than converting into something else and back, which is the difference between a file a colleague can open and a file a colleague complains about. It also replaces the smaller half of the subscription: it is an editing engine with no storage, no mailbox and no interface of its own, so it needs a file application in front of it, and the one upstream documents is Nextcloud with the ONLYOFFICE connector. Install this when the sentence you want to stop saying is 'the formatting broke', not 'I ran out of space'."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Collabora Online",
+      "repo": "https://github.com/CollaboraOnline/online",
+      "note": "The other browser office server, and the honest split with ONLYOFFICE is the engine underneath: Collabora renders with a LibreOffice core, so it is strongest on ODF and does its OOXML work through LibreOffice's import filters. Maintained and shipping, but the GitHub repository says in its own description that it is an issue tracker and that active development happens on the project's Gerrit, which is worth knowing before you plan to read the history there."
+    },
+    {
+      "name": "CryptPad",
+      "repo": "https://github.com/cryptpad/cryptpad",
+      "note": "Collaborative documents that are end-to-end encrypted, so the server holds ciphertext it cannot read. That is a different trade rather than a smaller one: documents live inside CryptPad in its own formats, and it is not a way to open the .docx already sitting in your file store with full fidelity. Actively developed, AGPL-3.0."
+    },
+    {
+      "name": "LibreOffice",
+      "repo": "https://github.com/LibreOffice/core",
+      "note": "The obvious answer to 'I want to stop paying for Word', and it is a desktop application rather than a server, so it does not answer the self-hosting question at all: no browser editing, nothing to install on a box, no co-editing with anyone. Listed because for one person on one laptop it is often the correct answer, and because the GitHub repository is a read-only mirror of a Gerrit-based project."
+    }
+  ]
+}

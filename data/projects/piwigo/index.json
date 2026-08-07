@@ -1,0 +1,93 @@
+{
+  "slug": "piwigo",
+  "name": "Piwigo",
+  "tagline": "A photo gallery on your own domain, with albums, tags and per-album permissions, and no cap on what you upload.",
+  "repo": "Piwigo/Piwigo",
+  "site": "https://piwigo.org",
+  "category": "photos-media",
+  "replaces": [
+    {
+      "saas": "flickr-pro",
+      "plan": "Annual plan",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "GPL-2.0-or-later",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/Piwigo/piwigo-docker/blob/v16.4a/compose.yaml",
+  "local": {
+    "fit": "caveat",
+    "note": "On your own computer the gallery answers only at http://localhost:8159, so the people you would have shared an album with get nothing and your own phone cannot reach it either: what you have is a private catalogue of a library that lives on one machine."
+  },
+  "quote": {
+    "text": "does the guest have access ? (not a security feature, set your categories \"private\" too)",
+    "source": "Piwigo source, include/config_default.inc.php, above the guest_access default",
+    "url": "https://github.com/Piwigo/Piwigo/blob/16.4.0/include/config_default.inc.php",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "Piwigo publishes its own Docker image and its own compose file. The image piwigo/piwigo is built from the Piwigo project's piwigo-docker repository, and Piwigo's install guide tells you to download that compose file, so this install uses the project's packaging rather than a community one.",
+      "url": "https://piwigo.org/guides/install/docker"
+    },
+    {
+      "claim": "The image is Alpine with nginx and php-fpm. Its init copies the Piwigo release into /var/www/html/piwigo on first start, copies newer files over on a version bump, and chowns that tree to PIWIGO_UID and PIWIGO_GID on every start.",
+      "url": "https://github.com/Piwigo/piwigo-docker/blob/v16.4a/config/init-script.sh"
+    },
+    {
+      "claim": "Piwigo's installer cannot be run twice. Once local/config/database.inc.php exists and defines PHPWG_INSTALLED, install.php prints \"Piwigo is already installed\" and stops, which is the check this install asserts after the wizard.",
+      "url": "https://github.com/Piwigo/Piwigo/blob/16.4.0/install.php"
+    },
+    {
+      "claim": "A new Piwigo has open sign-up: the installer's config.sql inserts allow_user_registration as true, and register.php answers 403 with \"User registration closed\" only once that value is false.",
+      "url": "https://github.com/Piwigo/Piwigo/blob/16.4.0/install/config.sql"
+    },
+    {
+      "claim": "Piwigo reads X-Forwarded-Proto to decide whether the absolute URLs it prints use https, which is why it works behind a TLS-terminating reverse proxy with no scheme setting of its own.",
+      "url": "https://github.com/Piwigo/Piwigo/blob/16.4.0/include/functions_url.inc.php"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The gallery is public unless you make it private, one album at a time. Piwigo ships with guest browsing on, which is the correct default for the product Flickr sold and a surprise if you assumed a server you own is a server nobody else sees. Album permissions are per album, and the decision is best made before the first upload.",
+    "You own the disk, and a photo library is the one thing on this site that grows without asking. Originals and the resized copies Piwigo makes from each one share a directory, so the number on your hosting invoice is now the number that decides how many photos you can keep.",
+    "You own a MariaDB, and a backup is two artifacts. Albums, tags, users and permissions are rows; the photos are files. Restore only one and you get either a gallery full of orphaned files or an index pointing at nothing, so both go off the box together and a pair you have never restored is not a backup.",
+    "No mail, so no password reset. The gallery works fully without SMTP and this install deliberately does not configure it, which means the webmaster password you choose in the browser installer is the only copy that exists.",
+    "The audience does not come with you. Flickr Pro sells unlimited hosting and a community that already browses, favourites and comments; what you get here is the hosting, on an address nobody has heard of yet. Every person who used to find your photos is now someone you have to send a link to."
+  ],
+  "sources": {
+    "compose": "https://piwigo.org/guides/install/docker",
+    "caddy": "https://caddyserver.com/docs/caddyfile/directives/reverse_proxy",
+    "install": "https://piwigo.org/guides/install/requirements",
+    "image": "https://github.com/Piwigo/piwigo-docker/blob/v16.4a/README.md",
+    "imageInit": "https://github.com/Piwigo/piwigo-docker/blob/v16.4a/config/init-script.sh",
+    "installer": "https://github.com/Piwigo/Piwigo/blob/16.4.0/install.php",
+    "config": "https://github.com/Piwigo/Piwigo/blob/16.4.0/include/config_default.inc.php",
+    "registration": "https://github.com/Piwigo/Piwigo/blob/16.4.0/install/config.sql",
+    "api": "https://github.com/Piwigo/Piwigo/blob/16.4.0/include/ws_functions/pwg.php"
+  },
+  "related": [
+    "immich",
+    "nextcloud",
+    "navidrome"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "57de76ff2f58c02dc8abba629541ca2d68e87e32ef0d443b31fc582f9105dc45"
+}

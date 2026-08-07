@@ -1,0 +1,93 @@
+{
+  "slug": "zipline",
+  "name": "Zipline",
+  "tagline": "The upload endpoint behind the screenshot key: drop a file, get a link, on a hostname you own.",
+  "repo": "diced/zipline",
+  "site": "https://zipline.diced.sh",
+  "category": "files-docs",
+  "replaces": [
+    {
+      "saas": "zight",
+      "plan": "Create",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 80,
+  "license": "MIT",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/diced/zipline/blob/v4.6.5/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Every link this hands you starts with http://localhost:8156, which means this computer to whoever opens it, so the link works for you and fails for the person you sent it to."
+  },
+  "quote": {
+    "text": "Zipline can generate a .sxcu (ShareX Custom Uploader) file for you to use with ShareX. With this you can easily upload files to your Zipline instance using ShareX.",
+    "source": "Zipline documentation, Windows: ShareX",
+    "url": "https://zipline.diced.sh/docs/guides/uploaders/windows-sharex",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "Zipline generates a ShareX custom uploader file from its own settings screen, which is how a capture tool already installed on Windows is pointed at your server.",
+      "url": "https://zipline.diced.sh/docs/guides/uploaders/windows-sharex"
+    },
+    {
+      "claim": "Upstream's hardening guide states that by default Zipline trusts whatever MIME type the browser claims a file is, and asks you to turn on type detection and give HTML and JavaScript a download-only default.",
+      "url": "https://zipline.diced.sh/docs/guides/hardening"
+    },
+    {
+      "claim": "Behind a reverse proxy Zipline needs CORE_TRUST_PROXY and CORE_RETURN_HTTPS_URLS, because without them it treats every request as coming from 127.0.0.1 and returns http:// links.",
+      "url": "https://zipline.diced.sh/docs/guides/reverse-proxy"
+    },
+    {
+      "claim": "CORE_SECRET signs session cookies, must be at least 32 characters, and changing it logs every session out including your own.",
+      "url": "https://zipline.diced.sh/docs/config/core"
+    },
+    {
+      "claim": "Upstream's own compose file runs Zipline against PostgreSQL, publishes port 3000, and bind-mounts the uploaded files at /zipline/uploads.",
+      "url": "https://github.com/diced/zipline/blob/v4.6.5/docker-compose.yml"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "This replaces the server, not the capture. Zight is one product that takes the screenshot and hosts it; Zipline is only the second half. You keep using ShareX, Flameshot, ishare or your operating system's own shortcut, and Zipline hands them a config file so they upload here. Nothing you install on a Linux box will record your screen for you.",
+    "Every link you hand out is a promise you are now making. The hostname, the certificate, the disk and the database row all have to keep existing, because those links are sitting in other people's tickets and chat histories, and Zight's real product is that they keep working.",
+    "You own two backups that only mean something together: a PostgreSQL dump with the accounts, tokens and file records, and the uploads directory with the bytes. Restore one without the other and you get an index of files that are not there.",
+    "A file host serves other people's uploads to strangers, and out of the box Zipline believes the type the uploader claims. This install turns on type detection and forces HTML and JavaScript to download instead of rendering, which is the upstream hardening advice; if you hand an upload token to anyone else, read that page before you do.",
+    "No transcription, no automatic captions or summaries, no viewer email capture, no team workspace with roles and retention policy. Those are what the paid ladder is actually selling above the storage."
+  ],
+  "sources": {
+    "compose": "https://zipline.diced.sh/docs/get-started/docker",
+    "caddy": "https://zipline.diced.sh/docs/guides/reverse-proxy",
+    "install": "https://zipline.diced.sh/docs/config",
+    "core": "https://zipline.diced.sh/docs/config/core",
+    "hardening": "https://zipline.diced.sh/docs/guides/hardening",
+    "uploaders": "https://zipline.diced.sh/docs/guides/uploaders/windows-sharex",
+    "health": "https://github.com/diced/zipline/blob/v4.6.5/src/server/routes/api/healthcheck.ts",
+    "proxy": "https://caddyserver.com/docs/caddyfile/directives/request_body",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "syncthing",
+    "nextcloud",
+    "shlink"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "f828d6b1d081325ebb343db9d7910b3633255412fa87caea902b62baf4f7ecc5"
+}

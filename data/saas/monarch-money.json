@@ -1,0 +1,55 @@
+{
+  "slug": "monarch-money",
+  "name": "Monarch Money",
+  "domain": "monarch.com",
+  "whyPeoplePay": "Monarch's product is the connection, not the spreadsheet. It signs in to every bank, card, loan and brokerage a household has, pulls yesterday's transactions in overnight, guesses the categories, and shows one net-worth number that is correct this morning without anyone typing anything. Budgets, goals, reports and shared household access sit on top of that, and the reason the subscription survives a lean month is that the sync keeps working while nobody is watching it. Every project on this page can hold the ledger. The connection is the part you take back yourself, and it is the part that costs you something.",
+  "plans": [
+    {
+      "name": "Core",
+      "priceMonthly": 14.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "source": "https://www.monarch.com/pricing",
+      "checkedOn": "2026-08-07",
+      "note": "Billed monthly. $99.99 a year on the annual plan, which the page presents as $8.33 a month. Free 7-day trial with a payment method required. Net worth across linked accounts, budgets, custom reports, and savings and debt goals."
+    },
+    {
+      "name": "Plus",
+      "priceMonthly": 16.67,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "source": "https://www.monarch.com/pricing",
+      "checkedOn": "2026-08-07",
+      "note": "$199.99 a year, which the page presents as $16.67 a month billed annually; no monthly-billed price is offered for this tier. Adds retirement forecasting, business income and expenses, profit-and-loss reports and tax-prep exports, advanced investment analysis, and a will."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://www.monarch.com/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Read from the vendor's own pricing page on 2026-08-07, but out of the page markup rather than a rendered view, because the monthly-versus-annual toggle is JavaScript and the fetched page returned no prices. The Core figures, $14.99 monthly and $99.99 a year, were corroborated against independent write-ups the same day. Two things stay uncertain, which is why this is not marked high: the page advertises Plus annually only, so its monthly figure is the annual rate divided out rather than a price you can buy, and the household sharing Monarch is widely reported to include at no extra cost is not stated on the pricing page, so no seat count beyond one is claimed here. Note also that monarchmoney.com now redirects to monarch.com, where the product is branded Monarch."
+  },
+  "ranked": [
+    {
+      "project": "firefly-iii",
+      "rationale": "The closest thing to the shape Monarch actually sells: real accounts with running balances, a transaction ledger you can search, rules that categorise on the way in, recurring transactions, budgets and reports, in three containers on your own domain. AGPL-3.0, released steadily, and the best-maintained self-hosted finance manager there is. Two things have to be said in the same breath. It has no bank connection at all, so transactions arrive as CSV files you export and import, or through the separate Data Importer on a second hostname wired to a paid provider such as SimpleFIN. And it tracks what your money did rather than what a portfolio is worth this morning, so the investment analysis and retirement forecasting on Monarch's upper tier are not here in any form."
+    },
+    {
+      "project": "actual-budget",
+      "rationale": "Second, and first if the reason you opened Monarch every week was the budget rather than the ledger. Actual is envelope budgeting done properly, one container, a local-first file that syncs through a server you run, and an install that is over before your coffee cools. It gives up ground on the parts Monarch sells hardest: no rules engine of Firefly III's depth, no multi-account reporting of the same kind, and the same bank-feed gap, reached through GoCardless or SimpleFIN and paid for separately. Pick it when the method is the point and the archive is not."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Maybe",
+      "repo": "https://github.com/maybe-finance/maybe",
+      "note": "AGPL-3.0, and on paper the nearest open-source copy of Monarch's shape: accounts, holdings, net worth and budgeting in one modern app, which is why it collected more stars than everything else on this page combined. The company wound down commercially and the repository has been archived since July 2025, with v0.6.0 as the last release, so nothing in it has been patched in over a year. Worth reading and worth forking. Not worth putting this year's money in."
+    },
+    {
+      "name": "Ghostfolio",
+      "repo": "https://github.com/ghostfolio/ghostfolio",
+      "note": "AGPL-3.0 and actively released, 3.43.0 in August 2026. The right answer if the screen you actually check in Monarch is the portfolio: holdings, allocation, performance and dividends, with market data fetched for you. It is investments-first by design, so day-to-day spending, categories and budgets are not what it is for, and it sits alongside a transaction ledger rather than replacing one."
+    }
+  ]
+}

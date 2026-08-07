@@ -1,0 +1,94 @@
+{
+  "slug": "wordpress",
+  "name": "WordPress",
+  "tagline": "The CMS most of the web already runs, on a box you rent, with the themes, plugins and media library intact.",
+  "repo": "WordPress/WordPress",
+  "site": "https://wordpress.org",
+  "category": "marketing-content",
+  "replaces": [
+    {
+      "saas": "squarespace",
+      "plan": "Core",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "GPL-2.0-or-later",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/docker-library/docs/blob/master/wordpress/compose.yaml",
+  "local": {
+    "fit": "caveat",
+    "note": "Every address this site builds starts with http://localhost:8152, so what you get is a drafting desk on one computer rather than a page a client or a reader can open."
+  },
+  "quote": {
+    "text": "The default configuration for this image matches the official WordPress defaults in which automatic updates are enabled (so the initial install comes from the image, but after that it becomes self-managing within the /var/www/html data volume).",
+    "source": "Docker Official Images documentation for WordPress",
+    "url": "https://hub.docker.com/_/wordpress",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "The official image documents the WORDPRESS_DB_* variables this install uses, and states that the eight authentication keys and salts default to unique random SHA1s when other environment configuration is supplied.",
+      "url": "https://hub.docker.com/_/wordpress"
+    },
+    {
+      "claim": "Upstream states the requirements as PHP 8.3 or greater, MariaDB 10.11 or MySQL 8.0 or greater, and HTTPS required for every install.",
+      "url": "https://wordpress.org/about/requirements/"
+    },
+    {
+      "claim": "WordPress backports security fixes to older versions so that sites receive critical fixes through automatic updates, which is why core keeps moving after you pin an image digest.",
+      "url": "https://wordpress.org/about/security/"
+    },
+    {
+      "claim": "Until the browser wizard runs, wp-admin/install.php serves the setup form; afterwards it answers with the heading Already Installed, which is what makes a finished setup checkable from a shell.",
+      "url": "https://github.com/WordPress/WordPress/blob/7.0.2/wp-admin/install.php"
+    },
+    {
+      "claim": "WP-Cron keeps no timer of its own and runs scheduled work on page loads, so a site nobody visits publishes its scheduled posts late.",
+      "url": "https://developer.wordpress.org/plugins/cron/hooking-wp-cron-into-the-system-task-scheduler/"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Updating is the job, weekly, forever. Core installs its own security releases in the background, but plugins and themes are where most WordPress compromises start and nothing here updates them for you. The honest budget is a pass over the Updates screen every week, with a database dump taken first, and that discipline is a large part of what the hosted platform was selling.",
+    "Every plugin is somebody else's PHP running with your site's full privileges. That ecosystem is why WordPress can do anything Squarespace does and more; it is also the entire attack surface, and quality across it ranges from excellent to abandoned in 2019.",
+    "You own a MySQL. It has to be dumped rather than copied, the dump has to leave the box on a schedule you set, and a dump you have never restored is not a backup.",
+    "Mail is yours now, and this install configures none. The site publishes and serves fine without it, but password resets, comment notifications and contact-form mail stay silent until you sign up with an SMTP provider and add its DNS records.",
+    "No designer, no support desk, no CDN, no uptime commitment. Squarespace's templates and the people behind the chat window are what you stop paying for, and your site is exactly as fast and as available as one VPS on one provider."
+  ],
+  "sources": {
+    "compose": "https://hub.docker.com/_/wordpress",
+    "caddy": "https://developer.wordpress.org/advanced-administration/security/https/",
+    "install": "https://wordpress.org/about/requirements/",
+    "image": "https://github.com/docker-library/wordpress/blob/master/latest/php8.3/apache/Dockerfile",
+    "config": "https://github.com/docker-library/wordpress/blob/master/wp-config-docker.php",
+    "constants": "https://developer.wordpress.org/advanced-administration/wordpress/wp-config/",
+    "installer": "https://github.com/WordPress/WordPress/blob/7.0.2/wp-admin/install.php",
+    "cron": "https://developer.wordpress.org/plugins/cron/hooking-wp-cron-into-the-system-task-scheduler/",
+    "mysql": "https://hub.docker.com/_/mysql",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "ghost",
+    "linkstack",
+    "matomo"
+  ],
+  "pagePriority": 1,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "caf77f50aedda270b2739019ad3ae083fdc01fd0ed92e7996c9ea3e0146658e0"
+}

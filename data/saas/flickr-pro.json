@@ -1,0 +1,65 @@
+{
+  "slug": "flickr-pro",
+  "name": "Flickr Pro",
+  "domain": "flickr.com",
+  "whyPeoplePay": "Flickr Pro sells two things that are hard to buy separately: hosting with no ceiling for photos at full resolution, and a place where photographs are already being looked at. The free account stops at 1,000 items and puts ads next to your work; Pro removes both and adds view and referrer statistics. Twenty years of accumulated links, groups, favourites and Creative Commons search have no line on the pricing page, and they are most of what a long-standing account is actually paying to keep.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Capped at 1,000 photos and videos in total, with ads shown to you and to your visitors."
+    },
+    {
+      "name": "Monthly plan",
+      "priceMonthly": 11,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$11.00 a month plus tax, the USD retail rate listed in Flickr's Help Center pricing article."
+    },
+    {
+      "name": "Annual plan",
+      "priceMonthly": 6.83,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$82.00 a year plus tax, which averages $6.83 a month. Flickr's upgrade page labels this one Most popular."
+    },
+    {
+      "name": "2-year plan",
+      "priceMonthly": 6.17,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$148.00 for two years plus tax, which averages $6.17 a month. Flickr's upgrade page labels this one Best value."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://www.flickr.com/account/upgrade/pro",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Flickr's own upgrade page shows the three plan names and what they include, and no prices at all until you sign in and start the checkout flow. The figures here are the USD retail rates published in Flickr's Help Center pricing article, $11.00 monthly, $82.00 annually and $148.00 for two years, all stated plus tax; that article is served behind a bot check we could not render on the day, so the numbers were corroborated through search rather than read on the page, and the confidence is medium until someone reads the checkout screen and reports it."
+  },
+  "ranked": [
+    {
+      "project": "piwigo",
+      "rationale": "The one that answers the question Flickr Pro actually asks. Piwigo is a gallery you publish, on a domain you own, with albums, tags, batch upload, per-album permissions for named users and groups, and a documented web API the third-party apps speak. There is no item cap because the cap is your disk. What it cannot hand you is the half of Flickr that never appeared on the invoice: the people already browsing. You get the hosting, and the audience becomes a link you send."
+    },
+    {
+      "project": "immich",
+      "rationale": "Second here, and first for a different question. If what you want back is the camera roll backing itself up from your phone the moment you take a photo, with faces, places and a scrolling timeline, Immich is that page and Piwigo is not. It is a heavier install and it points inward: a private archive of everything you shoot, rather than a curated gallery built for other people to look at."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "PhotoPrism",
+      "repo": "https://github.com/photoprism/photoprism",
+      "note": "Actively developed, and the best browsing experience of the four for a large unsorted library, with face and subject recognition that runs on your own machine. Not ranked here because of the edition split: GitHub reports no clear SPDX licence for the repository, the free community edition is documented as being for personal use, and user management, 2FA, single sign-on and video transcoding sit behind a paid membership. That is a fair way to fund the work, and a thing to read before a family builds a shared gallery on it."
+    },
+    {
+      "name": "Lychee",
+      "repo": "https://github.com/LycheeOrg/Lychee",
+      "note": "MIT, actively maintained, and the closest in spirit to a shared photo page: quick to install and built around albums you hand a link to. We put Piwigo first because permissions, an extension ecosystem and a documented upgrade path across major versions are what a gallery you intend to keep for a decade actually needs, and Piwigo has been answering that for twenty years."
+    }
+  ]
+}

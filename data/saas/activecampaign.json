@@ -1,0 +1,65 @@
+{
+  "slug": "activecampaign",
+  "name": "ActiveCampaign",
+  "domain": "activecampaign.com",
+  "whyPeoplePay": "ActiveCampaign sells the part of email marketing that is not the email. Behind the campaign editor sits an automation canvas where a signup, a page view or a reply can start a sequence, hold a contact for three days, score them, tag them and hand them to a sales pipeline, and all of it keeps running while nobody is looking. The other half of the bill is arrival: a sending reputation built across a very large pool of senders, bounce and complaint handling that runs without you, and deliverability people you can escalate to on send day. The price is attached to how many contacts are stored rather than how much is sent, so it grows on a list nobody has mailed in a year, and every plan step up is also a jump in contact allowance. That shape is the usual reason someone with 5,000 contacts and two working automations starts looking for somewhere else to keep them.",
+  "plans": [
+    {
+      "name": "Starter",
+      "priceMonthly": 19,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Quoted at the 1,000-contact tier, where this ladder starts. About $15 a month on the annual plan. One user, basic automation, no CRM."
+    },
+    {
+      "name": "Plus",
+      "priceMonthly": 59,
+      "unit": "flat",
+      "seatsIncluded": 3,
+      "note": "Also quoted at 1,000 contacts, and the tier most people mean by ActiveCampaign: full automation, landing pages, a sales pipeline and lead scoring. About $49 a month on the annual plan."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 89,
+      "unit": "flat",
+      "seatsIncluded": 5,
+      "note": "Also at 1,000 contacts. Adds split automations, attribution reporting and predictive sending. About $79 a month on the annual plan."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "The pricing page routes this tier to a quote request. Independent price trackers read on 2026-08-06 report a list figure near $145 a month billed annually at 1,000 contacts, which we record here as reported rather than as read off the vendor's page."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://www.activecampaign.com/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The pricing page renders its numbers client-side from a contact-count selector, so a fetch on 2026-08-06 returned the plan structure and the words 'Billed annually' but every figure as a placeholder. What we read directly off activecampaign.com that day: four email plans named Starter, Plus, Pro and Enterprise, a separate WhatsApp ladder, and contact-limit multipliers per tier. The dollar figures here are the widely published US list prices at the 1,000-contact anchor, corroborated against independent price trackers read the same day, so confidence is medium. Treat the anchor tier as part of the number: this ladder is priced per contact stored, and a plan name on its own says nothing about the bill."
+  },
+  "ranked": [
+    {
+      "project": "mautic",
+      "rationale": "The only open project that attempts the whole surface rather than a slice of it. Contacts with custom fields, dynamic segments, a visual campaign builder with waits and decisions, forms and landing pages, lead scoring, and a tracking script that ties a page view on your own site back to a contact record. What you take on is the part ActiveCampaign hides: every one of those moving pieces is driven by cron jobs you now operate, so a segment that never updates and a campaign step that never fires look exactly like a broken install, and the sending, the reputation and the SPF, DKIM and DMARC records belong to a relay you sign up for yourself. It is the heaviest thing in this catalogue's marketing shelf and it is the honest answer to this particular bill."
+    },
+    {
+      "project": "listmonk",
+      "rationale": "The lighter answer, and the right one if broadcast newsletters are the whole job. One Go binary and one PostgreSQL, a deeper API, and throughput behaviour that people have already pushed to hundreds of thousands of subscribers. It ranks second because it does not pretend to be an automation platform: there is no campaign canvas, no lead scoring, no site tracking and no pipeline, so if the ActiveCampaign account is really a list plus a monthly send, this is a fraction of the operational load. If the automations are the reason for the subscription, listmonk does not replace them."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Keila",
+      "repo": "https://github.com/pentacent/keila",
+      "note": "AGPL-3.0, Elixir and PostgreSQL, genuinely maintained, and already in this catalogue as the Kit answer. Honest about what it is: signup forms, contacts, segments and campaigns, with sequences rather than a branching automation canvas. It is the nicest of these to run and the furthest from what ActiveCampaign sells, so it belongs on this page as context, not as the swap."
+    },
+    {
+      "name": "Mailtrain",
+      "repo": "https://github.com/Mailtrain-org/mailtrain",
+      "note": "The third name people suggest, and we would not install it today. It does have automation triggers, which is why it keeps coming up in this comparison, but the last tagged release is v2.20210609.0 from June 2021, the default branch's last commit is December 2022 and 115 issues are open. GPL-3.0 and self-hostable, but an internet-facing app that sends mail and has had no patch since 2022 is a security decision rather than a shortlist entry."
+    }
+  ]
+}

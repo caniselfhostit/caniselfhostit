@@ -1,0 +1,29 @@
+# Rallly · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://support.rallly.co/self-hosting/installation/docker and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also NEXT_PUBLIC_BASE_URL in .env, and the container reads it to build the
+# poll links it mails out, so the two have to agree exactly.
+
+<DOMAIN> {
+	# Every invitee opens a page served from here, and the sign-in code arrives
+	# by mail, so a downgrade attack has a real audience. Nothing here is meant
+	# to be embedded in another site, so framing stays same-origin.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	encode zstd gzip
+
+	# 8153 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8153
+}

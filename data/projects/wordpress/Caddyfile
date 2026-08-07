@@ -1,0 +1,33 @@
+# WordPress · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://developer.wordpress.org/advanced-administration/security/https/,
+# https://caddyserver.com/docs/caddyfile/directives/reverse_proxy and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also WORDPRESS_SITE_URL in .env, which becomes WP_HOME and WP_SITEURL, so the
+# two must always agree.
+
+<DOMAIN> {
+	# HTML, JSON and theme assets all compress well.
+	encode zstd gzip
+
+	# WordPress speaks plain http here and has to be told the visitor did not.
+	# reverse_proxy sets X-Forwarded-Proto itself, ignoring what the client
+	# sent, and the image's wp-config reads that header.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# No frame-blocking header: the editor and the theme customiser render the
+	# site in same-origin iframes, and WordPress sends SAMEORIGIN itself.
+
+	# 8152 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8152
+}

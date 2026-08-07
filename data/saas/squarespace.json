@@ -1,0 +1,70 @@
+{
+  "slug": "squarespace",
+  "name": "Squarespace",
+  "domain": "squarespace.com",
+  "whyPeoplePay": "Squarespace sells the parts of a website that nobody enjoys owning: templates that already look designed, hosting that never needs patching, a certificate that renews itself, a domain bought in the same checkout, and one bill for all of it. The subscription is a standing agreement that your site stays up and looks current without you thinking about it, and for most of the people paying, that agreement is the product rather than the software.",
+  "plans": [
+    {
+      "name": "Basic",
+      "priceMonthly": 25,
+      "unit": "flat",
+      "seatsIncluded": 2,
+      "note": "Billed monthly. $228 a year on the annual plan, which the page shows as $19/month. Carries a 2% commerce transaction fee and a 7% digital product fee."
+    },
+    {
+      "name": "Core",
+      "priceMonthly": 39,
+      "unit": "flat",
+      "seatsIncluded": null,
+      "note": "Billed monthly. $348 a year on the annual plan, shown as $29/month. No commerce transaction fee, 5% on digital products, unlimited contributors, and the tier where custom code is unlocked."
+    },
+    {
+      "name": "Plus",
+      "priceMonthly": 65,
+      "unit": "flat",
+      "seatsIncluded": null,
+      "note": "Billed monthly. $588 a year on the annual plan, shown as $49/month. 1% digital product fee and a lower payment processing rate."
+    },
+    {
+      "name": "Advanced",
+      "priceMonthly": 139,
+      "unit": "flat",
+      "seatsIncluded": null,
+      "note": "Billed monthly. $1,188 a year on the annual plan, shown as $99/month. No digital product fee and the lowest processing rate."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://www.squarespace.com/pricing",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "Read from the structured pricing data the vendor publishes on its own pricing page, which lists each plan twice, monthly and annually. We record the monthly-billed figure and put the annual total in each plan note, because the page advertises savings of up to 36% for paying a year ahead and quoting only the annual rate would understate what a month-to-month subscriber pays."
+  },
+  "ranked": [
+    {
+      "project": "wordpress",
+      "rationale": "The general answer, because Squarespace sells general websites: pages, a blog, forms, galleries, a shop, and a theme somebody else designed. WordPress is the only thing on this list where all of that already exists as software you install rather than software you write, and the migration path is real, since every Squarespace export is a WordPress export file. What you take on in exchange is the update discipline: core patches itself, plugins do not, and the weekly pass over the Updates screen is the maintenance Squarespace was quietly doing for you."
+    },
+    {
+      "project": "ghost",
+      "rationale": "The better answer if what you actually have on Squarespace is a blog or a newsletter with a few pages around it. Ghost's editor is calmer, its themes are cleaner, members and paid subscriptions are built in rather than bolted on, and there is no plugin ecosystem to keep patched. It is the wrong answer for the shop, the booking form, the client portal and the twelve landing pages, which is the shape most Squarespace sites end up in."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "LinkStack",
+      "repo": "https://github.com/LinkStackOrg/LinkStack",
+      "note": "In this directory already, as the Linktree answer. Worth naming here because a fair number of Squarespace subscriptions are paying website prices for one page of links and a contact address; if that is the whole site, LinkStack replaces it in an evening and WordPress is more machine than the job needs. It is not a website builder, so anything with a second page rules it out."
+    },
+    {
+      "name": "Hugo",
+      "repo": "https://github.com/gohugoio/hugo",
+      "note": "A different shape of answer: no database, no admin panel, no login page to attack, and the site is a folder of HTML that any host can serve. Actively developed and very widely used. The trade is that editing means Markdown files and a build step rather than a browser, so it fits people who are comfortable in a text editor and rules out the client who wanted to change a photo on their phone."
+    },
+    {
+      "name": "Publii",
+      "repo": "https://github.com/GetPublii/Publii",
+      "note": "A desktop application that gives static publishing a real editor: you write on your own computer and it uploads the built site. Actively maintained and honest about its scope. It suits a small brochure site with one author and no shop, and it has nothing to say about commerce, memberships or a second person editing."
+    }
+  ]
+}

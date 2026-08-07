@@ -1,0 +1,60 @@
+# LibreTranslate · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   installation ....... https://docs.libretranslate.com/guides/installation/
+#   quickstart ......... https://docs.libretranslate.com/
+#   argument defaults .. https://github.com/LibreTranslate/LibreTranslate/blob/v1.9.6/libretranslate/default_values.py
+#   image build ........ https://github.com/LibreTranslate/LibreTranslate/blob/v1.9.6/docker/Dockerfile
+#   container start .... https://github.com/LibreTranslate/LibreTranslate/blob/v1.9.6/scripts/entrypoint.sh
+#
+# One service on the computer you are sitting at. No key database and no key
+# requirement: the server path sets LT_API_KEYS and LT_UNDER_ATTACK because a
+# public hostname needs a door, and here the loopback binding is the door.
+#
+# One mount, and it is a named volume rather than a folder you can open: the
+# image creates its own user with uid 1032 and chowns /home/libretranslate to
+# it, which a fresh named volume inherits and a home-directory bind mount
+# cannot. Nothing is hidden from you by that. The model cache is all this
+# install writes, because text arrives, is translated, is answered, and is
+# dropped. Upstream's run.sh mounts the same path.
+#
+# Tag and digest were read from Docker Hub on 2026-08-07; the image publishes
+# amd64 and arm64. The -cuda tag is a separate amd64-only image this file does
+# not use: the CPU image is upstream's ordinary path.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  libretranslate:
+    image: libretranslate/libretranslate:v1.9.6@sha256:1de2d7056bb8ad607a412f4563d9abe324ff632b43b5be9428bcc8e213aebb32
+    container_name: libretranslate
+    restart: unless-stopped
+    environment:
+      # Eleven languages, each paired with English in both directions and
+      # pivoted through English for every other combination. That is 22 model
+      # packages, about 2.1 GB, downloaded during the first start. Deleting this
+      # line downloads all 100 packages in the index instead, about 8.4 GB.
+      LT_LOAD_ONLY: "en,es,fr,de,it,pt,nl,pl,ru,zh,ja"
+      # entrypoint.sh hands this to gunicorn as --workers. Each worker loads its
+      # own copy of a model on first use, so this number multiplies memory and
+      # Docker Desktop's virtual machine has a ceiling. Upstream's default is 4.
+      LT_THREADS: "2"
+      # One request cannot occupy a worker forever. 20000 characters is a long
+      # document; upstream's default is no ceiling at all.
+      LT_CHAR_LIMIT: "20000"
+    volumes:
+      - libretranslate-models:/home/libretranslate/.local
+    ports:
+      # Loopback only: no other device on the wifi reaches 8154, and nothing on
+      # the internet does.
+      - "127.0.0.1:8154:5000"
+    healthcheck:
+      # Upstream's own script. It exits 0 while /tmp/booting.flag exists, so the
+      # container does not report unhealthy during the first model download.
+      test: ["CMD-SHELL", "./venv/bin/python scripts/healthcheck.py"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 900s
+
+volumes:
+  libretranslate-models:

@@ -1,0 +1,54 @@
+# Rallly · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker install ..... https://support.rallly.co/self-hosting/installation/docker
+#   configuration ...... https://support.rallly.co/self-hosting/configuration
+#   entrypoint ......... https://github.com/lukevella/rallly/blob/v4.12.1/scripts/docker-start.sh
+#   status endpoint .... https://github.com/lukevella/rallly/blob/v4.12.1/apps/web/src/app/api/status/route.ts
+#
+# Two services: Rallly and the PostgreSQL that holds every poll, vote, comment
+# and account. Upstream's own stack adds a bundled Traefik and a Garage object
+# store, and this file runs neither: Caddy on the host terminates TLS, and the
+# S3 variables are optional, so leaving them unset costs avatar and logo
+# uploads and nothing else. The container runs its own Prisma migrations before
+# the server listens, which the health check's start period allows for. Digests
+# read on 2026-08-07; both images publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: postgres:16.14-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
+    container_name: rallly-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: rallly
+      POSTGRES_USER: rallly
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - /srv/rallly/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rallly -d rallly"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other container.
+
+  rallly:
+    image: lukevella/rallly:4.12.1@sha256:6049260ff6d3accd86730372a650b5e8063c373a09f253c45f7e4a8dc9202752
+    container_name: rallly
+    restart: unless-stopped
+    env_file: /srv/rallly/.env
+    environment:
+      # Built here rather than kept in .env so the password appears once.
+      DATABASE_URL: postgres://rallly:${POSTGRES_PASSWORD}@postgres:5432/rallly
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:3000/api/status || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 180s
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8153.
+      - "127.0.0.1:8153:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy

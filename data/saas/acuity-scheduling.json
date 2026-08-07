@@ -1,0 +1,69 @@
+{
+  "slug": "acuity-scheduling",
+  "name": "Acuity Scheduling",
+  "domain": "acuityscheduling.com",
+  "whyPeoplePay": "Acuity sells a front desk that never closes. The booking page renders on a stranger's phone, it knows which of your staff works Tuesdays, it converts time zones without anyone thinking about it, and it can take the deposit before the appointment exists. The money is attached to the parts that are genuinely hard: reminder email and text that arrive, payment processing already wired in, and calendar connectors that keep working after Google or Microsoft changes something. There is no free tier, only a 7-day trial, so a booking habit starts costing from the first week.",
+  "plans": [
+    {
+      "name": "Starter",
+      "priceMonthly": 20,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "One calendar. $16/month on annual billing, which the pricing page shows by default under a 20% saving.",
+      "source": "https://www.acuityscheduling.com/pricing",
+      "checkedOn": "2026-08-06"
+    },
+    {
+      "name": "Standard",
+      "priceMonthly": 34,
+      "unit": "flat",
+      "seatsIncluded": 6,
+      "note": "Up to 6 calendars, which is the first tier that fits a shop with staff. $27/month on annual billing. Adds text reminders and memberships.",
+      "source": "https://www.acuityscheduling.com/pricing",
+      "checkedOn": "2026-08-06"
+    },
+    {
+      "name": "Premium",
+      "priceMonthly": 61,
+      "unit": "flat",
+      "seatsIncluded": 36,
+      "note": "Up to 36 calendars. $49/month on annual billing. The tier that carries the HIPAA agreement, removal of Acuity branding, and API and CSS access.",
+      "source": "https://www.acuityscheduling.com/pricing",
+      "checkedOn": "2026-08-06"
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://www.acuityscheduling.com/pricing",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "We record the monthly-billed figures ($20 / $34 / $61) because that is what a month-to-month subscriber pays; the page shows the annual-billed rates ($16 / $27 / $49) by default under a 20% saving label, and those are in each plan note. Two things worth knowing when comparing against other write-ups: the vendor now labels these tiers Starter, Standard and Premium, while a lot of third-party pricing summaries still call them Emerging, Growing and Powerhouse at the same prices; and the page's own FAQ states there is no free plan, only a 7-day trial. What each tier caps is calendars rather than seats, so seatsIncluded here is the number of staff calendars the plan allows."
+  },
+  "ranked": [
+    {
+      "project": "easyappointments",
+      "rationale": "The same shape of product rather than a smaller cousin: services with a duration and a price, providers with their own working plans, a public booking page a customer uses without creating an account, and a calendar the front desk actually watches. The install is modest by this catalogue's standards, two containers and a MySQL, and the honest cost is what it does not do. There are no payments, no text reminders, and no email at all until you wire in a relay, which matters more here than it sounds: the confirmation screen tells your customer their details were emailed to them."
+    },
+    {
+      "project": "calcom",
+      "rationale": "The better answer if what you are replacing is a personal booking link rather than a front desk. Cal.com's model is one person's availability, event types with buffers and notice periods, and a link in an email signature, and it does that far better than Easy!Appointments does. It is also the heavier install: 4 GB, a PostgreSQL, mail configured before it is useful at all, and the team and round-robin features behind a commercial licence key. Take it for your own meetings, not for a salon's diary."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Rallly",
+      "repo": "https://github.com/lukevella/rallly",
+      "note": "AGPL-3.0, actively released through 2026. It answers a different question: which of these times works for all eight of us, which is Doodle's job rather than Acuity's. No services, no providers, no working hours, and no page a customer can book on."
+    },
+    {
+      "name": "LibreBooking",
+      "repo": "https://github.com/LibreBooking/librebooking",
+      "note": "GPL-3.0 PHP, the maintained continuation of Booked Scheduler, still cutting releases in 2026. It books resources rather than people: rooms, equipment, lab time, with quotas and approval rules. A better fit than Easy!Appointments when the thing being scheduled is a thing; a worse one when a customer is meant to pick a service and a member of staff."
+    },
+    {
+      "name": "Thunderbird Appointment",
+      "repo": "https://github.com/thunderbird/appointment",
+      "note": "MPL-2.0, from the Thunderbird project, under heavy development and shipping rolling build tags rather than versioned releases. Personal booking links backed by your own calendar, closer to Calendly than to a salon diary, and young enough that we would not put a business's bookings on it yet."
+    }
+  ]
+}

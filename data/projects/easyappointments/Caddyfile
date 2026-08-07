@@ -1,0 +1,30 @@
+# Easy!Appointments · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://github.com/alextselegidis/easyappointments-docker/blob/master/README.md
+# and https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also BASE_URL in .env, so the two have to agree.
+
+<DOMAIN> {
+	# The booking page is HTML, CSS and JavaScript, so compression pays here.
+	encode zstd gzip
+
+	header {
+		# Booking page and backend share one hostname, so a downgrade on
+		# either is a downgrade on both. The application sends its own
+		# X-Frame-Options: SAMEORIGIN, not repeated here.
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# 8160 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall. Caddy terminates TLS
+	# and speaks plain http here, which is why BASE_URL carries the https:
+	# PHP reads it to mark the session cookie secure.
+	reverse_proxy 127.0.0.1:8160
+}

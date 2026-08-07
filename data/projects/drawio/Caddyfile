@@ -1,0 +1,32 @@
+# draw.io · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from https://caddyserver.com/docs/automatic-https
+# and https://github.com/jgraph/docker-drawio/blob/v31.1.8/README.md
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname whose A record already points at this
+# box. Caddy asks for the certificate on the first request and renews it on its
+# own, so there is nothing to schedule. The container builds a self-signed
+# certificate for its own port 8443 at every start; that port is not published,
+# and Caddy is the only thing terminating TLS in front of this service.
+
+<DOMAIN> {
+	# The editor is several megabytes of JavaScript on a cold load, so
+	# compression is the one setting here that changes what the user feels.
+	encode zstd gzip
+
+	# No Content-Security-Policy line on purpose. The container injects its own
+	# CSP as a meta tag at start-up and a second policy sent as a header would
+	# intersect with it, which fails as a blank editor rather than as an error.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8158 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8158
+}

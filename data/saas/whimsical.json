@@ -1,0 +1,63 @@
+{
+  "slug": "whimsical",
+  "name": "Whimsical",
+  "domain": "whimsical.com",
+  "whyPeoplePay": "Whimsical sells speed and company. Flowcharts, wireframes, sticky notes, mind maps and docs live in one workspace with one set of shortcuts, several people can be on the same board at the same time, and a colleague can leave a comment on the exact box you got wrong. The paid tiers buy unlimited boards, more guests, longer version history and an admin who can hand a board back after somebody leaves. None of that is the drawing; it is everything around the drawing, and it is genuinely hard to reproduce alone.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Three team boards, three teams, ten guests, 7-day version history, and 20 AI credits per workspace in total."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 10,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Shown as $10 per month per editor with annual billing selected, which is the page's default view. Unlimited team boards, six teams, fifty guests, 90-day version history."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": 20,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Shown as $20 per month per editor with annual billing selected. Adds unlimited teams, 200 guests, unlimited version history, SSO/SAML and SCIM, with a contact-sales button next to the price."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://whimsical.com/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The pricing page opens with the annual-billing toggle already selected and advertises 'Save 17%' for choosing it, so the $10 and $20 figures recorded here are the annual-billed rates as displayed. The page did not show a monthly-billed rate for either plan on the day we read it, so we did not record one. Anyone paying month to month pays more than the numbers above, which means the savings figure on the project page is the conservative one. Re-read the page before quoting a monthly-billed comparison."
+  },
+  "ranked": [
+    {
+      "project": "drawio",
+      "rationale": "The closest match to what Whimsical is actually used for: structured diagrams, flowcharts, wireframes and org charts, with shapes that snap and arrows that stay attached when you move a box. It is also the entry on this site with the most honest catch, and we would rather say it than sell around it. draw.io's own hosted editor at app.diagrams.net is free and asks for no account, so self-hosting buys you the origin the page loads from and nothing else: an offline network, an air-gapped site, or a written policy about which servers may serve code to your browser. If none of those is your problem, use the free hosted one."
+    },
+    {
+      "project": "excalidraw",
+      "rationale": "The right answer if what you liked about Whimsical was the sketching rather than the structure. Excalidraw is faster for a rough idea and its hand-drawn look invites edits in a way that a clean flowchart does not, but it has no wireframe kit, no mind-map mode and no docs, and the image upstream publishes has no realtime server either. Second place here because Whimsical's centre of gravity is structured diagrams, not freehand."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Penpot",
+      "repo": "https://github.com/penpot/penpot",
+      "note": "Actively developed, MPL-2.0, and the only option on this page with real multiplayer on a board you host. It is also a UI design tool rather than a diagramming one: components, prototyping and design handoff, not flowcharts or mind maps. It is in this catalogue as the Figma answer, and it costs five containers to run. If you bought Whimsical for wireframes and nothing else, look at it; if you bought it for diagrams, it is the wrong shape."
+    },
+    {
+      "name": "tldraw",
+      "repo": "https://github.com/tldraw/tldraw",
+      "note": "Actively developed and a pleasure to use, and we did not test it because of the licence rather than the code. tldraw ships under its own licence, not an open source one: it permits development and staging use and states plainly that you may not run it in a production environment or interfere with its licence-key enforcement, with commercial terms sold separately. GitHub reports it as Other for that reason. That is a legitimate business model and it puts tldraw outside what this catalogue installs."
+    },
+    {
+      "name": "AFFiNE",
+      "repo": "https://github.com/toeverything/AFFiNE",
+      "note": "The closest thing to Whimsical's actual shape, docs and an infinite canvas in one workspace with real collaboration, and actively developed. Two reasons it is not ranked: the repository is split-licensed, with the server under separate terms from the MIT-licensed rest and GitHub reporting no single licence, and a self-hosted instance is a multi-service stack with a database and object storage behind it. It is a bigger commitment than anything else on this page."
+    }
+  ]
+}

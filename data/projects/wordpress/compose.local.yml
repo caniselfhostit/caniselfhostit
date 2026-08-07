@@ -1,0 +1,73 @@
+# WordPress · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   image reference .... https://hub.docker.com/_/wordpress
+#   wp-config template . https://github.com/docker-library/wordpress/blob/master/wp-config-docker.php
+#   mysql image ........ https://hub.docker.com/_/mysql
+#
+# Two services on the computer you are sitting at, every path relative to
+# ~/selfhost/wordpress/, which lets one file work on macOS, Linux and Windows.
+# MySQL's data directory is a named volume because that image chowns it to its
+# own uid, which a home-directory bind mount cannot allow on Windows; the site
+# files stay a bind mount so themes, plugins and uploads show up in Finder or
+# Explorer. Upstream requires MySQL 8.0 or newer and PHP 8.3 or newer, so this
+# runs MySQL 8.4 and the 7.0.2-apache tag, the PHP 8.3 build.
+#
+# Nothing terminates TLS here, so WP_HOME and WP_SITEURL are the http address
+# in .env, read when Compose runs from this folder. The eight authentication
+# keys and salts are in neither file: the image writes a random value for each
+# into wp-config.php in ./html, which every backup carries.
+#
+# Digests read from the registries on 2026-08-06; both publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  mysql:
+    image: mysql:8.4.11@sha256:b3b90af2a6552ae30c266fdb7d5dd55f3afb72404bb78d37fe8a23eb857fd3fb
+    container_name: wordpress-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+    volumes:
+      - wordpress-mysql-data:/var/lib/mysql
+    healthcheck:
+      # `$$` sends a literal dollar to the container instead of interpolating.
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 10s
+      retries: 30
+      start_period: 60s
+    # No `ports:`: 3306 is reachable only from the other container.
+
+  wordpress:
+    image: wordpress:7.0.2-apache@sha256:b2d7e3153c8a96f90305a3102fb6439335237fb1a9655b617d15c5168ce2f7a3
+    container_name: wordpress
+    restart: unless-stopped
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      WORDPRESS_SITE_URL: ${WORDPRESS_SITE_URL}
+      # Evaluated inside wp-config.php. The first two make the site address a
+      # file rather than a database row; the third removes the admin editor.
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_HOME', getenv('WORDPRESS_SITE_URL'));
+        define('WP_SITEURL', getenv('WORDPRESS_SITE_URL'));
+        define('DISALLOW_FILE_EDIT', true);
+    volumes:
+      # Core, themes, plugins, uploads and wp-config.php. Posts are in MySQL.
+      - ./html:/var/www/html
+      # PHP's default caps uploads at 2 MB; conf.d is the documented override.
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini:ro
+    ports:
+      # Loopback only: no other device on the wifi can reach 8152.
+      - "127.0.0.1:8152:80"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  wordpress-mysql-data:

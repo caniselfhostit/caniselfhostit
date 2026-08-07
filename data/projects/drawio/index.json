@@ -1,0 +1,93 @@
+{
+  "slug": "drawio",
+  "name": "draw.io",
+  "tagline": "The structured-diagram editor as one container on a hostname you own, with every cloud storage backend switched off.",
+  "repo": "jgraph/drawio",
+  "site": "https://www.drawio.com",
+  "category": "design-whiteboard",
+  "replaces": [
+    {
+      "saas": "whimsical",
+      "plan": "Pro",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 9,
+  "license": "Apache-2.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/jgraph/docker-drawio/blob/v31.1.8/docker-compose.yml",
+  "local": {
+    "fit": "good",
+    "note": "The editor runs as well on a laptop as on a server because neither one stores a diagram: your work goes into a file you save or into this browser's storage, so the container is only ever the thing that serves the page."
+  },
+  "quote": {
+    "text": "No account required. No credit card.",
+    "source": "draw.io home page",
+    "url": "https://www.drawio.com/",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "draw.io's own hosted editor is free and states that no account and no sign-up are required, which is the alternative to weigh before renting a server for this one.",
+      "url": "https://www.drawio.com/"
+    },
+    {
+      "claim": "The image builds from a Tomcat base, serves the compiled editor at the root path on container port 8080, exposes 8080 and 8443, and runs as a non-root tomcat user with no volume of its own.",
+      "url": "https://github.com/jgraph/docker-drawio/blob/v31.1.8/main/Dockerfile"
+    },
+    {
+      "claim": "With no Google, Microsoft or GitLab client id set, the entrypoint writes gapi, od and gl to 0, and it always writes db, gh and tr to 0, so a default install offers no cloud storage backend at all.",
+      "url": "https://github.com/jgraph/docker-drawio/blob/v31.1.8/main/docker-entrypoint.sh"
+    },
+    {
+      "claim": "Upstream documents the ?offline=1 URL parameter as a security feature that disables support of cloud storage, and lists KEYSTORE_PASS with a default value printed in the README itself.",
+      "url": "https://github.com/jgraph/docker-drawio/blob/v31.1.8/README.md"
+    },
+    {
+      "claim": "The first dialog is the storage picker headed Save diagrams to, and the Browser option it offers is the browser's own local storage rather than anything on the server.",
+      "url": "https://github.com/jgraph/drawio/blob/v31.1.8/src/main/webapp/js/diagramly/Dialogs.js"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "You may not need this at all, and we would rather say so. draw.io's own hosted editor at app.diagrams.net is free, needs no account, and is the same editor this installs. Self-hosting buys you the origin the page loads from: it works with the network unplugged, and no third-party server hands code to your browser. If neither of those is a requirement you actually have, the free hosted editor is the better answer.",
+    "No realtime collaboration. This is one editor per person per diagram. The container has no sync service and no presence, so two people on one board is not slow here, it does not exist. That, the comments and the shared workspace are most of what Whimsical is actually selling.",
+    "The server stores nothing. There is no database, no document store and no volume in the compose file. A diagram is a file you save to your own computer or a record in the storage of the browser that drew it, which means clearing site data loses work no backup on the server could have held.",
+    "So the backup is small and the important half is not on the box. The archive holds compose.yml, the .env and the Caddy site block, and that is genuinely everything the server has. Your diagrams are wherever you saved them, and keeping them is a habit rather than a step in the install.",
+    "No accounts, which cuts both ways. There is no password to lose and no sign-up page to close, and anyone who finds the hostname gets their own blank canvas. They cannot see your work, because your work was never sent to the server."
+  ],
+  "sources": {
+    "compose": "https://github.com/jgraph/docker-drawio/blob/v31.1.8/README.md",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://github.com/jgraph/docker-drawio/blob/v31.1.8/main/docker-entrypoint.sh",
+    "image": "https://github.com/jgraph/docker-drawio/blob/v31.1.8/main/Dockerfile",
+    "example": "https://github.com/jgraph/docker-drawio/blob/v31.1.8/docker-compose.yml",
+    "firstScreen": "https://github.com/jgraph/drawio/blob/v31.1.8/src/main/webapp/js/diagramly/Dialogs.js",
+    "strings": "https://github.com/jgraph/drawio/blob/v31.1.8/src/main/webapp/resources/dia.txt",
+    "title": "https://github.com/jgraph/drawio/blob/v31.1.8/src/main/webapp/index.html",
+    "hosted": "https://www.drawio.com/"
+  },
+  "related": [
+    "excalidraw",
+    "penpot",
+    "stirling-pdf"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "b5eb8f934c4195cbec86ab944deea62204775fd422a33ec012d804186acadcbb"
+}

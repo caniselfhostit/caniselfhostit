@@ -1,0 +1,94 @@
+{
+  "slug": "mautic",
+  "name": "Mautic",
+  "tagline": "Contacts, segments, drip campaigns, forms and site tracking on your own hostname, with the sending handed to a relay you pick.",
+  "repo": "mautic/mautic",
+  "site": "https://www.mautic.org",
+  "category": "marketing-content",
+  "replaces": [
+    {
+      "saas": "activecampaign",
+      "plan": "Plus",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 3,
+    "externalDb": true,
+    "needsSmtp": true,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 3
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 240,
+  "license": "GPL-3.0-or-later",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/mautic/docker-mautic/blob/main/examples/basic/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Every link, unsubscribe address and tracking pixel Mautic writes into a campaign here begins with http://localhost:8161, which means the reader's own computer, so anyone you mail from this install gets a message whose links go nowhere, and the campaign schedule only advances while the machine is awake."
+  },
+  "quote": {
+    "text": "Mautic requires a few cron jobs to handle some maintenance tasks such as updating Contacts or Campaigns, executing Campaign Actions, sending Emails, and more.",
+    "source": "Mautic documentation, Cron jobs",
+    "url": "https://docs.mautic.org/en/7.1/configuration/cron_jobs.html",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's own Docker example runs the cron role as a separate container beside the web container and the database, and the crontab the image ships updates segments, campaigns and campaign triggers every 15 minutes.",
+      "url": "https://github.com/mautic/docker-mautic/blob/main/examples/basic/docker-compose.yml"
+    },
+    {
+      "claim": "Mautic states that it requires cron jobs to update contacts and campaigns, execute campaign actions and send email, and recommends running segment, campaign and trigger updates on a staggered quarter-hour schedule.",
+      "url": "https://docs.mautic.org/en/7.1/configuration/cron_jobs.html"
+    },
+    {
+      "claim": "The official image requires MAUTIC_DB_HOST, MAUTIC_DB_USER, MAUTIC_DB_PASSWORD and DOCKER_MAUTIC_ROLE, chowns its four mounted volumes to www-data at every start, and dispatches to the web, cron or worker entrypoint from the role.",
+      "url": "https://github.com/mautic/docker-mautic/blob/main/common/docker-entrypoint.sh"
+    },
+    {
+      "claim": "A fresh install ships a mailer DSN of smtp://localhost:1025 and a from-address of email@yoursite.com, so both have to be replaced before a single campaign can leave.",
+      "url": "https://github.com/mautic/mautic/blob/7.1.3/app/bundles/EmailBundle/Config/config.php"
+    },
+    {
+      "claim": "Upstream calls the trusted proxies setting mandatory behind a TLS-terminating proxy, and restricts cross-origin calls to the domains listed under CORS Valid Domains by default.",
+      "url": "https://docs.mautic.org/en/7.1/configuration/settings.html"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Cron is the product. Segments, campaign steps and scheduled sends are computed by a container running a crontab every 15 minutes, not when you open a page, so a segment stuck at zero and a campaign that never advances look exactly like a broken install and nobody emails you when that container stops. Every hour Mautic feels slow is an hour it was doing the thing it is for.",
+    "Deliverability becomes your job, and it is the job. Mautic composes, schedules and hands messages to an SMTP relay you sign up for; whether they arrive depends on that relay, on SPF, DKIM and DMARC records you write yourself, and on a sending reputation that starts at nothing. That is the half of the bill ActiveCampaign is really attached to, and moving the software does not move the work.",
+    "You own a MariaDB, and the row that matters most in it is consent. Every contact's opt-in and its timestamp live there alongside the page views, email opens and clicks the tracking script records, so a list restored from a backup you never took is a list you are no longer allowed to mail, and the dump itself is a credential once a relay is configured.",
+    "It is PHP, and it eats. Two PHP containers with a 768 MB memory limit each plus a database is a 2 GB box on day one, before the contact table grows, and the tracking script needs the domain of every site you paste it into listed under CORS Valid Domains or its forms fail without an error anybody sees.",
+    "No managed deliverability, no support on send day, no built-in SMS or WhatsApp, and no sales team using the same contact record. ActiveCampaign's upper tiers sell attribution reporting, predictive sending and a CRM alongside the automations, and none of that is here."
+  ],
+  "sources": {
+    "compose": "https://github.com/mautic/docker-mautic",
+    "caddy": "https://docs.mautic.org/en/7.1/configuration/settings.html",
+    "install": "https://docs.mautic.org/en/7.1/getting_started/how_to_install_mautic.html",
+    "entrypoint": "https://github.com/mautic/docker-mautic/blob/main/common/docker-entrypoint.sh",
+    "cron": "https://docs.mautic.org/en/7.1/configuration/cron_jobs.html",
+    "requirements": "https://www.mautic.org/download/requirements",
+    "messenger": "https://github.com/mautic/mautic/blob/7.1.3/app/bundles/MessengerBundle/Config/config.php",
+    "mailer": "https://github.com/mautic/mautic/blob/7.1.3/app/bundles/EmailBundle/Config/config.php",
+    "firstScreen": "https://github.com/mautic/mautic/blob/7.1.3/app/bundles/UserBundle/Resources/views/Security/login.html.twig",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "listmonk",
+    "keila",
+    "espocrm"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "c8b1e6c7251b671b6d5e77fcf5e55f1f1de2f48d947d4b50a3fc8a77937d69e2"
+}

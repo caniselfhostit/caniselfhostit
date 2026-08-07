@@ -55,7 +55,7 @@
     {
       "name": "Easy!Appointments",
       "repo": "https://github.com/alextselegidis/easyappointments",
-      "note": "GPL-3.0 PHP and MySQL, still maintained, 1.6.0 released in May 2026. Built for businesses booking customers into staff schedules, with services, providers and working plans, so the model is a barber's diary rather than a knowledge worker's link in an email signature. Simpler to host than Cal.com; the booking page looks like the software it is."
+      "note": "GPL-3.0, PHP and MySQL, still maintained. Built for businesses booking customers into staff schedules, with services, providers and working plans. It has since earned its own page in this catalog as the Acuity Scheduling answer, where its business-front-desk install is written up in full; on this page Cal.com keeps the top spot for personal scheduling links."
     }
   ]
 }

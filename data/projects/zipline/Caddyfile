@@ -1,0 +1,35 @@
+# Zipline · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://zipline.diced.sh/docs/guides/reverse-proxy,
+# https://caddyserver.com/docs/caddyfile/directives/request_body and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# the front of every share link this server hands out, so it is the value here
+# worth choosing once and keeping.
+
+<DOMAIN> {
+	# Uploads are mostly already-compressed image and video formats, so there
+	# is nothing to gain by compressing them again. These four headers are the
+	# part worth having: a file host serves other people's bytes to strangers.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# Zipline's own default file size limit is 100 MB and it cuts anything
+	# larger into 25 MB chunks, so 128 MB of request body covers both with room
+	# to spare. Caddy answers 413 above this. Raise Zipline's limit and this
+	# number together or the proxy will refuse what the app would have taken.
+	request_body {
+		max_size 128MB
+	}
+
+	# 8156 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8156
+}

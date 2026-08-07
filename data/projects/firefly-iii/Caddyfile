@@ -1,0 +1,28 @@
+# Firefly III · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.firefly-iii.org/how-to/firefly-iii/installation/docker/ and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also APP_URL in .env, and if the two disagree the forms post to an address
+# that does not answer.
+
+<DOMAIN> {
+	# Statements and attachments travel both ways, so compression earns a place.
+	encode zstd gzip
+
+	header {
+		# A ledger of every account you own is worth a downgrade attack.
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "same-origin"
+		-Server
+	}
+
+	# 8155 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8155
+}

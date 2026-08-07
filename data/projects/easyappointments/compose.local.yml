@@ -1,0 +1,57 @@
+# Easy!Appointments · the local-path fallback, authored by caniselfhostit from
+# the upstream documentation, not copied from a repository:
+#   server image ... https://github.com/alextselegidis/easyappointments-docker/blob/master/README.md
+#   entrypoint ..... https://github.com/alextselegidis/easyappointments-docker/blob/master/assets/docker-entrypoint.sh
+#   install guide .. https://github.com/alextselegidis/easyappointments/blob/1.6.0/docs/installation-guide.md
+#
+# Two services, driven from ~/selfhost/easyappointments/ so one file works on
+# macOS, Linux and Windows. The database is a named volume, not a bind mount:
+# the MySQL image chowns /var/lib/mysql to a uid Docker Desktop's Windows file
+# sharing cannot grant on a home-directory bind mount. The app container needs
+# none, since every appointment is a row in MySQL. Digests read from Docker Hub
+# on 2026-08-06; both publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  easyappointments-db:
+    image: mysql:8.4.11@sha256:b3b90af2a6552ae30c266fdb7d5dd55f3afb72404bb78d37fe8a23eb857fd3fb
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: easyappointments
+      MYSQL_USER: easyappointments
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - easyappointments-db:/var/lib/mysql
+    healthcheck:
+      # -h 127.0.0.1 forces TCP: the first start runs a socket-only server.
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 --silent"]
+      interval: 10s
+      start_period: 60s
+      timeout: 5s
+      retries: 18
+    # No `ports:` at all: 3306 is reachable only from the other container.
+
+  easyappointments:
+    image: alextselegidis/easyappointments:1.6.0@sha256:ab35b8872d5d3328fa3afb641a89a75f3c6f96f3fb98d6d6d3447fff9d357fa1
+    restart: unless-stopped
+    environment:
+      # BASE_URL is inside every booking link, so they work here only.
+      BASE_URL: http://localhost:8160
+      DEBUG_MODE: "FALSE"
+      DB_HOST: easyappointments-db
+      DB_NAME: easyappointments
+      DB_USERNAME: easyappointments
+      DB_PASSWORD: ${DB_PASSWORD}
+      # Off: turning it on means an OAuth client in your own Google project.
+      GOOGLE_SYNC_FEATURE: "FALSE"
+    ports:
+      # Loopback only: no other device on the wifi can reach 8160.
+      - "127.0.0.1:8160:80"
+    depends_on:
+      easyappointments-db:
+        condition: service_healthy
+
+volumes:
+  easyappointments-db:

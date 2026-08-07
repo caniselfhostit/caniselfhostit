@@ -1,0 +1,66 @@
+# Piwigo · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker install ... https://piwigo.org/guides/install/docker
+#   requirements ..... https://piwigo.org/guides/install/requirements
+#   image README ..... https://github.com/Piwigo/piwigo-docker/blob/v16.4a/README.md
+#   image init ....... https://github.com/Piwigo/piwigo-docker/blob/v16.4a/config/init-script.sh
+#
+# The image is the Piwigo project's own, built from github.com/Piwigo/piwigo-docker:
+# Alpine with nginx and php-fpm, tagged 16.4.0a for Piwigo 16.4.0. Two services:
+# Piwigo, and the MariaDB holding albums, tags, permissions and every photo's
+# metadata. The PHP tree and the photo files share /srv/piwigo/gallery, which the
+# image populates on first start. Upstream also mounts a scripts directory that
+# runs shell code as root inside the container; this file leaves it out. Every
+# ${...} comes from /srv/piwigo/.env, mode 600, which Compose reads and never
+# mounts. Digests read 2026-08-07; both images publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  db:
+    image: mariadb:11.8.8@sha256:d9f7eb2637296652f24b484afd5d246f759f49f5babcadc6a9e344c9acb75fbf
+    container_name: piwigo-db
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: piwigo
+      MARIADB_USER: piwigo
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_AUTO_UPGRADE: "1"
+    volumes:
+      - /srv/piwigo/mariadb:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      retries: 20
+    # No `ports:` at all: 3306 is reachable only from the other container.
+
+  piwigo:
+    image: piwigo/piwigo:16.4.0a@sha256:0ec6f159a3f972338b64e299d56ac37c442dd26cbeec39320d76ea826b5e0b84
+    container_name: piwigo
+    restart: unless-stopped
+    environment:
+      # The image's init reads TZ with `set -u`, so it is never left unset.
+      TZ: Etc/UTC
+      # The gallery tree is chowned to these on every start, so the login
+      # user can read the photos without sudo.
+      PIWIGO_UID: "${PIWIGO_UID}"
+      PIWIGO_GID: "${PIWIGO_GID}"
+    volumes:
+      # One directory: the release the image ships, the config the installer
+      # writes to local/config, and every photo uploaded afterwards.
+      - /srv/piwigo/gallery:/var/www/html/piwigo
+    healthcheck:
+      # / answers 302 to install.php before the installer runs and 200 after.
+      test: ["CMD-SHELL", "curl -fsS -o /dev/null http://127.0.0.1/ || exit 1"]
+      start_period: 60s
+      interval: 15s
+      retries: 20
+    ports:
+      # Loopback only: the host's Caddy alone reaches 8159, and the container
+      # listens on 80 with nginx running as its own unprivileged user.
+      - "127.0.0.1:8159:80"
+    depends_on:
+      db:
+        condition: service_healthy

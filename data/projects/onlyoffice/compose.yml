@@ -1,0 +1,52 @@
+# ONLYOFFICE Docs · the deterministic fallback. Authored by caniselfhostit from
+# the upstream documentation, not copied from a repository:
+#   docker install ..... https://helpcenter.onlyoffice.com/docs/installation/docs-community-install-docker.aspx
+#   system requirements  https://helpcenter.onlyoffice.com/docs/installation/docs-community-sys-reqs-docker.aspx
+#   image reference .... https://github.com/ONLYOFFICE/Docker-DocumentServer/blob/master/README.md
+#   entrypoint ......... https://github.com/ONLYOFFICE/Docker-DocumentServer/blob/master/run-document-server.sh
+#
+# One service, and there is no second one hiding inside it. Older images carried
+# their own PostgreSQL and RabbitMQ; the 9.4.0 change log records both
+# dependencies removed after the back-end was consolidated into a single
+# process, and the published 9.4.0 image declares no database directory among
+# its volumes. So there is no database to operate and nothing to dump.
+#
+# The three mounted directories are state this container writes: its runtime
+# configuration, a cache of the documents open in an editor right now, and
+# logs. Your documents are in none of them: they live in whichever application
+# hands them to this server.
+#
+# Tag and digest were read from the registry on 2026-08-07; the image publishes
+# amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  documentserver:
+    image: onlyoffice/documentserver:9.4.0@sha256:e3da62a847b9a5d51a11f73cfea1d9c13c3be3809614490d4edddcf01dcf919b
+    container_name: onlyoffice-documentserver
+    restart: unless-stopped
+    env_file: /srv/onlyoffice/.env
+    environment:
+      # Token validation is on by default, and with no secret set the
+      # entrypoint invents a random one at every start, which silently breaks
+      # every integration on restart. The secret arrives from .env instead.
+      JWT_ENABLED: "true"
+    volumes:
+      - /srv/onlyoffice/data:/var/www/onlyoffice/Data
+      - /srv/onlyoffice/lib:/var/lib/onlyoffice
+      - /srv/onlyoffice/logs:/var/log/onlyoffice
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8157.
+      - "127.0.0.1:8157:80"
+    healthcheck:
+      # /healthcheck answers 200 with the body `false` when a component is
+      # down, so the status code alone is not enough to test.
+      test: ["CMD-SHELL", "curl -fsS http://localhost/healthcheck | grep -q true"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 180s
+    # SIGTERM runs the shutdown script, which needs time to finish anything
+    # mid-conversion. Upstream's own compose file allows the same 60 seconds.
+    stop_grace_period: 60s

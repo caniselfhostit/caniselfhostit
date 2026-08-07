@@ -1,0 +1,70 @@
+{
+  "slug": "doodle",
+  "name": "Doodle",
+  "domain": "doodle.com",
+  "whyPeoplePay": "Doodle sells the end of the reply-all thread. You post the times you could meet, everyone else ticks boxes on a page that needs no account, and the winning slot is obvious without anyone reading twelve emails. What the paid tiers add is mostly the removal of limits and irritations you meet on the free one: more than a single live poll, no advertising on the page your colleagues open, deadlines and reminders that chase people for you, and calendar and video-call links that stop the follow-up admin.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "One Group Poll, one Booking Page, one 1:1, basic Sign-up Sheets and one calendar connection. Participants see ads."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 10.95,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Billed monthly. $83.40 a year on the annual plan, which the page presents as $6.95 a month. Doodle's own help centre lists this plan at $15 a month and $132 a year, so the figure a given visitor is shown depends on which price test they land in. Buys unlimited polls, booking pages and sign-up sheets, deadlines and reminders, Zoom, Teams and Webex links, and an ad-free page."
+    },
+    {
+      "name": "Team",
+      "priceMonthly": 19.95,
+      "unit": "per-seat",
+      "seatsIncluded": 2,
+      "note": "Per user per month billed monthly, minimum two seats and maximum 100. $8.95 per user per month on the annual plan, shown on the page as $214.80 a year for the two-seat default. Adds an admin console, roles, co-hosting, booking on someone else's behalf, activity reports and custom branding."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only, from USD 15,000 and billed annually, for organisations of 50 or more. Adds SAML and OIDC single sign-on, MFA, branded booking pages and a 99.9% SLA."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://doodle.com/en/premium",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The pricing page renders its numbers in the browser from an embedded catalogue that carries several concurrent price variants for the same tier, so it shows no figure to a plain fetch. The Pro numbers here were derived by matching the page's own \"You save USD 48.00/year\" line against that catalogue, which resolves to $10.95 monthly and $83.40 annually; Doodle's help centre states $15 and $132 for the same plan on the same day. Team's $19.95 and $8.95 per user agree between the catalogue and the help centre, and Team's \"You save USD 264.00\" line matches the two-seat minimum exactly. Confidence is medium because of the Pro discrepancy, not because any figure was guessed."
+  },
+  "ranked": [
+    {
+      "project": "rallly",
+      "rationale": "The closest thing to what Doodle actually sells: you propose several dates or times, you send one link, and anyone who opens it votes without making an account. The participant count that Doodle's free tier caps and its paid tiers unlock is a row in your own PostgreSQL here, and the ads that sit on a free Doodle page never existed. The honest catch is that sign-in is a code emailed to you, so you are signing up to keep an SMTP relay working, and upstream asks you to buy a licence key once more than one person has an account on the instance."
+    },
+    {
+      "project": "calcom",
+      "rationale": "The other half of what Doodle does, and the right answer if your real problem is one-to-one bookings rather than polling a group. Cal.com publishes your availability and lets a single person pick a slot straight out of it, which is Doodle's Booking Page feature rather than its Group Poll. Rallly ranks first here because group time-polling is the thing Doodle is named for; if you have never made a group poll and only ever sent people a booking link, install this one instead."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Framadate",
+      "repo": "https://framagit.org/framasoft/framadate/framadate",
+      "note": "The original free-software answer to Doodle, written in PHP by Framasoft and still the thing most European public bodies mean when they say they run their own poll tool. It needs a PHP host and MySQL rather than a container, it is not on GitHub, and its GitLab showed its last activity in November 2025, so treat it as maintained rather than developed."
+    },
+    {
+      "name": "Crab Fit",
+      "repo": "https://github.com/GRA0007/crab.fit",
+      "note": "A When2meet-shaped availability grid rather than a poll: everyone paints the hours they are free onto a shared grid and the overlap is the answer. Nobody makes an account at all, which removes the mail relay that Rallly's sign-in depends on, and with it any way to own a poll or notify anyone. GPL-3.0, actively developed, and upstream publishes a self-hosting guide."
+    },
+    {
+      "name": "Nextcloud Polls",
+      "repo": "https://github.com/nextcloud/polls",
+      "note": "Date and text polls as an app inside Nextcloud, using the accounts and the mail settings you already configured there. That is the whole pitch and the whole limitation: it is worth it only if a Nextcloud is already yours to operate, and it is not something you install on its own."
+    }
+  ]
+}

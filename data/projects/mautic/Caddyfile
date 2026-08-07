@@ -1,0 +1,23 @@
+# Mautic · the Caddy site block for this service. Authored by caniselfhostit
+# from https://docs.mautic.org/en/7.1/configuration/settings.html and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile with <DOMAIN> replaced by the hostname
+# pointed at this box. That hostname is Mautic's Site URL, and every link and
+# tracking pixel it writes into a message is built from it.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# Caddy terminates TLS and adds X-Forwarded-For; step 7's trusted_proxies
+	# list tells Mautic to believe it. 8161 is the loopback port compose
+	# publishes here, not a container port and not in the firewall.
+	reverse_proxy 127.0.0.1:8161
+}

@@ -1,0 +1,66 @@
+{
+  "slug": "zight",
+  "name": "Zight",
+  "domain": "zight.com",
+  "whyPeoplePay": "Zight, which used to be CloudApp, sells one gesture: hit a shortcut, drag a box round part of your screen, and a link is already on your clipboard before you have finished letting go of the mouse. The capture app and the hosting are the same product, which is why it feels like nothing at all, and the bill is for the half you never see: the storage, the transcription, the analytics that tell you a customer opened the video twice, and the promise that a link you sent a client last spring still opens today.",
+  "plans": [
+    {
+      "name": "Share",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Free. 1 GB of storage, 5-minute recordings, 15-second GIFs, up to 720p, and only the last 25 captures stay reachable."
+    },
+    {
+      "name": "Create",
+      "priceMonthly": 9.95,
+      "unit": "per-seat",
+      "seatsIncluded": 2,
+      "note": "Listed as $9.95 per user / month. 5 GB of storage, unlimited recording length, 4K, and 5 AI actions a month."
+    },
+    {
+      "name": "Collaborate",
+      "priceMonthly": 12,
+      "unit": "per-seat",
+      "seatsIncluded": 100,
+      "note": "Listed as $12 per user / month, marked most popular, for teams of 2 or more. Adds custom branding, viewer analytics and unlimited AI actions."
+    },
+    {
+      "name": "Scale",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. Adds SAML SSO, SCIM, HIPAA, custom retention and custom S3 storage."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://zight.com/plans/",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "zight.com/pricing/ now redirects to zight.com/plans/, and the plan names changed in mid-2026: the ladder is Share, Create, Collaborate and Scale rather than the Free and Pro tiers that older write-ups quote. The page prints one figure per plan labelled per user / month, and its monthly-versus-annual toggle is commented out in the page source, so we cannot say from the page alone whether $9.95 and $12 require an annual commitment. Both numbers are read from the vendor's own page on the date above; the billing period is the part we are not certain of."
+  },
+  "ranked": [
+    {
+      "project": "zipline",
+      "rationale": "Replaces the half of Zight you are actually paying for, and is honest that it does not replace the other half. Zipline is the upload endpoint, the storage, the short link and the view page; it generates a ShareX configuration file or a Flameshot script from its own settings screen, so the capture tool you already have starts putting files on your server instead of somebody else's. What it does not do is take the screenshot, record the screen, or draw the arrow, and no self-hosted server can, because that part is a desktop application."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Chibisafe",
+      "repo": "https://github.com/chibisafe/chibisafe",
+      "note": "A TypeScript file vault with albums, tags and a browser-first upload flow, MIT licensed and still receiving commits in 2026, though less often than Zipline. Closer to a media library than to a capture endpoint: the ShareX story exists but the project's centre of gravity is the web dashboard, so it suits somebody organising files more than somebody firing screenshots at a shortcut."
+    },
+    {
+      "name": "Pingvin Share X",
+      "repo": "https://github.com/smp46/pingvin-share-x",
+      "note": "The maintained fork of Pingvin Share, which its original author archived in June 2025 and now points people here. BSD-2-Clause, active, and aimed at a different job: expiring send-a-file links with passwords and visitor limits, the WeTransfer shape rather than the screenshot shape. Worth knowing that the name you find first on a search leads to an archived repository."
+    },
+    {
+      "name": "XBackBone",
+      "repo": "https://github.com/sergix44/XBackBone",
+      "note": "A PHP file manager built around ShareX support, Apache-2.0, still committed to in 2026, and light enough to run on shared hosting with SQLite instead of a database container. The trade is age and pace: it is a smaller, older codebase with a plainer interface, and it moves slowly compared with Zipline's monthly releases."
+    }
+  ]
+}

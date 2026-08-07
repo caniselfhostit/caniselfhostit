@@ -1,0 +1,94 @@
+{
+  "slug": "easyappointments",
+  "name": "Easy!Appointments",
+  "tagline": "A front-desk diary on your own domain: services, providers, working hours, and customers who book without creating an account.",
+  "repo": "alextselegidis/easyappointments",
+  "site": "https://easyappointments.org",
+  "category": "comms-scheduling",
+  "replaces": [
+    {
+      "saas": "acuity-scheduling",
+      "plan": "Standard",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 1536,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "GPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/alextselegidis/easyappointments-docker/blob/master/README.md",
+  "local": {
+    "fit": "caveat",
+    "note": "Only this computer can open http://localhost:8160, so what you get is a diary you drive yourself rather than a booking page you can send a customer to."
+  },
+  "quote": {
+    "text": "This Docker setup is for development only. Don't use it in production. For a production Docker image, see: https://github.com/alextselegidis/easyappointments-docker",
+    "source": "Easy!Appointments documentation, Docker",
+    "url": "https://github.com/alextselegidis/easyappointments/blob/1.6.0/docs/docker.md",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "The repository's own docker-compose.yml is a development environment that also runs phpMyAdmin, Mailpit, Baikal and OpenLDAP, and upstream's docs say to use the separately published server image instead.",
+      "url": "https://github.com/alextselegidis/easyappointments/blob/1.6.0/docs/docker.md"
+    },
+    {
+      "claim": "The published image is built on php:8.2-apache, exposes port 80, and carries default values of root and secret for the database account, which is why this install overrides every one of them.",
+      "url": "https://github.com/alextselegidis/easyappointments-docker/blob/master/Dockerfile"
+    },
+    {
+      "claim": "The image's entrypoint rewrites config.php and the mail configuration from environment variables at every container start, and appends BASE_URL to the CodeIgniter config as the last assignment in the file.",
+      "url": "https://github.com/alextselegidis/easyappointments-docker/blob/master/assets/docker-entrypoint.sh"
+    },
+    {
+      "claim": "Until the installer has been run, the base URL redirects to the installation page, which is an open form that creates the administrator account, seeds one sample service and one sample provider, and cannot be reached again afterwards.",
+      "url": "https://github.com/alextselegidis/easyappointments/blob/1.6.0/application/controllers/Installation.php"
+    },
+    {
+      "claim": "Appointment notification mail is sent inside a try/catch that logs the exception, after the appointment has already been saved, so a booking completes and appears in the calendar on a server with no SMTP configured.",
+      "url": "https://github.com/alextselegidis/easyappointments/blob/1.6.0/application/libraries/Notifications.php"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Mail is not configured, and the software assumes it is. A customer who books sees a screen reading `An email with the appointment details has been sent to you.` and no email arrives, because there is no relay here. The appointment itself is real and it is in your calendar. Turn Customer Notifications off under Settings until you add a relay, or add one and take on deliverability.",
+    "You own a MySQL. Every appointment, customer, service, provider, working plan and setting is a row in it, the company logo included, so the dump is the whole business and the containers are disposable. Nothing else on disk matters.",
+    "The installation page is open until you use it. Between the first container start and the moment you create the administrator, anyone who loads your hostname can create it instead. Do it in the first minute, not the next morning, and check afterwards that the page has stopped answering.",
+    "Google Calendar sync is a separate afternoon. Easy!Appointments can push appointments to Google, but that means registering an OAuth client in your own Google Cloud project and pasting its credentials in. Until you do, this diary is the only diary, and catching a clash with your work calendar is your job.",
+    "No payment collection, no text reminders, no HIPAA agreement, no branding removal. Those are most of what the paid tiers are actually selling on top of a booking page, and none of them is here."
+  ],
+  "sources": {
+    "compose": "https://github.com/alextselegidis/easyappointments-docker/blob/master/README.md",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://github.com/alextselegidis/easyappointments/blob/1.6.0/docs/installation-guide.md",
+    "image": "https://github.com/alextselegidis/easyappointments-docker/blob/master/Dockerfile",
+    "entrypoint": "https://github.com/alextselegidis/easyappointments-docker/blob/master/assets/docker-entrypoint.sh",
+    "docker": "https://github.com/alextselegidis/easyappointments/blob/1.6.0/docs/docker.md",
+    "database": "https://github.com/alextselegidis/easyappointments/blob/1.6.0/application/config/database.php",
+    "firstScreen": "https://github.com/alextselegidis/easyappointments/blob/1.6.0/application/views/pages/installation.php",
+    "api": "https://github.com/alextselegidis/easyappointments/blob/1.6.0/application/libraries/Api.php",
+    "redirects": "https://github.com/alextselegidis/easyappointments/blob/1.6.0/system/helpers/url_helper.php"
+  },
+  "related": [
+    "calcom",
+    "espocrm",
+    "listmonk"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "94ab1214522d05187fb08d5c97ed7a64c7ddaa9946dc632e92ef91a052d16208"
+}

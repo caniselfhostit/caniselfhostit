@@ -2,7 +2,7 @@
 # Cloudflare Workers static assets honor this file (same as public/_headers).
 # GENERATED: node scripts/generate-redirects.mjs . > public/_redirects
 # The validator fails CI when this file drifts from what data/ implies.
-# 70 pairs, 3 rules each (slashed, bare, .md mirror), all 301.
+# 80 pairs, 3 rules each (slashed, bare, .md mirror), all 301.
 /self-host/vaultwarden/          /self-host/1password/  301
 /self-host/vaultwarden           /self-host/1password/  301
 /self-host/vaultwarden.md        /self-host/1password.md  301
@@ -27,6 +27,12 @@
 /self-host/excalidraw/           /self-host/miro/  301
 /self-host/excalidraw            /self-host/miro/  301
 /self-host/excalidraw.md         /self-host/miro.md  301
+/self-host/wordpress/            /self-host/squarespace/  301
+/self-host/wordpress             /self-host/squarespace/  301
+/self-host/wordpress.md          /self-host/squarespace.md  301
+/self-host/mautic/               /self-host/activecampaign/  301
+/self-host/mautic                /self-host/activecampaign/  301
+/self-host/mautic.md             /self-host/activecampaign.md  301
 /self-host/audiobookshelf/       /self-host/audible/  301
 /self-host/audiobookshelf        /self-host/audible/  301
 /self-host/audiobookshelf.md     /self-host/audible.md  301
@@ -39,9 +45,15 @@
 /self-host/healthchecks/         /self-host/cronitor/  301
 /self-host/healthchecks          /self-host/cronitor/  301
 /self-host/healthchecks.md       /self-host/cronitor.md  301
+/self-host/libretranslate/       /self-host/deepl-pro/  301
+/self-host/libretranslate        /self-host/deepl-pro/  301
+/self-host/libretranslate.md     /self-host/deepl-pro.md  301
 /self-host/docuseal/             /self-host/docusign/  301
 /self-host/docuseal              /self-host/docusign/  301
 /self-host/docuseal.md           /self-host/docusign.md  301
+/self-host/rallly/               /self-host/doodle/  301
+/self-host/rallly                /self-host/doodle/  301
+/self-host/rallly.md             /self-host/doodle.md  301
 /self-host/trilium/              /self-host/evernote/  301
 /self-host/trilium               /self-host/evernote/  301
 /self-host/trilium.md            /self-host/evernote.md  301
@@ -72,6 +84,12 @@
 /self-host/plausible/            /self-host/matomo-cloud/  301
 /self-host/plausible             /self-host/matomo-cloud/  301
 /self-host/plausible.md          /self-host/matomo-cloud.md  301
+/self-host/onlyoffice/           /self-host/microsoft-365-personal/  301
+/self-host/onlyoffice            /self-host/microsoft-365-personal/  301
+/self-host/onlyoffice.md         /self-host/microsoft-365-personal.md  301
+/self-host/firefly-iii/          /self-host/monarch-money/  301
+/self-host/firefly-iii           /self-host/monarch-money/  301
+/self-host/firefly-iii.md        /self-host/monarch-money.md  301
 /self-host/wg-easy/              /self-host/nordvpn/  301
 /self-host/wg-easy               /self-host/nordvpn/  301
 /self-host/wg-easy.md            /self-host/nordvpn.md  301
@@ -123,6 +141,9 @@
 /self-host/peertube/             /self-host/vimeo/  301
 /self-host/peertube              /self-host/vimeo/  301
 /self-host/peertube.md           /self-host/vimeo.md  301
+/self-host/drawio/               /self-host/whimsical/  301
+/self-host/drawio                /self-host/whimsical/  301
+/self-host/drawio.md             /self-host/whimsical.md  301
 /self-host/actual-budget/        /self-host/ynab/  301
 /self-host/actual-budget         /self-host/ynab/  301
 /self-host/actual-budget.md      /self-host/ynab.md  301
@@ -132,6 +153,9 @@
 /self-host/jitsi/                /self-host/zoom/  301
 /self-host/jitsi                 /self-host/zoom/  301
 /self-host/jitsi.md              /self-host/zoom.md  301
+/self-host/easyappointments/     /self-host/acuity-scheduling/  301
+/self-host/easyappointments      /self-host/acuity-scheduling/  301
+/self-host/easyappointments.md   /self-host/acuity-scheduling.md  301
 /self-host/grist/                /self-host/airtable/  301
 /self-host/grist                 /self-host/airtable/  301
 /self-host/grist.md              /self-host/airtable.md  301
@@ -156,6 +180,9 @@
 /self-host/kavita/               /self-host/everand/  301
 /self-host/kavita                /self-host/everand/  301
 /self-host/kavita.md             /self-host/everand.md  301
+/self-host/piwigo/               /self-host/flickr-pro/  301
+/self-host/piwigo                /self-host/flickr-pro/  301
+/self-host/piwigo.md             /self-host/flickr-pro.md  301
 /self-host/grafana/              /self-host/grafana-cloud/  301
 /self-host/grafana               /self-host/grafana-cloud/  301
 /self-host/grafana.md            /self-host/grafana-cloud.md  301
@@ -213,3 +240,6 @@
 /self-host/wekan/                /self-host/trello/  301
 /self-host/wekan                 /self-host/trello/  301
 /self-host/wekan.md              /self-host/trello.md  301
+/self-host/zipline/              /self-host/zight/  301
+/self-host/zipline               /self-host/zight/  301
+/self-host/zipline.md            /self-host/zight.md  301

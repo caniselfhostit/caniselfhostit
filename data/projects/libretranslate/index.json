@@ -1,0 +1,96 @@
+{
+  "slug": "libretranslate",
+  "name": "LibreTranslate",
+  "tagline": "Machine translation on your own box, with no per-character meter and nothing sent to a vendor, at Argos model quality rather than DeepL's.",
+  "repo": "LibreTranslate/LibreTranslate",
+  "site": "https://libretranslate.com",
+  "category": "ai-tools",
+  "replaces": [
+    {
+      "saas": "deepl-pro",
+      "plan": "Individual",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/LibreTranslate/LibreTranslate/blob/v1.9.6/docker-compose.yml",
+  "local": {
+    "fit": "good",
+    "note": "Everything you paste is translated by models on this disk and none of it leaves the machine, which is the strongest version of the reason to do this at all; the cost is 2.1 GB of models downloaded once and a computer that has to be awake when you want a translation."
+  },
+  "quote": {
+    "text": "This work is largely possible thanks to Argos Translate, which powers the translation engine.",
+    "source": "LibreTranslate README, Credits",
+    "url": "https://github.com/LibreTranslate/LibreTranslate/blob/v1.9.6/README.md",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "LibreTranslate's translation engine is the open source Argos Translate library, so the output quality is Argos and OpenNMT's rather than a model LibreTranslate trains itself.",
+      "url": "https://github.com/LibreTranslate/LibreTranslate/blob/v1.9.6/README.md"
+    },
+    {
+      "claim": "The published image carries no language models. On the first boot, with fewer than two packages installed, the server updates the package index from a remote and downloads every package it offers for the requested languages.",
+      "url": "https://github.com/LibreTranslate/LibreTranslate/blob/v1.9.6/libretranslate/init.py"
+    },
+    {
+      "claim": "Every command-line argument is also an environment variable with an LT_ prefix, and every default is listed in one file, which is why this install is configured entirely through the compose environment block.",
+      "url": "https://github.com/LibreTranslate/LibreTranslate/blob/v1.9.6/libretranslate/default_values.py"
+    },
+    {
+      "claim": "With the key database enabled and under-attack mode on, a translate call carrying no key is refused with status 400 and a message telling the caller to contact the server operator.",
+      "url": "https://github.com/LibreTranslate/LibreTranslate/blob/v1.9.6/libretranslate/app.py"
+    },
+    {
+      "claim": "Upstream builds the CPU image for linux/amd64 and linux/arm64 and a separate -cuda image for amd64 only, so the plain tag is the one that runs on both architectures.",
+      "url": "https://github.com/LibreTranslate/LibreTranslate/blob/v1.9.6/.github/workflows/publish-docker.yml"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The translations are worse, and that is the trade. DeepL's entire product is output quality; this runs Argos Translate on OpenNMT models that sit a tier below it on the common pairs and further below on languages with less training data behind them. For gist, internal documents, bulk pre-translation and anything a person edits afterwards, that is a fair deal. For a contract, a marketing page or anything a customer reads unedited, it is not, and no setting in this install changes it.",
+    "What you actually buy is that the text never leaves. Every character you paste into a translation service is sent to that service; every character you paste here is translated by a model on your own disk, with no account, no meter and no retention policy to read. If the reason you went looking was a document you are not allowed to upload anywhere, that reason is fully answered here even though the quality question is not.",
+    "The software is pinned and the models are not. The image ships no models: the first start downloads them from the Argos package index, which names each package by version and carries no checksum, so the digest in the compose file covers the program and not the thing doing the translating. A cache rebuilt six months from now can hold different models than the one you tested.",
+    "Eleven languages, not fifty. This install loads en, es, fr, de, it, pt, nl, pl, ru, zh and ja, about 2.1 GB; the whole index is 100 packages across 50 languages and about 8.4 GB. Every pair that does not involve English is translated by pivoting through English, which costs quality a second time.",
+    "There is no glossary and no tone control anywhere in the software. The entire option surface is the LT_ variables: limits, languages, keys, and the look of the web page. A product name you always want left untranslated is something you fix afterwards, by hand, every time."
+  ],
+  "sources": {
+    "compose": "https://docs.libretranslate.com/guides/installation/",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://docs.libretranslate.com/",
+    "arguments": "https://github.com/LibreTranslate/LibreTranslate/blob/v1.9.6/libretranslate/default_values.py",
+    "image": "https://github.com/LibreTranslate/LibreTranslate/blob/v1.9.6/docker/Dockerfile",
+    "entrypoint": "https://github.com/LibreTranslate/LibreTranslate/blob/v1.9.6/scripts/entrypoint.sh",
+    "models": "https://github.com/LibreTranslate/LibreTranslate/blob/v1.9.6/libretranslate/init.py",
+    "modelIndex": "https://raw.githubusercontent.com/argosopentech/argospm-index/main/index.json",
+    "keys": "https://github.com/LibreTranslate/LibreTranslate/blob/v1.9.6/libretranslate/manage.py",
+    "auth": "https://github.com/LibreTranslate/LibreTranslate/blob/v1.9.6/libretranslate/app.py",
+    "publish": "https://github.com/LibreTranslate/LibreTranslate/blob/v1.9.6/.github/workflows/publish-docker.yml",
+    "runScript": "https://github.com/LibreTranslate/LibreTranslate/blob/v1.9.6/run.sh"
+  },
+  "related": [
+    "languagetool",
+    "librechat",
+    "stirling-pdf"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "9b10dac9d95ce5092c74cd9e1faa26937de0094bb7ce6fab090468e28de90076"
+}
