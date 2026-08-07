@@ -1,0 +1,24 @@
+# Zammad · the Caddy site block for this service. Authored by caniselfhostit
+# from https://docs.zammad.org/en/latest/install/docker-compose.html and
+# https://caddyserver.com/docs/automatic-https. Append it to
+# /etc/caddy/Caddyfile with <DOMAIN> replaced by the hostname pointed at this
+# box; that hostname is also ZAMMAD_FQDN in .env.
+
+<DOMAIN> {
+	# A helpdesk holds other people's names and complaints, so nothing here
+	# is framed, sniffed, or leaked through a referrer.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	encode zstd gzip
+
+	# 8169 is the loopback port compose publishes here, not open in the
+	# firewall. The Zammad nginx behind it routes /ws itself, so Caddy has
+	# one upstream.
+	reverse_proxy 127.0.0.1:8169
+}

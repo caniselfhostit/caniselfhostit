@@ -1,0 +1,29 @@
+# HeyForm · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.heyform.net/open-source/self-hosting and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also APP_HOMEPAGE_URL in .env, and HeyForm builds its cookie domain and its
+# CORS allowlist from that one value, so the two have to match or the dashboard
+# signs you straight back out.
+
+<DOMAIN> {
+	# No X-Frame-Options on purpose: HeyForm ships an embed library and turns
+	# frameguard off itself, so a form is meant to run inside another page.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	encode zstd gzip
+
+	# 8170 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall. HeyForm sets Express
+	# trust-proxy to 1, so it reads the visitor address Caddy forwards.
+	reverse_proxy 127.0.0.1:8170
+}

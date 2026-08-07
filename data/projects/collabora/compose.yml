@@ -1,0 +1,38 @@
+# Collabora Online (CODE) · the deterministic fallback. Authored by
+# caniselfhostit from the upstream sources, not copied from a repository:
+#   image build ........ https://github.com/CollaboraOnline/online.mirror/blob/main/docker/from-packages/Dockerfile
+#   env var handling ... https://github.com/CollaboraOnline/online.mirror/blob/main/wsd/COOLWSD.cpp
+#   config reference ... https://github.com/CollaboraOnline/online.mirror/blob/main/coolwsd.xml.in
+#
+# One service, and no second one hiding inside it. No database, no message
+# broker, and no volume: coolwsd builds its jails and its cache inside the
+# container, and the source turns fsync off there with the comment that this is
+# a state-less container. Your documents live in whichever application hands
+# them to this server, not here.
+#
+# No healthcheck is declared here, on purpose. The 26.04 image is built on a
+# distroless base with no shell, so a CMD-SHELL probe of ours would have
+# nothing to run it. It ships `coolwsd --probe --use-env-vars` instead.
+#
+# Tag and digest read from the registry on 2026-08-07; amd64 and arm64 both
+# published.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  collabora:
+    image: collabora/code:26.04.2.4.1@sha256:1f864ce3f0c49e867787b6dd303bd6ba989542d3023f6809df558eafd04c1b97
+    container_name: collabora
+    restart: unless-stopped
+    env_file: /srv/collabora/.env
+    environment:
+      # Caddy terminates TLS on this box, so coolwsd serves plain http on its
+      # own socket and is told the client reached it over https. With
+      # ssl.enable false the self-signed certificate branch never runs at all.
+      extra_params: "--o:ssl.enable=false --o:ssl.termination=true"
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8165.
+      - "127.0.0.1:8165:9980"
+    # SIGTERM has to leave coolwsd time to save and upload whatever is still
+    # open in an editor. Upstream's own deployment allows the same 60 seconds.
+    stop_grace_period: 60s

@@ -1,0 +1,47 @@
+# InvokeAI · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker ......... https://invoke.ai/configuration/docker/
+#   configuration .. https://invoke.ai/configuration/invokeai-yaml/
+#   requirements ... https://invoke.ai/start-here/system-requirements/
+#   image build .... https://github.com/invoke-ai/InvokeAI/blob/v6.13.7/docker/Dockerfile
+#
+# One service, and it wants an NVIDIA GPU. Upstream's own workflow builds and
+# pushes the -cuda image on every version tag, linux/amd64 only. Everything
+# InvokeAI keeps is under INVOKEAI_ROOT, which the image sets to /invokeai:
+# accounts and model records in databases/invokeai.db, checkpoints under models,
+# pictures under outputs. Digest read from ghcr.io on 2026-08-07.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  invokeai:
+    image: ghcr.io/invoke-ai/invokeai:v6.13.7-cuda@sha256:16e16aa96a1cc2df5373212baaa4b0e5827d2c1212a763bbdcea866db04b93c0
+    container_name: invokeai
+    restart: unless-stopped
+    environment:
+      # Upstream's default is single-user: no accounts, no sign-in, every
+      # request served as an administrator. On a hostname that is an open
+      # generator on somebody's GPU, so this install turns it off.
+      INVOKEAI_MULTIUSER: "true"
+      # The password is 192 bits of openssl output, not a phrase someone
+      # typed, so the upper/lower/digit rule has nothing to add.
+      INVOKEAI_STRICT_PASSWORD_CHECKING: "false"
+    volumes:
+      - /srv/invokeai/data:/invokeai
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8162.
+      - "127.0.0.1:8162:9090"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      # No curl in this image; python is on PATH.
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:9090/api/v1/app/version')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 180s

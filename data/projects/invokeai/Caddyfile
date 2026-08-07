@@ -1,0 +1,27 @@
+# InvokeAI · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from https://invoke.ai/configuration/docker/ and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy Prompt Zero installed, with
+# <DOMAIN> replaced by the hostname pointed at this box. InvokeAI serves plain
+# HTTP on 9090 and checks the credential itself, so nothing here is secret.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	# InvokeAI sets no transport or frame headers of its own. HSTS is on
+	# because every request after sign-in carries a bearer token.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8162 is the loopback port compose publishes here, not a container port
+	# and never open in the firewall. reverse_proxy upgrades the studio's
+	# progress socket unaided.
+	reverse_proxy 127.0.0.1:8162
+}

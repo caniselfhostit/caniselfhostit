@@ -1,0 +1,94 @@
+{
+  "slug": "invokeai",
+  "name": "InvokeAI",
+  "tagline": "Text-to-image on a card you own, with the checkpoint, the gallery and the electricity bill all in one building.",
+  "repo": "invoke-ai/InvokeAI",
+  "site": "https://invoke.ai",
+  "category": "ai-tools",
+  "replaces": [
+    {
+      "saas": "midjourney",
+      "plan": "Standard",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": true,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 16384,
+    "ramMeasuredMB": null,
+    "diskGB": 40,
+    "arm64": false,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 240,
+  "license": "Apache-2.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/invoke-ai/InvokeAI/blob/v6.13.7/docker/docker-compose.yml",
+  "local": {
+    "fit": "good",
+    "note": "This runs on the NVIDIA card in the computer you are sitting at, which is where a studio you sit in front of belongs, so the only things it costs you are the disk your gallery fills and a machine that has to be awake while you work."
+  },
+  "quote": {
+    "text": "Enable multiuser support. When disabled, the application runs in single-user mode using a default system account with administrator privileges.",
+    "source": "InvokeAI documentation, Configuration options",
+    "url": "https://invoke.ai/configuration/invokeai-yaml/",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's own GitHub Actions workflow builds the container on every v*.*.* tag and pushes it to ghcr.io/invoke-ai/invokeai, for linux/amd64 only, because there are no pytorch builds for arm64 with CUDA.",
+      "url": "https://github.com/invoke-ai/InvokeAI/blob/v6.13.7/.github/workflows/build-container.yml"
+    },
+    {
+      "claim": "Upstream's hardware table gives 8 GB of VRAM and 16 GB of system RAM as the floor for SDXL, and states that AMD GPUs are supported on Linux only.",
+      "url": "https://invoke.ai/start-here/system-requirements/"
+    },
+    {
+      "claim": "InvokeAI runs single-user by default, with no accounts and every request served as an administrator; multiuser mode is one configuration flag away and is what this install turns on.",
+      "url": "https://invoke.ai/configuration/invokeai-yaml/"
+    },
+    {
+      "claim": "The image sets INVOKEAI_ROOT to /invokeai and INVOKEAI_PORT to 9090, and its entrypoint chowns that directory to the container user before dropping privileges to it.",
+      "url": "https://github.com/invoke-ai/InvokeAI/blob/v6.13.7/docker/Dockerfile"
+    },
+    {
+      "claim": "The Stable Diffusion XL base checkpoint this install pins is published under the CreativeML Open RAIL++-M licence, is not gated, and its files have not changed since October 2023.",
+      "url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The bill changes shape and, on rented hardware, goes up. This needs an NVIDIA card with 8 GB of memory and a machine with 16 GB of RAM, and a rented GPU instance costs several times a Midjourney Standard subscription every month whether you generate anything or not. This entry pays for itself on a desktop that already has the card in it. On a rented box, do the arithmetic before the install rather than after.",
+    "The pictures are the checkpoint, not the studio. InvokeAI is the canvas, the queue, the gallery and the model manager; what comes out is decided by the weights you install, and this one installs Stable Diffusion XL. That is a capable open model and it is not Midjourney v7. Anyone promising you the house style of a closed model on your own hardware is selling something.",
+    "You are agreeing to a model licence as well as a software one. InvokeAI itself is Apache-2.0. The SDXL base checkpoint is CreativeML Open RAIL++-M, which is use-restricted rather than open source: it permits commercial use and forbids a list of uses named in the licence. Read it once. Better checkpoints exist and several of the interesting ones are gated behind a Hugging Face account and terms you have to accept yourself.",
+    "Nobody is filtering your prompts, and nobody is filtering the output either. A hosted generator refuses things; this does not, because there is no policy layer between you and the model. That is the freedom people come here for and it is also the responsibility: what this machine produces is produced by you, on your hardware, under your name.",
+    "No community, no gallery, no other people's prompts to learn from. A large part of what a Midjourney subscription buys is the feed: thousands of images a day with their settings attached, and a Discord full of people who already solved the thing you are stuck on. Self-hosting gets you the generator and none of that."
+  ],
+  "sources": {
+    "compose": "https://invoke.ai/configuration/docker/",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://invoke.ai/configuration/invokeai-yaml/",
+    "requirements": "https://invoke.ai/start-here/system-requirements/",
+    "image": "https://github.com/invoke-ai/InvokeAI/blob/v6.13.7/docker/Dockerfile",
+    "build": "https://github.com/invoke-ai/InvokeAI/blob/v6.13.7/.github/workflows/build-container.yml",
+    "auth": "https://github.com/invoke-ai/InvokeAI/blob/v6.13.7/invokeai/app/api/routers/auth.py",
+    "models": "https://github.com/invoke-ai/InvokeAI/blob/v6.13.7/invokeai/backend/model_manager/starter_models.py",
+    "checkpoint": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
+    "gpuRuntime": "https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html"
+  },
+  "related": [
+    "tabby",
+    "librechat",
+    "immich"
+  ],
+  "pagePriority": 1,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "1c5dcce4eb9a291c6d2372f0906aeb9dcb8bb6e2aef6a02f328efeb00180414c"
+}

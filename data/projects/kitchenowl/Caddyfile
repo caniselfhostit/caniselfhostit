@@ -1,0 +1,36 @@
+# KitchenOwl · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.kitchenowl.org/v0.7.10/self-hosting/reverse-proxy/ and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed, with
+# <DOMAIN> replaced by the hostname pointed at this box. That hostname is also
+# FRONT_URL in .env, and upstream asks for an exact match including the scheme,
+# so the two have to stay the same string.
+
+<DOMAIN> {
+	# The interface is a compiled web bundle and the API answers JSON. Caddy
+	# leaves the already-compressed recipe and item photos alone.
+	encode zstd gzip
+
+	# Upstream calls Strict-Transport-Security the header this app needs, on
+	# the grounds that a plain-http answer on this hostname is enough to hand
+	# an attacker a session. The frame and sniff headers come from the same
+	# page.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# The app opens a websocket back to this hostname and upstream warns that
+	# some requests get noticeably slower without one. Caddy upgrades the
+	# connection here with no extra directive.
+	#
+	# 8167 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8167
+}

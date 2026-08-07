@@ -1,0 +1,93 @@
+{
+  "slug": "photoprism",
+  "name": "PhotoPrism",
+  "tagline": "A photo library that indexes what is in the picture, so twenty years of files become something you can search.",
+  "repo": "photoprism/photoprism",
+  "site": "https://www.photoprism.app",
+  "category": "photos-media",
+  "replaces": [
+    {
+      "saas": "adobe-lightroom",
+      "plan": "Lightroom (1TB), annual plan",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 3
+  },
+  "resources": {
+    "ramMinMB": 3072,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 120,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://dl.photoprism.app/docker/compose.yaml",
+  "local": {
+    "fit": "caveat",
+    "note": "Only this computer can open the library, so the phone that took the pictures cannot upload to it and nobody you would have sent an album to can reach it."
+  },
+  "quote": {
+    "text": "you can alternatively use the \"ce\" tag instead of \"latest\" to get a slightly smaller Docker image distributed under the AGPL.",
+    "source": "PhotoPrism Open Source FAQ",
+    "url": "https://www.photoprism.app/oss/faq",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "The Community Edition is released under the AGPL, while the standard Docker images on Docker Hub are distributed under PhotoPrism's own Plus License, which is why this install pins the -ce image tag.",
+      "url": "https://www.photoprism.app/oss/faq"
+    },
+    {
+      "claim": "Upstream asks for at least 2 cores, 3 GB of physical memory and a 64-bit operating system, with at least 4 GB of swap, because the indexer temporarily needs more memory to process large files.",
+      "url": "https://docs.photoprism.app/getting-started/"
+    },
+    {
+      "claim": "PHOTOPRISM_ADMIN_PASSWORD sets the initial password of the superadmin account created on first startup, and PHOTOPRISM_AUTH_MODE chooses between public and password authentication.",
+      "url": "https://docs.photoprism.app/getting-started/config-options/"
+    },
+    {
+      "claim": "Behind a reverse proxy that terminates TLS, PhotoPrism takes the external address in PHOTOPRISM_SITE_URL and has PHOTOPRISM_DISABLE_TLS set to true so it serves plain HTTP to the proxy.",
+      "url": "https://docs.photoprism.app/getting-started/proxies/traefik/"
+    },
+    {
+      "claim": "When less than 1 GB of system memory is detected PhotoPrism logs that TensorFlow as well as indexing and conversion of RAW images have been disabled automatically, so a small box silently loses the search this install is for.",
+      "url": "https://github.com/photoprism/photoprism/blob/260728-bbde8f452/internal/config/config.go"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "It does not edit photographs. PhotoPrism indexes, searches and shows them, and there is no exposure slider, no masking, no presets and no history stack. Lightroom's develop module is half of what the subscription buys and none of what this replaces, so keep a raw developer on the desktop and let PhotoPrism own the catalogue.",
+    "The free edition has a boundary, and it is a commercial decision rather than a technical one. This install pins the -ce image, which upstream distributes under the AGPL; the unsuffixed Docker Hub images carry PhotoPrism's own Plus License, and their editions page puts two-factor login, single sign-on, session monitoring, the user-management screen and video transcoding behind a membership. Read that page before a household plans around a feature.",
+    "Three things to keep, not one. The database knows where every picture is, the storage directory holds the sidecar files and the thumbnails, and the originals directory is the photographs. Restore any one of them without the others and you have an index of files that are gone, or a pile of files nothing can find.",
+    "Nothing appears until you index. PhotoPrism only watches for files that arrive over WebDAV, so a folder you copy in by hand is invisible to the library until an index run has seen it, and on a real archive that run is measured in hours rather than minutes.",
+    "A real machine, not the cheapest one. Upstream's floor is 3 GB of memory plus 4 GB of swap, the image alone is about a gigabyte, and under 1 GB PhotoPrism turns TensorFlow and RAW conversion off by itself instead of failing loudly."
+  ],
+  "sources": {
+    "compose": "https://docs.photoprism.app/getting-started/docker-compose/",
+    "caddy": "https://docs.photoprism.app/getting-started/proxies/traefik/",
+    "install": "https://docs.photoprism.app/getting-started/config-options/",
+    "requirements": "https://docs.photoprism.app/getting-started/",
+    "license": "https://www.photoprism.app/oss/faq",
+    "editions": "https://www.photoprism.app/editions",
+    "image": "https://github.com/photoprism/photoprism/blob/260728-bbde8f452/docker/photoprism/noble/Dockerfile",
+    "health": "https://github.com/photoprism/photoprism/blob/260728-bbde8f452/internal/api/status.go",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "immich",
+    "piwigo",
+    "nextcloud"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "10b337b611db051d190bab5d31f22e9bc37dcd59410b9698491f4fbd0243943b"
+}

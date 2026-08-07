@@ -1,0 +1,72 @@
+# Leantime · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker install .... https://docs.leantime.io/installation/docker
+#   variable reference  https://github.com/Leantime/docker-leantime/blob/master/sample.env
+#   backup & restore .. https://docs.leantime.io/installation/backup-restore
+#
+# Two services: Leantime's nginx-and-PHP-FPM image and the MySQL holding every
+# project, task, goal and comment. Upstream keeps its data in named volumes;
+# this file binds the two userfiles directories the backup page asks you to
+# keep under /srv/leantime, and leaves MySQL on a directory the image chowns
+# for itself. No plugin mount: upstream asks for one only if you install
+# marketplace plugins, and this install does not. The app image runs as
+# www-data, uid 1000, so those two are created owned by 1000. Digests read
+# 2026-08-07; both images have arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  leantime_db:
+    image: mysql:8.4.11@sha256:b3b90af2a6552ae30c266fdb7d5dd55f3afb72404bb78d37fe8a23eb857fd3fb
+    container_name: leantime-db
+    restart: unless-stopped
+    command: --character-set-server=UTF8MB4 --collation-server=UTF8MB4_unicode_ci
+    environment:
+      MYSQL_DATABASE: leantime
+      MYSQL_USER: leantime
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - /srv/leantime/mysql:/var/lib/mysql
+    healthcheck:
+      # Runs inside the container, where that value already is an env var.
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u leantime -p$$MYSQL_PASSWORD --silent"]
+      start_period: 30s
+      interval: 10s
+      retries: 20
+    # No `ports:` at all: 3306 is reachable only from the other container.
+
+  leantime:
+    image: leantime/leantime:3.9.8@sha256:6150dd3e8a1e17f1ead8d462d31e26177fe906ce3602dbbbf6af5417ef809de3
+    container_name: leantime
+    restart: unless-stopped
+    # Both of these come from upstream's compose file for this service.
+    security_opt:
+      - no-new-privileges:true
+    cap_add:
+      - CAP_CHOWN
+      - CAP_SETGID
+      - CAP_SETUID
+    environment:
+      LEAN_DB_HOST: leantime_db
+      LEAN_DB_PORT: "3306"
+      LEAN_DB_DATABASE: leantime
+      LEAN_DB_USER: leantime
+      LEAN_DB_PASSWORD: ${DB_PASSWORD}
+      # Salts every session. Change it later and everyone is signed out.
+      LEAN_SESSION_PASSWORD: ${LEAN_SESSION_PASSWORD}
+      # Caddy terminates TLS in front, so the base URL carries its scheme.
+      # Upstream needs this set for proxy installs; without it /install loops.
+      LEAN_APP_URL: https://${DOMAIN_NAME}
+      # true because Caddy serves this over https.
+      LEAN_SESSION_SECURE: "true"
+      LEAN_DEFAULT_TIMEZONE: UTC
+    volumes:
+      - /srv/leantime/userfiles:/var/www/html/userfiles
+      - /srv/leantime/public-userfiles:/var/www/html/public/userfiles
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8163.
+      - "127.0.0.1:8163:8080"
+    depends_on:
+      leantime_db:
+        condition: service_healthy

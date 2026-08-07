@@ -1,0 +1,52 @@
+{
+  "slug": "firebase-blaze",
+  "name": "Firebase",
+  "domain": "firebase.google.com",
+  "whyPeoplePay": "Firebase sells the whole back half of an app as something you never operate. Sign-in with the phone-number and social flows already built, a database that syncs to a phone in the middle of a tunnel and reconciles when it comes back, functions that scale from nothing to a launch day without anyone being paged, static hosting on Google's edge, and Cloud Messaging, which is the only sanctioned way onto a locked home screen and costs nothing. The free Spark tier is genuinely generous, so most people meet the bill only once something worked, and the Blaze meter is what they go looking to escape after the first month that surprised them.",
+  "plans": [
+    {
+      "name": "Spark",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "No cost and no payment method. Carries the free-tier allowances and no charges at all for Cloud Messaging, Analytics, Crashlytics, Remote Config, App Check, A/B Testing, App Distribution, In-App Messaging or Performance Monitoring."
+    },
+    {
+      "name": "Blaze",
+      "priceMonthly": 0,
+      "unit": "usage",
+      "seatsIncluded": null,
+      "note": "No subscription fee: the Spark allowances still apply and everything past them is metered. Firestore is free to 1 GiB stored, 50K document reads, 20K writes and 20K deletes a day and 10 GiB egress a month; Authentication to 50K monthly active users, with phone sign-in billed per SMS; Cloud Functions to 2M invocations a month, then $0.40 per million, plus 400K GB-seconds and 200K CPU-seconds; Hosting to 10 GB stored, then $0.026/GB, and 360 MB of transfer a day, then $0.15/GB; Cloud Storage to 5 GB-months stored and 100 GB downloaded a month; Realtime Database to 1 GB stored, then $5/GB. Eligible accounts get $300 of credit."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://firebase.google.com/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Read from firebase.google.com/pricing on 2026-08-07. The uncertainty is the shape rather than the numbers: Firebase has no monthly plan price to record, so the ladder here is two rows and the money lives in a dozen separate meters whose free tiers reset on different clocks, some daily and some monthly. We record the free-tier allowances and the unit prices the pricing page itself states. Firestore's per-operation prices are deliberately absent: that page sends you to Google Cloud's own pricing tables for them because they vary by database location, and we do not publish a number we did not read. Treat any saving calculated from this entry as a floor."
+  },
+  "ranked": [
+    {
+      "project": "pocketbase",
+      "rationale": "The honest swap for the side project, not for the startup. One Go binary gives you the four things most Firebase apps actually use: accounts with email and OAuth2 sign-in, a database you query over a REST-ish API with realtime subscriptions on top, file uploads, and a dashboard to administer all of it. It is one container, one SQLite file and one generated password, which is why the whole install fits in a command, and it makes the usage meter go away completely. What you give up is the part Google's infrastructure was doing: the database is one file on one disk with no replica and no failover, there is no Cloud Messaging so nothing reaches a phone that is not looking at your app, and there is no importer, so leaving Firestore means exporting your collections and writing the loader yourself. Upstream is pre-1.0 and breaks things in minor releases, which is fine for a project you read the notes for and wrong for one you cannot babysit."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Supabase (self-hosted)",
+      "repo": "https://github.com/supabase/supabase",
+      "note": "Apache-2.0 and the most complete answer on this list: real Postgres, row-level security, auth, storage, edge functions and a studio. It is not ranked here for a structural reason rather than a quality one. The self-hosting compose file upstream publishes runs thirteen services, including Kong, GoTrue, PostgREST, Realtime, Storage, imgproxy, the meta API, Supavisor and Postgres itself, and thirteen services is a stack you operate rather than an install you finish. By our rubric that is ONGOING OPS on the day it starts working. If you want managed Postgres semantics and are prepared to be on call for them, look at it; if you wanted to stop being paged, it is the wrong direction."
+    },
+    {
+      "name": "Appwrite",
+      "repo": "https://github.com/appwrite/appwrite",
+      "note": "BSD-3-Clause per GitHub, very actively developed, and the closest thing to Firebase's feature list, including messaging, functions in a dozen runtimes and its own realtime layer. Same structural problem as Supabase and more of it: the compose file upstream ships declares around fifty services, most of them queue workers, alongside MariaDB and Redis. That is a platform, and platforms have operators. It is the right answer for a team that wants a Firebase-shaped backend on its own hardware and has somebody whose job that is."
+    },
+    {
+      "name": "Nhost",
+      "repo": "https://github.com/nhost/nhost",
+      "note": "MIT and actively maintained, built on Postgres with Hasura's GraphQL layer in front, plus auth, storage and functions. Worth knowing about if your client code is already GraphQL, because that is the one thing neither PocketBase nor a REST-first alternative gives you. The self-hosted path is again multi-service, Postgres plus Hasura plus auth plus storage plus a proxy, so it sits with the two above on effort rather than with PocketBase."
+    }
+  ]
+}

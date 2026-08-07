@@ -54,7 +54,7 @@
     {
       "name": "PhotoPrism",
       "repo": "https://github.com/photoprism/photoprism",
-      "note": "Actively developed, and the best browsing experience of the four for a large unsorted library, with face and subject recognition that runs on your own machine. Not ranked here because of the edition split: GitHub reports no clear SPDX licence for the repository, the free community edition is documented as being for personal use, and user management, 2FA, single sign-on and video transcoding sit behind a paid membership. That is a fair way to fund the work, and a thing to read before a family builds a shared gallery on it."
+      "note": "AGPL-3.0, AI tagging and search over your own library. It has since earned its own page in this catalog as the Adobe Lightroom answer, where its install is written up in full; on this page Piwigo keeps the top spot for curated public galleries."
     },
     {
       "name": "Lychee",

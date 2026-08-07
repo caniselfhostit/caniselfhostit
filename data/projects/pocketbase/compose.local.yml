@@ -1,0 +1,48 @@
+# PocketBase · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   production notes ... https://pocketbase.io/docs/going-to-production/
+#   health endpoint .... https://pocketbase.io/docs/api-health/
+#   image entrypoint ... https://github.com/muchobien/pocketbase-docker/blob/22f36a08837f26b22a3327cb8066ad63c3362c70/entrypoint.sh
+#
+# One container. Paths are relative to ~/selfhost/pocketbase/, so one file
+# works on macOS, Linux and Windows, and nothing off this machine reaches 8166.
+#
+# The PocketBase project publishes no image: upstream's production page states
+# that PocketBase doesn't have an official Docker image. This file therefore
+# uses ghcr.io/muchobien/pocketbase, packaged outside that project at the
+# revision above, the one this digest was built from. Its Dockerfile unpacks
+# upstream's release zip without checking it against the checksums.txt
+# published beside it, and neither does upstream's own example Dockerfile, so
+# what fixes these bytes is the digest below: step 7 asserts the binary in it
+# reports 0.39.10. Read from ghcr.io 2026-08-07; amd64, arm64 and armv7.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  pocketbase:
+    image: ghcr.io/muchobien/pocketbase:0.39.10@sha256:dfebd2550d6b5176d67afd3e859f9b642096e624c7f6ada1b5a5bc70a5d21be1
+    container_name: pocketbase
+    restart: unless-stopped
+    # The image declares no USER, so without this it runs as root and what it
+    # writes into ./data on Linux comes back owned by root.
+    user: "1000:1000"
+    env_file: ./.env
+    environment:
+      # It has to listen on every interface inside the container or the
+      # published loopback port reaches nothing. 8090 is the entrypoint's own
+      # default, named here so a change to it cannot move the port.
+      PB_HOST: "0.0.0.0"
+      PB_PORT: "8090"
+    volumes:
+      # The one mount: SQLite database, uploaded files, and PocketBase's own
+      # backup archives. Keep off synced folders: SQLite wants POSIX locks.
+      - ./data:/pb_data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8090/api/health || exit 1"]
+      start_period: 10s
+      interval: 15s
+      retries: 10
+    ports:
+      # Loopback only. No other device on this network reaches 8166, not even
+      # your own phone.
+      - "127.0.0.1:8166:8090"

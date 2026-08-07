@@ -1,0 +1,94 @@
+{
+  "slug": "heyform",
+  "name": "HeyForm",
+  "tagline": "A drag-and-drop form builder on your own hostname, with file uploads, logic and no monthly submission cap.",
+  "repo": "heyform/heyform",
+  "site": "https://heyform.net",
+  "category": "marketing-content",
+  "replaces": [
+    {
+      "saas": "jotform",
+      "plan": "Bronze",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 3,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 4
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://docs.heyform.net/open-source/self-hosting",
+  "local": {
+    "fit": "caveat",
+    "note": "Every form this publishes lives at http://localhost:8170/form/ and an id, which resolves on this computer and nowhere else, so the people you wanted answers from get a connection error instead of question one."
+  },
+  "quote": {
+    "text": "When APP_DISABLE_REGISTRATION=true, public account creation remains disabled, but a visitor with a valid workspace invitation can create an account and join that workspace.",
+    "source": "HeyForm repository, Invite-only registration",
+    "url": "https://github.com/heyform/heyform/blob/v3.0.0/docs/invite-only-registration.md",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "The image this install pins is heyform/community-edition, built and pushed for linux/amd64 and linux/arm64 by upstream's own release workflow and tagged with the release tag.",
+      "url": "https://github.com/heyform/heyform/blob/v3.0.0/.github/workflows/publish-docker-image.yml"
+    },
+    {
+      "claim": "The server listens on port 9157 by default, email verification is off unless VERIFY_USER_EMAIL is set, and APP_HOMEPAGE_URL is what the cookie domain and the CORS allowlist are derived from, which is why this install needs no SMTP server.",
+      "url": "https://github.com/heyform/heyform/blob/v3.0.0/packages/server/src/environments/index.ts"
+    },
+    {
+      "claim": "The /health/ready endpoint reports MongoDB and Redis separately and answers 503 until both are up, which is what lets one command tell a container that never started from one that failed authentication.",
+      "url": "https://github.com/heyform/heyform/blob/v3.0.0/packages/server/src/controller/health.controller.ts"
+    },
+    {
+      "claim": "With APP_DISABLE_REGISTRATION set, /sign-up redirects to /login for a visitor with no workspace invitation cookie, and /api/config reports the flag, so closing registration can be asserted from the command line.",
+      "url": "https://github.com/heyform/heyform/blob/v3.0.0/packages/server/src/controller/dashboard.controller.ts"
+    },
+    {
+      "claim": "Upstream's documented compose uses MONGO_URI with authSource=admin alongside MONGO_USER and MONGO_PASSWORD when MongoDB runs with credentials, which is the pattern this install follows.",
+      "url": "https://docs.heyform.net/open-source/self-hosting"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The submissions are readable rows. HeyForm encrypts the login cookie and the token a live form page carries, and it stores answers as plain fields, together with each respondent's IP address and user agent. A MongoDB dump is therefore the answers themselves: keep it where you would keep a spreadsheet of what people told you, not in a repository.",
+    "Three services, and the database is not optional. HeyForm needs a MongoDB and a Redis-protocol server to boot at all, and its readiness endpoint refuses until both answer. That is one dump, one archive and two upgrade paths you now own.",
+    "No mail, by choice. This install configures no SMTP server, which is what makes it an evening rather than a weekend, and it works: the account is created, the sign-in holds, submissions land. What you do not get is the email that tells you a response arrived, the verification message and password reset. That first account is the whole way back in.",
+    "Upstream's own compose names an end-of-life database. It pins percona-server-mongodb:4.4, which left support in February 2024, and eqalpha/keydb, whose last release was 2023 and which publishes no multi-architecture versioned tag. This install substitutes MongoDB 7.0 and Valkey, both of which the application's drivers speak, and that substitution is ours rather than upstream's.",
+    "No payments, no e-signatures, no HIPAA paperwork, no template library. Those four are a large part of what the paid tiers are selling on top of the form, and none of them arrives with the container."
+  ],
+  "sources": {
+    "compose": "https://docs.heyform.net/open-source/self-hosting",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://github.com/heyform/heyform/blob/v3.0.0/packages/server/src/environments/index.ts",
+    "image": "https://github.com/heyform/heyform/blob/v3.0.0/.github/workflows/publish-docker-image.yml",
+    "dockerfile": "https://github.com/heyform/heyform/blob/v3.0.0/Dockerfile",
+    "health": "https://github.com/heyform/heyform/blob/v3.0.0/packages/server/src/controller/health.controller.ts",
+    "registration": "https://github.com/heyform/heyform/blob/v3.0.0/docs/invite-only-registration.md",
+    "upstreamCompose": "https://github.com/heyform/heyform/blob/v3.0.0/docker-compose.test.yml",
+    "database": "https://mongoosejs.com/docs/compatibility.html",
+    "databaseSupport": "https://www.mongodb.com/legal/support-policy/lifecycles"
+  },
+  "related": [
+    "formbricks",
+    "limesurvey",
+    "listmonk"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "cf2ccaf61555ee4bb739c611a8c0c534e7bc10f3e0021a9ef5512571d597a051"
+}

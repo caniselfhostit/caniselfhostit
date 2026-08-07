@@ -1,0 +1,95 @@
+{
+  "slug": "leantime",
+  "name": "Leantime",
+  "tagline": "Goals, boards, timesheets and a wiki from one container plus a database, with no seat minimum and no per-seat bill.",
+  "repo": "Leantime/leantime",
+  "site": "https://leantime.io",
+  "category": "work-pm",
+  "replaces": [
+    {
+      "saas": "monday-com",
+      "plan": "Standard",
+      "seatsAssumed": 5
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 3
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/Leantime/docker-leantime/blob/master/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Everything answers at http://localhost:8163, which means this computer and nowhere else, so a board built for a team is one nobody else can open and your own phone cannot reach it either."
+  },
+  "quote": {
+    "text": "Leantime is an open source project management system for non-project managers. We combine strategy, planning and execution while making it easy for everyone on the team to use. Built with ADHD, dyslexia and autism in mind.",
+    "source": "Leantime README",
+    "url": "https://github.com/Leantime/leantime/blob/v3.9.8/README.md",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's Docker page documents LEAN_DB_HOST, LEAN_DB_USER, LEAN_DB_PASSWORD, LEAN_DB_DATABASE, LEAN_DB_PORT and LEAN_SESSION_PASSWORD as the settings to supply, and ends by sending you to /install to finish the setup in a browser.",
+      "url": "https://docs.leantime.io/installation/docker"
+    },
+    {
+      "claim": "LEAN_APP_URL is documented as the base URL needed for subfolder or proxy installs, including the scheme, and LEAN_SESSION_SECURE as true when the site is served over https and false over http.",
+      "url": "https://github.com/Leantime/docker-leantime/blob/master/sample.env"
+    },
+    {
+      "claim": "The official image exposes port 8080, runs as a non-root www-data user created at uid 1000, and carries its own health check against that port.",
+      "url": "https://github.com/Leantime/leantime/blob/v3.9.8/.docker/Dockerfile"
+    },
+    {
+      "claim": "public/healthCheck.php answers with the literal string Ok, which is what this install asserts on rather than a green container.",
+      "url": "https://github.com/Leantime/leantime/blob/v3.9.8/public/healthCheck.php"
+    },
+    {
+      "claim": "Upstream states that a Docker install must mount app/Plugins as a volume or plugins disappear after a container restart, and that plugins come from the Leantime Marketplace.",
+      "url": "https://github.com/Leantime/docs/blob/master/installation/plugin-installation.md"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "No email. This install leaves the mailer off, so Leantime sends nothing at all: no invitation when you add a colleague, no notification when a task is assigned, no password reset. Everything else works without it, including the first account, but on a team install fixing this is the first thing you will want to do and it means running or renting a mail sender.",
+    "The shape is a position, not a preference. Leantime describes itself as project management for non-project managers, built with ADHD, dyslexia and autism in mind, and that shows up as goals, idea boards and a personal work dashboard rather than a dense grid of automations. A team that chose monday.com for the grid will notice on day one.",
+    "You own a MySQL, and a backup here is three things. Every project, task, goal, wiki page and comment is a row in that database, the uploads are files in two directories beside it, and LEAN_SESSION_PASSWORD lives in .env and nowhere else, so a dump restored on its own signs everybody out.",
+    "The code is AGPL-3.0 and the feature list really is in it, but the marketplace is not. Leantime sells plugins that install into this same instance, and this prompt mounts no plugin directory, so adding one is a purchase and an edit to the compose file rather than a click.",
+    "No integrations catalogue, no AI credits, no mobile app of its own, no support line. You get a web interface, an API and whatever you wire up yourself; those four are a large part of what the monday.com subscription is actually buying."
+  ],
+  "sources": {
+    "compose": "https://docs.leantime.io/installation/docker",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://github.com/Leantime/docker-leantime/blob/master/sample.env",
+    "requirements": "https://docs.leantime.io/installation/system-requirements",
+    "backup": "https://docs.leantime.io/installation/backup-restore",
+    "image": "https://github.com/Leantime/leantime/blob/v3.9.8/.docker/Dockerfile",
+    "webserver": "https://github.com/Leantime/leantime/blob/v3.9.8/.docker/config/nginx.conf",
+    "health": "https://github.com/Leantime/leantime/blob/v3.9.8/public/healthCheck.php",
+    "installScreen": "https://github.com/Leantime/leantime/blob/v3.9.8/app/Domain/Install/Templates/new.blade.php",
+    "strings": "https://github.com/Leantime/leantime/blob/v3.9.8/app/Language/en-US.ini",
+    "plugins": "https://github.com/Leantime/docs/blob/master/installation/plugin-installation.md"
+  },
+  "related": [
+    "openproject",
+    "vikunja",
+    "kimai"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "e3325d9ff034b0f6e6027315323ed78093c56611e3a1fae2d6ae3bf736712949"
+}

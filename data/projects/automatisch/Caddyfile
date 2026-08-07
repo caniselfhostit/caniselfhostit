@@ -1,0 +1,29 @@
+# Automatisch · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://automatisch.io/docs/guide/installation and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also API_URL in .env, and every webhook address Automatisch hands a third
+# party is built from it, so it is the value here you cannot change once
+# published flows are running. The app sends its own frame headers, so there is
+# no frame directive below.
+
+<DOMAIN> {
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		# Not no-referrer: connecting an app sends the user out to a third-party
+		# consent screen and back, and some providers check the origin.
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	encode zstd gzip
+
+	# 8171 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8171
+}

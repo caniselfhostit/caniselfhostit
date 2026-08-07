@@ -60,7 +60,7 @@
     {
       "name": "Automatisch",
       "repo": "https://github.com/automatisch/automatisch",
-      "note": "AGPL-3.0 with a .ee carve-out, and the closest in spirit to what Zapier looks like. The reason it is not ranked is cadence: the last tagged release was v0.15.0 in August 2025 and the last commit to the repository was February 2026, so a connector that breaks may stay broken. Worth watching rather than installing today."
+      "note": "AGPL-3.0 with a .ee carve-out, and the closest in spirit to what Zapier looks like. It has since earned its own page in this catalog as the Make answer, where its install is written up in full alongside the honest cadence facts: the last tagged release was v0.15.0 in August 2025, and that risk is stated on its page rather than hidden. On this page Activepieces keeps the top spot for its weekly development pace."
     },
     {
       "name": "Huginn",

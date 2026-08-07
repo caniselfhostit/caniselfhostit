@@ -1,0 +1,96 @@
+{
+  "slug": "zammad",
+  "name": "Zammad",
+  "tagline": "A shared support desk with agents, groups, escalation clocks and a customer portal, on your own hostname, with nobody counting seats.",
+  "repo": "zammad/zammad",
+  "site": "https://zammad.org",
+  "category": "comms-scheduling",
+  "replaces": [
+    {
+      "saas": "zendesk",
+      "plan": "Suite Team",
+      "seatsAssumed": 5
+    }
+  ],
+  "tierFactors": {
+    "containers": 7,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 6144,
+    "ramMeasuredMB": null,
+    "diskGB": 20,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 300,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/zammad/zammad-docker-compose/blob/master/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Only this computer can open the helpdesk, so nobody you would actually support can reach it, and every escalation clock and reminder stops running the moment the machine sleeps."
+  },
+  "quote": {
+    "text": "This dependency is optional but strongly recommended! Zammad will work without it, but search performance will be degraded and the search will be very limited.",
+    "source": "Zammad documentation, Software prerequisites",
+    "url": "https://docs.zammad.org/en/latest/prerequisites/software.html",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's own compose file declares ten services, and their documented scenario files switch off the Elasticsearch and the nightly backup containers, which is how this install gets to seven.",
+      "url": "https://docs.zammad.org/en/latest/install/docker-compose/docker-compose-scenarios.html"
+    },
+    {
+      "claim": "Upstream states a minimum of 2 CPU cores and 6 GB of RAM, plus another 4 GB if Elasticsearch runs on the same server, and declines to recommend any disk figure.",
+      "url": "https://docs.zammad.org/en/latest/prerequisites/hardware.html"
+    },
+    {
+      "claim": "ELASTICSEARCH_ENABLED set to false is upstream's switch for running without Elasticsearch, RAILS_TRUSTED_PROXIES defaults to 127.0.0.1 and ::1, and the database password ships with the default value zammad.",
+      "url": "https://docs.zammad.org/en/latest/appendix/environment-variables.html"
+    },
+    {
+      "claim": "Zammad seeds the user_create_account setting on, so a fresh install lets anyone who finds the hostname create their own account until an administrator turns it off.",
+      "url": "https://github.com/zammad/zammad/blob/7.1.2/db/seeds/settings.rb"
+    },
+    {
+      "claim": "One image runs as uid 1000 and dispatches on its first argument, which is what makes railsserver, websocket, scheduler, nginx and the one-off migration run the same container with different commands.",
+      "url": "https://github.com/zammad/zammad/blob/7.1.2/bin/docker-entrypoint"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "This is a stack, not an app. Seven containers, four of them the same Zammad image under different commands, plus PostgreSQL, Redis and memcached. On any given morning one of them can be the unhappy one, and you are the only person who will notice. The one nobody notices is the scheduler: the desk keeps answering pages perfectly while escalation clocks, triggers and notifications quietly stop firing.",
+    "No search index. Upstream calls Elasticsearch optional but strongly recommended, and says plainly that without it search is degraded and very limited. This install leaves it out through upstream's own switch, because it wants a fourth gigabyte of RAM to itself. You can add it later; you will pay for it in memory and a reindex, and until you do, searching a year of ticket history is not the tool Zendesk gave you.",
+    "No mail, and mail is what most people came for. A support address that turns email into tickets is Zendesk's core, and this install configures no SMTP and no IMAP: no inbound mail channel, no notification mail, no password-reset link. The web form, the agent interface and the customer portal all work without it. Adding mail is a separate day with a provider whose deliverability you now own.",
+    "You own a PostgreSQL, and attachments are in it. Zammad's default storage setting keeps files in the database rather than on disk, so the dump is the whole of the data and it grows with every screenshot a customer sends. The .env beside it is the other half of the same backup, because a database restored beside a different password does not open.",
+    "AGPL-3.0 with nothing held back, and a shorter feature list than the plan you are leaving. Every Zammad feature is in the release you install; what the upper Zendesk tiers sell that is not here at all is the AI copilot, workforce management, and the voice contact centre. The Zammad company sells hosting and support subscriptions, not a better build."
+  ],
+  "sources": {
+    "compose": "https://docs.zammad.org/en/latest/install/docker-compose.html",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://docs.zammad.org/en/latest/appendix/environment-variables.html",
+    "scenarios": "https://docs.zammad.org/en/latest/install/docker-compose/docker-compose-scenarios.html",
+    "prerequisites": "https://docs.zammad.org/en/latest/prerequisites/software.html",
+    "hardware": "https://docs.zammad.org/en/latest/prerequisites/hardware.html",
+    "backup": "https://docs.zammad.org/en/latest/appendix/backup-and-restore/docker-compose.html",
+    "entrypoint": "https://github.com/zammad/zammad/blob/7.1.2/bin/docker-entrypoint",
+    "image": "https://github.com/zammad/zammad/blob/7.1.2/Dockerfile",
+    "signup": "https://github.com/zammad/zammad/blob/7.1.2/db/seeds/settings.rb",
+    "firstScreen": "https://github.com/zammad/zammad/blob/7.1.2/app/frontend/apps/desktop/pages/guided-setup/views/GuidedSetupStart.vue",
+    "setupApi": "https://github.com/zammad/zammad/blob/7.1.2/app/services/service/system/check_setup.rb"
+  },
+  "related": [
+    "chatwoot",
+    "espocrm",
+    "mattermost"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "3119faf4ff93bd31ab4a67acfcbf8d18f569fd9ef325c93a11ee354fcd898adf"
+}

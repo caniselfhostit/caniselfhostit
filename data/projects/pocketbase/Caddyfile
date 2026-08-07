@@ -1,0 +1,32 @@
+# PocketBase · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://pocketbase.io/docs/going-to-production/ and
+# https://caddyserver.com/docs/caddyfile/directives/reverse_proxy
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed, with
+# <DOMAIN> replaced by the hostname pointed at this box. Caddy runs under systemd
+# on the host. There is no Caddy container anywhere in this project.
+
+<DOMAIN> {
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# No `encode` directive here, on purpose. PocketBase's realtime endpoint is
+	# a long-lived text/event-stream, which Caddy flushes to the client
+	# immediately instead of buffering, and a compressor in front of a stream
+	# that carries JSON this small earns nothing.
+	#
+	# reverse_proxy sets X-Forwarded-For itself and ignores whatever the client
+	# sent in that header, which is what makes it safe to name in PocketBase's
+	# User IP proxy headers setting.
+	#
+	# 8166 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8166
+}

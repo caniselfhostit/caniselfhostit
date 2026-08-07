@@ -1,0 +1,37 @@
+# Collabora Online (CODE) · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://github.com/CollaboraOnline/online.mirror/blob/main/coolwsd.xml.in and
+# https://caddyserver.com/docs/caddyfile/directives/reverse_proxy and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also server_name in .env, and it is the address you type into the application
+# that uses this editor, so it must resolve for that application's server too.
+
+<DOMAIN> {
+	# The editors are tens of megabytes of JavaScript, served by coolwsd's
+	# own file server rather than by anybody's CDN.
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		-Server
+	}
+
+	# There is deliberately no X-Frame-Options and no frame-ancestors rule.
+	# This whole product is an iframe: the application that owns the document
+	# embeds the editor inside its own page, and a frame-blocking header
+	# would leave the user looking at an empty box. The WOPI alias group in
+	# .env, not the browser, decides which application may load a document.
+
+	# reverse_proxy sets X-Forwarded-Proto and X-Forwarded-Host on the way
+	# through, which is how coolwsd builds https URLs while speaking plain
+	# http here, and it upgrades WebSocket connections with no extra
+	# configuration. Every keystroke in a shared document is a WebSocket
+	# frame. 8165 is the loopback port compose publishes; it is not open in
+	# the firewall.
+	reverse_proxy 127.0.0.1:8165
+}

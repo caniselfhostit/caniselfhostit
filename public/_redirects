@@ -2,7 +2,7 @@
 # Cloudflare Workers static assets honor this file (same as public/_headers).
 # GENERATED: node scripts/generate-redirects.mjs . > public/_redirects
 # The validator fails CI when this file drifts from what data/ implies.
-# 80 pairs, 3 rules each (slashed, bare, .md mirror), all 301.
+# 90 pairs, 3 rules each (slashed, bare, .md mirror), all 301.
 /self-host/vaultwarden/          /self-host/1password/  301
 /self-host/vaultwarden           /self-host/1password/  301
 /self-host/vaultwarden.md        /self-host/1password.md  301
@@ -24,6 +24,9 @@
 /self-host/home-assistant/       /self-host/home-assistant-cloud/  301
 /self-host/home-assistant        /self-host/home-assistant-cloud/  301
 /self-host/home-assistant.md     /self-host/home-assistant-cloud.md  301
+/self-host/invokeai/             /self-host/midjourney/  301
+/self-host/invokeai              /self-host/midjourney/  301
+/self-host/invokeai.md           /self-host/midjourney.md  301
 /self-host/excalidraw/           /self-host/miro/  301
 /self-host/excalidraw            /self-host/miro/  301
 /self-host/excalidraw.md         /self-host/miro.md  301
@@ -33,6 +36,9 @@
 /self-host/mautic/               /self-host/activecampaign/  301
 /self-host/mautic                /self-host/activecampaign/  301
 /self-host/mautic.md             /self-host/activecampaign.md  301
+/self-host/photoprism/           /self-host/adobe-lightroom/  301
+/self-host/photoprism            /self-host/adobe-lightroom/  301
+/self-host/photoprism.md         /self-host/adobe-lightroom.md  301
 /self-host/audiobookshelf/       /self-host/audible/  301
 /self-host/audiobookshelf        /self-host/audible/  301
 /self-host/audiobookshelf.md     /self-host/audible.md  301
@@ -60,6 +66,9 @@
 /self-host/freshrss/             /self-host/feedly/  301
 /self-host/freshrss              /self-host/feedly/  301
 /self-host/freshrss.md           /self-host/feedly.md  301
+/self-host/pocketbase/           /self-host/firebase-blaze/  301
+/self-host/pocketbase            /self-host/firebase-blaze/  301
+/self-host/pocketbase.md         /self-host/firebase-blaze.md  301
 /self-host/invoice-ninja/        /self-host/freshbooks/  301
 /self-host/invoice-ninja         /self-host/freshbooks/  301
 /self-host/invoice-ninja.md      /self-host/freshbooks.md  301
@@ -69,6 +78,9 @@
 /self-host/tabby/                /self-host/github-copilot/  301
 /self-host/tabby                 /self-host/github-copilot/  301
 /self-host/tabby.md              /self-host/github-copilot.md  301
+/self-host/collabora/            /self-host/google-workspace-business-starter/  301
+/self-host/collabora             /self-host/google-workspace-business-starter/  301
+/self-host/collabora.md          /self-host/google-workspace-business-starter.md  301
 /self-host/languagetool/         /self-host/grammarly/  301
 /self-host/languagetool          /self-host/grammarly/  301
 /self-host/languagetool.md       /self-host/grammarly.md  301
@@ -90,6 +102,9 @@
 /self-host/firefly-iii/          /self-host/monarch-money/  301
 /self-host/firefly-iii           /self-host/monarch-money/  301
 /self-host/firefly-iii.md        /self-host/monarch-money.md  301
+/self-host/leantime/             /self-host/monday-com/  301
+/self-host/leantime              /self-host/monday-com/  301
+/self-host/leantime.md           /self-host/monday-com.md  301
 /self-host/wg-easy/              /self-host/nordvpn/  301
 /self-host/wg-easy               /self-host/nordvpn/  301
 /self-host/wg-easy.md            /self-host/nordvpn.md  301
@@ -150,6 +165,9 @@
 /self-host/activepieces/         /self-host/zapier/  301
 /self-host/activepieces          /self-host/zapier/  301
 /self-host/activepieces.md       /self-host/zapier.md  301
+/self-host/zammad/               /self-host/zendesk/  301
+/self-host/zammad                /self-host/zendesk/  301
+/self-host/zammad.md             /self-host/zendesk.md  301
 /self-host/jitsi/                /self-host/zoom/  301
 /self-host/jitsi                 /self-host/zoom/  301
 /self-host/jitsi.md              /self-host/zoom.md  301
@@ -159,6 +177,9 @@
 /self-host/grist/                /self-host/airtable/  301
 /self-host/grist                 /self-host/airtable/  301
 /self-host/grist.md              /self-host/airtable.md  301
+/self-host/kitchenowl/           /self-host/anylist-complete/  301
+/self-host/kitchenowl            /self-host/anylist-complete/  301
+/self-host/kitchenowl.md         /self-host/anylist-complete.md  301
 /self-host/openproject/          /self-host/asana/  301
 /self-host/openproject           /self-host/asana/  301
 /self-host/openproject.md        /self-host/asana.md  301
@@ -189,12 +210,18 @@
 /self-host/wallabag/             /self-host/instapaper/  301
 /self-host/wallabag              /self-host/instapaper/  301
 /self-host/wallabag.md           /self-host/instapaper.md  301
+/self-host/heyform/              /self-host/jotform/  301
+/self-host/heyform               /self-host/jotform/  301
+/self-host/heyform.md            /self-host/jotform.md  301
 /self-host/keila/                /self-host/kit/  301
 /self-host/keila                 /self-host/kit/  301
 /self-host/keila.md              /self-host/kit.md  301
 /self-host/linkstack/            /self-host/linktree/  301
 /self-host/linkstack             /self-host/linktree/  301
 /self-host/linkstack.md          /self-host/linktree.md  301
+/self-host/automatisch/          /self-host/make/  301
+/self-host/automatisch           /self-host/make/  301
+/self-host/automatisch.md        /self-host/make.md  301
 /self-host/wger/                 /self-host/myfitnesspal-premium/  301
 /self-host/wger                  /self-host/myfitnesspal-premium/  301
 /self-host/wger.md               /self-host/myfitnesspal-premium.md  301
@@ -240,6 +267,9 @@
 /self-host/wekan/                /self-host/trello/  301
 /self-host/wekan                 /self-host/trello/  301
 /self-host/wekan.md              /self-host/trello.md  301
+/self-host/adventurelog/         /self-host/wanderlog-pro/  301
+/self-host/adventurelog          /self-host/wanderlog-pro/  301
+/self-host/adventurelog.md       /self-host/wanderlog-pro.md  301
 /self-host/zipline/              /self-host/zight/  301
 /self-host/zipline               /self-host/zight/  301
 /self-host/zipline.md            /self-host/zight.md  301

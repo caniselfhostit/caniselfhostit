@@ -1,0 +1,65 @@
+{
+  "slug": "google-workspace-business-starter",
+  "name": "Google Workspace",
+  "domain": "workspace.google.com",
+  "whyPeoplePay": "Google Workspace arrives as one line per person and gets bought for four things at once: mail at your own domain that lands in other people's inboxes, storage everybody in the company can find, documents two people can type into at the same second without anyone merging anything afterwards, and a Meet link on the end of every calendar invite. The editing is the part with the most obvious replacement and the smallest share of the reason anyone renews. What the money is mostly buying is deliverability and an identity directory nobody has to administer, and those are the halves that stay bought.",
+  "plans": [
+    {
+      "name": "Business Starter",
+      "priceMonthly": 8.4,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$7.00 per user per month on the Annual/Fixed-Term plan. 30 GB pooled storage per user, Meet up to 100 participants, capped at 300 users."
+    },
+    {
+      "name": "Business Standard",
+      "priceMonthly": 16.8,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$14.00 per user per month on the Annual/Fixed-Term plan. 2 TB pooled per user, Meet up to 150 participants with recording, capped at 300 users."
+    },
+    {
+      "name": "Business Plus",
+      "priceMonthly": 26.4,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$22.00 per user per month on the Annual/Fixed-Term plan. 5 TB pooled per user, Meet up to 500 participants, Vault and eDiscovery, capped at 300 users."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The pricing page says contact sales, and this is the tier with no 300-user cap."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://knowledge.workspace.google.com/admin/billing/flexible-plan",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Monthly-billed Flexible Plan figures recorded, with the Annual/Fixed-Term equivalents in each plan note, because committing to a year costs about 16% less per user and quoting only that rate would understate what a month-to-month subscriber pays. Confidence is medium for one reason: workspace.google.com/pricing geolocated us and served Canadian dollars on the day we read it, so the USD figures here come from Google's own Help centre instead, from the Flexible Plan page and the Flexible versus Annual comparison page, both read the same day and agreeing with each other. The pricing page was also running a limited-time 50% promotion on the first three months for new customers, which is not recorded as a price."
+  },
+  "ranked": [
+    {
+      "project": "collabora",
+      "rationale": "The LibreOffice lineage, which gives it the deepest ODF handling of anything here and an office suite's worth of features rather than an approximation of one. It replaces the editing third of the subscription and nothing else: no mailbox, no storage, no interface of its own, so it needs a file application in front of it, and the pairing upstream documents is Nextcloud with the Collabora Online connector. The free CODE edition is a single container with a single generated password, which makes it the shortest path from a Docs tab to something you run yourself. Choose it when the documents that matter are yours and your colleagues', written where you write them, rather than files arriving from somebody else's Office."
+    },
+    {
+      "project": "onlyoffice",
+      "rationale": "The OOXML-native sibling one page over, and the safer engine when docx, xlsx and pptx round-tripping with Microsoft Office users is the daily reality, because it treats those as its own formats rather than importing and exporting them. It ranks second here only because a Workspace reader's documents usually begin life in Google's editors rather than in Word, which is exactly the ground where Collabora's filters are level and its ODF story is better. Same shape otherwise: an editing engine with no storage, needing a file application in front of it."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "CryptPad",
+      "repo": "https://github.com/cryptpad/cryptpad",
+      "note": "Encrypted-first collaborative documents: the server stores ciphertext and cannot read what anyone writes in it, which is a stronger privacy claim than anything else in this list makes. The cost is that documents live inside CryptPad rather than in a file store you already keep, so it answers 'where do we write things together' without answering 'how do we open the spreadsheet a client emailed us'. Actively developed, AGPL-3.0."
+    },
+    {
+      "name": "Etherpad",
+      "repo": "https://github.com/ether/etherpad",
+      "note": "Plain collaborative text, and the honest line is that it is not an office suite: no spreadsheet, no slides, no page layout to preserve. What it does have is a long record of many cursors in one document at once and a far smaller thing to operate than either engine ranked above. Worth knowing about if what you actually miss from Docs is the shared cursor rather than the formatting. Actively developed, Apache-2.0."
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "slug": "make",
+  "name": "Make",
+  "domain": "make.com",
+  "whyPeoplePay": "Make sells a canvas and a metered engine. The canvas is the part people love: scenarios drawn as connected modules, with routers that split a path, iterators that walk a list and aggregators that put it back together, over an app catalogue in the thousands that somebody else keeps working. The meter is the part they pay for. Every module that acts spends a credit, so the bill scales with how much work you actually make it do, and the queue keeps running while you sleep on hardware you never think about.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Up to 1,000 credits a month, capped at 2 active scenarios."
+    },
+    {
+      "name": "Core",
+      "priceMonthly": 9,
+      "unit": "usage",
+      "seatsIncluded": 1,
+      "note": "The price shown for the 10,000 credits a month tier, which is the entry rung. Unlimited active scenarios and minute-level scheduling start here. The credit slider moves this number up; annual billing is advertised as saving 15% or more."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 16,
+      "unit": "usage",
+      "seatsIncluded": 1,
+      "note": "Same 10,000-credit entry tier, plus priority execution, custom variables and full-text search of the execution log."
+    },
+    {
+      "name": "Teams",
+      "priceMonthly": 29,
+      "unit": "usage",
+      "seatsIncluded": null,
+      "note": "Same 10,000-credit entry tier, unlimited users, team roles and shared scenario templates."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only, with custom credit allocation and overage protection."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://www.make.com/en/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Read from the vendor's own pricing page on 2026-08-07. Two things are uncertain and neither can be resolved from the rendered text. The page prices every paid plan against a credit-volume slider, and the figures recorded here are the ones shown at its lowest 10,000-credit stop, so the same plan name costs several times this further up. The monthly and annual toggle state could not be confirmed, and third-party write-ups from May 2026 quote higher annual figures for the same plan names, which means either the vendor moved the price since or the toggle was on annual when we read it. What a given reader actually pays turns on credit volume more than on the plan name: one credit is one module action, so a scenario with six modules spends six per run."
+  },
+  "ranked": [
+    {
+      "project": "automatisch",
+      "rationale": "The Make-shaped answer, and the reason this page exists: a visual flow builder that positions itself explicitly as the Make alternative, with a short list of connectors that do what they say. Go in knowing the cadence: the last tagged release is a year old and commits have slowed, which is why its own page says plainly what you are taking on. If that risk reads as too much, the second pick is under weekly development."
+    },
+    {
+      "project": "activepieces",
+      "rationale": "The bigger, faster-moving sibling, one page over as this catalog's Zapier answer. Pick it if active weekly development and a larger piece library matter more to you than the Make-shaped canvas; what you give up is the flow-per-line plainness that makes Automatisch feel like the product this page is named after."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "n8n",
+      "repo": "https://github.com/n8n-io/n8n",
+      "note": "The most capable option by a distance, released weekly, and the one whose node editor comes nearest to what a heavy Make user does all day. It is not open source: the code is under n8n's Sustainable Use License, which restricts commercial use, and files marked .ee need a paid enterprise licence on top. We rank the two above it on licence clarity rather than on features. If that trade does not bother you, this is the stronger tool and we would rather you knew."
+    },
+    {
+      "name": "Node-RED",
+      "repo": "https://github.com/node-red/node-red",
+      "note": "Apache-2.0, actively released, and visually the nearest thing to Make's canvas on this page: you wire nodes together on a flow sheet and watch messages move along the wires. It sits a layer lower down, though. The palette is built around protocols and hardware rather than around SaaS accounts, so connecting a CRM usually means an HTTP node and its API docs, not a login button. A person leaving Make for the app catalogue will find the catalogue missing."
+    },
+    {
+      "name": "Huginn",
+      "repo": "https://github.com/huginn/huginn",
+      "note": "MIT, still taking commits, and the oldest idea here: agents that watch things and act, configured as JSON rather than drawn. Two problems for us. The last tagged release was in 2022, so there is no version number to pin an image to, and the mental model is far enough from a scenario that most people arriving from Make will bounce off it."
+    }
+  ]
+}

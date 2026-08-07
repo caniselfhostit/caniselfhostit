@@ -1,0 +1,93 @@
+{
+  "slug": "automatisch",
+  "name": "Automatisch",
+  "tagline": "Trigger-and-action flows on your own box, with a connector list you can count and no credit meter.",
+  "repo": "automatisch/automatisch",
+  "site": "https://automatisch.io",
+  "category": "automation-dev",
+  "replaces": [
+    {
+      "saas": "make",
+      "plan": "Core",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 4,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 4
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 240,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/automatisch/automatisch/blob/v0.15.0/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Triggers are checked every fifteen minutes and only while this computer is awake, and the webhook address Automatisch hands a third-party service begins with http://localhost:8171, which that service cannot reach."
+  },
+  "quote": {
+    "text": "Please be careful with the ENCRYPTION_KEY and WEBHOOK_SECRET_KEY environment variables. They are used to encrypt your credentials from third-party services and verify webhook requests. If you change them, your existing connections and flows will not continue to work.",
+    "source": "Automatisch documentation, Credentials",
+    "url": "https://automatisch.io/docs/advanced/credentials",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's Docker install runs two services from the same image with the same environment, main and worker, differing only by WORKER=true.",
+      "url": "https://automatisch.io/docs/guide/installation"
+    },
+    {
+      "claim": "The Available apps page for the release this install pins lists 82 integrations, against the thousands Make advertises.",
+      "url": "https://github.com/automatisch/automatisch/blob/v0.15.0/packages/docs/pages/guide/available-apps.md"
+    },
+    {
+      "claim": "The community edition is AGPL-3.0, and every file whose name contains .ee. is covered instead by a separate commercial Enterprise licence.",
+      "url": "https://automatisch.io/docs/other/license"
+    },
+    {
+      "claim": "Without a valid enterprise licence, a flow's execution interval is forced back to fifteen minutes and every polling trigger runs on a fifteen-minute cron.",
+      "url": "https://github.com/automatisch/automatisch/blob/v0.15.0/packages/backend/src/models/flow.js"
+    },
+    {
+      "claim": "The endpoint that creates the first admin account refuses with 403 once installation is complete or any user exists, which is what closes the door behind the first signup.",
+      "url": "https://github.com/automatisch/automatisch/blob/v0.15.0/packages/backend/src/helpers/allow-installation.js"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "You become the developer at every service you connect. The release pinned here documents 82 integrations, and 39 of them present a redirect URL you have to paste into a developer console at that company and copy a client id and secret back. Make's price is partly a set of app registrations somebody else already holds, and moving the software does not move those.",
+    "The catalogue is the gap, and the shape of a flow is the other one. A flow is one trigger and a line of actions, with a filter step that can stop the run. There are no routers, no iterators and no aggregators, so a Make scenario that forks down two paths does not have an equivalent here; you build two flows.",
+    "Fifteen minutes is the floor. Without an enterprise licence every polling trigger is scheduled on a fifteen-minute cron, and a flow saved with a shorter interval is put back to fifteen. Webhook triggers fire immediately, which is the reason the cloud path wants a real hostname and the local path honestly gives you half the tool.",
+    "The core is AGPL-3.0, and every file with .ee. in its name is under a separate commercial licence instead. That split is where the public REST API, SAML, roles and permissions, templates and the sub-fifteen-minute scheduler live. What you install is uncapped on flows, runs and connections and stops short of that list.",
+    "Check the cadence before you commit. v0.15.0 was tagged in August 2025 and the last commit to the repository was in February 2026, so a connector that breaks when a third party changes an endpoint may stay broken until someone sends a patch. This is the risk you are taking on in exchange for the bill, and it is a real one."
+  ],
+  "sources": {
+    "compose": "https://automatisch.io/docs/guide/installation",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://automatisch.io/docs/advanced/configuration",
+    "credentials": "https://automatisch.io/docs/advanced/credentials",
+    "urls": "https://github.com/automatisch/automatisch/blob/v0.15.0/packages/backend/src/config/app.js",
+    "installation": "https://github.com/automatisch/automatisch/blob/v0.15.0/packages/backend/src/helpers/allow-installation.js",
+    "scheduling": "https://github.com/automatisch/automatisch/blob/v0.15.0/packages/backend/src/models/flow.js",
+    "apps": "https://github.com/automatisch/automatisch/blob/v0.15.0/packages/docs/pages/guide/available-apps.md",
+    "license": "https://automatisch.io/docs/other/license"
+  },
+  "related": [
+    "activepieces",
+    "postiz",
+    "listmonk"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "a6dbfcfae69baf09e4a8f21a4f0624829f5cb6c4dd8cfe9c01a0e6fcb786f5a5"
+}

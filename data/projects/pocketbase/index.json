@@ -1,0 +1,93 @@
+{
+  "slug": "pocketbase",
+  "name": "PocketBase",
+  "tagline": "One Go binary that gives a side project its backend: accounts, a SQLite database with realtime subscriptions, file uploads and a REST API.",
+  "repo": "pocketbase/pocketbase",
+  "site": "https://pocketbase.io",
+  "category": "automation-dev",
+  "replaces": [
+    {
+      "saas": "firebase-blaze",
+      "plan": "Blaze",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 512,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 8,
+  "license": "MIT",
+  "officialCompose": "none",
+  "local": {
+    "fit": "caveat",
+    "note": "The backend answers at http://localhost:8166 and nowhere else, so the app you build on it works in a browser on this computer while the phone you wanted to test it from cannot reach the API at all."
+  },
+  "quote": {
+    "text": "PocketBase doesn't have an official Docker image, but you could use the below minimal Dockerfile as an example.",
+    "source": "PocketBase documentation, Going to production",
+    "url": "https://pocketbase.io/docs/going-to-production/",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "PocketBase publishes no Docker image of its own and documents an example Dockerfile instead, which is why this install pins a community-built image by digest.",
+      "url": "https://pocketbase.io/docs/going-to-production/"
+    },
+    {
+      "claim": "The community image's Dockerfile downloads upstream's release zip for the target architecture over HTTPS and unpacks it, without verifying it against the checksums.txt published beside that release.",
+      "url": "https://github.com/muchobien/pocketbase-docker/blob/22f36a08837f26b22a3327cb8066ad63c3362c70/Dockerfile"
+    },
+    {
+      "claim": "The image's entrypoint runs pocketbase superuser upsert from PB_ADMIN_EMAIL and PB_ADMIN_PASSWORD before starting the server, on every container start, so the account exists before the port answers and the file keeps overriding the dashboard.",
+      "url": "https://github.com/muchobien/pocketbase-docker/blob/22f36a08837f26b22a3327cb8066ad63c3362c70/entrypoint.sh"
+    },
+    {
+      "claim": "The health endpoint at /api/health needs no authentication and answers with a JSON body whose message field reads API is healthy.",
+      "url": "https://pocketbase.io/docs/api-health/"
+    },
+    {
+      "claim": "Every route under /api/collections is bound to the superuser auth middleware, so a request carrying no superuser token is refused with 401 rather than answered.",
+      "url": "https://github.com/pocketbase/pocketbase/blob/v0.39.10/apis/collection.go"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The application is upstream's, the Docker packaging is not. PocketBase ships release binaries with a checksums.txt and no image, so this install uses ghcr.io/muchobien/pocketbase, maintained outside the PocketBase project. Its Dockerfile fetches upstream's own release zip but does not check it against that checksums.txt, and neither does the example Dockerfile in upstream's docs. Pinning the digest fixes exactly which build you run and step 7 asks the binary its version, but the packager's cadence is one more thing you are trusting.",
+    "This is a side-project backend, and the shape of it says so. One SQLite database on one box means writes go through one file on one disk, there is no read replica and no failover, and the way you make it bigger is a bigger box. Upstream is pre-1.0 and breaking changes land in minor releases, so an upgrade is something you read about first rather than something you automate.",
+    "No push notifications. Firebase Cloud Messaging is free on Firebase and has no equivalent here: reaching a phone that is not currently looking at your app needs Apple's and Google's push networks, and neither of them talks to your server without an account with them. If your product is notifications, this is the wrong swap.",
+    "The superuser password lives in a file, and the file wins. The image re-applies PB_ADMIN_PASSWORD at every container start, so a password you change in the dashboard is silently restored at the next restart. That is a documented reset path and a real trap, and the fix is to treat .env as the source of truth or delete that line once you own the password.",
+    "There is no migration path from Firestore. Nobody ships an importer, the data models do not line up, and moving means exporting your collections and writing the loader yourself. Plan this as a rebuild of the backend, not as a lift and shift."
+  ],
+  "sources": {
+    "compose": "https://pocketbase.io/docs/going-to-production/",
+    "caddy": "https://caddyserver.com/docs/caddyfile/directives/reverse_proxy",
+    "install": "https://pocketbase.io/docs/",
+    "health": "https://pocketbase.io/docs/api-health/",
+    "image": "https://github.com/muchobien/pocketbase-docker/blob/22f36a08837f26b22a3327cb8066ad63c3362c70/Dockerfile",
+    "entrypoint": "https://github.com/muchobien/pocketbase-docker/blob/22f36a08837f26b22a3327cb8066ad63c3362c70/entrypoint.sh",
+    "superuser": "https://github.com/pocketbase/pocketbase/blob/v0.39.10/cmd/superuser.go",
+    "auth": "https://github.com/pocketbase/pocketbase/blob/v0.39.10/apis/collection.go",
+    "version": "https://github.com/pocketbase/pocketbase/blob/v0.39.10/.goreleaser.yaml",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "appsmith",
+    "grist",
+    "code-server"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "57350abb150150a072aedc68f7c36c3e25219306b16205630904ba2e784b0ce3"
+}

@@ -1,0 +1,35 @@
+# AdventureLog · the Caddy site block for this service. Authored by
+# caniselfhostit from
+# https://github.com/seanmorley15/AdventureLog/blob/v0.12.1/documentation/docs/install/caddy.md
+# and https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy Prompt Zero installed, with
+# <DOMAIN> replaced by the hostname pointed at this box. That hostname is also
+# ORIGIN, PUBLIC_URL, FRONTEND_URL and CSRF_TRUSTED_ORIGINS in .env, so all five
+# stay the same string or the login form answers 403.
+#
+# One hostname, two upstreams, the split upstream's Caddy guide documents: the
+# Django backend answers /media, /admin, /static and /accounts, the frontend
+# answers everything else. Send it all to the frontend and every photograph
+# goes missing.
+
+<DOMAIN> {
+	# The app is a JavaScript bundle and the API answers JSON.
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+	# No Content-Security-Policy: the map draws tiles from basemaps.cartocdn.com
+	# and the flags come from flagcdn.com, so one written untested breaks maps.
+
+	# 8268 and 8168 are loopback ports compose publishes, closed in the firewall.
+	@backend path /media* /admin* /static* /accounts*
+	reverse_proxy @backend 127.0.0.1:8268
+
+	reverse_proxy 127.0.0.1:8168
+}

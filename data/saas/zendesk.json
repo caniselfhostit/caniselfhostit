@@ -1,0 +1,82 @@
+{
+  "slug": "zendesk",
+  "name": "Zendesk",
+  "domain": "zendesk.com",
+  "whyPeoplePay": "Zendesk turns a support address into a system: every mail, chat and form becomes a ticket with an owner, a clock and a history, and the help centre, the reporting and the escalation rules come already wired to each other. What you are renting is the part nobody enjoys building, the routing and the SLAs and the audit trail, plus a per-agent meter that makes the bill grow exactly when the team does.",
+  "plans": [
+    {
+      "name": "Support Team",
+      "priceMonthly": 19,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "source": "https://www.zendesk.com/pricing/",
+      "checkedOn": "2026-08-07",
+      "note": "Ticketing on its own, without the Suite's messaging, help centre and reporting. $19 per agent per month is the rate the page prints, paid yearly."
+    },
+    {
+      "name": "Suite Team",
+      "priceMonthly": 55,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "source": "https://www.zendesk.com/pricing/",
+      "checkedOn": "2026-08-07",
+      "note": "The entry Suite plan and the usual starting point: $55 per agent per month, paid yearly. Five agents on this plan is $3,300 a year."
+    },
+    {
+      "name": "Suite Professional",
+      "priceMonthly": 115,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "source": "https://www.zendesk.com/pricing/",
+      "checkedOn": "2026-08-07",
+      "note": "Marked most popular on the page. $115 per agent per month, paid yearly."
+    },
+    {
+      "name": "Suite Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "source": "https://www.zendesk.com/pricing/",
+      "checkedOn": "2026-08-07",
+      "note": "Quote only. The page carries a Talk to Sales button where the other plans carry a number."
+    },
+    {
+      "name": "Copilot add-on",
+      "priceMonthly": 50,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "source": "https://www.zendesk.com/pricing/",
+      "checkedOn": "2026-08-07",
+      "note": "An add-on rather than a plan, listed at $50 per agent per month paid yearly, which is where a Suite Team seat quietly becomes a $105 seat."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://www.zendesk.com/pricing/",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Every figure here is the per-agent-per-month rate the pricing page prints under annual billing, because that is the only set of numbers the page renders without JavaScript. The page advertises 20 percent off annual, so a month-to-month subscriber pays more than these figures and we did not read that higher number ourselves rather than infer it. Recheck before quoting a saving."
+  },
+  "ranked": [
+    {
+      "project": "zammad",
+      "rationale": "The closest thing on this list to what Zendesk actually sells: tickets with owners, groups, states and escalation clocks, an agent interface built for a queue rather than a chat, a customer portal, triggers and schedulers, and a text module and knowledge base behind them. It is also the heaviest install here, seven containers and a six gigabyte floor, and the version this catalogue installs leaves out Elasticsearch and configures no mail, which is honestly two of the things you were paying for. Everything else is present and uncapped on agents."
+    },
+    {
+      "project": "chatwoot",
+      "rationale": "The right answer if the front door is a chat bubble on your website rather than a support address. Live chat into a shared agent inbox, a help centre, and a lighter four-container install than Zammad's. It ranks second here because Zendesk's centre of gravity is email ticketing with SLAs and agent workflow, and that is Zammad's ground, not Chatwoot's."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "FreeScout",
+      "repo": "https://github.com/freescout-help-desk/freescout",
+      "note": "Actively maintained and the lightest shared-inbox answer on this shelf: a Laravel app over MySQL that reads like a team mailbox rather than a ticket system, AGPL-3.0, released as recently as this week. It is not in the tested list because upstream ships no first-party container image, so every Docker path runs through a community image this catalogue cannot pin to a publisher it trusts, and several of its helpdesk features are paid modules from the vendor's own store."
+    },
+    {
+      "name": "osTicket",
+      "repo": "https://github.com/osTicket/osTicket",
+      "note": "The long-running GPL-2.0 PHP ticket system, still maintained, v1.18.4 in June 2026. Not tested here because the supported install is a LAMP stack rather than a container: there is no Dockerfile in the repository, so a compose install means adopting somebody else's packaging, and the interface and the customer portal are a generation behind what a Zendesk subscriber is leaving."
+    }
+  ]
+}

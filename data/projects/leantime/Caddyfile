@@ -1,0 +1,28 @@
+# Leantime · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.leantime.io/installation/docker and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also DOMAIN_NAME in .env, where it becomes LEAN_APP_URL: keep them identical.
+
+<DOMAIN> {
+	# The interface is HTML, JavaScript and JSON, and compresses well.
+	encode zstd gzip
+
+	# The image's own nginx already sends X-Frame-Options, a CSP and versions of
+	# the three below. Caddy's header directive replaces rather than appends, so
+	# a browser sees one of each and the two not named here pass through.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# 8163 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8163
+}

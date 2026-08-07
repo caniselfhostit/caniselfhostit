@@ -1,0 +1,37 @@
+# Collabora Online (CODE) · the deterministic fallback for the local path.
+# Authored by caniselfhostit from the upstream sources, not copied:
+#   image build ........ https://github.com/CollaboraOnline/online.mirror/blob/main/docker/from-packages/Dockerfile
+#   env var handling ... https://github.com/CollaboraOnline/online.mirror/blob/main/wsd/COOLWSD.cpp
+#   config reference ... https://github.com/CollaboraOnline/online.mirror/blob/main/coolwsd.xml.in
+#
+# One service, same tag, digest and host port as the server file, with the env
+# file path relative so it works from ~/selfhost/collabora/ on all three
+# systems. No volumes and no bind mounts at all: coolwsd builds its jails and
+# its cache inside the container, which the source calls state-less. Your
+# documents live in whichever application hands them over, not here.
+#
+# No healthcheck is declared here. The 26.04 image is built on a distroless
+# base with no shell, so a CMD-SHELL probe of ours would have nothing to run
+# it. It ships `coolwsd --probe --use-env-vars` instead, which GETs /livez.
+#
+# Digest read on 2026-08-07; amd64 and arm64 both published.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  collabora:
+    image: collabora/code:26.04.2.4.1@sha256:1f864ce3f0c49e867787b6dd303bd6ba989542d3023f6809df558eafd04c1b97
+    container_name: collabora
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      # Nothing here terminates TLS, so coolwsd serves plain http and the
+      # links it builds say http. With ssl.enable false the self-signed
+      # certificate branch never runs, so no throwaway certificate is made.
+      extra_params: "--o:ssl.enable=false"
+    ports:
+      # Loopback only: no other device on the wifi can reach 8165.
+      - "127.0.0.1:8165:9980"
+    # SIGTERM has to leave coolwsd time to save and upload whatever is still
+    # open in an editor. Upstream's own deployment allows the same 60 seconds.
+    stop_grace_period: 60s

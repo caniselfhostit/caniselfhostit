@@ -1,0 +1,60 @@
+# AdventureLog · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker install .. https://github.com/seanmorley15/AdventureLog/blob/v0.12.1/documentation/docs/install/docker.md
+#   variables ....... https://github.com/seanmorley15/AdventureLog/blob/v0.12.1/.env.example
+#
+# Three services, every path relative to ~/selfhost/adventurelog/ so one file
+# works on macOS, Linux and Windows. The names are load bearing:
+# PUBLIC_SERVER_URL defaults to http://server:8000 and PGHOST is db. Two host
+# ports: the backend serves photographs on 8268, the frontend the app on 8168.
+# The database is a named volume because PostgreSQL chowns its data directory to
+# a uid a home bind mount cannot grant on Windows. PostGIS is linux/amd64 only.
+# Digests read 2026-08-07.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  db:
+    image: postgis/postgis:16-3.5@sha256:7d7925e334fceb6079c0a5d150e925f192cde2cf1dd78767ca843e2996d39829
+    platform: linux/amd64
+    container_name: adventurelog-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - adventurelog-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U adventurelog -d adventurelog"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other containers.
+
+  server:
+    image: ghcr.io/seanmorley15/adventurelog-backend:v0.12.1@sha256:7c759efab1476841f7319776666e527bedd481cd71dbb08e51aaa5959f2a28eb
+    container_name: adventurelog-backend
+    restart: unless-stopped
+    env_file: ./.env
+    volumes:
+      - ./media:/code/media
+    ports:
+      # Loopback only: nothing else on the wifi reaches 8268.
+      - "127.0.0.1:8268:80"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    image: ghcr.io/seanmorley15/adventurelog-frontend:v0.12.1@sha256:edd79220f0def1dbea5b5d56636621f6cfdb454db9c00a8ce436a8ab489c5e99
+    container_name: adventurelog-frontend
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      # Loopback only: nothing else on the wifi reaches 8168.
+      - "127.0.0.1:8168:3000"
+    depends_on:
+      - server
+
+volumes:
+  adventurelog-pgdata:

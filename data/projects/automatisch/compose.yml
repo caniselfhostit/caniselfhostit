@@ -1,0 +1,86 @@
+# Automatisch · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   installation ....... https://automatisch.io/docs/guide/installation
+#   variable reference . https://automatisch.io/docs/advanced/configuration
+#   credentials ........ https://automatisch.io/docs/advanced/credentials
+#   url resolution ..... https://github.com/automatisch/automatisch/blob/v0.15.0/packages/backend/src/config/app.js
+#
+# Four services. One image runs twice: as the web and API process, and with
+# WORKER=true as the queue worker, the split upstream documents for Docker.
+# PostgreSQL holds the flows, the connections and the run history; Redis holds
+# the BullMQ queues and the schedule of every published flow. Upstream's own
+# compose file builds from a git checkout; this one runs the image their release
+# workflow publishes to ghcr.io.
+#
+# API_URL is the one address variable that matters: config/app.js derives the
+# API base, the web app URL and the webhook URL from it, where the documented
+# HOST and PORT pair would build https://host:3000 and break the app icons in
+# the editor. Digests read 2026-08-07; all images publish arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+# The web process and the worker share an image; compose ignores x- keys.
+x-automatisch-env: &automatisch-env
+  APP_ENV: production
+  POSTGRES_HOST: postgres
+  POSTGRES_DATABASE: automatisch
+  POSTGRES_USERNAME: automatisch
+  REDIS_HOST: redis
+  # No seeded admin: the first account is typed on the installation screen.
+  DISABLE_SEED_USER: "true"
+  TELEMETRY_ENABLED: "false"
+
+x-automatisch: &automatisch
+  image: ghcr.io/automatisch/automatisch:0.15.0@sha256:3bace7a12d5fb3f5b1305a6a52232270e0e0abd8465a8b78baacb07f6ea89594
+  restart: unless-stopped
+  env_file: /srv/automatisch/.env
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
+services:
+  postgres:
+    image: postgres:16.14-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
+    container_name: automatisch-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: automatisch
+      POSTGRES_USER: automatisch
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - /srv/automatisch/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U automatisch -d automatisch"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other containers.
+
+  redis:
+    image: redis:7.4.10-alpine@sha256:e7723ff73d963f5cc6d9c4643ea3d989527a402a319239054e9472a7fb9219a2
+    container_name: automatisch-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - /srv/automatisch/redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 12
+
+  automatisch:
+    <<: *automatisch
+    container_name: automatisch
+    environment: *automatisch-env
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8171.
+      - "127.0.0.1:8171:3000"
+
+  worker:
+    <<: *automatisch
+    container_name: automatisch-worker
+    environment:
+      <<: *automatisch-env
+      # The one difference: this copy runs the queue, not the web process.
+      WORKER: "true"

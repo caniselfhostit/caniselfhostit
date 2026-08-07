@@ -1,0 +1,52 @@
+{
+  "slug": "wanderlog-pro",
+  "name": "Wanderlog",
+  "domain": "wanderlog.com",
+  "whyPeoplePay": "Wanderlog is the rare travel app that four people can open at once and all see the same itinerary change under their fingers. It reads flight and hotel confirmations straight out of your inbox, puts the whole trip on one map, optimises the order you visit things in, splits the costs, and keeps working on a phone with no signal in a foreign city. That last part is the one people actually pay for: an offline map and a day plan you can still read when roaming is off.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Unlimited places, live collaboration and reservation imports. Offline access, the AI assistant, route optimisation, Gmail scanning and PDF export sit behind Pro."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 3.33,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Wanderlog advertises Pro as $39.99 for a year; 3.33 is that figure divided by twelve, recorded this way so the ladder stays comparable. Apple's listing for the same app also shows a monthly option and several other annual price points, so what a given account is offered varies."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://apps.apple.com/us/app/wanderlog/id1476732439",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "wanderlog.com/pro renders its prices in JavaScript and served us no price text at all, so the figures here come from Apple's App Store listing for the same app, which publishes the in-app purchase names and prices. That listing shows Wanderlog Pro annual plans at $31.99, $39.99, $49.99 and $59.99 and monthly plans at $5.99 and $16.99 on the same day, which is a promotional and regional spread rather than one ladder. $39.99 a year is the figure the vendor's own marketing and independent reporting both name, so that is what is recorded, and the confidence is medium because we could not read it off the vendor's page ourselves."
+  },
+  "ranked": [
+    {
+      "project": "adventurelog",
+      "rationale": "The only one of these that is a trip journal rather than a track database: days, locations, lodging, transport, photographs, a map and a visited-countries record, in an app you run. It takes the half of Wanderlog you keep, which is the record of where you went, and it gives up the half that made Wanderlog worth paying for, which is planning a trip with three other people and reading the plan on a phone with no signal. Go in knowing it is a young project on 0.x versions with effectively one maintainer."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "wanderer",
+      "repo": "https://github.com/open-wanderer/wanderer",
+      "note": "A self-hosted trail database, AGPL-3.0, actively developed and recently moved from its author's account to an organisation. It is the closest thing in this space with real momentum, but it catalogues GPX trails you have walked or want to walk, not trips with hotels and flights in them. If you want a hiking library it beats AdventureLog; if you want a holiday journal it is answering a different question."
+    },
+    {
+      "name": "Dawarich",
+      "repo": "https://github.com/Freika/dawarich",
+      "note": "AGPL-3.0 and the busiest project on this page by a distance, aimed squarely at replacing Google Timeline: it ingests your phone's location history and draws where you have physically been. That is a complement to a travel journal rather than a substitute, because it records movement automatically and has no notion of a trip you are planning or a place you meant to visit."
+    },
+    {
+      "name": "KDE Itinerary",
+      "repo": "https://github.com/KDE/itinerary",
+      "note": "The one project that does Wanderlog's best trick, turning a booking confirmation into a structured itinerary with live train and flight information. It is a desktop and Android application from the KDE project rather than a server you host, so there is nothing to install on a VPS, no shared trip, and no photo library. Worth knowing about if the inbox-to-itinerary part is what you are losing."
+    }
+  ]
+}

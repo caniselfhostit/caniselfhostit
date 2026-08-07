@@ -1,0 +1,77 @@
+{
+  "slug": "monday-com",
+  "name": "monday.com",
+  "domain": "monday.com",
+  "whyPeoplePay": "monday.com sells a board that anyone in the company can be handed on a Monday morning and understand by Tuesday. The colour, the drag and drop and the templates are the product, not decoration: they are what gets a marketing team, an ops team and a founder updating the same rows without a training session. Underneath that you are paying per seat for the automations, the integrations catalogue and the dashboards that turn those rows into a status report somebody else maintains.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 2,
+      "note": "Free forever, capped at 2 seats and 3 boards."
+    },
+    {
+      "name": "Basic",
+      "priceMonthly": 12,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per seat per month billed monthly. $9 per seat per month billed annually. Paid plans start at 3 seats, so the real floor is 3 times this."
+    },
+    {
+      "name": "Standard",
+      "priceMonthly": 14,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per seat per month billed monthly. $12 per seat per month billed annually. The plan that first adds timeline, calendar and Gantt views."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 24,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per seat per month billed monthly. $19 per seat per month billed annually. Marked Most Popular on the pricing page."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The page says get a quote, with custom AI credits."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://monday.com/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Confidence is medium because monday.com prices by location: the page itself says the price is determined by the user's billing country, and it rendered in CAD for us on the day we read it ($13, $17 and $26 per seat billed annually for Basic, Standard and Pro on the Work Management table). The USD figures recorded here are the ones monday.com publishes in that same page's own structured pricing data, and we recorded the monthly-billed number with the annual equivalent in each plan note. The 3-seat minimum is what monday.com's team-size selector starts at on the CRM, service and dev tables; the Work Management table rendered with its selector already at 10 seats, so treat the minimum as the widely stated 3 and re-check it at the checkout page before doing savings maths."
+  },
+  "ranked": [
+    {
+      "project": "leantime",
+      "rationale": "The closest thing here to how monday.com teams actually work: goals and boards that a non-project-manager will open on their own, not a work breakdown structure they need shown. You get kanban, table, list, calendar and timeline views, a wiki, timesheets and per-project roles from one container plus a MySQL, and no seat counter anywhere. What you give up is the layer monday.com charges for, which is real: no integrations catalogue, no automation recipes, and no mail at all until you configure a sender, so nobody gets told a task was assigned to them."
+    },
+    {
+      "project": "openproject",
+      "rationale": "Second place, and first if what you actually need is structure. OpenProject is the catalogue's heavyweight classic answer: work packages with types and statuses, real Gantt, a work breakdown structure, time and cost tracking. It is ranked below Leantime for a monday.com refugee because it asks more of every item you create and reads as project-management software rather than as a board, which is the exact quality that made monday.com spread inside companies in the first place."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Plane",
+      "repo": "https://github.com/makeplane/plane",
+      "note": "AGPL-3.0, actively developed, and the nearest thing on this list to monday.com's feel and pace: cycles, modules, a fast issue view. Not ranked because a working self-hosted install is a stack of ten or more services rather than one compose file, which this catalogue's prompt format cannot carry honestly. Surveyed, not tested."
+    },
+    {
+      "name": "Vikunja",
+      "repo": "https://github.com/go-vikunja/vikunja",
+      "note": "AGPL-3.0 and maintained, and the lightest install in this category: one container, one SQLite file. It is a task manager rather than a project management system, with no wiki, no goals and no dashboards, so it replaces the part of monday.com you use for lists and none of the part you use for reporting. Ranked on its own page against Todoist instead."
+    },
+    {
+      "name": "WeKan",
+      "repo": "https://github.com/wekan/wekan",
+      "note": "MIT and released often. Boards, lists, swimlanes, cards, checklists and attachments, which is a faithful kanban board and nothing beyond it: no timeline, no calendar view, no automations, no dashboards. If the only monday.com board you would miss is the kanban one it is a fair swap; as a monday.com replacement it is one view out of five."
+    }
+  ]
+}

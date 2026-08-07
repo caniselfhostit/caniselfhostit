@@ -1,0 +1,40 @@
+# KitchenOwl · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   self-hosting ....... https://docs.kitchenowl.org/v0.7.10/self-hosting/
+#   variable reference . https://docs.kitchenowl.org/v0.7.10/self-hosting/advanced/
+#   reverse proxy ...... https://docs.kitchenowl.org/v0.7.10/self-hosting/reverse-proxy/
+#   image .............. https://github.com/TomBursch/kitchenowl/blob/v0.7.10/Dockerfile
+#
+# One service. Upstream publishes two shapes, a split front-and-back pair and an
+# all-in-one image, and this file takes the all-in-one: the same container serves
+# the web app on 8080 and answers /api on that same port, so there is nothing to
+# route between two containers. The database driver defaults to sqlite and the
+# file lands in /data next to the uploaded photos, so no database container runs
+# here and there is nothing to dump. The image declares its own HEALTHCHECK
+# against the /api/health route, so none is repeated below. Tag and digest read
+# from Docker Hub on 2026-08-07; the image publishes amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  kitchenowl:
+    image: tombursch/kitchenowl:v0.7.10@sha256:bd821a41b8cb27fd7fcf429acd1fc67e9f889485a2cd1193d68c2d804a8e1bef
+    container_name: kitchenowl
+    restart: unless-stopped
+    # FRONT_URL and the signing key come from /srv/kitchenowl/.env, mode 600 and
+    # owned by the login user. The image carries a signing-key default that
+    # upstream prints in its own sample, so this file is only safe with that
+    # file in place.
+    env_file: /srv/kitchenowl/.env
+    environment:
+      # Nobody can create an account from the sign-in screen. The first account
+      # invites the rest of the household instead.
+      OPEN_REGISTRATION: "false"
+      # Onboarding stays available until one account exists, then the server
+      # closes it on its own: the endpoint counts users and refuses at one.
+      DISABLE_ONBOARDING: "false"
+    volumes:
+      - /srv/kitchenowl/data:/data
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8167.
+      - "127.0.0.1:8167:8080"

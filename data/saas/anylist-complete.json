@@ -1,0 +1,58 @@
+{
+  "slug": "anylist-complete",
+  "name": "AnyList",
+  "domain": "anylist.com",
+  "whyPeoplePay": "AnyList is cheap, and the reason people pay is not the feature list. It is that a shared grocery list has to be right on two phones in two different aisles at the same second, and AnyList has done that reliably for over a decade on hardware nobody in the household administers. The subscription buys sync that has never dropped an item, native apps on the platforms a family already carries, and the fact that the person who does not care about any of this can install it and it works. Leaving is not a money decision at fifteen dollars a year; it is a decision about whose account the household's shopping list lives in.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "No charge. Creating lists and sharing them with family and friends is in the free tier. The vendor's own /complete page lists recipe web import, the meal planning calendar, item and recipe photos, price and budget tracking, premium themes, folders, location reminders, passcode lock, cloud backup and Mac or PC web access as what the paid tier unlocks; the comparison table at /features draws two of those lines differently, so read this row as marketing rather than a contract."
+    },
+    {
+      "name": "Complete (individual)",
+      "priceMonthly": 0.83,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$9.99 a year, billed annually. There is no monthly plan, so 0.83 is that annual figure divided by twelve rather than a price the vendor quotes."
+    },
+    {
+      "name": "Complete (household)",
+      "priceMonthly": 1.25,
+      "unit": "flat",
+      "seatsIncluded": null,
+      "note": "$14.99 a year, billed annually, and 1.25 is that figure divided by twelve. The page sells this as covering a household and does not say how many people that is, so no seat count is recorded."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://www.anylist.com/complete",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The two prices are the vendor's own sentence on anylist.com/complete, read on this date and corroborated by a second search the same day: $9.99 a year for an individual, $14.99 a year for a household. Confidence is medium for two reasons rather than any doubt about those numbers. AnyList sells annually only, so the monthly figures here are the annual price divided by twelve and are ours, not the vendor's. And the free-versus-paid split is drawn one way on /complete and another way on the /features comparison table, which renders with JavaScript, so the Free row records what the vendor claims rather than what we verified line by line."
+  },
+  "ranked": [
+    {
+      "project": "kitchenowl",
+      "rationale": "The only one here that keeps the part of AnyList people actually use: a shopping list that two phones in a supermarket both hold, ticked off in real time, with real apps on Google Play, F-Droid and the App Store that you point at your own server. That client story is what usually breaks when a household app becomes self-hosted, and it is the whole reason this ranks first. One container, SQLite inside it, one generated key, and the household model, meal planner and shared expenses arrive with it. What you give up against AnyList is the Apple side: no Apple Watch app, no location-based reminders, no passcode lock on a list."
+    },
+    {
+      "project": "mealie",
+      "rationale": "The right answer if the recipes are the reason you subscribed rather than the list. Mealie is a recipe box first, reads a Paprika or Tandoor export directly, clips from hundreds of sites, and its shopping list is generated out of a meal plan rather than being the thing you open every day. Same category of install, one container and SQLite, so the choice is genuinely about which half of AnyList you use. If both people in the house edit the list while shopping, KitchenOwl fits better; if one person collects recipes and prints a list on Sunday, this one does."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Grocy",
+      "repo": "https://github.com/grocy/grocy",
+      "note": "MIT, maintained, nine thousand stars, and a much larger machine than the one this page is about. Grocy runs the whole household as inventory: what is in the fridge, what expires on Thursday, which chore is due, with the shopping list generated from stock levels falling below a minimum. If you want a list you type into while walking round a shop, that is a lot of bookkeeping to accept first, and the mobile story is a web app rather than the store apps KitchenOwl ships."
+    },
+    {
+      "name": "Tandoor Recipes",
+      "repo": "https://github.com/TandoorRecipes/recipes",
+      "note": "Actively developed, with a meal planner and a shopping list at least as capable as anything here. Not ranked for a licensing reason worth stating plainly: GitHub reports no license for the repository because its LICENSE.md is AGPL-3.0 with the Commons Clause attached, which withdraws the right to sell a service built on the software and means it is not open source. Nothing there stops a household running it; it is the kind of fact to know before you build on it."
+    }
+  ]
+}

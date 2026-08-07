@@ -1,0 +1,93 @@
+{
+  "slug": "kitchenowl",
+  "name": "KitchenOwl",
+  "tagline": "A shared grocery list your household's phones open from their own app stores, pointed at a server you run.",
+  "repo": "TomBursch/kitchenowl",
+  "site": "https://kitchenowl.org",
+  "category": "money-home",
+  "replaces": [
+    {
+      "saas": "anylist-complete",
+      "plan": "Complete (household)",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 9,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/TomBursch/kitchenowl/blob/main/docker-compose-single.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "The list answers only at http://localhost:8167 on this computer, so the phone in the supermarket has nothing to point at and the household half of the app never comes on."
+  },
+  "quote": {
+    "text": "It is also important that you have HTTP Strict Transport Security enabled and the proper headers applied to your responses or you could be subject to a javascript hijack.",
+    "source": "KitchenOwl documentation, Getting Started",
+    "url": "https://docs.kitchenowl.org/v0.7.10/self-hosting/",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "Upstream publishes an all-in-one image next to the split front-and-back pair, and its own sample for it runs one service with one published port and one /data volume, which is the shape this install takes.",
+      "url": "https://docs.kitchenowl.org/v0.7.10/self-hosting/"
+    },
+    {
+      "claim": "DB_DRIVER defaults to sqlite, STORAGE_PATH defaults to /data, OPEN_REGISTRATION defaults to false, and FRONT_URL has to match the server's own URL including the scheme.",
+      "url": "https://docs.kitchenowl.org/v0.7.10/self-hosting/advanced/"
+    },
+    {
+      "claim": "The onboarding endpoint creates the first user with admin rights and refuses once any user exists, so the first person to complete that form owns the server.",
+      "url": "https://github.com/TomBursch/kitchenowl/blob/v0.7.10/backend/app/controller/onboarding/onboarding_controller.py"
+    },
+    {
+      "claim": "The signup route is only registered when OPEN_REGISTRATION is on, which is why a server with public signups off answers 404 there rather than refusing a request.",
+      "url": "https://github.com/TomBursch/kitchenowl/blob/v0.7.10/backend/app/controller/auth/auth_controller.py"
+    },
+    {
+      "claim": "KitchenOwl ships apps on Google Play, F-Droid and the App Store, and they can be pointed at a server you run instead of the hosted one.",
+      "url": "https://kitchenowl.org"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The owner account is a race you have to win. KitchenOwl creates its first user through an onboarding form that is open to anyone who reaches your hostname, and that user gets admin rights. The install closes the window by making you claim it at a stop and then asserting the door is shut, but for the minutes between the container starting and you finishing that form, the offer is public.",
+    "The phone apps are the point, and they are also the cost. Every person in the household installs KitchenOwl from their own app store and types your hostname into it once, which is the thing most self-hosted household apps cannot do. In exchange, the hostname becomes load-bearing: change it and you visit every phone, and the apps update on Apple's and Google's schedule rather than yours, so a server left months behind can stop talking to a phone that updated itself.",
+    "You own the backups, and the honest copy needs the container stopped. Everything is one SQLite file and one upload directory under /srv/kitchenowl/data, and a SQLite file copied while it is being written is not a backup. A backup on the same disk is not one either.",
+    "Three things on AnyList's paid feature list do not come across, and no setting brings them: the Apple Watch app, location-based reminders that fire when you walk into a shop, and a passcode lock on a list. Those are platform features of a native iOS app, not server features, and this install has no answer to them.",
+    "There is no password reset unless you configure mail, and this install does not. Forget the owner password and the way back in is the command line on your own server. Household members join by invitation from inside the app, so the only account recovery anyone has is you."
+  ],
+  "sources": {
+    "compose": "https://docs.kitchenowl.org/v0.7.10/self-hosting/",
+    "caddy": "https://docs.kitchenowl.org/v0.7.10/self-hosting/reverse-proxy/",
+    "install": "https://docs.kitchenowl.org/v0.7.10/self-hosting/advanced/",
+    "image": "https://github.com/TomBursch/kitchenowl/blob/v0.7.10/Dockerfile",
+    "routes": "https://github.com/TomBursch/kitchenowl/blob/v0.7.10/backend/app/api/register_controller.py",
+    "onboarding": "https://github.com/TomBursch/kitchenowl/blob/v0.7.10/backend/app/controller/onboarding/onboarding_controller.py",
+    "registration": "https://github.com/TomBursch/kitchenowl/blob/v0.7.10/backend/app/controller/auth/auth_controller.py",
+    "config": "https://github.com/TomBursch/kitchenowl/blob/v0.7.10/backend/app/config.py",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "mealie",
+    "home-assistant",
+    "vikunja"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "70bd4b1581f6b1ecb4b88337fead7674f1c6a735e498c4b94debc56d2c507dca"
+}

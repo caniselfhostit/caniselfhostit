@@ -1,0 +1,96 @@
+{
+  "slug": "adventurelog",
+  "name": "AdventureLog",
+  "tagline": "A travel journal on your own server: the trips, the photographs, the map, and the countries you have actually stood in.",
+  "repo": "seanmorley15/AdventureLog",
+  "site": "https://adventurelog.app",
+  "category": "money-home",
+  "replaces": [
+    {
+      "saas": "wanderlog-pro",
+      "plan": "Pro",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 3,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 3
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": false,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 120,
+  "license": "GPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/seanmorley15/AdventureLog/blob/v0.12.1/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "On your own computer AdventureLog answers only at http://localhost:8168, so the phone that took the photographs cannot upload to it and nobody you travelled with can open the trip."
+  },
+  "quote": {
+    "text": "If running on an ARM based machine, you will need to use a different PostGIS Image.",
+    "source": "AdventureLog documentation, Docker",
+    "url": "https://github.com/seanmorley15/AdventureLog/blob/v0.12.1/documentation/docs/install/docker.md",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's own compose file runs three services, a SvelteKit frontend, a Django backend and a PostGIS database, with the frontend and the backend each published on their own port.",
+      "url": "https://github.com/seanmorley15/AdventureLog/blob/v0.12.1/docker-compose.yml"
+    },
+    {
+      "claim": "Upstream's Caddy guide puts one hostname in front of both application containers and routes /media, /admin, /static and /accounts to the Django backend, everything else to the frontend.",
+      "url": "https://github.com/seanmorley15/AdventureLog/blob/v0.12.1/documentation/docs/install/caddy.md"
+    },
+    {
+      "claim": "The documented defaults are an admin account named admin with the password admin, which is why this install generates that password on the server instead.",
+      "url": "https://github.com/seanmorley15/AdventureLog/blob/v0.12.1/documentation/docs/install/docker.md"
+    },
+    {
+      "claim": "Registration stays open until DISABLE_REGISTRATION is set, and Django's DEBUG defaults to true inside the image unless the environment says otherwise.",
+      "url": "https://github.com/seanmorley15/AdventureLog/blob/v0.12.1/backend/server/main/settings.py"
+    },
+    {
+      "claim": "Before the backend serves a request it downloads the countries, states and cities dataset and one flag image per country from flagcdn.com, and a container without enough memory is killed partway through.",
+      "url": "https://github.com/seanmorley15/AdventureLog/blob/v0.12.1/backend/server/worldtravel/management/commands/download-countries.py"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "What you get is a trip journal, not the planner. Days, locations, lodging, transport, photographs, a map, and a record of every country and region you have visited, all yours. What does not come across: live collaborative editing with people who have no account on your server, reservations pulled out of your inbox, offline maps on a phone, route optimisation, and flight or hotel deals. Those are most of what the subscription is actually selling.",
+    "This is a small, young project and it is honest to say so. The version numbers are still 0.x, there were three releases in the past year, and one person has written more than forty times as many commits as the next contributor. It is active and it is real, but the bus factor is one, and you are the operations team for something that is still changing shape.",
+    "Your browser keeps talking to other people's servers. The default basemap is CARTO's Voyager style, so every map view fetches tiles from basemaps.cartocdn.com, the country flags were downloaded from flagcdn.com during the first boot, and place search goes to OpenStreetMap's Nominatim from your server unless you add a Google Maps key. Your trips stay on your box; the tile requests do not.",
+    "amd64 only, and not the cheapest box. PostGIS is required and upstream states you need a different image on ARM, so a Raspberry Pi or an Ampere VPS is out. The first boot imports world geography data and wants 2 GB of RAM while it runs, and a smaller machine gets the import killed rather than a clear error.",
+    "Two things to back up, and one account with no way back in. The photographs are files under media and everything saying which trip they belong to is rows in PostgreSQL, so an archive of one without the other restores nothing usable. No SMTP is configured, sign-up is closed, and the admin password the installer generated is the only copy there is."
+  ],
+  "sources": {
+    "compose": "https://github.com/seanmorley15/AdventureLog/blob/v0.12.1/documentation/docs/install/docker.md",
+    "caddy": "https://github.com/seanmorley15/AdventureLog/blob/v0.12.1/documentation/docs/install/caddy.md",
+    "install": "https://github.com/seanmorley15/AdventureLog/blob/v0.12.1/.env.example",
+    "requirements": "https://adventurelog.app/docs/install/docker.html",
+    "registration": "https://github.com/seanmorley15/AdventureLog/blob/v0.12.1/documentation/docs/configuration/disable_registration.md",
+    "updating": "https://github.com/seanmorley15/AdventureLog/blob/v0.12.1/documentation/docs/configuration/updating.md",
+    "settings": "https://github.com/seanmorley15/AdventureLog/blob/v0.12.1/backend/server/main/settings.py",
+    "entrypoint": "https://github.com/seanmorley15/AdventureLog/blob/v0.12.1/backend/entrypoint.sh",
+    "routes": "https://github.com/seanmorley15/AdventureLog/blob/v0.12.1/backend/server/main/urls.py",
+    "tiles": "https://github.com/seanmorley15/AdventureLog/blob/v0.12.1/frontend/src/lib/index.ts",
+    "troubleshooting": "https://github.com/seanmorley15/AdventureLog/blob/v0.12.1/documentation/docs/troubleshooting/no_images.md",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "fittrackee",
+    "immich",
+    "mealie"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "ad7fc6709acec5177f2e3053bacd5ac7150990109631ee6082d841ddb5511da8"
+}

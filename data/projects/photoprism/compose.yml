@@ -1,0 +1,82 @@
+# PhotoPrism · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker compose .. https://docs.photoprism.app/getting-started/docker-compose/
+#   config options .. https://docs.photoprism.app/getting-started/config-options/
+#   behind a proxy .. https://docs.photoprism.app/getting-started/proxies/traefik/
+#   open source faq . https://www.photoprism.app/oss/faq
+#
+# Two services: PhotoPrism and the MariaDB holding the index. The image is the
+# "ce" build, which upstream describes as the Community Edition distributed
+# under the AGPL; the unsuffixed Docker Hub tags carry their Plus License.
+# MariaDB 11.8 is the current long-term release, above the 10.5.12 floor
+# upstream states. PHOTOPRISM_INIT is empty and DEFAULT_TLS false, so the
+# container installs nothing and generates no certificate at start-up. Every
+# ${...} comes from /srv/photoprism/.env, mode 600, which Compose reads and
+# never mounts. Digests read 2026-08-07; both images publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  mariadb:
+    image: mariadb:11.8.8@sha256:d9f7eb2637296652f24b484afd5d246f759f49f5babcadc6a9e344c9acb75fbf
+    container_name: photoprism-db
+    restart: unless-stopped
+    command: --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_DATABASE: photoprism
+      MARIADB_USER: photoprism
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+    volumes:
+      - /srv/photoprism/mariadb:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      retries: 20
+    # No `ports:` at all: 3306 is reachable only from the other container.
+
+  photoprism:
+    image: photoprism/photoprism:260728-ce@sha256:15deeb6cc6c31f043625579a29a0e26f5f7b328441fc3945a7a0b7e4b54c0a18
+    container_name: photoprism
+    restart: unless-stopped
+    # Relaxed as upstream's example does, for the tools the indexer runs.
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
+    working_dir: /photoprism
+    environment:
+      PHOTOPRISM_ADMIN_USER: "admin"
+      PHOTOPRISM_ADMIN_PASSWORD: "${PHOTOPRISM_ADMIN_PASSWORD}"
+      PHOTOPRISM_AUTH_MODE: "password"
+      # Caddy reaches this over the Docker bridge, inside the proxy range
+      # PhotoPrism trusts by default.
+      PHOTOPRISM_SITE_URL: "${PHOTOPRISM_SITE_URL}"
+      PHOTOPRISM_SITE_CAPTION: ""
+      PHOTOPRISM_DISABLE_TLS: "true"
+      PHOTOPRISM_DEFAULT_TLS: "false"
+      # Nothing is installed on first start: the container downloads nothing.
+      PHOTOPRISM_INIT: ""
+      PHOTOPRISM_DISABLE_MCP: "true"
+      PHOTOPRISM_BACKUP_DATABASE: "true"
+      PHOTOPRISM_DATABASE_DRIVER: "mysql"
+      PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"
+      PHOTOPRISM_DATABASE_NAME: "photoprism"
+      PHOTOPRISM_DATABASE_USER: "photoprism"
+      PHOTOPRISM_DATABASE_PASSWORD: "${DB_PASSWORD}"
+      # Drops to the login user after start-up, so the photographs belong
+      # to a person rather than to root.
+      PHOTOPRISM_UID: "${PHOTOPRISM_UID}"
+      PHOTOPRISM_GID: "${PHOTOPRISM_GID}"
+    volumes:
+      # The library: everything indexed lives here.
+      - /srv/photoprism/originals:/photoprism/originals
+      # Cache, sidecar YAML and the nightly dump.
+      - /srv/photoprism/storage:/photoprism/storage
+    ports:
+      # Loopback only: the host's Caddy alone reaches 8164.
+      - "127.0.0.1:8164:2342"
+    depends_on:
+      mariadb:
+        condition: service_healthy

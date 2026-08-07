@@ -1,0 +1,66 @@
+{
+  "slug": "midjourney",
+  "name": "Midjourney",
+  "domain": "midjourney.com",
+  "whyPeoplePay": "Midjourney sells a look. The subscription buys access to a model nobody else has, tuned by a small team toward a house aesthetic that makes a mediocre prompt come out looking deliberate, and it buys the GPUs that render it in seconds without you owning any. The rest of the price is the crowd: a feed of thousands of images a day with their settings attached, and a community where somebody has already solved whatever you are stuck on.",
+  "plans": [
+    {
+      "name": "Basic",
+      "priceMonthly": 10,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "About 3.3 hours of fast GPU time a month. $96 a year on the annual plan, which the page presents as roughly 20 percent off."
+    },
+    {
+      "name": "Standard",
+      "priceMonthly": 30,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "About 15 hours of fast GPU time, plus unlimited generations in relax mode. $288 a year on the annual plan."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 60,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "About 30 hours of fast GPU time, and the first tier with stealth mode, which keeps your generations off the public feed. $576 a year on the annual plan."
+    },
+    {
+      "name": "Mega",
+      "priceMonthly": 120,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "About 60 hours of fast GPU time. $1,152 a year on the annual plan."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://docs.midjourney.com/hc/en-us/articles/27870484040333",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Midjourney's own subscription-plans article and its checkout page both sit behind a challenge that refuses automated readers, so we could not read the figures off the vendor's page on this date. The four monthly prices and the GPU-hour allowances are corroborated across several independent pricing round-ups published in 2026, and the annual figures are the 20 percent discount those pages describe. Treat the allowances as approximate and re-check before quoting a saving."
+  },
+  "ranked": [
+    {
+      "project": "invokeai",
+      "rationale": "The only option here that behaves like a product rather than a toolkit: a canvas, a queue, a gallery with boards, a model manager that installs checkpoints by name, and, unusually for this category, a real account system you can switch on with one variable. It is also the only one whose Docker image upstream builds itself, tagged with the release it contains, on every version tag. That matters more than it sounds: everything else in this field is packaged by volunteers whose tags name a CUDA version and a build date rather than the software inside them. What you give up is reach. It wants an NVIDIA card with 8 GB of memory and 16 GB of system RAM, and it will not draw like Midjourney, because that look belongs to a model nobody has published."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "ComfyUI",
+      "repo": "https://github.com/comfyanonymous/ComfyUI",
+      "note": "GPL-3.0, developed daily, and the most capable of these by a distance: the node graph is where new techniques land first and where every serious workflow ends up. We planned to rank it and could not, for one reason. The project publishes no Docker image, and none of the community packagings clears the bar this catalogue sets. yanwk/comfyui-boot bakes in whichever release was newest on its build date and names that date in the tag rather than the version, so a pin cannot say which ComfyUI you get. mmartial/comfyui-nvidia-docker is MIT and well maintained, but it downloads ComfyUI into a mounted directory at container start, so the digest pins nothing about the application at all. ai-dock/comfyui has not been touched since November 2024. If you want ComfyUI, install it on the machine directly and pin the git tag yourself."
+    },
+    {
+      "name": "Stable Diffusion web UI (AUTOMATIC1111)",
+      "repo": "https://github.com/AUTOMATIC1111/stable-diffusion-webui",
+      "note": "AGPL-3.0, and still the most widely written-about interface in this field: almost every tutorial from the SD 1.5 and SDXL era assumes it. Its pace has changed, though. The last commit to the main branch landed in March 2026 after a long quiet stretch, extensions have drifted toward other hosts, and there is no official container. It is a reasonable thing to run if you already know it. It is a poor thing to start on in 2026."
+    },
+    {
+      "name": "Fooocus",
+      "repo": "https://github.com/lllyasviel/Fooocus",
+      "note": "GPL-3.0, not archived, and the closest anything open has come to the Midjourney feel: one prompt box, sensible defaults baked in, no sliders to get wrong. It is also effectively finished. The last commit was December 2025, it targets SDXL and has not followed the model generations since, and there is no official image. Worth knowing about if the appeal of Midjourney was that it asks you nothing. Not worth building on."
+    }
+  ]
+}

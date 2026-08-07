@@ -1,0 +1,25 @@
+# PhotoPrism · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.photoprism.app/getting-started/proxies/traefik/ and
+# https://caddyserver.com/docs/caddyfile/directives/reverse_proxy
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed, with
+# <DOMAIN> replaced by the hostname pointed at this box. That hostname is also
+# PHOTOPRISM_SITE_URL in .env, and the two have to say the same thing.
+
+<DOMAIN> {
+	# No `encode`: PhotoPrism compresses its own API responses, and JPEG,
+	# HEIC and video do not compress twice.
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# 8164 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8164
+}

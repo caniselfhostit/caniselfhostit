@@ -1,0 +1,39 @@
+# KitchenOwl · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   self-hosting ....... https://docs.kitchenowl.org/v0.7.10/self-hosting/
+#   variable reference . https://docs.kitchenowl.org/v0.7.10/self-hosting/advanced/
+#   image .............. https://github.com/TomBursch/kitchenowl/blob/v0.7.10/Dockerfile
+#
+# One service on the computer you are sitting at. Every path is relative to
+# ~/selfhost/kitchenowl/, which lets one file work on macOS, Linux and Windows
+# and keeps the shopping lists a folder you can open in Finder or Explorer. The
+# container process runs as root and writes into /data itself, so the relative
+# bind mount needs no named volume and no ownership fix on any of the three.
+# The database driver defaults to sqlite and the file lands in ./data next to
+# the uploaded photos. The image declares its own HEALTHCHECK against the
+# /api/health route. FRONT_URL is http://localhost:8167, which is an address
+# this computer answers and no other device does. Digest read from Docker Hub
+# on 2026-08-07; the image publishes amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  kitchenowl:
+    image: tombursch/kitchenowl:v0.7.10@sha256:bd821a41b8cb27fd7fcf429acd1fc67e9f889485a2cd1193d68c2d804a8e1bef
+    container_name: kitchenowl
+    restart: unless-stopped
+    # FRONT_URL and the signing key come from ./.env, mode 600. The image
+    # carries a signing-key default that upstream prints in its own sample, so
+    # this file is only safe with that file in place.
+    env_file: ./.env
+    environment:
+      # Nobody can create an account from the sign-in screen.
+      OPEN_REGISTRATION: "false"
+      # Onboarding stays available until one account exists, then the server
+      # closes it on its own: the endpoint counts users and refuses at one.
+      DISABLE_ONBOARDING: "false"
+    volumes:
+      - ./data:/data
+    ports:
+      # Loopback only: no other device on the wifi can reach 8167.
+      - "127.0.0.1:8167:8080"

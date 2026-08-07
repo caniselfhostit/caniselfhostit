@@ -50,7 +50,7 @@
     {
       "name": "Collabora Online",
       "repo": "https://github.com/CollaboraOnline/online",
-      "note": "The other browser office server, and the honest split with ONLYOFFICE is the engine underneath: Collabora renders with a LibreOffice core, so it is strongest on ODF and does its OOXML work through LibreOffice's import filters. Maintained and shipping, but the GitHub repository says in its own description that it is an issue tracker and that active development happens on the project's Gerrit, which is worth knowing before you plan to read the history there."
+      "note": "MPL-2.0, the LibreOffice-lineage engine. It has since earned its own page in this catalog as the Google Workspace answer, where its single-container CODE install is written up in full; on this page ONLYOFFICE keeps the top spot for OOXML round-trip fidelity with Office users."
     },
     {
       "name": "CryptPad",

@@ -1,0 +1,117 @@
+# Zammad · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker compose ..... https://docs.zammad.org/en/latest/install/docker-compose.html
+#   scenarios .......... https://docs.zammad.org/en/latest/install/docker-compose/docker-compose-scenarios.html
+#   variable reference . https://docs.zammad.org/en/latest/appendix/environment-variables.html
+#
+# Seven services, every path relative to ~/selfhost/zammad/ so one file works
+# on macOS, Linux and Windows. The database and Redis are named volumes, not
+# bind mounts: both images chown their data directories to uids Docker
+# Desktop's Windows file sharing cannot grant on a home-directory bind mount.
+# Four of the seven are one Zammad image under different commands. Upstream's
+# Elasticsearch, backup and migration containers are left out, the first
+# through their ELASTICSEARCH_ENABLED switch. Digests read from Docker Hub 2026-08-07;
+# every image publishes amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+name: zammad
+
+# The four Zammad processes share one image; compose ignores x- keys.
+x-zammad: &zammad
+  image: zammad/zammad:7.1.2-0003@sha256:1ce0e929fac75f83f3e7534e9eb7aabfc3596cffbd00e25393be79709b9bea0c
+  restart: unless-stopped
+  init: true
+  env_file: ./.env
+  environment:
+    POSTGRESQL_HOST: zammad-postgresql
+    POSTGRESQL_DB: zammad_production
+    POSTGRESQL_USER: zammad
+    MEMCACHE_SERVERS: zammad-memcached:11211
+    REDIS_URL: redis://zammad-redis:6379
+    ELASTICSEARCH_ENABLED: "false"
+    NGINX_SERVER_SCHEME: http
+    RAILS_TRUSTED_PROXIES: 127.0.0.1,::1,172.16.0.0/12
+  volumes:
+    - ./storage:/opt/zammad/storage
+  depends_on:
+    zammad-postgresql:
+      condition: service_healthy
+    zammad-redis:
+      condition: service_healthy
+    zammad-memcached:
+      condition: service_healthy
+
+services:
+  zammad-postgresql:
+    image: postgres:17.10-alpine@sha256:742f40ea20b9ff2ff31db5458d127452988a2164df9e17441e191f3b72252193
+    container_name: zammad-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: zammad_production
+      POSTGRES_USER: zammad
+      POSTGRES_PASSWORD: ${POSTGRESQL_PASS}
+    volumes:
+      - zammad-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U zammad -d zammad_production"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other containers.
+
+  zammad-redis:
+    image: redis:8.10.0-alpine@sha256:978f0e01593e65eed801f2402944efcd936d43b5027e4908a7897baf88ed6241
+    container_name: zammad-redis
+    restart: unless-stopped
+    volumes:
+      - zammad-redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 12
+
+  zammad-memcached:
+    image: memcached:1.6.45-alpine@sha256:c29847751abb41f4c268c84fb3087fee05d4edcbda44409ccb5086e26148e8a7
+    container_name: zammad-memcached
+    restart: unless-stopped
+    command: memcached -m 256M
+    healthcheck:
+      test: ["CMD", "nc", "-z", "127.0.0.1", "11211"]
+      interval: 10s
+      retries: 12
+
+  zammad-railsserver:
+    <<: *zammad
+    container_name: zammad-railsserver
+    command: ["zammad-railsserver"]
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://127.0.0.1:3000"]
+      interval: 30s
+      start_period: 240s
+      retries: 5
+
+  zammad-websocket:
+    <<: *zammad
+    container_name: zammad-websocket
+    command: ["zammad-websocket"]
+
+  zammad-scheduler:
+    <<: *zammad
+    container_name: zammad-scheduler
+    command: ["zammad-scheduler"]
+
+  zammad-nginx:
+    <<: *zammad
+    container_name: zammad-nginx
+    command: ["zammad-nginx"]
+    init: false
+    ports:
+      # Loopback only: no other device on the wifi can reach 8169.
+      - "127.0.0.1:8169:8080"
+    depends_on:
+      zammad-railsserver:
+        condition: service_healthy
+
+volumes:
+  zammad-pgdata:
+  zammad-redisdata:

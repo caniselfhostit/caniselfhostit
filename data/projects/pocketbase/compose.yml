@@ -1,0 +1,56 @@
+# PocketBase · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   introduction ....... https://pocketbase.io/docs/
+#   production notes ... https://pocketbase.io/docs/going-to-production/
+#   health endpoint .... https://pocketbase.io/docs/api-health/
+#   image entrypoint ... https://github.com/muchobien/pocketbase-docker/blob/22f36a08837f26b22a3327cb8066ad63c3362c70/entrypoint.sh
+#
+# One container. PocketBase is a single Go binary with SQLite compiled into it,
+# so there is no database service here, and no Caddy service either: Prompt Zero
+# already runs Caddy under systemd on the host.
+#
+# The PocketBase project publishes no image. Its production page states that
+# PocketBase doesn't have an official Docker image, so this file uses
+# ghcr.io/muchobien/pocketbase, built outside the PocketBase project from the
+# revision named above, which is the one this digest was built from. That
+# Dockerfile downloads upstream's own release zip for the target architecture
+# and unpacks it, and it does not check that zip against the checksums.txt
+# upstream publishes beside it. Neither does the example Dockerfile in
+# upstream's own docs. What fixes the bytes you run is the digest below, which
+# names one build and nothing else, and step 7 asserts the binary inside it
+# reports 0.39.10. Digest read from ghcr.io on 2026-08-07; the index carries
+# linux/amd64, linux/arm64 and linux/armv7.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  pocketbase:
+    image: ghcr.io/muchobien/pocketbase:0.39.10@sha256:dfebd2550d6b5176d67afd3e859f9b642096e624c7f6ada1b5a5bc70a5d21be1
+    container_name: pocketbase
+    restart: unless-stopped
+    # The image declares no USER, so without this line it runs as root.
+    # PocketBase writes nothing outside its data directory, so uid 1000 is
+    # enough, and step 2 hands that directory to 1000.
+    user: "1000:1000"
+    env_file: /srv/pocketbase/.env
+    environment:
+      # Inside the container the server has to listen on every interface, or
+      # the loopback port published on the host reaches nothing. 8090 is the
+      # port the image's entrypoint defaults to, named here so a change to
+      # that default cannot move it under the healthcheck and the Caddy block.
+      PB_HOST: "0.0.0.0"
+      PB_PORT: "8090"
+    volumes:
+      # The one mount: data.db, every uploaded file, and PocketBase's own
+      # backup archives. Local disk only: SQLite needs real POSIX file locks,
+      # and a network mount corrupts it quietly.
+      - /srv/pocketbase/data:/pb_data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8090/api/health || exit 1"]
+      start_period: 10s
+      interval: 15s
+      retries: 10
+    ports:
+      # Loopback only. The host's Caddy is the only thing that reaches 8166,
+      # and 8166 never enters the firewall.
+      - "127.0.0.1:8166:8090"

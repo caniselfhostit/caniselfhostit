@@ -1,0 +1,70 @@
+{
+  "slug": "adobe-lightroom",
+  "name": "Adobe Lightroom",
+  "domain": "adobe.com",
+  "whyPeoplePay": "Lightroom is two products sold as one, and most subscribers only think about the first. It is a raw developer: a non-destructive edit stack, masking that finds the sky and the subject on its own, presets you built over years, and profiles for the exact camera and lens you shot with. It is also a catalogue: every photograph you own, indexed, keyworded, searchable, and synced so the phone, the laptop and the desktop see the same library. The develop half is genuinely hard to leave, because the edits are stored as instructions in Adobe's format and nothing else reads them the same way. The catalogue half is the part that quietly grew into a storage bill, and it is the part a server you own can take back.",
+  "plans": [
+    {
+      "name": "Lightroom (1TB), annual plan",
+      "priceMonthly": 14.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Billed monthly on a one-year commitment, with 1 TB of cloud storage. Adobe's own pricing-change notice puts this at $14.99, up from $11.99, for new subscribers from 20 March 2026 and for existing ones at their next renewal on or after that date. Paying for the year up front is $149.99, up from $119.88."
+    },
+    {
+      "name": "Lightroom (1TB), month to month",
+      "priceMonthly": 22.49,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "No commitment, cancel any time. Raised from $17.99 in the same March 2026 change. This is the figure a subscriber pays who has not signed up for a year."
+    },
+    {
+      "name": "Photography plan (1TB)",
+      "priceMonthly": 19.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Adds Lightroom Classic and Photoshop to the same 1 TB of cloud storage. This is the plan most photographers who keep a desktop catalogue are actually on, which is why the arithmetic on this page is worth doing twice."
+    },
+    {
+      "name": "Photography plan (20GB)",
+      "priceMonthly": 9.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "The cheap tier that made this bundle famous. Closed to new subscribers, and existing members were moved to a higher monthly rate; it is listed here because a lot of people are still on it and will be surprised by what replaces it."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://www.adobe.com/products/photoshop-lightroom/plans.html",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Adobe's own plans page would not render for us on the day: three attempts timed out before returning anything, and the Creative Cloud plans page and the regional compare-plans pages did the same. The figures here come from Adobe's help-centre notice about the Lightroom (1TB) price change, which states the increases to $14.99 annual-billed-monthly, $22.49 month-to-month and $149.99 prepaid effective 20 March 2026, corroborated through search against third-party trackers for the Photography plan tiers. That makes the ladder structure reliable and the individual Photography plan figures worth re-reading on a rendered vendor page before anyone quotes them. Monthly-billed figures are recorded, with the annual-billed equivalents in the plan notes."
+  },
+  "ranked": [
+    {
+      "project": "photoprism",
+      "rationale": "The closest thing to Lightroom's catalogue half that you can run on your own machine. It indexes a folder tree you already have, recognises faces and subjects on your own CPU rather than in somebody's datacentre, reads RAW files, puts everything on a map and a timeline, and answers to a search box that understands what is in the picture. Be clear about what it is not: it will not develop a photograph. There is no exposure slider, no masking, no preset. If the develop module is what you open Lightroom for, this replaces the half of the subscription that turned into a storage bill and leaves the other half exactly where it is."
+    },
+    {
+      "project": "immich",
+      "rationale": "Second here, and first for a different question. If what you actually need back is the phone: the camera roll uploading itself the moment you take a picture, from anywhere, into an archive you own. Immich has the mobile app for that and PhotoPrism does not. It is the heavier install, four containers against two, and it points at the everything-archive rather than the curated library. Choose it if the sync is the thing you are paying for, and PhotoPrism if the organising is."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "darktable",
+      "repo": "https://github.com/darktable-org/darktable",
+      "note": "GPL-3.0, released steadily, and the honest answer to the other half of this question. It is a raw developer with a non-destructive edit history, masking, a module stack and camera profiles, which is the part of Lightroom no server-side photo library replaces. It is not self-hosted software: it is a desktop application, there is no browser, no phone, and no catalogue you can reach from another machine. Most people leaving Lightroom properly end up running something like this next to something like PhotoPrism, and paying for neither."
+    },
+    {
+      "name": "Piwigo",
+      "repo": "https://github.com/Piwigo/Piwigo",
+      "note": "GPL-2.0, twenty years old and still shipping, and the pick if the job is publishing galleries for other people to look at. That is a different job from a Lightroom catalogue, which is private working storage for the person who took the pictures. Piwigo's per-album permissions and its guest browsing are built for an audience, and both are wasted on an archive of one. We rank it first on the Flickr page for exactly that reason."
+    },
+    {
+      "name": "LibrePhotos",
+      "repo": "https://github.com/LibrePhotos/librephotos",
+      "note": "MIT, still maintained, with a 1.0 line released in mid-2026 after a long stretch of pre-1.0 versions. It does face recognition, auto-albums and semantic search, and it is the smallest of these projects by a wide margin, which shows in the pace of change and in how many people you can ask when something breaks. A reasonable choice if the MIT licence matters to you, and not the one to hand a family's only copy of twenty years of photographs."
+    }
+  ]
+}

@@ -75,7 +75,7 @@
     {
       "name": "PhotoPrism",
       "repo": "https://github.com/photoprism/photoprism",
-      "note": "Actively developed and the strongest browser-first library manager on this list, with good indexing of an existing folder tree you already organise yourself. It is not the pick here because the mobile story is the weak point: there is no first-party background-upload app of the kind that replaces Google Photos, and that automatic upload is the habit people are paying for. GitHub reports its license as NOASSERTION; the LICENSE file in the repository is AGPL-3.0, and parts of the project are sold under a separate membership."
+      "note": "AGPL-3.0, AI tagging and search over your own library. It has since earned its own page in this catalog as the Adobe Lightroom answer, where its install is written up in full; on this page Immich keeps the top spot for phone backup."
     },
     {
       "name": "Ente Photos",

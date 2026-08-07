@@ -1,0 +1,96 @@
+{
+  "slug": "collabora",
+  "name": "Collabora Online",
+  "tagline": "Writer, Calc and Impress in a browser tab, on the LibreOffice engine, driven by the file app you already run.",
+  "repo": "CollaboraOnline/online",
+  "site": "https://www.collaboraonline.com",
+  "category": "files-docs",
+  "replaces": [
+    {
+      "saas": "google-workspace-business-starter",
+      "plan": "Business Starter",
+      "seatsAssumed": 5
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "MPL-2.0",
+  "officialCompose": "none",
+  "local": {
+    "fit": "caveat",
+    "note": "The editor answers only at http://localhost:8165, so the file application that drives it has to be on this same computer, and nobody else can open a document alongside you."
+  },
+  "quote": {
+    "text": "The Collabora Online Development Edition (CODE) is aimed at home users and small teams.",
+    "source": "Collabora, CODE 26.04 release notes",
+    "url": "https://www.collaboraonline.com/code-26-04-release-notes/",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "Under --use-env-vars coolwsd reads username, password, server_name and aliasgroup1 from the environment and maps them onto admin_console.username, admin_console.password, server_name and the WOPI alias groups, while extra_params is appended to its command line.",
+      "url": "https://github.com/CollaboraOnline/online.mirror/blob/main/wsd/COOLWSD.cpp"
+    },
+    {
+      "claim": "With no alias group configured the WOPI host list runs in 'first' mode, which allows only the first host that connects; naming an alias group and leaving it empty switches it to 'groups' mode with nothing in it, and upstream logs that all WOPI hosts will be denied.",
+      "url": "https://github.com/CollaboraOnline/online.mirror/blob/main/wsd/HostUtil.cpp"
+    },
+    {
+      "claim": "The admin console at /browser/dist/admin/admin.html authenticates with HTTP Basic credentials and answers 401 with a WWW-Authenticate header when none are supplied, which is what makes an unauthenticated request a usable check that the generated password reached the container.",
+      "url": "https://github.com/CollaboraOnline/online.mirror/blob/main/wsd/FileServer.cpp"
+    },
+    {
+      "claim": "Home mode limits concurrent open connections to 20 and concurrent open documents to 10, and it is off by default: the documented trade is that welcome and user-feedback popups cannot be switched off unless you accept those limits.",
+      "url": "https://github.com/CollaboraOnline/online.mirror/blob/main/configure.ac"
+    },
+    {
+      "claim": "The Nextcloud connector is the richdocuments app, configured under Admin then Collabora Online, which stores the server address as the wopi_url setting and reads /hosting/discovery and /hosting/capabilities from it.",
+      "url": "https://github.com/nextcloud/richdocuments/blob/main/docs/install.md"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "This replaces one part of the subscription, not the subscription. You get Writer, Calc and Impress in a browser tab, co-editing included, on the LibreOffice engine and its native ODF formats. You do not get Gmail, the pooled Drive storage, or Meet. The mail and the storage are separate problems, and the storage half upstream documents is Nextcloud with the Collabora Online connector app.",
+    "On its own it edits nothing. A document server with no application in front of it is a correctly running server with an empty queue: it opens, renders and saves documents that something else hands it, and that something else is a separate install with its own hostname and its own backups.",
+    "One list decides who may use it. The WOPI alias group in .env names the applications allowed to load documents through this server, and leaving it unset does not mean 'open to me', it means whichever application connects first claims the server. This install sets that list deliberately and asserts it.",
+    "Two gigabytes of RAM and about 470 MB to download before it starts, because this is an office suite compiled to run on a server, with every dictionary and forty language packs inside the image. Each open document is a separate process on top of that.",
+    "The image is CODE, the free edition upstream describes as aimed at home users and small teams. MPL-2.0 throughout, with no support contract, no clustering, and a welcome screen and feedback popup you cannot switch off unless you turn on home mode and accept its cap of 20 connections and 10 open documents. Those are what the paid editions sell."
+  ],
+  "sources": {
+    "compose": "https://github.com/CollaboraOnline/online.mirror/blob/main/docker/from-packages/Dockerfile",
+    "caddy": "https://caddyserver.com/docs/caddyfile/directives/reverse_proxy",
+    "install": "https://github.com/CollaboraOnline/online.mirror/blob/main/docker/README",
+    "env": "https://github.com/CollaboraOnline/online.mirror/blob/main/wsd/COOLWSD.cpp",
+    "config": "https://github.com/CollaboraOnline/online.mirror/blob/main/coolwsd.xml.in",
+    "wopiHosts": "https://github.com/CollaboraOnline/online.mirror/blob/main/wsd/HostUtil.cpp",
+    "routes": "https://github.com/CollaboraOnline/online.mirror/blob/main/wsd/ClientRequestDispatcher.cpp",
+    "adminAuth": "https://github.com/CollaboraOnline/online.mirror/blob/main/wsd/FileServer.cpp",
+    "limits": "https://github.com/CollaboraOnline/online.mirror/blob/main/configure.ac",
+    "helm": "https://github.com/CollaboraOnline/online/blob/master/kubernetes/helm/collabora-online/values.yaml",
+    "connector": "https://github.com/nextcloud/richdocuments/blob/main/docs/install.md",
+    "releaseNotes": "https://www.collaboraonline.com/code-26-04-release-notes/",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "nextcloud",
+    "onlyoffice",
+    "stirling-pdf"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "0b26eb4a8de027cbc80612df2ff21838bd8c80ed0deb067fb8ebb179c76f183a"
+}
