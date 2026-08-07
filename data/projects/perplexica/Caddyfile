@@ -1,0 +1,35 @@
+# Vane · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://github.com/ItzCrazyKns/Vane/blob/v1.12.2/README.md,
+# https://caddyserver.com/docs/automatic-https and
+# https://caddyserver.com/docs/caddyfile/directives/basic_auth
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. Vane has no
+# sign-in of its own, so this block is the login: the setup screen behind it
+# holds the API key every answer is billed to. Needs Caddy 2.8 or newer, where
+# the directive is spelled basic_auth.
+
+<DOMAIN> {
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# The credential is not in this file, because this file is published. The
+	# install writes /etc/caddy/vane-auth.conf: one basic_auth block with the
+	# username `vane` and a bcrypt hash of the generated password.
+	import /etc/caddy/vane-auth.conf
+
+	# 8148 is the loopback port compose publishes on this host. Not a container
+	# port, and not open in the firewall.
+	reverse_proxy 127.0.0.1:8148 {
+		# Answers arrive one piece at a time: no `encode` line anywhere here,
+		# and a proxy that flushes every write instead of buffering them.
+		flush_interval -1
+	}
+}

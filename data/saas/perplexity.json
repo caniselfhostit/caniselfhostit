@@ -1,0 +1,72 @@
+{
+  "slug": "perplexity",
+  "name": "Perplexity",
+  "domain": "perplexity.ai",
+  "whyPeoplePay": "Perplexity sells the two halves of an answer at once: a search index it crawls and maintains itself, and frontier models it has already paid for. You type a question and get a written answer with numbered sources under it, on a phone, in a browser extension, at a flat monthly price that does not move when you have a heavy week. The index is the part that is genuinely hard to replace, and the flat rate is the part people are really buying.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "A daily allowance of the advanced search mode, then the basic one."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 20,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Advertised at $200 a year on the annual plan, which is the figure the marketing pages lead with."
+    },
+    {
+      "name": "Max",
+      "priceMonthly": 200,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Advertised at $2,000 a year on the annual plan. Adds unlimited use of the deep-research and Labs modes."
+    },
+    {
+      "name": "Enterprise Pro",
+      "priceMonthly": 40,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per user per month, or $400 per seat per year. Discounted rates are advertised for education and nonprofits."
+    },
+    {
+      "name": "Enterprise Max",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Secondary sources put this near $325 per seat per month; the vendor directs buyers to sales, so it is recorded as quote-only."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://www.perplexity.ai/pro",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "perplexity.ai returned HTTP 403 to every automated request on the check date, so the vendor page could not be read directly. The ladder was corroborated from two independent secondary write-ups dated April and June 2026 that agree on Free, Pro at $20, Max at $200 and Enterprise Pro at $40 per seat. One further source quoted Max at a different figure, and the sources disagree on whether Enterprise Max has a list price at all, which is why it is recorded as quote-only. Re-check against the vendor page before quoting these numbers."
+  },
+  "ranked": [
+    {
+      "project": "perplexica",
+      "rationale": "The only one here that reproduces the actual shape of the product: you ask a question, it searches, and the answer arrives with numbered citations under it, in an interface built for that and nothing else. What you take on is both halves of what Perplexity pays for. The index becomes a SearXNG asking public engines that increasingly refuse datacenter addresses, and the model becomes an API key metered to you. It is the honest trade, not a free lunch."
+    },
+    {
+      "project": "librechat",
+      "rationale": "The better pick if what you actually wanted was the chat window, and search is occasional. It is a conversation-first interface over Anthropic, OpenAI and Google with a searchable history in your own database, and search arrives through plugins rather than being the point. Choose it when you would miss the threads more than the citations."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "SearXNG",
+      "repo": "https://github.com/searxng/searxng",
+      "note": "The metasearch engine underneath the answer layer, AGPL-3.0 and released most days. On its own it gives you private search across many engines with no tracking and no LLM bill, which is enough for a lot of people, but it hands you a list of links rather than a written answer with sources. It is also where the hard part lives: engines block instances hosted in datacenters, and running it is signing up for that."
+    },
+    {
+      "name": "Morphic",
+      "repo": "https://github.com/miurla/morphic",
+      "note": "Apache-2.0, actively developed, and the closest alternative in spirit: an answer engine with a generative interface built on Next.js. It leans on hosted search APIs such as Tavily or Exa rather than a search engine you run, so the search bill moves from your own SearXNG to a third-party key. Not tested here."
+    }
+  ]
+}

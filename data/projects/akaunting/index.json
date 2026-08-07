@@ -1,0 +1,93 @@
+{
+  "slug": "akaunting",
+  "name": "Akaunting",
+  "tagline": "Invoices, bills, expenses and a client portal on your own domain, with the double-entry ledger sold as a paid app.",
+  "repo": "akaunting/akaunting",
+  "site": "https://akaunting.com",
+  "category": "money-home",
+  "replaces": [
+    {
+      "saas": "quickbooks-online",
+      "plan": "Simple Start",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 3
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "BUSL-1.1",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/akaunting/docker/blob/master/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "On your own computer Akaunting answers at http://localhost:8151 and nowhere else, so the client portal is a page only you can open and every invoice reaches a customer as a PDF you send yourself."
+  },
+  "quote": {
+    "text": "provided you do not use it in any of the following ways: (1) Use the Licensed Work with a total of more than two users or one company or one thousand invoices.",
+    "source": "Akaunting LICENSE.txt, Business Source License 1.1, Additional Use Grant",
+    "url": "https://github.com/akaunting/akaunting/blob/3.1.21/LICENSE.txt",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Akaunting is licensed under the Business Source License 1.1, whose Additional Use Grant permits production use only up to two users, one company and one thousand invoices, with GPLv3 as the change licence four years after a version is published.",
+      "url": "https://github.com/akaunting/akaunting/blob/3.1.21/LICENSE.txt"
+    },
+    {
+      "claim": "The chart of accounts, general ledger, trial balance and balance sheet come from the Double-Entry app, which costs $72 a year or $756 once for an on-premise install.",
+      "url": "https://akaunting.com/apps/double-entry"
+    },
+    {
+      "claim": "Connecting a bank account is the Bank Feeds app, a paid subscription of $132 a year on-premise that runs through Plaid or GoCardless.",
+      "url": "https://akaunting.com/apps/bank-feeds"
+    },
+    {
+      "claim": "The official image's entrypoint runs `php artisan install` with the database and admin details from the environment when AKAUNTING_SETUP is true, so the browser setup wizard is never needed.",
+      "url": "https://github.com/akaunting/docker/blob/master/files/akaunting.sh"
+    },
+    {
+      "claim": "Recurring transactions and invoice reminders are scheduled Laravel commands, so they only run where something runs the scheduler, and the official image runs Apache alone.",
+      "url": "https://github.com/akaunting/akaunting/blob/3.1.21/app/Console/Kernel.php"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Source-available, not open source. Akaunting is under the Business Source License 1.1: you may read and modify the code, but the free production grant stops at two users, one company and one thousand invoices, and it converts to GPLv3 four years after each version ships. One person billing their own clients sits inside that grant; a bookkeeper running books for several companies does not, and buys an on-premise plan.",
+    "Double-entry is a paid app. The free core gives you customers, vendors, invoices, bills, transactions, a client portal, a profit and loss and a tax summary. The chart of accounts, general ledger, trial balance and balance sheet are the Double-Entry app at $72 a year, so if your accountant asks for a balance sheet, that is a purchase rather than a setting.",
+    "No bank feeds. Connecting a bank is another paid app at $132 a year; without it you download a statement and import or type the transactions, which is the part of QuickBooks people miss first.",
+    "The image trails the source. 3.1.21 is the newest tag upstream's Docker repository has published, while the project has released 3.2.1, and the application lives in a Docker volume, so pulling a newer image moves PHP and Apache but not Akaunting. Moving Akaunting is a console command, `php artisan update:all`, run after a backup.",
+    "Nothing here runs the scheduler or sends mail, so recurring invoices do not create themselves and Email Invoice does nothing. You send the PDF or the portal link yourself until you add both, and payroll, inventory and projects are further paid apps."
+  ],
+  "sources": {
+    "compose": "https://github.com/akaunting/docker/blob/master/README.md",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://akaunting.com/hc/docs/on-premise/installation/",
+    "requirements": "https://akaunting.com/hc/docs/on-premise/requirements/",
+    "entrypoint": "https://github.com/akaunting/docker/blob/master/files/akaunting.sh",
+    "variables": "https://github.com/akaunting/docker/blob/master/env/run.env.example",
+    "update": "https://akaunting.com/hc/docs/on-premise/update/",
+    "license": "https://github.com/akaunting/akaunting/blob/3.1.21/LICENSE.txt",
+    "plans": "https://akaunting.com/plans-on-premise"
+  },
+  "related": [
+    "invoice-ninja",
+    "actual-budget",
+    "kimai"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "c4253cd75bd1d404457f96099b77f2e098972c06bc995bf3e11ff7e1bcdde988"
+}

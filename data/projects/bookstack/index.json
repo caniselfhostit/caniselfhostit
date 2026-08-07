@@ -1,0 +1,91 @@
+{
+  "slug": "bookstack",
+  "name": "BookStack",
+  "tagline": "A team wiki organised into shelves, books, chapters and pages, on a hostname you own and a database you can dump.",
+  "repo": "BookStackApp/BookStack",
+  "site": "https://www.bookstackapp.com",
+  "category": "notes-wikis",
+  "replaces": [
+    {
+      "saas": "slab",
+      "plan": "Startup",
+      "seatsAssumed": 5
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 4
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "MIT",
+  "officialCompose": "none",
+  "local": {
+    "fit": "caveat",
+    "note": "The wiki answers only at http://localhost:8150, so nobody else can open it and your own phone cannot either: on this path a team wiki is a notebook for one person."
+  },
+  "quote": {
+    "text": "Community docker setups are available for those that would prefer to use a containerised version of BookStack.",
+    "source": "BookStack documentation, Installation",
+    "url": "https://www.bookstackapp.com/docs/admin/installation/",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "BookStack publishes no Docker image of its own. Its installation page points at community docker setups and names two, LinuxServer.io and solidnerd, which is why this install pins a community image rather than an official one.",
+      "url": "https://www.bookstackapp.com/docs/admin/installation/"
+    },
+    {
+      "claim": "The LinuxServer.io image halts its own init with \"The application key is missing, halting init!\" when APP_KEY is unset, and runs BookStack's schema migration on every start.",
+      "url": "https://github.com/linuxserver/docker-bookstack/blob/v26.05.3-ls277/root/etc/s6-overlay/s6-rc.d/init-bookstack-config/run"
+    },
+    {
+      "claim": "BookStack's first database migration inserts a user with the email admin@admin.com and the bcrypt of the password \"password\", which is the credential this install replaces before it finishes.",
+      "url": "https://github.com/BookStackApp/BookStack/blob/v26.05.3/database/migrations/2014_10_12_000000_create_users_table.php"
+    },
+    {
+      "claim": "The bookstack:create-admin command with --initial updates the name, email and password of the existing admin@admin.com account in place rather than creating a second administrator.",
+      "url": "https://github.com/BookStackApp/BookStack/blob/v26.05.3/app/Console/Commands/CreateAdminCommand.php"
+    },
+    {
+      "claim": "APP_URL is the root URL every link in BookStack is generated from, and changing it later needs the bookstack:update-url command to rewrite stored URLs.",
+      "url": "https://github.com/BookStackApp/BookStack/blob/v26.05.3/.env.example"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The application is upstream's, the Docker packaging is not. BookStack publishes no image and its installation page points at community docker setups, so this install uses lscr.io/linuxserver/bookstack, maintained at github.com/linuxserver/docker-bookstack under GPL-3.0 by people outside the BookStack project. Their image unpacks BookStack's own release archive onto their Alpine and nginx base, so the code is upstream's, and their build cadence and base-image conventions are one more thing you are trusting.",
+    "The account the schema creates is admin@admin.com with the password \"password\", published in the image's install notes. This install replaces it before it finishes and then checks that the old pair is refused, which is exactly why you do not walk away from a half-finished run on a hostname that already resolves.",
+    "You own a MariaDB. Every shelf, book, chapter, page and revision is a row in it, and backups are a dump rather than a folder copy. Uploaded images and attachments live separately under config/, so a real backup is two artifacts, and a dump you have never restored is not a backup.",
+    "No mail, so no password resets and no invitations. The wiki works fully without SMTP, and this install deliberately does not configure it, which means the administrator password in .env is the only copy and you add people by creating their accounts yourself.",
+    "No realtime co-editing, no AI answers over your content, no SAML or SCIM. Those are what Slab's paid tiers sell on top of a wiki, and a page you and a colleague open at the same moment here is a page one of you will overwrite."
+  ],
+  "sources": {
+    "compose": "https://docs.linuxserver.io/images/docker-bookstack/",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://www.bookstackapp.com/docs/admin/installation/",
+    "config": "https://github.com/BookStackApp/BookStack/blob/v26.05.3/.env.example.complete",
+    "imageInit": "https://github.com/linuxserver/docker-bookstack/blob/v26.05.3-ls277/root/etc/s6-overlay/s6-rc.d/init-bookstack-config/run",
+    "imageDockerfile": "https://github.com/linuxserver/docker-bookstack/blob/v26.05.3-ls277/Dockerfile",
+    "admin": "https://www.bookstackapp.com/docs/admin/commands/",
+    "backup": "https://www.bookstackapp.com/docs/admin/backup-restore/"
+  },
+  "related": [
+    "docmost",
+    "trilium",
+    "linkding"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "c9d0743f71a3d4031a7a9bbbfebee8c818b721a8119cff9c82b448f337f468b5"
+}

@@ -1,0 +1,92 @@
+{
+  "slug": "documenso",
+  "name": "Documenso",
+  "tagline": "E-signing where the key that seals the document is one you generated and keep, on a server you run.",
+  "repo": "documenso/documenso",
+  "site": "https://documenso.com",
+  "category": "files-docs",
+  "replaces": [
+    {
+      "saas": "pandadoc",
+      "plan": "Business",
+      "seatsAssumed": 3
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": true,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 5
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 240,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/documenso/documenso/blob/main/docker/production/compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Signing links made here begin with http://localhost:8142 and this install sends no mail, so it signs and stores your own documents and cannot ask anyone else to sign one."
+  },
+  "quote": {
+    "text": "Documenso does not ship with a signing certificate. Without one, the application starts normally but all document signing will fail.",
+    "source": "Documenso self-hosting requirements",
+    "url": "https://docs.documenso.com/docs/self-hosting/getting-started/requirements",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "A self-hosted instance needs a signing certificate you provide, PostgreSQL 14 or later, and a working SMTP server; no other database engine is supported.",
+      "url": "https://docs.documenso.com/docs/self-hosting/getting-started/requirements"
+    },
+    {
+      "claim": "A self-signed certificate is free and still guarantees document integrity, but Adobe Acrobat will not show a green check and recipients see a warning that the signature cannot be verified.",
+      "url": "https://docs.documenso.com/docs/self-hosting/configuration/signing-certificate"
+    },
+    {
+      "claim": "The container reads the certificate from /opt/documenso/cert.p12, runs as uid 1001, listens on port 3000, and exposes /api/health and /api/certificate-status.",
+      "url": "https://docs.documenso.com/docs/self-hosting/deployment/docker"
+    },
+    {
+      "claim": "Sign-in is refused with an unverified-email error until the account's address has been confirmed, so a fresh instance without working mail locks out its own installer.",
+      "url": "https://github.com/documenso/documenso/blob/main/packages/auth/server/routes/email-password.ts"
+    },
+    {
+      "claim": "New accounts get the USER role only, the first admin is granted by editing that user's roles directly in the database, and CSC signing, SSO and white-labelling need a paid Enterprise license key.",
+      "url": "https://docs.documenso.com/docs/self-hosting/configuration/organisation-limits"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The signature is only as recognised as the certificate behind it. This install generates a self-signed one, which proves the document has not been altered since signing and carries the name you put in it. Adobe Acrobat will still tell your counterparty the signature cannot be verified, because that certificate is not on Adobe's trust list, and the only fix is buying one from an authority that is.",
+    "Mail is the front door, not a feature. Documenso refuses a sign-in until the account's email address has been confirmed through a link it emails, so a broken relay locks out the person who installed it. New Hetzner and DigitalOcean accounts block outbound mail ports until you ask them not to.",
+    "You own the backups, and three things have to travel together: the database dump, the encryption keys in .env that the encrypted columns are read back with, and the certificate the signatures were made with. Any one of them missing turns a restore into an archive you cannot use.",
+    "Documents live in the database by default, so the dump grows with every PDF you upload and every one you sign. That keeps the backup to one file, and it makes that file the thing you guard.",
+    "AGPL-3.0, with a paid Enterprise edition upstream. Qualified signatures through a trust service provider, single sign-on and embed white-labelling live behind a license key, and the admin role for your own first account is granted by editing a database row."
+  ],
+  "sources": {
+    "compose": "https://docs.documenso.com/docs/self-hosting/deployment/docker-compose",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://docs.documenso.com/docs/self-hosting/deployment/docker",
+    "requirements": "https://docs.documenso.com/docs/self-hosting/getting-started/requirements",
+    "certificate": "https://docs.documenso.com/docs/self-hosting/configuration/signing-certificate/local",
+    "email": "https://docs.documenso.com/docs/self-hosting/configuration/email",
+    "health": "https://github.com/documenso/documenso/blob/main/apps/remix/app/routes/api+/health.ts",
+    "telemetry": "https://docs.documenso.com/docs/self-hosting/configuration/telemetry"
+  },
+  "related": [
+    "docuseal",
+    "stirling-pdf",
+    "vaultwarden"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "f4be91be2ed8b7f0dbc457bffac58c68ce803ad8cd00b4d368d10f7d93e8562f"
+}

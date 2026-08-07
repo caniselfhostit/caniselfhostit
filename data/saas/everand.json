@@ -1,0 +1,65 @@
+{
+  "slug": "everand",
+  "name": "Everand",
+  "domain": "everand.com",
+  "whyPeoplePay": "The catalog is the product. Everand pays the publishers and the narrators so that a book you heard about this morning is one tap away, already licensed, already produced, on a phone and a laptop and a tablet with your place kept in all three. Since the switch away from unlimited reading, the subscription is a rotating shelf of titles you can open at will plus a monthly allowance of unlocks for the premium ones, and an unlock keeps working for as long as you keep paying. None of that is software anyone can install: it is rights and licensing, and it is what the money actually buys. What it also buys, and what you can take back, is the reader, the library and the progress bar.",
+  "plans": [
+    {
+      "name": "Standard",
+      "priceMonthly": 11.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "source": "https://support.scribd.com/hc/en-us/articles/40678839226644-Everand-plans-Standard-Plus-and-Deluxe",
+      "checkedOn": "2026-08-06",
+      "note": "One unlock a month. Unused unlocks roll over for up to six months, then expire."
+    },
+    {
+      "name": "Plus",
+      "priceMonthly": 16.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "source": "https://support.scribd.com/hc/en-us/articles/40678839226644-Everand-plans-Standard-Plus-and-Deluxe",
+      "checkedOn": "2026-08-06",
+      "note": "Three unlocks a month. Sold as the most popular tier on the everand.com home page."
+    },
+    {
+      "name": "Deluxe",
+      "priceMonthly": 28.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "source": "https://support.scribd.com/hc/en-us/articles/40678839226644-Everand-plans-Standard-Plus-and-Deluxe",
+      "checkedOn": "2026-08-06",
+      "note": "Five unlocks a month, and the tier added most recently to the ladder."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://support.scribd.com/hc/en-us/articles/40678839226644-Everand-plans-Standard-Plus-and-Deluxe",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "everand.com served us a Canadian storefront on the day we read it, quoting CAD 12.99, CAD 23.99 and CAD 39.99, so the USD figures here come from Scribd's own help centre article for the same three plans rather than from a page everand.com served us in dollars. Plan names, unlock counts and the six-month rollover matched across both. There is no annual billing option on the help centre page. Re-check this ladder against everand.com from a US connection."
+  },
+  "ranked": [
+    {
+      "project": "kavita",
+      "rationale": "The honest answer to a narrower question. It replaces none of the catalog, because nothing self-hosted does; it replaces the reader, the library and the place you stopped. Point one container at epub, pdf and cbz files you already hold and you get a web reader that remembers per-user progress, a library model built for series rather than for loose files, and OPDS switched on by default so third-party reading apps can browse and download from it. The reason it is first for this question is that Everand is text-shaped and so is Kavita: an epub reader, a pdf reader and a comic reader in the same server, none of which the audio-first projects here try to be."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Calibre-Web",
+      "repo": "https://github.com/janeczku/calibre-web",
+      "note": "GPL-3.0, 0.6.26 released in February 2026 with commits still landing this week. The veteran of this shelf, and the right pick if you already keep your library in Calibre, because it is a web front end for an existing Calibre database rather than its own scanner. That is also the caveat: it wants that database to exist and to stay the source of truth, and its packaging is community-maintained rather than upstream. It is on this list because for a reader whose books are already in Calibre it is less work than anything else here, not because it is a fuller server."
+    },
+    {
+      "name": "Audiobookshelf",
+      "repo": "https://github.com/advplyr/audiobookshelf",
+      "note": "GPL-3.0, v2.36.0 in July 2026, actively developed. Everand sells audiobooks alongside the ebooks, and this is the project that answers that half: it is built around listening positions, it has an ebook reader bolted on rather than at its centre, and unlike Kavita it publishes its own phone apps. Run it beside Kavita rather than instead of it if your Everand habit is mostly listening. We have tested and written up this one separately, against Audible."
+    },
+    {
+      "name": "Komga",
+      "repo": "https://github.com/gotson/komga",
+      "note": "MIT, 1.25.0 in June 2026, commits landing today. A genuine peer rather than a lesser option, and it beats Kavita on one thing outright: it ships Kobo Sync and KOReader Sync, so an e-ink device can talk to it directly instead of through a generic OPDS feed. Its own description puts comics, manga and BDs first and ebooks last, which is the honest reason it is not ranked first for a subscription people mostly used to read prose. If your library is mainly comics, or the device you read on is a Kobo, look at this one before Kavita."
+    }
+  ]
+}

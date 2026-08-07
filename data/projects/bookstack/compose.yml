@@ -1,0 +1,79 @@
+# BookStack · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   installation ... https://www.bookstackapp.com/docs/admin/installation/
+#   configuration .. https://github.com/BookStackApp/BookStack/blob/v26.05.3/.env.example.complete
+#   image docs ..... https://docs.linuxserver.io/images/docker-bookstack/
+#
+# BookStack ships no Docker image of its own; its installation page points at
+# community docker setups. This file uses the LinuxServer.io one, GPL-3.0,
+# which unpacks BookStack's own 26.05.3 release archive onto their Alpine plus
+# nginx base image. The application is upstream's, the packaging is not.
+#
+# Two services: BookStack and the MariaDB holding every shelf, book, chapter
+# and page. Every ${...} comes from /srv/bookstack/.env, mode 600, which
+# Compose reads and never mounts. Digests read 2026-08-06; both are multi-arch.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  db:
+    image: mariadb:11.8.8@sha256:d9f7eb2637296652f24b484afd5d246f759f49f5babcadc6a9e344c9acb75fbf
+    container_name: bookstack-db
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: bookstack
+      MARIADB_USER: bookstack
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_AUTO_UPGRADE: "1"
+    volumes:
+      - /srv/bookstack/mariadb:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      retries: 20
+    # No `ports:` at all: 3306 is reachable only from the other container.
+
+  bookstack:
+    image: lscr.io/linuxserver/bookstack:version-v26.05.3@sha256:7f0af07baa41fd6265f5ec57887564d85be03a326f79cb32f926fe735e5313ff
+    container_name: bookstack
+    restart: unless-stopped
+    environment:
+      # The image's own `abc` user is remapped to these, so config/ is yours.
+      PUID: "${PUID}"
+      PGID: "${PGID}"
+      TZ: Etc/UTC
+      # Every URL BookStack builds comes from this one value, so it carries the
+      # https Caddy terminates rather than the plain http the container speaks.
+      APP_URL: ${APP_URL}
+      # Session and at-rest key. The image halts its init without one.
+      APP_KEY: ${APP_KEY}
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_DATABASE: bookstack
+      DB_USERNAME: bookstack
+      DB_PASSWORD: ${DB_PASSWORD}
+      # Caddy terminates TLS. Upstream ships this false by default.
+      SESSION_SECURE_COOKIE: "true"
+      # Trust the proxy: the audit log then names the reader, not Caddy.
+      APP_PROXIES: "*"
+      # Neither is a BookStack setting; the application ignores both. They
+      # let step 7 hand them to the console command that replaces the account
+      # the first migration seeds, without either value reaching
+      # a command line or the host's process list.
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    volumes:
+      - /srv/bookstack/config:/config
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS -o /dev/null http://127.0.0.1/status || exit 1"]
+      start_period: 30s
+      interval: 15s
+      retries: 20
+    ports:
+      # Loopback only: Caddy alone reaches 8150; the container listens on 80.
+      - "127.0.0.1:8150:80"
+    depends_on:
+      db:
+        condition: service_healthy

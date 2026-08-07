@@ -1,0 +1,92 @@
+{
+  "slug": "languagetool",
+  "name": "LanguageTool",
+  "tagline": "The grammar and style engine behind the browser add-on, running on your own machine, with nothing you write leaving it.",
+  "repo": "languagetool-org/languagetool",
+  "site": "https://languagetool.org",
+  "category": "ai-tools",
+  "replaces": [
+    {
+      "saas": "grammarly",
+      "plan": "Pro",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "LGPL-2.1-or-later",
+  "officialCompose": "none",
+  "local": {
+    "fit": "good",
+    "note": "The checking happens on this computer and only for what you write on it, so your phone and a second laptop get nothing, and in exchange not one sentence you type leaves the machine."
+  },
+  "quote": {
+    "text": "For security reasons, the server will not be accessible from other hosts. If you want to run a server for remote users, use the --public option.",
+    "source": "LanguageTool documentation, Embedded HTTP Server",
+    "url": "https://dev.languagetool.org/http-server",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "The LanguageTool project publishes no Docker image of its own. Its README lists three community-contributed Dockerfiles instead, one of which is Erikvl87/docker-languagetool, the image this install pins.",
+      "url": "https://github.com/languagetool-org/languagetool/blob/v6.8/README.md"
+    },
+    {
+      "claim": "That community Dockerfile clones the upstream languagetool repository at the v6.8 tag and builds the standalone distribution with Maven, so the software is upstream's release and only the packaging is third-party.",
+      "url": "https://github.com/Erikvl87/docker-languagetool/blob/v6.8/Dockerfile"
+    },
+    {
+      "claim": "Upstream documents that the server is reachable from other hosts only with the --public option, and that --allow-origin is what lets the browser add-on talk to your own server.",
+      "url": "https://dev.languagetool.org/http-server"
+    },
+    {
+      "claim": "The image's start script turns every langtool_ environment variable into a line of the server's config.properties, sets the heap from Java_Xms and Java_Xmx, and starts the server on port 8010 with --public and --allow-origin '*'.",
+      "url": "https://github.com/Erikvl87/docker-languagetool/blob/v6.8/start.sh"
+    },
+    {
+      "claim": "LanguageTool Premium advertises more than 20,000 additional checks and a 150,000-character limit over the free version, none of which ship in the open-source server.",
+      "url": "https://languagetool.org/premium"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The engine is upstream's, the Docker packaging is not. LanguageTool publishes no image and names three community Dockerfiles in its own README; this install pins one of them, Erikvl87/docker-languagetool, LGPL-2.1, maintained outside the LanguageTool project. It clones the upstream v6.8 tag and builds it, so the code is upstream's, and the packaging's release cadence is one more thing you are trusting.",
+    "The premium rules are not in here, and no setting turns them on. LanguageTool the company sells more than 20,000 extra checks, a style guide, AI paraphrasing and a much larger text limit on top of the same open-source engine. Self-hosting gives you the free rule set, which is a real grammar and spelling checker for 25-plus languages, and not the paid one.",
+    "There is no login, anywhere in the software. The HTTP server checks nobody's credentials, and the image starts it with --public and --allow-origin '*', so on a public hostname the only lock is the one the reverse proxy holds. This install generates that password. The cost is that the LanguageTool browser add-on cannot answer it, so the add-on story lives on the local path or behind a tunnel.",
+    "Nothing you write is stored. There is no database, no volume and no upload folder: text arrives, is checked, is answered, and is dropped. That makes the backup here the shortest on this site, and it makes a lost server a ten-minute rebuild rather than a loss.",
+    "No mobile keyboard, no plagiarism or AI detection, no tone rewriting, no team style enforcement. Those are what Grammarly's subscription is actually selling, and none of them are in this box."
+  ],
+  "sources": {
+    "compose": "https://github.com/Erikvl87/docker-languagetool/blob/v6.8/README.md",
+    "caddy": "https://caddyserver.com/docs/caddyfile/directives/basic_auth",
+    "install": "https://dev.languagetool.org/http-server",
+    "image": "https://github.com/Erikvl87/docker-languagetool/blob/v6.8/Dockerfile",
+    "entrypoint": "https://github.com/Erikvl87/docker-languagetool/blob/v6.8/start.sh",
+    "upstream": "https://github.com/languagetool-org/languagetool/blob/v6.8/README.md",
+    "ngrams": "https://dev.languagetool.org/finding-errors-using-n-gram-data",
+    "imageComposeExample": "https://github.com/Erikvl87/docker-languagetool/blob/v6.8/docker-compose.yml",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "librechat",
+    "stirling-pdf",
+    "docmost"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "d06e3c278336a4728b80668c6f73774b0d8e8051650d6b28735ccab8b1a1a658"
+}

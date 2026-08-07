@@ -1,0 +1,65 @@
+{
+  "slug": "pandadoc",
+  "name": "PandaDoc",
+  "domain": "pandadoc.com",
+  "whyPeoplePay": "PandaDoc is not really a signature button, it is the whole path a proposal takes: a template with your pricing tables in it, a content library the sales team pulls from, a CRM that fills in the customer's name, a notification when the buyer opens page four, and a signature at the end. The signature is the cheap part. What people are paying for is that the quote, the negotiation and the executed contract are one object with one audit trail, and that a new hire can send a correct one on their second day.",
+  "plans": [
+    {
+      "name": "Free eSign",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Free tier, reported as capped at 60 documents a year, with the editor and basic tracking."
+    },
+    {
+      "name": "Starter",
+      "priceMonthly": 35,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per user per month billed monthly. $19 per user per month on the annual plan. Unlimited documents and signatures, no CRM integrations, no custom branding."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": 65,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per user per month billed monthly. $49 per user per month on the annual plan. Adds CRM integrations, custom branding, the content library and approval workflows."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. Configure-price-quote, single sign-on, notary and API access sit here."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://www.pandadoc.com/pricing/",
+    "currency": "USD",
+    "confidence": "low",
+    "note": "TODO: re-read from a normal browser session and raise this confidence. On 2026-08-06 pandadoc.com/pricing answered HTTP 429 with a Vercel bot checkpoint from our location, so we could not read the vendor page at all. The ladder above is corroborated across two independent secondary trackers that agree on all four tiers and on both billing cycles, and we record the monthly-billed figure with the annual equivalent in each note, because the annual plan is a twelve-month commitment and savings math built on it overstates what a month-to-month subscriber pays. Treat the Free tier's 60-documents-a-year cap as the least certain number here."
+  },
+  "ranked": [
+    {
+      "project": "documenso",
+      "rationale": "The one that takes the signature itself seriously. Every completed document is sealed with an X.509 certificate you generate and hold, so the integrity claim is yours rather than a vendor's, and there are templates, an API, teams and an audit trail around it. The price is honesty about two things: it needs PostgreSQL and a working mail relay before anyone can even sign in, and a self-signed certificate makes Adobe Acrobat warn your counterparty that the signature cannot be verified until you buy one from an authority on Adobe's trust list."
+    },
+    {
+      "project": "docuseal",
+      "rationale": "The faster answer if what you want is a PDF signed by Friday. One container, SQLite, a drag-the-fields-onto-the-page editor that is quicker to learn than Documenso's, and no database to operate. What you give up is the part above: a smaller template and API surface, and less control over the signing identity. Pick this when the counterparty is a client who trusts you already, and Documenso when the document has to argue for itself later."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "OpenSign",
+      "repo": "https://github.com/OpenSignLabs/OpenSign",
+      "note": "Actively developed, releases through mid-2026, and the closest thing on this list to a drop-in DocuSign clone with folders, teams and bulk send. We have not installed it: the stack is Parse Server plus MongoDB plus a React app, which is more moving parts than either project above, and the licence is AGPL-3.0 with one directory carved out under separate terms, which is why GitHub reports no SPDX identifier for the repository."
+    },
+    {
+      "name": "Papermark",
+      "repo": "https://github.com/papermark/papermark",
+      "note": "Not an e-signature tool first. It covers the half of PandaDoc that is sending a document on a custom-domain link and watching who opened which page, which is the DocSend-shaped part of the bill. AGPL-3.0 with a commercial ee/ directory excluded from that licence. Worth knowing about if link analytics is why you pay PandaDoc, and the wrong tool if signatures are."
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "slug": "keila",
+  "name": "Keila",
+  "tagline": "Signup forms, contacts and campaigns out of one Elixir release and one PostgreSQL, with the sending handed to an SMTP relay you pick.",
+  "repo": "pentacent/keila",
+  "site": "https://www.keila.io",
+  "category": "marketing-content",
+  "replaces": [
+    {
+      "saas": "kit",
+      "plan": "Creator",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": true,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 3
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": false,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 240,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/pentacent/keila/blob/v0.30.2/ops/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Every unsubscribe and opt-in confirmation link this writes into a message begins with http://localhost:8145, which means the reader's own computer, so anyone you mail from here gets a message they cannot unsubscribe from."
+  },
+  "quote": {
+    "text": "For smaller newsletters, you can use your own email inbox to send out campaigns. For larger newsletter projects, AWS SES, Sendgrid, Mailgun, and Postmark are supported in addition to SMTP.",
+    "source": "Keila README, v0.30.2",
+    "url": "https://github.com/pentacent/keila/blob/v0.30.2/README.md",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Upstream publishes the official image as pentacent/keila and states that a PostgreSQL database is the only dependency besides a container engine, and that a reverse proxy in front of it has to forward WebSockets.",
+      "url": "https://www.keila.io/docs/installation"
+    },
+    {
+      "claim": "Keila reads the SMTP relay host, the from-address and the relay password out of the environment while the release boots and halts the process when one of them is missing, so the app does not start without a relay at all.",
+      "url": "https://github.com/pentacent/keila/blob/v0.30.2/config/runtime.exs"
+    },
+    {
+      "claim": "The root account is created by a seed on the first start against an empty database, and without KEILA_USER and KEILA_PASSWORD it generates a random password and writes that password into the container log in clear text.",
+      "url": "https://github.com/pentacent/keila/blob/v0.30.2/priv/repo/seeds.exs"
+    },
+    {
+      "claim": "DISABLE_REGISTRATION closes the sign-up form, SECRET_KEY_BASE has to be at least 64 characters, and the release listens on port 4000 unless PORT says otherwise.",
+      "url": "https://www.keila.io/docs/configuration"
+    },
+    {
+      "claim": "Every /api/v1 route sits behind an authorization plug that answers 403 to a caller with no bearer token.",
+      "url": "https://github.com/pentacent/keila/blob/v0.30.2/lib/keila_web/api/plugs/api_authorization_plug.ex"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Deliverability becomes your job, and it is the job. Keila composes, queues and hands messages to an SMTP relay you sign up for; whether they arrive depends on that relay, on SPF, DKIM and DMARC records you write yourself, and on a sending reputation that starts at nothing. That is the half of the bill Kit is actually attached to, and moving the software does not move the work.",
+    "You own a PostgreSQL, and the row that matters most in it is consent. Every subscriber's opt-in and its timestamp live in that database, so a list restored from a backup you never took is a list you are no longer allowed to mail.",
+    "Mail is two settings that look like one. The relay in .env carries system mail, password resets and opt-in confirmations. Campaigns go out as a sender you add inside a project in the web interface, and an install where the first is right and the second is missing looks healthy and sends nothing.",
+    "amd64 only. The official image publishes linux/amd64 and no arm64 variant, so an Ampere or Graviton VPS is not an option here, and on an Apple Silicon laptop it runs under Docker Desktop's emulation.",
+    "No landing pages you did not build, no visual automation builder, no subscriber scoring, no deliverability dashboard, and nobody to call on send day. Those are what the paid tiers sell on top of the list."
+  ],
+  "sources": {
+    "compose": "https://www.keila.io/docs/installation",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://www.keila.io/docs/configuration",
+    "setup": "https://www.keila.io/docs/setup",
+    "seeds": "https://github.com/pentacent/keila/blob/v0.30.2/priv/repo/seeds.exs",
+    "runtime": "https://github.com/pentacent/keila/blob/v0.30.2/config/runtime.exs"
+  },
+  "related": [
+    "listmonk",
+    "ghost",
+    "formbricks"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "6c5f8472af4d3eba96e527270bd2a3563294014884d6968f172a4d69716603a0"
+}

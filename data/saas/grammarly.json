@@ -1,0 +1,54 @@
+{
+  "slug": "grammarly",
+  "name": "Grammarly",
+  "domain": "grammarly.com",
+  "whyPeoplePay": "Grammarly's product is not the grammar rules, it is the fact that they are already there. It sits in the email you are writing, the document, the message box and the phone keyboard, with no setup and nothing to point anywhere, and the paid tier adds the parts people actually reach for under deadline: rewriting a clumsy sentence, softening the tone of a reply, and telling you the draft reads as machine-written before your reader does.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Listed as $0 USD / month. Spelling and grammar, tone display, and a monthly allowance of AI prompts."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 12,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "The plans page shows $12 USD with a 7-day free trial and does not state the billing period next to the figure. Independent pricing trackers describe $12 a month as the annual-billed rate, with month-to-month closer to $30. Adds sentence rewriting, tone adjustment, plagiarism and AI detection, and 2,000 AI prompts per member per month."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The page says Contact Sales and lists dedicated support, BYOK encryption, custom roles, data loss prevention and unlimited prompts per member."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://www.grammarly.com/plans",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The plans page renders its prices in JavaScript and shows Pro as $12 USD without stating the billing period beside it, so we record the figure the vendor's own page displays rather than a monthly-billed number we could not read there. Independent trackers read on the same day put the month-to-month rate near $30, which would make $12 the annual-billed equivalent; a reader paying by the month should expect to pay more than the number here. Recheck with the billing period visible before quoting a saving."
+  },
+  "ranked": [
+    {
+      "project": "languagetool",
+      "rationale": "The only one here that keeps the shape of what you are cancelling. It is a grammar and spelling engine for 25-plus languages with an HTTP API, and the clients built around it, the browser add-on and the editor plugins, carry a box for a different server address. What it will not give you is the paid rule set: LanguageTool the company sells 20,000-plus extra checks, a style guide and AI paraphrasing on top of the same open-source core, and self-hosting gets you the free half."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Harper",
+      "repo": "https://github.com/Automattic/harper",
+      "note": "Apache-2.0, maintained by Automattic, and genuinely fast: it is a Rust grammar checker small enough to run as WebAssembly in the page or as a language server in your editor. That is also why it is not on the ranked list here, because there is no server to self-host, the whole thing runs in the client. English only today, and its rule set is a fraction of LanguageTool's, which is the trade it makes on purpose."
+    },
+    {
+      "name": "Vale",
+      "repo": "https://github.com/vale-cli/vale",
+      "note": "MIT, actively maintained, and a different job. Vale is a markup-aware prose linter you run over Markdown, AsciiDoc or reStructuredText in CI to enforce a style guide such as Microsoft's or Google's. It will tell you that you wrote a passive sentence or a banned term; it will not tell you that you wrote 'I has'. Excellent for a docs repository, wrong tool for an inbox."
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+# Kavita · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker install ...... https://wiki.kavitareader.com/installation/docker/
+#   dockerhub image ..... https://wiki.kavitareader.com/installation/docker/dockerhub/
+#   server settings ..... https://wiki.kavitareader.com/guides/admin-settings/general/
+#   libraries ........... https://wiki.kavitareader.com/guides/admin-settings/libraries/
+#
+# One service on the computer you are sitting at. Every path is relative to
+# ~/selfhost/kavita/, so one file works on macOS, Linux and Windows and you can
+# open config/ and books/ in Finder or Explorer. No named volume is needed: the
+# container runs as root, because upstream took the PUID and PGID handling out
+# of its entrypoint, and nothing here chowns its own data directory. The image
+# already exposes 5000 and carries its own HEALTHCHECK against /api/health.
+# /kavita/config is the one mount path upstream marks as unchangeable. The
+# library is mounted read-only: Kavita reads filenames and in-file metadata and
+# writes nothing back into it. Tag and digest read from Docker Hub on
+# 2026-08-06; the image publishes linux/amd64, linux/arm64 and linux/arm/v7.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  kavita:
+    image: jvmilazz0/kavita:0.9.0.2@sha256:ca6af7a18d7124d014702983c2364e485294f808c1552e9555f2595b7cda7982
+    container_name: kavita
+    restart: unless-stopped
+    environment:
+      # The nightly library scan and the database backup task both run at
+      # midnight in this zone, so it is the one setting worth being deliberate
+      # about before the first scan.
+      TZ: UTC
+    volumes:
+      - ./config:/kavita/config
+      # Read-only: nothing here writes to the library, and the mount keeps a
+      # mis-click in the web UI from writing to it either.
+      - ./books:/books:ro
+    ports:
+      # Loopback only: no other device on the wifi can reach 8146.
+      - "127.0.0.1:8146:5000"

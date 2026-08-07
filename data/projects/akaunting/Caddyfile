@@ -1,0 +1,28 @@
+# Akaunting · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://github.com/akaunting/docker/blob/master/env/run.env.example and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also APP_URL in .env, the <base href> on every page, so the two stay equal.
+
+<DOMAIN> {
+	# The interface is HTML and JSON; PDFs are already compressed.
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+	# No Content-Security-Policy: invoice templates are editable here, and
+	# one written blind breaks a printed invoice rather than an attack.
+
+	# 8151 is the loopback port compose publishes here, not a container
+	# port, and not open in the firewall.
+	reverse_proxy 127.0.0.1:8151
+}

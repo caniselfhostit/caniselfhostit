@@ -1,0 +1,66 @@
+# Dokploy · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   installation ....... https://docs.dokploy.com/docs/core/installation
+#   manual install ..... https://docs.dokploy.com/docs/core/manual-installation
+#
+# Two services, every path relative to ~/selfhost/dokploy/ so one file works on
+# macOS, Linux and Windows. PostgreSQL uses a named volume because it chowns
+# that directory to a uid of its own, which a Windows bind mount cannot allow.
+# No proxy container: nothing is public and the panel answers on 127.0.0.1:8144.
+# Its own tree is /etc/dokploy in the container and ./config out here, so a file
+# the panel mounts points at a path this machine has not got. dokploy-network is
+# the attachable overlay network the install step made, and Swarm mode is not
+# optional. Digests read 2026-08-06; both images publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  dokploy:
+    image: dokploy/dokploy:v0.29.14@sha256:57771f6edc7921f741c004002b9be9b39cfa5cb84ecd4ba325f735219a8cae6b
+    container_name: dokploy
+    restart: unless-stopped
+    environment:
+      # Upstream reads DATABASE_URL ahead of its Docker-secret path.
+      DATABASE_URL: postgres://dokploy:${DB_PASSWORD}@postgres:5432/dokploy
+      BETTER_AUTH_SECRET: ${AUTH_SECRET}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./config:/etc/dokploy
+      - dokploy-docker:/root/.docker
+    ports:
+      # Loopback only: no other device on the wifi can reach 8144.
+      - "127.0.0.1:8144:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:3000/api/health || exit 1"]
+      interval: 10s
+      retries: 30
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16.14-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
+    container_name: dokploy-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: dokploy
+      POSTGRES_USER: dokploy
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - dokploy-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dokploy -d dokploy"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other container.
+
+networks:
+  default:
+    name: dokploy-network
+    external: true
+
+volumes:
+  dokploy-docker:
+    name: dokploy-docker
+  dokploy-pgdata:
+    name: dokploy-pgdata

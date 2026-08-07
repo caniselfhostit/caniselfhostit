@@ -1,0 +1,30 @@
+# Appsmith · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.appsmith.com/getting-started/setup/installation-guides/docker and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also APPSMITH_BASE_URL in .env, which is the value Appsmith compares the
+# Origin header of a password-reset request against, so the two have to agree.
+
+<DOMAIN> {
+	# The container runs a Caddy of its own and already sends
+	# Content-Security-Policy and X-Content-Type-Options on every response, so
+	# this block does not restate them and cannot contradict them. HSTS is
+	# here because nothing inside the container knows it is being served over
+	# https. There is no `encode` either: the inner Caddy compresses already,
+	# and compressing a second time costs CPU for no bytes.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# 8143 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall. The editor holds a
+	# WebSocket open to /rts, and reverse_proxy carries that upgrade with no
+	# extra configuration.
+	reverse_proxy 127.0.0.1:8143
+}

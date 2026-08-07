@@ -1,0 +1,63 @@
+{
+  "slug": "myfitnesspal-premium",
+  "name": "MyFitnessPal Premium",
+  "domain": "myfitnesspal.com",
+  "whyPeoplePay": "MyFitnessPal sells the shortest path between a barcode and a logged meal. The company advertises 20.5 million foods, and the reason people pay rather than switch is that the packet in their hand is already in that database with the right serving size, so logging dinner takes four seconds instead of four minutes. Scanning that barcode moved behind the paywall on 1 October 2022, along with custom macro targets and an ad-free app, and the subscription is mostly a fee for keeping the habit frictionless.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Calorie and macro logging by typing a food name, with ads. Barcode scanning was moved to Premium on 1 October 2022."
+    },
+    {
+      "name": "Premium",
+      "priceMonthly": 19.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$79.99 a year on the annual plan. Barcode scanning, custom macro goals, no ads. The US App Store lists both figures as in-app purchases."
+    },
+    {
+      "name": "Premium+",
+      "priceMonthly": 24.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$99.99 a year on the annual plan. Adds meal planning and a recipe library. This is the tier the pricing page led with on the day we read it."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://www.myfitnesspal.com/premium",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The vendor's pricing page served us Canadian prices (CA$36.99 a month or CA$144.99 a year for Premium+, CA$114.99 a year for the legacy Premium tier), so the USD figures here come from the in-app purchase list on the US App Store entry read the same day, which shows MyFitnessPal Premium at $19.99 monthly and $79.99 yearly, plus secondary reporting for Premium+. Treat the Premium+ numbers as the softest of the three."
+  },
+  "ranked": [
+    {
+      "project": "wger",
+      "rationale": "The only one here that does both halves: a food diary with a barcode lookup, and a workout manager with routines, progression rules and body measurements. The barcode path is the honest surprise, because an unknown code is fetched live from Open Food Facts by your own server rather than looked up in a licensed database. What you give up is coverage and the phone app: the ingredient table you sync from wger.de held 3,063,298 entries on the day we checked against MyFitnessPal's advertised 20.5 million, it leans European and packaged rather than American restaurant menus, and the mobile app in the stores needs a sync service this install does not run."
+    },
+    {
+      "project": "fittrackee",
+      "rationale": "Second only if the half you actually used was the exercise diary. FitTrackee is a GPS training log built around .gpx and .fit files on a map, and it has no food database, no barcode anything and no calorie target. Ranked here because people do cancel MyFitnessPal for a workout log, and if that is you it is a much smaller thing to run than wger."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "OpenNutriTracker",
+      "repo": "https://github.com/simonoppowa/OpenNutriTracker",
+      "note": "A calorie tracker that queries Open Food Facts directly, GPL-3.0, actively developed in 2026. It is a phone app and nothing else: the diary lives in the app's own storage, so there is no server to self-host, nothing to back up centrally, and no second device sees the same data."
+    },
+    {
+      "name": "Waistline",
+      "repo": "https://github.com/davidhealey/waistline",
+      "note": "The same shape on Android only, reading Open Food Facts and keeping everything on the phone. Still getting commits in mid-2026. Worth knowing about if what you want is the barcode scanner back rather than a server, and it can export its database, which is the whole backup story."
+    },
+    {
+      "name": "Tandoor Recipes",
+      "repo": "https://github.com/TandoorRecipes/recipes",
+      "note": "Recipes, meal plans and shopping lists with nutrition per recipe, which reads like a MyFitnessPal replacement until you look for the daily diary and the barcode lookup, and neither exists. Its licence is AGPL-3.0 with the Commons Clause attached, so it is not open source in the OSI sense; check that before you build anything on it."
+    }
+  ]
+}

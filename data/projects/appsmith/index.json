@@ -1,0 +1,93 @@
+{
+  "slug": "appsmith",
+  "name": "Appsmith",
+  "tagline": "Drag-and-drop internal tools over your own databases and APIs, with no per-builder seat and no second meter for the people who only use them.",
+  "repo": "appsmithorg/appsmith",
+  "site": "https://www.appsmith.com",
+  "category": "automation-dev",
+  "replaces": [
+    {
+      "saas": "retool",
+      "plan": "Team",
+      "seatsAssumed": 5
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 8192,
+    "ramMeasuredMB": null,
+    "diskGB": 20,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "Apache-2.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://docs.appsmith.com/getting-started/setup/installation-guides/docker",
+  "local": {
+    "fit": "caveat",
+    "note": "Every app you build answers only at http://localhost:8143, so the colleague you meant to hand the form to gets a connection error: this path gives you the builder and the tools, not the audience for them."
+  },
+  "quote": {
+    "text": "The default Docker Compose setup runs MongoDB, Redis, and PostgreSQL inside the Appsmith container. Plan for at least 8 GB of RAM on the host for this all-in-one deployment.",
+    "source": "Appsmith documentation, Docker installation guide",
+    "url": "https://docs.appsmith.com/getting-started/setup/installation-guides/docker",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's documented compose file is a single service that runs MongoDB, Redis and PostgreSQL inside the Appsmith container and asks for at least 8 GB of RAM on the host.",
+      "url": "https://docs.appsmith.com/getting-started/setup/installation-guides/docker"
+    },
+    {
+      "claim": "Upstream's capacity guidance names 2 vCPU and 8 GB of memory as the baseline for a self-hosted deployment, and calls that an entry-level figure rather than a production guarantee.",
+      "url": "https://docs.appsmith.com/getting-started/setup/infrastructure-sizing"
+    },
+    {
+      "claim": "APPSMITH_SIGNUP_DISABLED stops new account creation, and it does not apply to the addresses listed in APPSMITH_ADMIN_EMAILS, which is how one account can still be made on a closed instance.",
+      "url": "https://docs.appsmith.com/getting-started/setup/environment-variables"
+    },
+    {
+      "claim": "In the server source, an address in APPSMITH_ADMIN_EMAILS skips the signup-disabled check entirely, and every other address is refused with the SIGNUP_DISABLED error.",
+      "url": "https://github.com/appsmithorg/appsmith/blob/v2.2/app/server/appsmith-server/src/main/java/com/appsmith/server/services/ce/UserServiceCEImpl.java"
+    },
+    {
+      "claim": "The health endpoint answers with the string All systems are up only after both MongoDB and Redis have responded, which is why it is the verification gate rather than container state.",
+      "url": "https://github.com/appsmithorg/appsmith/blob/v2.2/app/server/appsmith-server/src/main/java/com/appsmith/server/services/ce/HealthCheckServiceCEImpl.java"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The public repository is Apache-2.0 all the way through, which is cleaner than most of this category, and the paid edition is a separate image built from code that is not in it. The split is still real: SAML and OIDC single sign-on with SCIM provisioning, audit logs, custom roles and granular access control, workflows and reusable packages, unlimited workspaces and Git repositories, backup sync to S3, private app embedding and removing Appsmith's branding are what the paid plans sell. The community edition you install here is uncapped on users, apps and builders, and stops short of that list.",
+    "Eight gigabytes, for one container. The all-in-one image runs the application, MongoDB, Redis and PostgreSQL together under supervisord, so what looks like a single-service install is really four processes sharing a memory budget. The first boot takes minutes, and the cheapest VPS tier will not do.",
+    "Two keys stand between a backup and every credential in it. The encryption password and salt encrypt each database password, API key and token you hand to a datasource, and a data directory restored without them comes back with every app intact and nothing able to connect. They live in .env, not in the data directory, so the backup is one archive that has to carry both.",
+    "No mail means no invitations and no password resets. This install configures no SMTP, which the core loop does not need, but the day you add a second person you either configure mail or edit the database by hand, and a forgotten administrator password has no reset link. Put it in a password manager on day one.",
+    "You own the whole state in one directory, and backing it up means stopping the service. Three database engines are writing in there, so a tar taken while they run is a file that looks like a backup. Budget a few minutes of downtime for every archive you take."
+  ],
+  "sources": {
+    "compose": "https://docs.appsmith.com/getting-started/setup/installation-guides/docker",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://docs.appsmith.com/getting-started/setup/environment-variables",
+    "sizing": "https://docs.appsmith.com/getting-started/setup/infrastructure-sizing",
+    "backup": "https://docs.appsmith.com/getting-started/setup/instance-management/appsmithctl",
+    "health": "https://github.com/appsmithorg/appsmith/blob/v2.2/app/server/appsmith-server/src/main/java/com/appsmith/server/services/ce/HealthCheckServiceCEImpl.java",
+    "signup": "https://github.com/appsmithorg/appsmith/blob/v2.2/app/server/appsmith-server/src/main/java/com/appsmith/server/services/ce/UserServiceCEImpl.java",
+    "proxy": "https://github.com/appsmithorg/appsmith/blob/v2.2/deploy/docker/fs/opt/appsmith/caddy-reconfigure.mjs",
+    "license": "https://github.com/appsmithorg/appsmith/blob/v2.2/LICENSE"
+  },
+  "related": [
+    "grist",
+    "activepieces",
+    "code-server"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "ad7e851e9db3c10bb9c0214ddb2f228e570bf7ae538782ac8ca9f485d749c3dc"
+}

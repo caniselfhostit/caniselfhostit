@@ -1,0 +1,33 @@
+# Keila · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://www.keila.io/docs/installation and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed, with
+# <DOMAIN> replaced by the hostname pointed at this box. That hostname is also
+# URL_HOST in .env: Keila builds unsubscribe links, form URLs and opt-in
+# confirmation links from that setting, not from the request, so the two have to
+# agree. Upstream asks that a reverse proxy forward WebSockets, which Caddy's
+# reverse_proxy does with no extra configuration.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		# SAMEORIGIN, the value Keila's own browser pipeline already sets
+		# through Phoenix's secure-headers plug. Stated here so it does not
+		# depend on that plug staying in the pipeline.
+		X-Frame-Options "SAMEORIGIN"
+		# An unsubscribe or confirmation URL carries a recipient token in
+		# the path, and a full Referer would hand it to the next site.
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8145 is the loopback port compose publishes here. It is not a container
+	# port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8145
+}

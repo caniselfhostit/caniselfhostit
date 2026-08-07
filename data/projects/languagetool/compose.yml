@@ -1,0 +1,42 @@
+# LanguageTool · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   http server ........ https://dev.languagetool.org/http-server
+#   upstream readme .... https://github.com/languagetool-org/languagetool/blob/v6.8/README.md
+#   image readme ....... https://github.com/Erikvl87/docker-languagetool/blob/v6.8/README.md
+#   image dockerfile ... https://github.com/Erikvl87/docker-languagetool/blob/v6.8/Dockerfile
+#
+# One service and no database. LanguageTool loads its rules and dictionaries out
+# of the image and keeps nothing between requests: no volume, nothing to
+# migrate, nothing on disk to lose.
+#
+# The LanguageTool project publishes no Docker image. Its README names three
+# community-contributed Dockerfiles and this install uses one of them,
+# Erikvl87/docker-languagetool, LGPL-2.1 like LanguageTool itself. That
+# Dockerfile clones the upstream v6.8 tag and builds it with Maven, so the code
+# is upstream's and the packaging is somebody else's. Tag and digest were read
+# from Docker Hub on 2026-08-06; the image publishes amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  languagetool:
+    image: erikvl87/languagetool:6.8@sha256:ef8fa12cbd485166c9ceeb7139d76d56d07707a624da6bb1fc1fbb5411750527
+    container_name: languagetool
+    restart: unless-stopped
+    environment:
+      # The image's start script reads these two and defaults to 256m and 512m.
+      # 512m runs out of room once several languages load, and the RAM floor in
+      # the install accounts for the larger ceiling.
+      Java_Xms: 512m
+      Java_Xmx: 1g
+      # Every langtool_* variable becomes one line in the server's
+      # config.properties. This one caps a single request so one enormous paste
+      # cannot hold the whole JVM. 40000 characters is a long document.
+      langtool_maxTextLength: "40000"
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8149. The
+      # image starts the server with --public and --allow-origin '*', so it
+      # answers whoever reaches it. Nothing else may.
+      - "127.0.0.1:8149:8010"
+    # The image ships a HEALTHCHECK that posts a sentence to /v2/check, so
+    # `docker compose ps` reports healthy or unhealthy without help from here.

@@ -1,0 +1,36 @@
+# LanguageTool · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://dev.languagetool.org/http-server,
+# https://caddyserver.com/docs/automatic-https and
+# https://caddyserver.com/docs/caddyfile/directives/basic_auth
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. The LanguageTool
+# HTTP server has no accounts and no API key of its own, and the image starts it
+# with --public and --allow-origin '*', so it answers whoever reaches it. This
+# block is the only door on the install: Caddy checks one credential before a
+# byte reaches the container. Needs Caddy 2.8, where basicauth became basic_auth.
+
+<DOMAIN> {
+	# JSON in, JSON out. A check response for a long document compresses well,
+	# and there is no HTML here to frame or to sniff.
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# The credential is not in this file, because this file is published. The
+	# install writes /etc/caddy/languagetool-auth.conf with one basic_auth
+	# block: a username and a bcrypt hash of the password generated on the
+	# server. Mode 640, owned by root, readable by the caddy group.
+	import /etc/caddy/languagetool-auth.conf
+
+	# 8149 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8149
+}

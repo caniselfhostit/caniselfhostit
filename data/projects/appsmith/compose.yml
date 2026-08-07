@@ -1,0 +1,40 @@
+# Appsmith · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker install ..... https://docs.appsmith.com/getting-started/setup/installation-guides/docker
+#   variable reference . https://docs.appsmith.com/getting-started/setup/environment-variables
+#   capacity planning .. https://docs.appsmith.com/getting-started/setup/infrastructure-sizing
+#   backup and restore . https://docs.appsmith.com/getting-started/setup/instance-management/appsmithctl
+#
+# One service, and it is a heavy one. Upstream ships an all-in-one image that
+# runs MongoDB, Redis and PostgreSQL inside this same container under
+# supervisord, which is why no database service appears below and why the RAM
+# floor is 8 GB rather than the few hundred megabytes a web app alone would
+# want. Everything the instance keeps, including the docker.env it generates
+# for itself on first boot, lives under /appsmith-stacks.
+#
+# APPSMITH_CUSTOM_DOMAIN is deliberately never set here: setting it makes the
+# container ask Let's Encrypt for a certificate of its own, and the host's
+# Caddy already terminates TLS. The container's 443 is therefore never
+# published and only its plain-http 80 is. Tag and digest were read from the
+# registry on 2026-08-06; the image publishes amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  appsmith:
+    image: appsmith/appsmith-ce:v2.2@sha256:dc17b968c88eebf42b85c2e22b97efb55f2339b2d685e48f804c5f87bdd9d4e5
+    container_name: appsmith
+    restart: unless-stopped
+    env_file: /srv/appsmith/.env
+    environment:
+      # Upstream ships anonymous usage collection turned on. This turns it off.
+      APPSMITH_DISABLE_TELEMETRY: "true"
+      # The docker.env the container writes for itself lets any site on the
+      # internet load these apps in an iframe. This narrows the
+      # Content-Security-Policy back to this hostname and nothing else.
+      APPSMITH_ALLOWED_FRAME_ANCESTORS: "'self'"
+    volumes:
+      - /srv/appsmith/stacks:/appsmith-stacks
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8143.
+      - "127.0.0.1:8143:80"

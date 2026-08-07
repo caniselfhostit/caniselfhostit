@@ -1,0 +1,65 @@
+{
+  "slug": "slab",
+  "name": "Slab",
+  "domain": "slab.com",
+  "whyPeoplePay": "Slab sells the part of a wiki that is not writing pages. Every plan, down to the free one, carries Verification and Unified Search: a way to mark a post as still true and a search that reaches the other tools the account is connected to, so nobody follows instructions that quietly stopped being correct two reorganisations ago. Realtime collaboration is in every tier as well, and the paid ones add the identity plumbing a company needs to add and remove people without thinking about it. You are paying for a knowledge base that keeps telling you which of its own pages to distrust.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "per-seat",
+      "seatsIncluded": 10,
+      "note": "Shown as $0 user / month, for up to 10 users."
+    },
+    {
+      "name": "Startup",
+      "priceMonthly": 6.67,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "The page shows $6.67 user / month billed annually, which is $80 per user per year. Unlimited users."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": 12.5,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "The page shows $12.50 user / month billed annually, which is $150 per user per year, and adds SAML SSO and SCIM."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only, and the page states a minimum of 100 users."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://slab.com/pricing/",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The pricing page carries an Annually / Monthly toggle but renders the annual figures by default, and the monthly-billed rates did not come back when we read it, so the recorded numbers are the annually-billed per-user rates the page shows. Month-to-month therefore costs more than what is stored here, which is the opposite of our usual bias: treat these as the floor, not the bill."
+  },
+  "ranked": [
+    {
+      "project": "bookstack",
+      "rationale": "The shape matches. Slab organises a knowledge base into topics and posts and then sells you the search over them; BookStack organises it into shelves, books, chapters and pages, which is the structure teams actually reach for when a wiki grows past fifty documents, and its search is the reason people stay. It is MIT, it is two containers, and every page and revision is a row in a MariaDB you can dump. What you give up is co-editing and the verification workflow that flags a stale post, and what you take on is the packaging: BookStack publishes no Docker image of its own, so you are running a community-maintained one."
+    },
+    {
+      "project": "docmost",
+      "rationale": "The Notion-shaped answer, and the one to pick if the thing your team misses most is two people typing in the same document at once. Docmost has spaces, nested pages and a realtime collaborative editor, which BookStack does not, and it keeps everything in Postgres. It ranks second here only because Slab's own model is topics and posts rather than an infinite page tree, so BookStack's book-and-chapter structure lands closer to what a Slab team already has."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Outline",
+      "repo": "https://github.com/outline/outline",
+      "note": "The closest thing to Slab in feel, and actively developed, but two things keep it off the tested list. It is under the Business Source License 1.1 with a change date in 2030, so it is source-available rather than open source, and its own hosting docs state it does not support email and password authentication natively: you must wire up an outside identity provider before anyone can sign in at all, which turns a wiki install into an SSO project."
+    },
+    {
+      "name": "Wiki.js",
+      "repo": "https://github.com/requarks/wiki",
+      "note": "AGPL-3.0, still receiving releases, and genuinely capable, but the state of the project is the honest issue: releases continue on the 2.5.x line while the long-promised 3.0 rewrite has not shipped, so anything you build today sits on a version its own maintainers describe as superseded. Worth watching, hard to recommend as a five-year home for a team's documentation."
+    }
+  ]
+}

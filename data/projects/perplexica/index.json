@@ -1,0 +1,91 @@
+{
+  "slug": "perplexica",
+  "name": "Vane",
+  "tagline": "An answering engine with citations, assembled from a SearXNG you run and a model key you already pay for. Renamed from Perplexica in 2026.",
+  "repo": "ItzCrazyKns/Vane",
+  "site": "https://github.com/ItzCrazyKns/Vane",
+  "category": "ai-tools",
+  "replaces": [
+    {
+      "saas": "perplexity",
+      "plan": "Pro",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "MIT",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/ItzCrazyKns/Vane/blob/v1.12.2/docker-compose.yaml",
+  "local": {
+    "fit": "caveat",
+    "note": "Everything answers at http://localhost:8148, which is this computer and nowhere else, so your phone cannot open the answer you saved there and nothing searches while the lid is shut."
+  },
+  "quote": {
+    "text": "Make sure your SearxNG instance has: JSON format enabled in the settings, Wolfram Alpha search engine enabled",
+    "source": "Vane README, Getting Started with Docker",
+    "url": "https://github.com/ItzCrazyKns/Vane/blob/v1.12.2/README.md",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Upstream publishes a slim image for people who already run SearXNG, and states that the instance it talks to needs JSON format and the Wolfram Alpha engine enabled.",
+      "url": "https://github.com/ItzCrazyKns/Vane/blob/v1.12.2/README.md"
+    },
+    {
+      "claim": "The full image bundles SearXNG with a settings file carrying one literal secret_key, and its start-up script launches SearXNG through sudo, which drops the SEARXNG_SECRET override.",
+      "url": "https://github.com/ItzCrazyKns/Vane/blob/v1.12.2/searxng/settings.yml"
+    },
+    {
+      "claim": "SearXNG returns 403 for any output format not listed under search.formats, and the shipped defaults list html only.",
+      "url": "https://github.com/searxng/searxng/blob/master/searx/webapp.py"
+    },
+    {
+      "claim": "The SEARXNG_SECRET environment variable overrides server.secret_key in settings.yml, which is how a generated key replaces the one in the file.",
+      "url": "https://github.com/searxng/searxng/blob/master/searx/settings.yml"
+    },
+    {
+      "claim": "Google actively blocks self-hosted SearXNG instances, and a fresh instance can be refused after a handful of searches.",
+      "url": "https://github.com/searxng/searxng/issues/2515"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The bill changes shape rather than disappearing. Vane writes nothing itself: every answer comes from an API key you hold at Anthropic, OpenAI or Google, metered per token and billed to you, with no ceiling. That key is stored in plain text in data/config.json, so treat that file and every backup of it like a password file.",
+    "You do not get the index. Perplexity crawls and maintains its own; SearXNG asks the public engines on your behalf, and those engines refuse requests from datacenter addresses. Google in particular blocks fresh instances within a handful of searches, and the honest consequence is thinner answers from fewer sources on a VPS than on your own home connection.",
+    "It ships with no sign-in at all, and upstream lists adding authentication as a future feature. This install puts a Caddy password box in front of it, because an open Vane on a public hostname is a stranger spending your money. That password is the whole login, and losing it means going back to the server.",
+    "This runs the slim image, which carries no headless browser. Quality mode still answers, from search-result snippets rather than by opening the pages, and the tool that summarises a URL you paste will not work. The full image that can do both also ships a SearXNG secret key shared by every copy of it, which is why this install does not use it.",
+    "The project renamed itself from Perplexica to Vane, and the repository, the Docker images and the documentation all moved. The old image name stopped receiving releases, so anything still pinned to it is frozen wherever it was."
+  ],
+  "sources": {
+    "compose": "https://github.com/ItzCrazyKns/Vane/blob/v1.12.2/README.md",
+    "caddy": "https://caddyserver.com/docs/caddyfile/directives/basic_auth",
+    "install": "https://github.com/ItzCrazyKns/Vane/blob/v1.12.2/docs/installation/UPDATING.md",
+    "searxng": "https://docs.searxng.org/admin/installation-docker.html",
+    "settings": "https://docs.searxng.org/admin/settings/settings_server.html",
+    "config": "https://github.com/ItzCrazyKns/Vane/blob/v1.12.2/src/lib/config/index.ts",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "librechat",
+    "tabby",
+    "freshrss"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "b240eb709632d30dfc3356911b9d78780e28d2ae3d7a161ead95fa00be74c290"
+}

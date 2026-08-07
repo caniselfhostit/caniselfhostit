@@ -1,0 +1,93 @@
+{
+  "slug": "wger",
+  "name": "wger",
+  "tagline": "A gym log and a food diary on one server: routines, body measurements, and a barcode lookup that asks Open Food Facts instead of a subscription.",
+  "repo": "wger-project/wger",
+  "site": "https://wger.de",
+  "category": "money-home",
+  "replaces": [
+    {
+      "saas": "myfitnesspal-premium",
+      "plan": "Premium",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 4,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 4
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 240,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/wger-project/docker/blob/master/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "On your own computer wger answers only at http://localhost:8147, so the phone you would log lunch on cannot reach it: every meal and every set gets typed on this one machine, while it is awake."
+  },
+  "quote": {
+    "text": "The Docker image ships with a default set of exercises but no ingredients (the dataset is large).",
+    "source": "wger documentation, Syncing exercises and ingredients",
+    "url": "https://wger.readthedocs.io/en/latest/administration/sync-data.html",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "The image ships exercises but no ingredients, and the full food dataset is around 1 GB of database space synced from wger.de, with a smaller base set available in one command.",
+      "url": "https://wger.readthedocs.io/en/latest/administration/sync-data.html"
+    },
+    {
+      "claim": "Django serves none of its own static files in production, so a separate web server reads the directory collectstatic writes into, and a mounted folder has to be owned by UID and GID 1000 and readable by everyone.",
+      "url": "https://wger.readthedocs.io/en/latest/administration/errors.html"
+    },
+    {
+      "claim": "Upstream's architecture page marks Redis and the Celery worker and beat scheduler optional, and routes the mobile app's offline sync through a separate PowerSync service that replicates from Postgres.",
+      "url": "https://wger.readthedocs.io/en/latest/development/architecture.html"
+    },
+    {
+      "claim": "The image creates its first account as admin with the password adminadmin, and upstream tells you to change it and the shipped JWT keys before the instance is reachable from the internet.",
+      "url": "https://wger.readthedocs.io/en/latest/installation/docker.html"
+    },
+    {
+      "claim": "A barcode that is not in the local database is looked up in Open Food Facts by the server itself, which creates a local ingredient from the result.",
+      "url": "https://github.com/wger-project/wger/blob/2.6/wger/nutrition/api/filtersets.py"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The food database is the whole question, and yours will be smaller. MyFitnessPal advertises 20.5 million foods; the ingredient table you sync from wger.de held 3,063,298 entries the day we looked, and it is built from Open Food Facts, which had 4.67 million products. A barcode that is not in your copy is fetched live from Open Food Facts by your own server, so coverage follows what shoppers have contributed there: good on European packaged goods, thinner on American store brands and restaurant items. You will type some foods in by hand.",
+    "The phone app is not part of this install. wger publishes an app on Google Play and F-Droid, with a community build on the iOS store, but version 2 syncs through a separate PowerSync service that this install does not run, so the app logs in and then reports that sync is unavailable. What you get on a phone is the web interface in a browser, which is fine at the kitchen table and useless with no signal in a shop.",
+    "The install ends before the food database is finished. The image brings exercises and this install adds a small base set of ingredients in a couple of minutes; the full dataset is around 1 GB of database and hours of downloading and processing, and it is a command you decide to run later. That is why the time budget here is a weekend rather than an evening.",
+    "No mail and no scheduler. Password reset by email does not work, so on a one-account instance recovery is a command on the server. The weekly exercise sync and the ingredient photos are Celery jobs this install leaves out, because upstream marks that worker optional, so refreshing the exercise database is something you do on purpose.",
+    "You own four containers and one database. Everything that matters is in PostgreSQL, which means a dump rather than a file copy, and the static files are rebuilt on every start so they are not worth backing up. AGPL-3.0, so if you ever run a modified copy as a service for other people, those people are owed the source."
+  ],
+  "sources": {
+    "compose": "https://wger.readthedocs.io/en/latest/installation/docker.html",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://wger.readthedocs.io/en/latest/administration/settings.html",
+    "static": "https://wger.readthedocs.io/en/latest/administration/errors.html",
+    "architecture": "https://wger.readthedocs.io/en/latest/development/architecture.html",
+    "ingredients": "https://wger.readthedocs.io/en/latest/administration/sync-data.html",
+    "backup": "https://wger.readthedocs.io/en/latest/administration/backup.html",
+    "entrypoint": "https://github.com/wger-project/wger/blob/2.6/extras/docker/production/entrypoint.sh",
+    "settings": "https://github.com/wger-project/wger/blob/2.6/settings/main.py"
+  },
+  "related": [
+    "fittrackee",
+    "mealie",
+    "home-assistant"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "5cf05bd3a1ee29bedff925f890807b0239c15f30f4cc1ae02bcd9dfb5e45f709"
+}

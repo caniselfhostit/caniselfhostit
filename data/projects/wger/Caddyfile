@@ -1,0 +1,28 @@
+# wger · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://wger.readthedocs.io/en/latest/installation/docker.html and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also SITE_URL and CSRF_TRUSTED_ORIGINS in .env: Django refuses a form post
+# from an origin nobody told it about, so all three have to agree. This block
+# proxies everything and serves nothing; nginx inside the stack has the static
+# and media files.
+
+<DOMAIN> {
+	# HSTS because there is a login form on every path.
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "same-origin"
+		-Server
+	}
+
+	# 8147 is the loopback port compose publishes and nginx answers on. It is
+	# not a container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8147
+}

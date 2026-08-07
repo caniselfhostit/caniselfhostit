@@ -1,0 +1,59 @@
+# Keila · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   installation ....... https://www.keila.io/docs/installation
+#   configuration ...... https://www.keila.io/docs/configuration
+#   root user seed ..... https://github.com/pentacent/keila/blob/v0.30.2/priv/repo/seeds.exs
+#
+# Two services: Keila and the PostgreSQL it keeps contacts, campaigns and forms
+# in. Upstream states PostgreSQL is the only dependency besides a container
+# engine, and the release migrates and seeds itself on the way up. The SMTP relay
+# is not optional: upstream reads the relay host, from-address and password at
+# boot and halts when one is missing. Digests read on 2026-08-06. The Keila image
+# publishes linux/amd64 only; PostgreSQL publishes both.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  db:
+    image: postgres:17.10-alpine@sha256:742f40ea20b9ff2ff31db5458d127452988a2164df9e17441e191f3b72252193
+    container_name: keila-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: keila
+      POSTGRES_USER: keila
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - /srv/keila/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keila -d keila"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other container.
+
+  keila:
+    image: pentacent/keila:0.30.2@sha256:b2fdb45228c94a0df0d7d1597009edaa663ff455999ddcf1dc1483d06631762b
+    container_name: keila
+    restart: unless-stopped
+    env_file: /srv/keila/.env
+    environment:
+      # Assembled from .env, so the two cannot disagree.
+      DB_URL: postgres://keila:${POSTGRES_PASSWORD}@db:5432/keila
+      # The release listens on 4000; the host port below is the only way in.
+      PORT: "4000"
+      # Caddy terminates TLS, so Keila has to be told the links it writes into
+      # campaigns and forms are https. Upstream then defaults URL_PORT to 443.
+      URL_SCHEMA: https
+      # /auth/register is an open sign-up form on a public hostname otherwise.
+      DISABLE_REGISTRATION: "true"
+      # HOME here is /opt/app, and uploads default to a path under it.
+      USER_CONTENT_DIR: /opt/app/uploads
+      # The digest above is the pin; a check from inside cannot act on it.
+      DISABLE_UPDATE_CHECKS: "true"
+    volumes:
+      - /srv/keila/uploads:/opt/app/uploads
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8145.
+      - "127.0.0.1:8145:4000"
+    depends_on:
+      db:
+        condition: service_healthy

@@ -1,0 +1,95 @@
+{
+  "slug": "kavita",
+  "name": "Kavita",
+  "tagline": "A reading server for the epubs, PDFs and comics you already own, with per-user progress and OPDS on by default.",
+  "repo": "Kareadita/Kavita",
+  "site": "https://www.kavitareader.com",
+  "category": "reading-bookmarks",
+  "replaces": [
+    {
+      "saas": "everand",
+      "plan": "Standard",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 0
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "GPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://wiki.kavitareader.com/installation/docker/dockerhub/",
+  "local": {
+    "fit": "caveat",
+    "note": "On your own computer this answers only at http://localhost:8146, so the phone and the e-reader cannot reach it and the OPDS apps that are most of the point stay unused: the browser on that one machine is the whole reader."
+  },
+  "quote": {
+    "text": "Kavita uses parsing (not folder structure) to determine what is a series and what belongs to each series. Kavita requires that each series be in its folder and that no files are at root level of the library.",
+    "source": "Kavita wiki, Managing Files",
+    "url": "https://wiki.kavitareader.com/guides/scanner/managefiles/",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's own compose example runs a single service, publishes port 5000, and marks /kavita/config as the one mount path that must not be changed.",
+      "url": "https://wiki.kavitareader.com/installation/docker/dockerhub/"
+    },
+    {
+      "claim": "The published image exposes 5000, defaults TZ to UTC, and carries a HEALTHCHECK that curls /api/health inside the container.",
+      "url": "https://github.com/Kareadita/Kavita/blob/v0.9.0.2/Dockerfile"
+    },
+    {
+      "claim": "The container entrypoint no longer reads PUID or PGID; that handling was commented out upstream, so Kavita runs as root.",
+      "url": "https://github.com/Kareadita/Kavita/blob/v0.9.0.2/entrypoint.sh"
+    },
+    {
+      "claim": "OPDS support is enabled by default on all Kavita installs, and the wiki lists the Android, iOS and desktop readers that can browse a Kavita server through it.",
+      "url": "https://wiki.kavitareader.com/guides/features/opds/"
+    },
+    {
+      "claim": "Kavita does not publish its own mobile apps, and Kavita collects anonymous usage statistics by default until an administrator turns the setting off.",
+      "url": "https://wiki.kavitareader.com/troubleshooting/faq/"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "You bring the books. This reads files that are already on the disk, and nothing appears in it that you did not put there. Books bought inside a store that wraps them in DRM, which is most Kindle and Kobo purchases, stay locked to that store's own apps and will not open here. Everand's catalog and its monthly unlocks are the actual product, and no self-hosted server replaces them. What you get back is the reader, the library and the bill.",
+    "There is no first-party phone app, and upstream says so plainly. What there is instead is OPDS, switched on for every install, and a documented list of readers that speak it on Android, iOS and desktop, plus a handful of community-built Kavita clients the project explicitly does not vet. That is a real ecosystem and it is also a shelf of other people's software: pick one, test that it keeps your place, and know that nobody upstream is on the hook if it stops being maintained.",
+    "Your library is not in the backup. The install backs up the database, the settings file and the config folder, which is small and quick. The books are yours already and belong in whatever protects the machine you copied them from. Kavita also runs its own scheduled backup into that same config folder, which is convenient and is still on the same disk.",
+    "It phones home until you tell it not to. Kavita collects anonymous installation statistics by default, the first send is delayed 24 hours to give you time to opt out, and the switch is one toggle in the admin dashboard. Upstream documents exactly what is in the payload; it is still a default you did not choose.",
+    "No catalog, no unlocks, no Everand Originals, and no way to start a book you do not own at eleven at night. Kavita+, upstream's own paid subscription, is what buys the automatic metadata matching and recommendations, and this install runs without it."
+  ],
+  "sources": {
+    "compose": "https://wiki.kavitareader.com/installation/docker/dockerhub/",
+    "caddy": "https://wiki.kavitareader.com/installation/remote-access/caddy-example/",
+    "install": "https://wiki.kavitareader.com/installation/docker/",
+    "settings": "https://wiki.kavitareader.com/guides/admin-settings/general/",
+    "libraries": "https://wiki.kavitareader.com/guides/admin-settings/libraries/",
+    "layout": "https://wiki.kavitareader.com/guides/scanner/managefiles/",
+    "opds": "https://wiki.kavitareader.com/guides/features/opds/",
+    "image": "https://github.com/Kareadita/Kavita/blob/v0.9.0.2/Dockerfile",
+    "health": "https://github.com/Kareadita/Kavita/blob/v0.9.0.2/Kavita.Server/Controllers/HealthController.cs",
+    "firstRun": "https://github.com/Kareadita/Kavita/blob/v0.9.0.2/Kavita.Server/Controllers/AdminController.cs",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "audiobookshelf",
+    "navidrome",
+    "wallabag"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "5f222166e614b3862b6433c800ae658f03392d75f89a54f45c43e2b4ac0505ac"
+}

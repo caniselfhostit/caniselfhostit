@@ -1,0 +1,77 @@
+{
+  "slug": "railway",
+  "name": "Railway",
+  "domain": "railway.com",
+  "whyPeoplePay": "Railway sells the shortest distance between a git repository and a running service, and it charges for the running rather than for the seat. You connect a repo, it works out how to build it, and a database, a cron job and a worker are three clicks that arrive already networked together and already backed up. What you are paying for is that nobody on your side owns capacity: the meter runs per second on the memory and CPU you actually use, it scales down to nothing overnight, and there is an operator awake when the underlying machine is not. The subscription is the small half of the bill and the meter is the half people go looking to escape.",
+  "plans": [
+    {
+      "name": "Trial",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$5 of credits for 30 days, no card required, capped at 2 vCPU and 1 GB per service with 7-day log history."
+    },
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$1 of monthly usage credits, capped at 1 vCPU and 0.5 GB per service, one replica, 3-day log history."
+    },
+    {
+      "name": "Hobby",
+      "priceMonthly": 5,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$5 a month that includes $5 of usage credits, so a quiet project costs the subscription and nothing more. Up to 48 vCPU and 48 GB per service, 6 replicas, 7-day log history."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 20,
+      "unit": "flat",
+      "seatsIncluded": null,
+      "note": "$20 a month per workspace, not per person: the page lists workspace seats as unlimited and included. It carries $20 of usage credits, and everything past them is billed at the published unit rates."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. Adds contractual SLAs, SSO, dedicated support and procurement options."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://railway.com/pricing",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "The subscription prices are read straight off the pricing page, and they are only the floor of a Railway bill. Usage is metered per second on top of the included credits, at $0.0139 per GB-hour of memory, $0.0278 per vCPU-hour, and $0.05 per GB of egress, so a savings comparison built on the $5 or $20 alone understates what a busy service actually costs. Pro is priced per workspace with seats included, which is the one number people most often mis-remember as per-seat."
+  },
+  "ranked": [
+    {
+      "project": "dokploy",
+      "rationale": "The closest thing to the Railway loop you can run on a box you already pay for: connect a repository, push, and it builds the image and starts the container with the deployment log in a browser instead of a terminal. It is the lighter of the two panels here and the one whose interface feels most like the product it replaces. What it does not have is the part the meter was paying for, elastic capacity and managed databases somebody else backs up, and what it adds is a dashboard holding the Docker socket of your server, which is root with a login form in front of it."
+    },
+    {
+      "project": "coolify",
+      "rationale": "Second place, and the same job done by the bigger sibling. Coolify is older, has the larger community and the deeper service catalogue, and it is one page over as the answer to Vercel. Pick it over Dokploy when you want the project more people have already broken and written up; pick Dokploy when you want the smaller footprint and the interface that reads most like Railway. Both make the same trade with your server's Docker daemon, so neither of them is the safer choice on that front."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "CapRover",
+      "repo": "https://github.com/caprover/caprover",
+      "note": "Apache-2.0, and still receiving commits. The oldest and plainest of these: a one-click app store, its own nginx, and a captain-definition file per application. GitHub reports its licence as unrecognised because the LICENSE file carries the short Apache notice rather than the full text, not because anything is unclear. The interface shows its age next to the others, which is a real cost only if you are looking at it every day."
+    },
+    {
+      "name": "Dokku",
+      "repo": "https://github.com/dokku/dokku",
+      "note": "MIT, actively maintained, and the most honestly scoped of the four. It is the Heroku git-push experience as a set of shell commands, with no web interface in the free project at all, so administering it means being comfortable on the box. That is a smaller promise and a smaller thing to go wrong; it is also the wrong answer for anyone who came here wanting a dashboard."
+    },
+    {
+      "name": "Kamal",
+      "repo": "https://github.com/basecamp/kamal",
+      "note": "MIT, maintained by Basecamp and used to run their own products. Not a panel at all: it is a deploy tool you run from your laptop that puts containers on servers you already have, with a config file in the repository instead of state in a database. It answers the question 'how do I stop paying for deploys' without answering 'where is my dashboard', and on a tool that would otherwise hold root on your server, having no long-lived service to attack is a feature."
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+# Appsmith · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker install ..... https://docs.appsmith.com/getting-started/setup/installation-guides/docker
+#   variable reference . https://docs.appsmith.com/getting-started/setup/environment-variables
+#   capacity planning .. https://docs.appsmith.com/getting-started/setup/infrastructure-sizing
+#
+# One heavy service: upstream's all-in-one image runs MongoDB, Redis and
+# PostgreSQL inside this container under supervisord, which is where the 8 GB
+# floor comes from. /appsmith-stacks is a named volume, not a relative bind
+# mount, because the embedded PostgreSQL chowns its data directory to its own
+# uid and Windows file sharing cannot grant that on a home folder. ./backups
+# stays a real folder. Digest read on 2026-08-06; amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  appsmith:
+    image: appsmith/appsmith-ce:v2.2@sha256:dc17b968c88eebf42b85c2e22b97efb55f2339b2d685e48f804c5f87bdd9d4e5
+    container_name: appsmith
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      # Upstream ships anonymous usage collection turned on. This turns it off.
+      APPSMITH_DISABLE_TELEMETRY: "true"
+      # The docker.env the container writes for itself lets any site load
+      # these apps in an iframe. This narrows it back to this address only.
+      APPSMITH_ALLOWED_FRAME_ANCESTORS: "'self'"
+    volumes:
+      - appsmith-stacks:/appsmith-stacks
+      - ./backups:/backup
+    ports:
+      # Loopback only: no other device on the wifi can reach 8143.
+      - "127.0.0.1:8143:80"
+
+volumes:
+  appsmith-stacks:

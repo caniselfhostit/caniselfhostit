@@ -1,0 +1,58 @@
+{
+  "slug": "kit",
+  "name": "Kit",
+  "domain": "kit.com",
+  "whyPeoplePay": "Kit, which spent its first decade as ConvertKit, sells a creator's whole audience layer in one account: signup forms and landing pages that work the first time you paste them into a page, sequences and visual automations that keep sending while you are asleep, and a delivery reputation built across a very large pool of other newsletters. The bill is attached to how many subscribers you store rather than how much you send, so it grows on a list you have not mailed in a year, and the free tier stops exactly where a newsletter starts being worth something. That shape is the most common reason a writer with 3,000 readers goes looking for somewhere else to keep them.",
+  "plans": [
+    {
+      "name": "Newsletter",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Free up to 10,000 subscribers, with unlimited forms, landing pages and broadcasts, and one basic visual automation."
+    },
+    {
+      "name": "Creator",
+      "priceMonthly": 39,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Quoted at the 1,000-subscriber tier and rises with the subscriber slider. $390 a year on the annual plan, which the page shows as $33/month billed yearly."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 79,
+      "unit": "flat",
+      "seatsIncluded": null,
+      "note": "Also quoted at 1,000 subscribers; adds subscriber signals, engagement scoring, deliverability reporting and unlimited users. $790 a year on the annual plan, shown as $66/month billed yearly. Older write-ups still call this plan Creator Pro."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://kit.com/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Read off kit.com/pricing on 2026-08-06 in its yearly view, which is what the page loads with: headline figures of $33 and $66 a month, annual totals of $390 and $790, a stated saving of $78 and $158 a year, and a toggle reading 'Pay yearly, save 17%'. The monthly-billed figures recorded here are those annual totals plus the stated savings divided by twelve, which gives $39 and $79, corroborated against independent price trackers read the same day rather than off the vendor's own page, so confidence is medium. Every figure is the 1,000-subscriber tier: this ladder is priced per subscriber stored, and a plan name on its own says nothing about the bill."
+  },
+  "ranked": [
+    {
+      "project": "keila",
+      "rationale": "The closest match to what a Kit subscriber actually touches every week. Signup forms you can style and embed, a WYSIWYG campaign editor with templates, segments, double opt-in and a public archive, all out of one Elixir release and one PostgreSQL, and the bill stops being a function of how many people are sitting on the list. What it does not hand you is the half Kit is charging for: Keila composes and queues, and the sending, the reputation and the bounces belong to an SMTP relay you sign up for yourself. It is also honest about the boundary in a way that is unusual, because the release will not even start until you have given it a relay."
+    },
+    {
+      "project": "listmonk",
+      "rationale": "The heavier-throughput sibling, already in this catalogue as the Mailchimp answer, and the better pick once the list is large enough that send rate and queue behaviour are the thing you think about. One Go binary, one PostgreSQL, a deeper API and a bigger pool of people who have already hit whatever breaks at a hundred thousand subscribers. It ranks second here because the daily surface is a database-shaped admin panel rather than a creator's editor: templating is Go templates and the form builder is thinner, which is a fair trade for throughput and a bad trade for someone who came from Kit's canvas."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Mautic",
+      "repo": "https://github.com/mautic/mautic",
+      "note": "Marketing automation rather than a newsletter tool: lead scoring, drip campaigns, landing pages and forms, on PHP with MySQL and a cron schedule you have to keep running. Actively developed, 7.1.3 released in July 2026, GPL-3.0 by its own LICENSE file even though GitHub reports the license as undetected. It replaces more of Kit than Keila does, including the automation canvas, and asks for several times the operational attention, which is why it is not the pick for someone who wants their newsletter back."
+    },
+    {
+      "name": "Ghost",
+      "repo": "https://github.com/TryGhost/Ghost",
+      "note": "In this catalogue already, as the answer to Ghost(Pro), and the right call if the newsletter is attached to a site and paid memberships. MIT, shipping constantly, v6.56.0 in August 2026, and its members and newsletter features cover a real part of what Kit does. It sits here rather than in the ranking because it is a publishing platform first: you are installing a website in order to get a mailing list, which is the wrong shape when the newsletter is the whole product and there is no blog behind it."
+    }
+  ]
+}

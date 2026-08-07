@@ -1,0 +1,74 @@
+# BookStack · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   installation ... https://www.bookstackapp.com/docs/admin/installation/
+#   configuration .. https://github.com/BookStackApp/BookStack/blob/v26.05.3/.env.example.complete
+#   image docs ..... https://docs.linuxserver.io/images/docker-bookstack/
+#
+# BookStack ships no Docker image of its own; its installation page points at
+# community docker setups. This uses the LinuxServer.io one, GPL-3.0, unpacking
+# BookStack's own 26.05.3 release archive onto their Alpine and nginx base
+# image. The application is upstream's, the packaging is not.
+#
+# Paths are relative to ~/selfhost/bookstack/, so one file works on all three
+# systems. The database is a named volume because MariaDB chowns its data
+# directory to a uid Docker Desktop cannot grant on a Windows bind mount;
+# config/ is a bind mount, owned by PUID/PGID. Digests read 2026-08-06.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  db:
+    image: mariadb:11.8.8@sha256:d9f7eb2637296652f24b484afd5d246f759f49f5babcadc6a9e344c9acb75fbf
+    container_name: bookstack-db
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: bookstack
+      MARIADB_USER: bookstack
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_AUTO_UPGRADE: "1"
+    volumes:
+      - bookstack-dbdata:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      retries: 20
+    # No `ports:` at all: 3306 is reachable only from the other container.
+
+  bookstack:
+    image: lscr.io/linuxserver/bookstack:version-v26.05.3@sha256:7f0af07baa41fd6265f5ec57887564d85be03a326f79cb32f926fe735e5313ff
+    container_name: bookstack
+    restart: unless-stopped
+    environment:
+      PUID: "${PUID}"
+      PGID: "${PGID}"
+      TZ: Etc/UTC
+      APP_URL: ${APP_URL}
+      # Session and at-rest key. The image halts its init without one.
+      APP_KEY: ${APP_KEY}
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_DATABASE: bookstack
+      DB_USERNAME: bookstack
+      DB_PASSWORD: ${DB_PASSWORD}
+      # Neither is a BookStack setting. They let step 7 hand them to the
+      # command that replaces the seeded account, off the command line.
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    volumes:
+      - ./config:/config
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS -o /dev/null http://127.0.0.1/status || exit 1"]
+      start_period: 30s
+      interval: 15s
+      retries: 20
+    ports:
+      # Loopback only: no other device on the wifi reaches 8150.
+      - "127.0.0.1:8150:80"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  bookstack-dbdata:

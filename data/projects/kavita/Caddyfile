@@ -1,0 +1,35 @@
+# Kavita · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://wiki.kavitareader.com/installation/remote-access/caddy-example/,
+# https://caddyserver.com/docs/caddyfile/directives/reverse_proxy and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. Upstream's own
+# Caddy example is two directives, an encode and a reverse_proxy. Kavita opens
+# a websocket for scan progress and reading events; Caddy upgrades that
+# connection with no extra directive, so the only additions here are headers.
+
+<DOMAIN> {
+	# The Angular bundle, the JSON API and epub text all compress well. Caddy's
+	# default encode matcher covers text, JSON, JavaScript and SVG only, so
+	# cover images and archive downloads pass through untouched.
+	encode zstd gzip
+
+	# No X-Frame-Options here on purpose: Kavita renders books in a same-origin
+	# frame and decides its own frame-ancestors policy from the AllowIFraming
+	# server setting, so a blanket DENY at the proxy would break the reader.
+	# HSTS is here because every request to this host carries either a session
+	# credential or an OPDS key in the URL.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8146 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8146
+}

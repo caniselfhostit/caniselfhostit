@@ -1,0 +1,50 @@
+# Documenso · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   compose deployment . https://docs.documenso.com/docs/self-hosting/deployment/docker-compose
+#   signing certificate  https://docs.documenso.com/docs/self-hosting/configuration/signing-certificate/local
+#
+# Two services: Documenso and PostgreSQL, upstream's only supported engine, 14
+# or later. Signed PDFs are rows in it, and the only state outside it is the
+# signing certificate, mounted from the host because one made inside a container
+# dies with it. Digests read on 2026-08-06; both images publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: postgres:17.10-alpine@sha256:742f40ea20b9ff2ff31db5458d127452988a2164df9e17441e191f3b72252193
+    container_name: documenso-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: documenso
+      POSTGRES_USER: documenso
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - /srv/documenso/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U documenso -d documenso"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other container.
+
+  documenso:
+    image: ghcr.io/documenso/documenso:v2.16.0@sha256:945bd2c04306bd5d78def0c4ceafdffb6b0a106cd6a2543db5acda9a6424b2d9
+    container_name: documenso
+    restart: unless-stopped
+    env_file: /srv/documenso/.env
+    environment:
+      PORT: "3000"
+      # One database, named twice: upstream wants a pooled URL and a direct URL
+      # for migrations, and allows one string for both with no pooler in front.
+      NEXT_PRIVATE_DATABASE_URL: postgresql://documenso:${DB_PASSWORD}@postgres:5432/documenso
+      NEXT_PRIVATE_DIRECT_DATABASE_URL: postgresql://documenso:${DB_PASSWORD}@postgres:5432/documenso
+    volumes:
+      # The signing certificate, read-only. The image runs as uid 1001, which
+      # is why step 3 hands this file to 1001 first.
+      - /srv/documenso/cert.p12:/opt/documenso/cert.p12:ro
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8142.
+      - "127.0.0.1:8142:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy

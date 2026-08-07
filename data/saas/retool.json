@@ -1,0 +1,66 @@
+{
+  "slug": "retool",
+  "name": "Retool",
+  "domain": "retool.com",
+  "whyPeoplePay": "Retool sells the weeks between a spreadsheet and a real admin panel. Somebody else has already written the table widget that paginates a million rows without falling over, the query editor that speaks forty databases, the permission model your auditor asks about, and the hosting that keeps all of it up while your ops team clicks buttons on a Tuesday. The two-part seat price is the tell: they meter the people who build the tools and, separately and more cheaply, the people who only use them, because on their side both groups are load they carry.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 5,
+      "note": "Up to 5 users, 500 workflow runs a month, 5 GB of Retool Database and 250 AI credits a month."
+    },
+    {
+      "name": "Team",
+      "priceMonthly": 12,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per builder per month billed monthly; $10 billed annually. Internal users who only open the apps are a second, cheaper meter on the same plan at $7 monthly, $5 annually. Adds 5,000 workflow runs a month, a staging environment and app versions."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": 65,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per builder per month billed monthly; $50 billed annually. Internal users $18 monthly, $15 annually. External app users are free to 50, then $10 each monthly, falling to $5 each above 500. Adds audit logging, permission controls and custom branding."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. SSO, source control, observability, white-labeling, admin APIs and volume discounts sit here."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://retool.com/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Read from retool.com/pricing on 2026-08-06 and corroborated by search the same day, because the page renders its figures in JavaScript behind a monthly-versus-annual toggle. The recorded prices are the monthly-billed ones, with the annual-billed equivalents in each plan note; the page advertises 20% off for annual billing. The larger uncertainty is not the number but the shape: Retool bills builders and non-editing internal users on two different meters within one plan, and Business adds a third tiered meter for external users, so a plan name alone does not predict a bill. Self-hosting is offered on the same tiers rather than as a separate charge."
+  },
+  "ranked": [
+    {
+      "project": "appsmith",
+      "rationale": "The closest like-for-like swap you can actually run on one server, and the only app builder on this list whose community edition is Apache-2.0 end to end rather than open source with a paid directory carved out of it. You keep the shape people are paying for: a drag-and-drop editor over your own databases and APIs, JavaScript anywhere a value goes, and apps you hand to colleagues. The seat meters go away entirely, both of them. What you take on is a heavy container. One image runs the application, MongoDB, Redis and PostgreSQL together under supervisord, upstream asks for 8 GB of RAM, and the first boot takes minutes rather than seconds. SSO, audit logs, granular roles, workflows and embedding are the paid edition, and this install stops short of them."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "ToolJet",
+      "repo": "https://github.com/ToolJet/ToolJet",
+      "note": "The nearest rival to Appsmith on features and the more active repository of the two, releasing continuously. AGPL-3.0 at the root, with the paid half kept in two private git submodules, ToolJet/ee-frontend and ToolJet/ee-server, so the code you can read is genuinely AGPL and the code behind the licence key is not published at all. We ranked Appsmith first on the simpler licence and the single-container install; if you would rather have the newer builder and do not mind AGPL, this is the one to look at."
+    },
+    {
+      "name": "Budibase",
+      "repo": "https://github.com/Budibase/budibase",
+      "note": "Actively developed and pleasant to build in, with its own built-in database if you do not already have one. The licence is the reason it is not ranked: GitHub reports no single licence for the repository, and Budibase's own guidelines say the project is GPLv3 overall while paid features live in packages/pro under the Business Source License, which is not open source and forbids running modified code that bypasses their licence checks. That is a real constraint to read before you build a company's tools on it."
+    },
+    {
+      "name": "Grist",
+      "repo": "https://github.com/gristlabs/grist-core",
+      "note": "Apache-2.0, actively released, and the honest answer for a large share of people shopping for Retool: if the internal tool you want is a shared table with formulas, validation and a couple of forms in front of it, a spreadsheet-database is less to run and less to maintain than an app builder. It is a different product though. There is no widget canvas and no arbitrary API-backed UI, so anyone who needs a real front end over an existing service will outgrow it. We run it, on its own page."
+    }
+  ]
+}

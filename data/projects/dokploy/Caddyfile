@@ -1,0 +1,31 @@
+# Dokploy · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.dokploy.com/docs/core/installation and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. Caddy keeps 80 and
+# 443 here; upstream's installer would have given them to its own Traefik, and
+# this install runs none, so every application deployed from the panel gets a
+# host port and a site block of its own, written like this one.
+
+<DOMAIN> {
+	# The panel carries a session cookie and an embedded shell, so it is never
+	# framed and leaks no path in a referrer. HSTS because whoever reaches this
+	# dashboard reaches the Docker daemon standing behind it.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	encode zstd gzip
+
+	# 8144 is the loopback port compose publishes on this host. It is not a
+	# container port and not open in the firewall. Deployment logs and the web
+	# terminal are WebSockets on it too, which reverse_proxy upgrades already.
+	reverse_proxy 127.0.0.1:8144
+}

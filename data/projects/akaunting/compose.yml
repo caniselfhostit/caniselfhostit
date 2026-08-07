@@ -1,0 +1,70 @@
+# Akaunting · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   image README ... https://github.com/akaunting/docker/blob/master/README.md
+#   entrypoint ..... https://github.com/akaunting/docker/blob/master/files/akaunting.sh
+#   variables ...... https://github.com/akaunting/docker/blob/master/env/run.env.example
+#
+# Akaunting's Apache image and the MariaDB holding the books. /var/www/html is
+# a named volume because the image ships the application there and chowns it;
+# MariaDB chowns its own directory, so that one is the bind mount. 3.1.21 is the
+# newest tag akaunting/docker has published, and 3.2.1 has no image behind it.
+# Digests read 2026-08-06, amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  db:
+    image: mariadb:11.8.8@sha256:d9f7eb2637296652f24b484afd5d246f759f49f5babcadc6a9e344c9acb75fbf
+    container_name: akaunting-db
+    restart: unless-stopped
+    # Upstream's install page asks for utf8mb4_general_ci.
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_general_ci
+    environment:
+      MARIADB_DATABASE: akaunting
+      MARIADB_USER: akaunting
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_DISABLE_UPGRADE_BACKUP: "1"
+    volumes:
+      - /srv/akaunting/mariadb:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      retries: 20
+    # No `ports:` at all: 3306 is reachable only from the other container.
+
+  akaunting:
+    image: akaunting/akaunting:3.1.21@sha256:50940112be48a229a2f567dc50ace9886fe5b14e1fe33f0232e704d0fb96f29f
+    container_name: akaunting
+    restart: unless-stopped
+    environment:
+      # The <base href> on every page: the scheme and host Caddy answers on.
+      APP_URL: ${APP_URL}
+      LOCALE: ${LOCALE}
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_NAME: akaunting
+      DB_USERNAME: akaunting
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_PREFIX: ""
+      COMPANY_NAME: ${COMPANY_NAME}
+      COMPANY_EMAIL: ${COMPANY_EMAIL}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      # The installer runs while AKAUNTING_SETUP is set; step 7 deletes it.
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      AKAUNTING_SETUP: ${AKAUNTING_SETUP:-}
+    volumes:
+      - akaunting-html:/var/www/html
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8151.
+      - "127.0.0.1:8151:80"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  akaunting-html:

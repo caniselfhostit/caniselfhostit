@@ -1,0 +1,71 @@
+# Dokploy · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   installation ....... https://docs.dokploy.com/docs/core/installation
+#   manual install ..... https://docs.dokploy.com/docs/core/manual-installation
+#   architecture ....... https://docs.dokploy.com/docs/core/architecture
+#   applications ....... https://docs.dokploy.com/docs/core/applications
+#
+# Two services: the panel, and the PostgreSQL holding every project, server and
+# stored credential. Upstream's installer starts a third container, its own
+# Traefik, on 80 and 443; this file starts no proxy, because Caddy holds those
+# on a Prompt Zero box. The panel answers on 127.0.0.1:8144, and applications
+# deployed from it get a host port and a Caddy site block.
+#
+# /etc/dokploy is bound host path to identical container path on purpose: the
+# panel hands those strings to the Docker daemon out here. The socket is
+# read-write because driving this host's Docker is the product, and that is
+# root on this machine. dokploy-network is the attachable overlay network the
+# install step created; Swarm mode is not optional, because everything the
+# panel deploys is a Swarm service. Digests read 2026-08-06; both images
+# publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  dokploy:
+    image: dokploy/dokploy:v0.29.14@sha256:57771f6edc7921f741c004002b9be9b39cfa5cb84ecd4ba325f735219a8cae6b
+    container_name: dokploy
+    restart: unless-stopped
+    environment:
+      # Upstream reads DATABASE_URL ahead of its Docker-secret path.
+      DATABASE_URL: postgres://dokploy:${DB_PASSWORD}@postgres:5432/dokploy
+      BETTER_AUTH_SECRET: ${AUTH_SECRET}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/dokploy:/etc/dokploy
+      - dokploy-docker:/root/.docker
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8144.
+      - "127.0.0.1:8144:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:3000/api/health || exit 1"]
+      interval: 10s
+      retries: 30
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16.14-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
+    container_name: dokploy-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: dokploy
+      POSTGRES_USER: dokploy
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - /srv/dokploy/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dokploy -d dokploy"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other container.
+
+networks:
+  default:
+    name: dokploy-network
+    external: true
+
+volumes:
+  dokploy-docker:
+    name: dokploy-docker

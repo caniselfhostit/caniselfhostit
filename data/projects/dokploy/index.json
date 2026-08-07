@@ -1,0 +1,92 @@
+{
+  "slug": "dokploy",
+  "name": "Dokploy",
+  "tagline": "Push to a git repository and get a running container, on a server you rent flat instead of a meter you watch.",
+  "repo": "Dokploy/dokploy",
+  "site": "https://dokploy.com",
+  "category": "automation-dev",
+  "replaces": [
+    {
+      "saas": "railway",
+      "plan": "Pro",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 30,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 150,
+  "license": "Apache-2.0",
+  "officialCompose": "none",
+  "local": {
+    "fit": "caveat",
+    "note": "Everything this panel deploys runs on the computer you installed it on and answers at localhost only, so what you build here is reachable from that one desk, and it stops when the machine sleeps."
+  },
+  "quote": {
+    "text": "Before installing Dokploy, ensure the following ports are available on your server: Port 80: HTTP traffic (used by Traefik), Port 443: HTTPS traffic (used by Traefik), Port 3000: Dokploy web interface",
+    "source": "Dokploy documentation, Installation",
+    "url": "https://docs.dokploy.com/docs/core/installation",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's manual installation puts the panel in Docker Swarm on an attachable overlay network, binds /var/run/docker.sock and /etc/dokploy into the container, and publishes the interface on port 3000, which is the topology this install reproduces without upstream's Traefik container.",
+      "url": "https://docs.dokploy.com/docs/core/manual-installation"
+    },
+    {
+      "claim": "Upstream asks for at least 2 GB of RAM and 30 GB of disk, and for ports 80, 443 and 3000 to be free, the first two because its own Traefik wants them.",
+      "url": "https://docs.dokploy.com/docs/core/installation"
+    },
+    {
+      "claim": "The panel reads DATABASE_URL ahead of its Docker-secret path, and falls back to a published hard-coded database password when neither is set, which is why this install supplies the connection string itself.",
+      "url": "https://github.com/Dokploy/dokploy/blob/v0.29.14/packages/server/src/db/constants.ts"
+    },
+    {
+      "claim": "BETTER_AUTH_SECRET is read from the environment, and an instance that leaves it unset falls back to a hard-coded session key that upstream's own warning calls a critical security risk.",
+      "url": "https://github.com/Dokploy/dokploy/blob/v0.29.14/packages/server/src/lib/auth-secret.ts"
+    },
+    {
+      "claim": "The self-hosted deployment queue runs in memory rather than on Redis, so the stack behind this panel is two services and not three.",
+      "url": "https://github.com/Dokploy/dokploy/blob/v0.29.14/apps/dokploy/server/queues/queueSetup.ts"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "This is not sandboxed, and the sandbox is not coming. The panel mounts this server's Docker socket and switches the machine into Swarm mode so it can create services on it, which is root on that box by another name. Anyone who reaches the dashboard reaches the server, so treat the panel password the way you treat the root password, because here they amount to the same thing.",
+    "You own the proxy decision, and this install makes it one way. Upstream runs its own Traefik on ports 80 and 443 and issues a certificate per application domain. Those ports belong to the Caddy from Prompt Zero, so no Traefik is started, the Domains tab on an application will not issue anything, and each application you deploy gets a published port plus a Caddy site block you write. That is a real subtraction from the product, and it is the honest one on a box that already has a reverse proxy.",
+    "Apache-2.0, with a carve-out worth reading. The licence file reserves anything under a /proprietary directory for Dokploy's own source-available licence, and that directory exists inside the source tree, so parts of what you are running are not covered by the Apache grant. GitHub reports the repository as having no single licence for exactly that reason.",
+    "You own the backups and the updates, and the database is the whole install. It holds every project, application, server and the credentials for every repository and registry you connect. The containers it deployed keep running while the panel is gone, which makes a lost database feel survivable right up to the moment you need to change something. Nobody applies a security fix here but you, and the panel's own update button is switched off by this layout.",
+    "No managed databases with somebody else's backup schedule, no per-second scaling, no global network, and no support contract. You get a build on your own box, one container behind one hostname, and a bill that does not move when your traffic does. The difference between those two is most of what the metered plan was buying."
+  ],
+  "sources": {
+    "compose": "https://docs.dokploy.com/docs/core/manual-installation",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://docs.dokploy.com/docs/core/installation",
+    "architecture": "https://docs.dokploy.com/docs/core/architecture",
+    "applications": "https://docs.dokploy.com/docs/core/applications",
+    "image": "https://github.com/Dokploy/dokploy/blob/v0.29.14/Dockerfile",
+    "health": "https://github.com/Dokploy/dokploy/blob/v0.29.14/apps/dokploy/pages/api/health.ts",
+    "database": "https://github.com/Dokploy/dokploy/blob/v0.29.14/packages/server/src/db/constants.ts",
+    "proxy": "https://github.com/Dokploy/dokploy/blob/v0.29.14/packages/server/src/setup/traefik-setup.ts"
+  },
+  "related": [
+    "coolify",
+    "activepieces",
+    "uptime-kuma"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "253aeffd0a93466076e8936f5d4792411fe7b0afb057ed2b9f4d6e68232d0498"
+}

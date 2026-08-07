@@ -1,0 +1,37 @@
+# Kavita · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker install ...... https://wiki.kavitareader.com/installation/docker/
+#   dockerhub image ..... https://wiki.kavitareader.com/installation/docker/dockerhub/
+#   server settings ..... https://wiki.kavitareader.com/guides/admin-settings/general/
+#   libraries ........... https://wiki.kavitareader.com/guides/admin-settings/libraries/
+#
+# One service. The whole state is a SQLite database and a handful of folders
+# under /kavita/config, a path upstream's own compose example marks as the one
+# that must not be changed. The image already exposes 5000 and carries its own
+# HEALTHCHECK against /api/health, so this file repeats neither. Upstream took
+# the PUID and PGID handling out of its entrypoint, so the container runs as
+# root and the config directory is root-owned on the host to match. The library
+# is mounted read-only: Kavita reads filenames and in-file metadata and writes
+# nothing back into it. Tag and digest read from Docker Hub on 2026-08-06; the
+# image publishes linux/amd64, linux/arm64 and linux/arm/v7.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  kavita:
+    image: jvmilazz0/kavita:0.9.0.2@sha256:ca6af7a18d7124d014702983c2364e485294f808c1552e9555f2595b7cda7982
+    container_name: kavita
+    restart: unless-stopped
+    environment:
+      # The nightly library scan and the database backup task both run at
+      # midnight in this zone, so it is the one setting worth being deliberate
+      # about before the first scan.
+      TZ: UTC
+    volumes:
+      - /srv/kavita/config:/kavita/config
+      # Read-only. Nothing in this configuration writes to the library, and the
+      # mount is what keeps a mis-click in the web UI from writing to it either.
+      - /srv/kavita/books:/books:ro
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8146.
+      - "127.0.0.1:8146:5000"

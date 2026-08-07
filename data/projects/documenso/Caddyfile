@@ -1,0 +1,28 @@
+# Documenso · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from https://caddyserver.com/docs/automatic-https
+# and https://docs.documenso.com/docs/self-hosting/deployment/docker-compose
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also NEXT_PUBLIC_WEBAPP_URL in .env, and it is the address inside every
+# signing link Documenso mails out, so the two have to agree.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# No X-Frame-Options: Documenso publishes an embeddable signing view, and a
+	# blanket SAMEORIGIN would break it later. No body limit either, because a
+	# scanned contract is often several megabytes.
+	#
+	# 8142 is the loopback port compose publishes here. It is not a container
+	# port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8142
+}

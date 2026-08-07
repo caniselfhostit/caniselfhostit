@@ -1,0 +1,78 @@
+{
+  "slug": "quickbooks-online",
+  "name": "QuickBooks Online",
+  "domain": "quickbooks.intuit.com",
+  "whyPeoplePay": "QuickBooks sells the boring middle of running a business, and it sells it to two people at once. To you: bank and card feeds that pull yesterday's transactions in overnight, payroll that files the tax deposits, sales tax that knows your state, and receipts you photograph rather than file. To your accountant: a file they already know, with an accountant login, a trial balance and a year-end close they have done a thousand times. That second audience is the part self-hosting cannot buy back, and it is the reason people who dislike the subscription keep paying it.",
+  "plans": [
+    {
+      "name": "Simple Start",
+      "priceMonthly": 38,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "source": "https://quickbooks.intuit.com/pricing/",
+      "checkedOn": "2026-08-06",
+      "note": "One user plus accountant access. Income and expense tracking, invoicing and payments, bank feeds, sales tax and general reports. Intuit's August 2026 price change left this tier unchanged."
+    },
+    {
+      "name": "Essentials",
+      "priceMonthly": 85,
+      "unit": "flat",
+      "seatsIncluded": 3,
+      "source": "https://quickbooks.intuit.com/pricing/",
+      "checkedOn": "2026-08-06",
+      "note": "Three users. Adds bill management, multi-currency and time tracking. Raised from $75 on 1 August 2026."
+    },
+    {
+      "name": "Plus",
+      "priceMonthly": 140,
+      "unit": "flat",
+      "seatsIncluded": 5,
+      "source": "https://quickbooks.intuit.com/pricing/",
+      "checkedOn": "2026-08-06",
+      "note": "Five users. Adds inventory, project profitability and budgets. Raised from $115 on 1 August 2026."
+    },
+    {
+      "name": "Advanced",
+      "priceMonthly": 340,
+      "unit": "flat",
+      "seatsIncluded": 25,
+      "source": "https://quickbooks.intuit.com/pricing/",
+      "checkedOn": "2026-08-06",
+      "note": "Twenty-five users, with workflow automation, custom roles and a dedicated support line. Raised from $275 on 1 August 2026."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://quickbooks.intuit.com/pricing/",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Intuit's own pricing page did not return content to us on the day we checked, so these are the list prices Intuit announced for its 1 August 2026 change, corroborated against two independent write-ups of that announcement rather than read off the vendor page. Regular monthly rates only: the introductory discount the site runs for new customers is deliberately excluded, because a saving measured against a promotional rate overstates what month four costs. Intuit also sells lower tiers, Solopreneur and Ledger, which this ladder does not price. Worth re-checking against the vendor page."
+  },
+  "ranked": [
+    {
+      "project": "akaunting",
+      "rationale": "The closest thing here to the shape of QuickBooks rather than one half of it: customers and vendors, invoices and bills, transactions and transfers, a client portal, a profit and loss and a tax summary, in two containers on your own domain. Two things have to be said in the same breath. Its licence is source-available, not open source, and the free production grant stops at two users, one company and one thousand invoices, which happens to be about the shape of a Simple Start subscription. And the double-entry half of the name, the chart of accounts, general ledger and balance sheet, is a $72-a-year app rather than part of the free core, with bank feeds another $132 a year. Pick it when you keep the books yourself and hand an accountant a P&L; do not pick it expecting a balance sheet on day one."
+    },
+    {
+      "project": "invoice-ninja",
+      "rationale": "Second here, and first if the half of QuickBooks you actually use is getting paid. Invoice Ninja does the billing loop deeper than Akaunting does, with recurring invoices, quotes, a client portal and payment-gateway integrations you connect yourself, and it puts no cap on users, clients or invoices. What it does not do is bookkeeping: there are expenses and reports, but no vendor bills ledger, no chart of accounts, and nothing an accountant will treat as a set of books. It is also heavier to run, four containers, and source-available under the Elastic License."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Firefly III",
+      "repo": "https://github.com/firefly-iii/firefly-iii",
+      "note": "AGPL-3.0, released steadily (6.6.6 in July 2026), and the best-maintained self-hosted finance manager there is. It is personal finance, though: budgets, categories and account reconciliation for your own money, with no customers, no invoices and no tax reporting a business files from. Right if what you left QuickBooks for is knowing where the money went, wrong if you have to bill anybody."
+    },
+    {
+      "name": "Bigcapital",
+      "repo": "https://github.com/bigcapitalhq/bigcapital",
+      "note": "AGPL-3.0 and the only project on this list that puts real double-entry accounting, a chart of accounts and financial statements in the free core, with active releases through August 2026. It is also still on 0.x version numbers with a young operator story, so it is the one to watch rather than the one to put this year's books in. Revisit it when it reaches 1.0."
+    },
+    {
+      "name": "GnuCash",
+      "repo": "https://github.com/Gnucash/gnucash",
+      "note": "Twenty-five years old, still releasing (5.16 in June 2026), and genuinely double-entry with a balance sheet and a general ledger. It is a desktop application, not a server: no web interface, no client portal, no multi-user access without shared storage and care. If nobody else needs to touch the books, it is the most complete free answer on this page, and it is not something you self-host so much as something you install."
+    }
+  ]
+}

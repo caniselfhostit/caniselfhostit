@@ -1,0 +1,27 @@
+# BookStack · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.linuxserver.io/images/docker-bookstack/ and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, with <DOMAIN> replaced by the hostname
+# pointed at this box. That hostname is also APP_URL in .env, and BookStack
+# builds every link it stores from APP_URL, so moving it is a database edit.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	# BookStack sets its own content-security and frame-ancestors headers.
+	# These four are the ones a reverse proxy is the right place for.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# 8150 is the loopback port compose publishes here, not a container
+	# port and not open in the firewall. Caddy sets X-Forwarded-For, and
+	# APP_PROXIES in compose.yml lets BookStack read it.
+	reverse_proxy 127.0.0.1:8150
+}
