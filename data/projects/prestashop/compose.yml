@@ -1,0 +1,71 @@
+# PrestaShop · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker guide ..... https://devdocs.prestashop-project.org/9/basics/installation/environments/docker/
+#   image entrypoint . https://github.com/PrestaShop/docker/blob/master/base/config_files/docker_run.sh
+#   mariadb image .... https://hub.docker.com/_/mariadb
+#
+# Apache with PHP 8.5 serving PrestaShop 9.1.4, and the MariaDB holding the
+# catalogue and the orders. Every ${...} comes from /srv/prestashop/.env, mode
+# 600. /var/www/html is a named volume because the image copies the application
+# into it on first boot with `cp -p` and must keep the ownership Apache needs,
+# as upstream's own example does. Digests read 2026-08-06, amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  db:
+    image: mariadb:11.8.8@sha256:d9f7eb2637296652f24b484afd5d246f759f49f5babcadc6a9e344c9acb75fbf
+    container_name: prestashop-db
+    restart: unless-stopped
+    # Upstream asks for utf8mb4_general_ci, not MariaDB 11.8's own default.
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_general_ci
+    environment:
+      MARIADB_DATABASE: prestashop
+      MARIADB_USER: prestashop
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_DISABLE_UPGRADE_BACKUP: "1"
+    volumes:
+      # The bind mount goes here: MariaDB chowns its own data directory.
+      - /srv/prestashop/mariadb:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      retries: 20
+    # No `ports:` at all: 3306 is reachable only from the other container.
+
+  app:
+    image: prestashop/prestashop:9.1.4-apache@sha256:2f339136154feddf679f9dd6868542466e760f54865a95ae2d0fb065efb14a1f
+    container_name: prestashop-app
+    restart: unless-stopped
+    environment:
+      DB_SERVER: db
+      DB_NAME: prestashop
+      DB_USER: prestashop
+      DB_PASSWD: ${DB_PASSWORD}
+      # Runs the console installer once, then deletes install/ itself.
+      PS_INSTALL_AUTO: "1"
+      PS_ERASE_DB: "0"
+      PS_FOLDER_ADMIN: ${PS_FOLDER_ADMIN}
+      PS_FOLDER_INSTALL: install
+      # Caddy sets X-Forwarded-Proto, which is how PrestaShop knows https.
+      PS_DOMAIN: ${PS_DOMAIN}
+      PS_ENABLE_SSL: "1"
+      PS_COUNTRY: GB
+      ADMIN_MAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWD: ${ADMIN_PASSWORD}
+    volumes:
+      - prestashop-html:/var/www/html
+    ports:
+      # Loopback only: the host's Caddy is the one thing reaching 8138.
+      - "127.0.0.1:8138:80"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  prestashop-html:

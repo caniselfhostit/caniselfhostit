@@ -1,0 +1,95 @@
+{
+  "slug": "castopod",
+  "name": "Castopod",
+  "tagline": "Podcast hosting on a domain you own: your feed, your audio files, your download numbers, and no monthly download meter.",
+  "repo": "ad-aures/castopod",
+  "site": "https://castopod.org",
+  "category": "marketing-content",
+  "replaces": [
+    {
+      "saas": "transistor-fm",
+      "plan": "Starter",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 3,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 4
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 110,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/ad-aures/castopod/blob/v1.15.5/docs/src/content/docs/en/getting-started/docker.mdx",
+  "local": {
+    "fit": "caveat",
+    "note": "The feed URL becomes http://localhost:8135, which no podcast app on another device can fetch and no fediverse server can reach, so this path gives you a private archive of your show rather than a way to publish it."
+  },
+  "quote": {
+    "text": "TLS is mandatory for ActivityPub to work. This job can easily be handled by a reverse proxy, for example with Caddy.",
+    "source": "Castopod documentation, Official Docker image",
+    "url": "https://docs.castopod.org/getting-started/docker.html",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Castopod publishes one official image, castopod/castopod, an all-in-one FrankenPHP and Caddy build that requires a MySQL-compatible database and optionally uses Redis as its cache layer.",
+      "url": "https://docs.castopod.org/getting-started/docker.html"
+    },
+    {
+      "claim": "The image's bootstrap exits with an error when CP_BASEURL or CP_ANALYTICS_SALT is missing, rewrites the application's .env on every start, and then prints that file, database and Redis passwords included, into the container log.",
+      "url": "https://github.com/ad-aures/castopod/blob/v1.15.5/docker/production/s6-rc.d/bootstrap/prepare-environment.sh"
+    },
+    {
+      "claim": "Once a user flagged as the instance owner exists, the install wizard at /cp-install answers 404 to everyone, which is what makes the closed installer a checkable assertion rather than a hope.",
+      "url": "https://github.com/ad-aures/castopod/blob/v1.15.5/modules/Install/Controllers/InstallController.php"
+    },
+    {
+      "claim": "The /health endpoint returns 200 only when Castopod could connect to the database, reach its cache handler and write through its media file manager, and 503 naming the failing check otherwise.",
+      "url": "https://github.com/ad-aures/castopod/blob/v1.15.5/app/Controllers/HomeController.php"
+    },
+    {
+      "claim": "Castopod is developed on its own GitLab at code.castopod.org; github.com/ad-aures/castopod is the synchronised read-only mirror this entry records, and github.com/castopod/castopod does not exist.",
+      "url": "https://github.com/ad-aures/castopod"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The feed URL is the promise you are now making. Every podcast app that subscribes stores the hostname you picked before the install and keeps asking that hostname for years, so moving later means keeping the old name alive as a redirect for as long as anyone still has the show. That permanence is most of what a podcast host actually sells.",
+    "Bandwidth is yours, and so is being on call. Every download is a large file leaving your server, an episode that gets shared widely arrives as traffic on a box you sized for a quiet week, and nobody else notices at 3am when the feed stops answering mid-launch. There is no download meter here, which also means nothing stands between you and the bill.",
+    "You own a MariaDB and a volume full of audio. The database holds the shows, the episodes and the download history; the media volume holds the payload, and it is the backup that stops being small after the first year. Backups are a dump plus a tar taken through the container, restores are the reverse, and one you have never restored is not a backup.",
+    "The analytics ship with the app, and nobody audits them. Castopod counts downloads and unique listeners itself, de-duplicating with a salted hash of the date, the listener's IP and their user agent, and the image carries a geo database so country charts work with no MaxMind account. That database is baked in at build time, so the country data ages with the image pin, and the numbers are yours, which also means an advertiser has only your word for them.",
+    "The container prints its whole configuration, all four generated secrets included, into its own log on every start. No setting turns that off, so `docker compose logs` is a command you always filter, and a log pasted into a chat window is a secret rotation you now have to do."
+  ],
+  "sources": {
+    "compose": "https://docs.castopod.org/getting-started/docker.html",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://docs.castopod.org/getting-started/install.html",
+    "env": "https://github.com/ad-aures/castopod/blob/v1.15.5/docker/production/s6-rc.d/bootstrap/prepare-environment.sh",
+    "installer": "https://github.com/ad-aures/castopod/blob/v1.15.5/modules/Install/Controllers/InstallController.php",
+    "health": "https://github.com/ad-aures/castopod/blob/v1.15.5/app/Controllers/HomeController.php",
+    "analytics": "https://github.com/ad-aures/castopod/blob/v1.15.5/modules/Analytics/Helpers/analytics_helper.php",
+    "auth": "https://github.com/ad-aures/castopod/blob/v1.15.5/modules/Auth/Config/Auth.php",
+    "database": "https://mariadb.org/about/maintenance-policy/",
+    "repository": "https://code.castopod.org/adaures/castopod",
+    "image": "https://hub.docker.com/r/castopod/castopod"
+  },
+  "related": [
+    "navidrome",
+    "audiobookshelf",
+    "ghost"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "99e944ec554fdf31d5dc15791e77bf876f4bcedbe143164884171ad79f4943f9"
+}

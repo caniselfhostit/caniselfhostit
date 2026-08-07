@@ -1,0 +1,36 @@
+# code-server · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://coder.com/docs/code-server/guide,
+# https://caddyserver.com/docs/caddyfile/directives/reverse_proxy and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. Upstream asks you
+# to put a proxy in front of code-server that terminates TLS. This is it, and
+# this hostname is the front door to a terminal on this server.
+
+<DOMAIN> {
+	# The workbench is tens of megabytes of JavaScript on first load.
+	# Caddy's default encode matcher covers text, JSON, JavaScript and SVG
+	# only, so a binary file opened in the editor passes through untouched.
+	encode zstd gzip
+
+	# code-server sends a Content-Security-Policy of its own and none of
+	# these. HSTS is on because every request to this host carries the
+	# session cookie for a shell.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8137 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall. The editor rides
+	# WebSockets, which Caddy upgrades with no extra configuration, and Caddy
+	# forwards the original host, which is what code-server checks the
+	# Origin header against before accepting that upgrade.
+	reverse_proxy 127.0.0.1:8137
+}

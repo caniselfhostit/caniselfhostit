@@ -1,0 +1,55 @@
+# wg-easy · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   getting started .... https://github.com/wg-easy/wg-easy/blob/v15.3.0/docs/content/getting-started.md
+#   basic installation . https://github.com/wg-easy/wg-easy/blob/v15.3.0/docs/content/examples/tutorials/basic-installation.md
+#   optional config .... https://github.com/wg-easy/wg-easy/blob/v15.3.0/docs/content/advanced/config/optional-config.md
+#   unattended setup ... https://github.com/wg-easy/wg-easy/blob/v15.3.0/docs/content/advanced/config/unattended-setup.md
+#   caddy example ...... https://github.com/wg-easy/wg-easy/blob/v15.3.0/docs/content/examples/tutorials/caddy.md
+#
+# One service and no database process. The admin UI, the wg0 interface and the
+# SQLite file holding the account and every client key live in this container,
+# and /etc/wireguard is the whole of the state.
+#
+# Two deliberate differences from the compose file upstream ships:
+#   * SYS_MODULE is not granted and /lib/modules is not mounted. That
+#     capability lets a container load kernel modules, which is a way out of
+#     it; the install loads the wireguard module on the host instead.
+#   * DISABLE_IPV6 is true. Upstream documents that as dropping the IPv6
+#     firewall rules and the IPv6 address on the interface and on clients. It
+#     takes the ip6tables kernel tables off the host's requirements and the
+#     IPv6 Docker network out of this file. Tunnels here carry IPv4.
+#
+# Tag and digest read from ghcr.io on 2026-08-06; amd64 and arm64 published.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  wg-easy:
+    image: ghcr.io/wg-easy/wg-easy:15.3.0@sha256:93bbd593e07bab98d02807a28770ac87ab6c48818e319e68c1f66561feb99876
+    container_name: wg-easy
+    restart: unless-stopped
+    env_file: /srv/wg-easy/.env
+    environment:
+      # Upstream's default, kept explicit. The session cookie is marked Secure,
+      # so the admin UI works over https and refuses a login over plain http.
+      INSECURE: "false"
+      DISABLE_IPV6: "true"
+    volumes:
+      - /srv/wg-easy/etc_wireguard:/etc/wireguard
+    ports:
+      # The tunnel. Phones and laptops speak WireGuard straight to this port,
+      # so no reverse proxy can stand in front of it. It answers nothing at all
+      # to a packet that is not signed by a key this install issued.
+      - "51820:51820/udp"
+      # The admin UI. Loopback only: the host's Caddy is the only thing that
+      # reaches 8133.
+      - "127.0.0.1:8133:51821"
+    cap_add:
+      # Creating wg0, writing its routes, and the NAT rule the PostUp hook adds.
+      - NET_ADMIN
+    sysctls:
+      # Packets arriving on wg0 have to be routed out of eth0.
+      - net.ipv4.ip_forward=1
+      # wg-quick marks its own packets; without this the kernel drops them as
+      # martians on the way back.
+      - net.ipv4.conf.all.src_valid_mark=1

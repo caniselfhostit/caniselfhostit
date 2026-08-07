@@ -1,0 +1,93 @@
+{
+  "slug": "prestashop",
+  "name": "PrestaShop",
+  "tagline": "A full storefront, catalogue and order pipeline on a domain you own, with no monthly platform fee sitting on top of the card rates.",
+  "repo": "PrestaShop/PrestaShop",
+  "site": "https://prestashop-project.org",
+  "category": "marketing-content",
+  "replaces": [
+    {
+      "saas": "shopify",
+      "plan": "Basic",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 4
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 120,
+  "license": "OSL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://devdocs.prestashop-project.org/9/basics/installation/environments/docker/",
+  "local": {
+    "fit": "caveat",
+    "note": "Every product link and checkout page this builds begins with http://localhost:8138, which resolves on this computer and nowhere else, so it is a shop you can build in and nobody can buy from."
+  },
+  "quote": {
+    "text": "Production ready images with minimal tooling. Development and testing friendly images with tooling: PrestaShop Flashlight.",
+    "source": "PrestaShop developer documentation, Installing PrestaShop with Docker",
+    "url": "https://devdocs.prestashop-project.org/9/basics/installation/environments/docker/",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "PrestaShop publishes two Docker lines and says so: prestashop/prestashop is the minimal-tooling one it points at real deployments, and PrestaShop Flashlight is the development and testing one.",
+      "url": "https://devdocs.prestashop-project.org/9/basics/installation/environments/docker/"
+    },
+    {
+      "claim": "With PS_INSTALL_AUTO set, the image's entrypoint runs PrestaShop's console installer and then deletes the install directory itself, and PS_FOLDER_ADMIN renames the admin directory before that installer runs, so both halves of the classic hardening happen without a browser wizard on a public address.",
+      "url": "https://github.com/PrestaShop/docker/blob/master/base/config_files/docker_run.sh"
+    },
+    {
+      "claim": "The image ships demo@prestashop.com and prestashop_demo as the ADMIN_MAIL and ADMIN_PASSWD defaults, which is why this install overrides both with values generated on the server.",
+      "url": "https://github.com/PrestaShop/docker/blob/master/base/Dockerfile.model"
+    },
+    {
+      "claim": "PrestaShop's installer writes app/config/parameters.php with the database credentials and the cookie keys, and that same file is what the entrypoint looks for to decide whether the shop is already installed.",
+      "url": "https://github.com/PrestaShop/PrestaShop/blob/9.1.4/src/PrestaShopBundle/Install/Install.php"
+    },
+    {
+      "claim": "Upstream asks for a memory_limit of at least 512M and MySQL 5.7 or MariaDB 10.2 as a floor, and its installer defaults the fixtures flag to 1, which is why a fresh shop arrives holding a demo catalogue.",
+      "url": "https://devdocs.prestashop-project.org/9/basics/installation/system-requirements/"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The subscription was never only software. Shopify's fee also buys the payment rails, the PCI scope, the fraud screening, the CDN in front of your product images and somebody awake when checkout breaks during a sale. Self-hosting removes the monthly fee and none of the rest: you still pay a processor per transaction, and the uptime is now yours.",
+    "You are running code that touches money. A shop is the one self-hosted thing where a missed security release is a breach of somebody else's card details, and PrestaShop's own upgrade path is a back-office tool you run deliberately, not a container tag you bump. Budget the attention, not only the install.",
+    "No mail, so no order confirmations. The core loop works without it: a customer can browse, add to cart and place an order, and you see it in the back office. What nobody gets is the receipt. Real transactional mail is a separate build, with a sending domain, SPF and DKIM records and a relay you pay for.",
+    "The shop arrives full of demo products. Upstream's installer loads its fixtures dataset by default and the official image does not expose the flag that turns it off, so your first afternoon is deleting t-shirts and mugs from a catalogue you did not write.",
+    "Modules and themes are a market, not a library. The core is OSL-3.0 and free, and most of what a working shop wants beyond it, from payment integrations to a theme that does not look like the default, is sold on PrestaShop Addons by third parties."
+  ],
+  "sources": {
+    "compose": "https://devdocs.prestashop-project.org/9/basics/installation/environments/docker/",
+    "caddy": "https://caddyserver.com/docs/caddyfile/directives/reverse_proxy",
+    "install": "https://github.com/PrestaShop/docker/blob/master/base/config_files/docker_run.sh",
+    "requirements": "https://devdocs.prestashop-project.org/9/basics/installation/system-requirements/",
+    "image": "https://github.com/PrestaShop/docker/blob/master/base/Dockerfile.model",
+    "installer": "https://github.com/PrestaShop/PrestaShop/blob/9.1.4/install-dev/classes/datas.php",
+    "proxy": "https://github.com/PrestaShop/PrestaShop/blob/9.1.4/classes/Tools.php",
+    "database": "https://hub.docker.com/_/mariadb",
+    "update": "https://devdocs.prestashop-project.org/9/basics/keeping-up-to-date/update/"
+  },
+  "related": [
+    "ghost",
+    "listmonk",
+    "matomo"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "bd1c6ceef53848b9a89dca24cf58e52acdb0086a61daa2be41b2d329de9c894b"
+}

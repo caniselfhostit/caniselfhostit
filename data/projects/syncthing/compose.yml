@@ -1,0 +1,37 @@
+# Syncthing · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker image ....... https://github.com/syncthing/syncthing/blob/v2.1.3/README-Docker.md
+#   image build ........ https://github.com/syncthing/syncthing/blob/v2.1.3/Dockerfile
+#   ports .............. https://docs.syncthing.net/users/firewall.html
+#
+# One service, no host networking: upstream's example uses it for LAN
+# discovery, which a rented server has no use for, so 21027/udp is not
+# published at all. No env_file either: the only secret is the web GUI
+# password, which step 7 turns into a bcrypt hash in config.xml before the
+# server listens. Digest read 2026-08-06; amd64, arm64, arm/v7.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  syncthing:
+    image: syncthing/syncthing:2.1.3@sha256:8c8ff37ab6aa8be23b700648a90fa9412e214852e9fd6ea8477c8334792daec0
+    container_name: syncthing
+    hostname: syncthing-vps
+    restart: unless-stopped
+    environment:
+      # Image defaults; step 2 creates data/ owned by this uid.
+      PUID: "1000"
+      PGID: "1000"
+      # config.xml, the device certificate and the database all live here.
+      STHOMEDIR: /var/syncthing/config
+      # Container-internal; published on loopback below. The image also ships
+      # a HEALTHCHECK on /rest/noauth/health that compose inherits.
+      STGUIADDRESS: 0.0.0.0:8384
+    volumes:
+      - /srv/syncthing/data:/var/syncthing
+    ports:
+      # 8139 is loopback for Caddy; 22000 is the sync protocol itself, TCP
+      # and QUIC, on every interface on purpose.
+      - "127.0.0.1:8139:8384"
+      - "22000:22000/tcp"
+      - "22000:22000/udp"

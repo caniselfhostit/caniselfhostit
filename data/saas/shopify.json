@@ -1,0 +1,73 @@
+{
+  "slug": "shopify",
+  "name": "Shopify",
+  "domain": "shopify.com",
+  "whyPeoplePay": "The monthly plan is the smallest part of what Shopify sells. The rest is a checkout that has already been through PCI review, fraud screening on every order, a CDN that keeps product images fast from anywhere, and a platform that stays up on the day your campaign lands. Merchants pay for the part where nobody has to think about any of it, and they pay again per transaction, which is where most of the money actually goes.",
+  "plans": [
+    {
+      "name": "Starter",
+      "priceMonthly": 5,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Selling through links and social rather than a full online store. Online card rate around 5% + 30 cents."
+    },
+    {
+      "name": "Basic",
+      "priceMonthly": 39,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$29/month billed annually. Online card rate 2.9% + 30 cents, plus a 2% fee on orders taken through a payment provider other than Shopify Payments."
+    },
+    {
+      "name": "Grow",
+      "priceMonthly": 105,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$79/month billed annually. Online card rate 2.7% + 30 cents, and the third-party payment provider fee drops to 1%."
+    },
+    {
+      "name": "Advanced",
+      "priceMonthly": 399,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$299/month billed annually. Online card rate 2.5% + 30 cents, and the third-party payment provider fee drops to 0.6%."
+    },
+    {
+      "name": "Plus",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quoted. Widely reported to start near $2,300/month on a three-year term billed annually; the third-party payment provider fee is 0.2%."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://www.shopify.com/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "shopify.com/pricing rendered in Canadian dollars from where we read it (Basic CA$49 monthly, CA$37 annual), so the USD plan figures here were corroborated from secondary reporting on the same day rather than read off the vendor page. The percentages are the vendor's own and are currency-independent: 2% / 1% / 0.6% / 0.2% for using a payment provider other than Shopify Payments on Basic, Grow, Advanced and Plus. Re-check the dollar figures against a US session before quoting them."
+  },
+  "ranked": [
+    {
+      "project": "prestashop",
+      "rationale": "The closest thing to Shopify's shape that you can run yourself: a catalogue, a cart, a checkout, taxes, shipping rules and a back office where orders arrive, all in one application that installs from one compose file. The official image runs PrestaShop's own console installer, deletes the setup wizard afterwards and renames the back office off its guessable path, so the two hardening steps a PHP shop is usually blamed for forgetting happen before you ever see a login page. What it does not replace is the half of the bill that was payments: you still sign a processor agreement, you still pay per transaction, and the uptime during a sale is now a thing you own."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "WooCommerce",
+      "repo": "https://github.com/woocommerce/woocommerce",
+      "note": "The most-installed self-hosted store on the web, and the honest catch is that it is a WordPress plugin rather than an application. Choosing it means running and updating two systems whose release cycles are not coordinated, plus the theme and the plugins the shop actually depends on. Actively developed by Automattic; the repository carries no SPDX licence field on GitHub because the code is split across GPL-licensed packages."
+    },
+    {
+      "name": "Medusa",
+      "repo": "https://github.com/medusajs/medusa",
+      "note": "MIT, very actively developed, and a headless commerce framework rather than a turnkey shop: you get a Node.js backend and an admin, and the storefront is a JavaScript application you build and deploy yourself. A good answer if a developer is already on the project, and the wrong shape for someone whose goal is to stop paying a monthly fee this weekend."
+    },
+    {
+      "name": "Bagisto",
+      "repo": "https://github.com/bagisto/bagisto",
+      "note": "MIT, built on Laravel, actively maintained, and a genuine turnkey alternative with a storefront and admin in the box. We have not tested it. The practical difference from PrestaShop is ecosystem age: fewer third-party payment and shipping integrations exist, so more of what you need is something you or a developer writes."
+    }
+  ]
+}

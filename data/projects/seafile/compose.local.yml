@@ -1,0 +1,81 @@
+# Seafile Community Edition · the deterministic fallback for the local path.
+# Authored by caniselfhostit from the upstream documentation, not copied:
+#   docker install ..... https://manual.seafile.com/13.0/setup/setup_ce_by_docker/
+#   variable reference . https://manual.seafile.com/13.0/config/env/
+#
+# Three services, all on loopback; upstream's deployment starts five, adding a
+# TLS proxy and the SeaDoc editor. Nothing here is public, so ENABLE_SEADOC
+# is false and the hostname is localhost:8140 over http. Paths are relative to
+# ~/selfhost/seafile/ except the database, a named volume because MariaDB chowns
+# its data directory to a uid Docker Desktop on Windows cannot grant on a bind
+# mount. Digests read 2026-08-06, all multi-arch.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  db:
+    image: mariadb:10.11.18@sha256:de61fed4a40d3842f3ee09944ba52792156cfd9adf489b2cc670fc6ded28df8d
+    container_name: seafile-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${INIT_SEAFILE_MYSQL_ROOT_PASSWORD}
+      MARIADB_AUTO_UPGRADE: "1"
+    volumes:
+      - seafile-mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 20s
+      start_period: 30s
+      timeout: 5s
+      retries: 10
+    # No `ports:` anywhere below: 3306 and 6379 stay on the compose network.
+
+  redis:
+    image: redis:8.10.0-alpine@sha256:978f0e01593e65eed801f2402944efcd936d43b5027e4908a7897baf88ed6241
+    container_name: seafile-redis
+    restart: unless-stopped
+    # A password, which upstream leaves off; $$ defers expansion to the container.
+    command:
+      - /bin/sh
+      - -c
+      - exec redis-server --requirepass "$$REDIS_PASSWORD" --save "" --appendonly no
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+
+  seafile:
+    image: seafileltd/seafile-mc:13.0.25@sha256:90c1aaa08731116750cd7ce16cbc6afe0c26006433002d3c7215a5f4254ec244
+    container_name: seafile
+    restart: unless-stopped
+    volumes:
+      - ./data:/shared
+    environment:
+      SEAFILE_MYSQL_DB_HOST: db
+      SEAFILE_MYSQL_DB_USER: seafile
+      SEAFILE_MYSQL_DB_PASSWORD: ${SEAFILE_MYSQL_DB_PASSWORD}
+      INIT_SEAFILE_MYSQL_ROOT_PASSWORD: ${INIT_SEAFILE_MYSQL_ROOT_PASSWORD}
+      SEAFILE_MYSQL_DB_CCNET_DB_NAME: ccnet_db
+      SEAFILE_MYSQL_DB_SEAFILE_DB_NAME: seafile_db
+      SEAFILE_MYSQL_DB_SEAHUB_DB_NAME: seahub_db
+      CACHE_PROVIDER: redis
+      REDIS_HOST: redis
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY}
+      SEAFILE_SERVER_HOSTNAME: ${SEAFILE_SERVER_HOSTNAME}
+      SEAFILE_SERVER_PROTOCOL: http
+      TIME_ZONE: ${TIME_ZONE}
+      # Read on the first start only, to create the one account there is.
+      INIT_SEAFILE_ADMIN_EMAIL: ${INIT_SEAFILE_ADMIN_EMAIL}
+      INIT_SEAFILE_ADMIN_PASSWORD: ${INIT_SEAFILE_ADMIN_PASSWORD}
+      # Upstream's editor extension, which would need a container of its own.
+      ENABLE_SEADOC: "false"
+    ports:
+      # Loopback only: no other device on the wifi reaches 8140.
+      - "127.0.0.1:8140:80"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+volumes:
+  seafile-mysql:

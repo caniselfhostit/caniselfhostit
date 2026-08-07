@@ -1,0 +1,94 @@
+{
+  "slug": "tabby",
+  "name": "Tabby",
+  "tagline": "A code-completion server on a GPU you control, so the surrounding file never leaves your building to get an autocomplete.",
+  "repo": "TabbyML/tabby",
+  "site": "https://www.tabbyml.com",
+  "category": "ai-tools",
+  "replaces": [
+    {
+      "saas": "github-copilot",
+      "plan": "Pro",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": true,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 4096,
+    "ramMeasuredMB": null,
+    "diskGB": 20,
+    "arm64": false,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 240,
+  "license": "Apache-2.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://tabby.tabbyml.com/docs/quick-start/installation/docker-compose/",
+  "local": {
+    "fit": "good",
+    "note": "This runs on the NVIDIA card in the computer you are sitting at, so a Mac cannot host it and a machine without that card cannot either, but where the card exists the server only has to be awake while you are typing, which is the one time you are there."
+  },
+  "quote": {
+    "text": "For 1B to 3B models, it's advisable to have at least NVIDIA T4, 10 Series, or 20 Series GPUs, or Apple Silicon like the M1.",
+    "source": "Tabby documentation, Models Registry",
+    "url": "https://tabby.tabbyml.com/docs/models/",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's only rendered Docker instructions run the image with --gpus all and --device cuda, and tell you to install the NVIDIA Container Toolkit first.",
+      "url": "https://tabby.tabbyml.com/docs/quick-start/installation/docker/"
+    },
+    {
+      "claim": "The published image is built from docker/Dockerfile.cuda against CUDA 12.4.1, on a single amd64 runner, and pushed to both Docker Hub and ghcr.io.",
+      "url": "https://github.com/TabbyML/tabby/blob/v0.32.0/.github/workflows/docker.yml"
+    },
+    {
+      "claim": "Upstream closed the request for a CPU-only Docker mode on 5 February 2026 as not on the project roadmap, and pointed at a community-maintained image instead.",
+      "url": "https://github.com/TabbyML/tabby/issues/4377"
+    },
+    {
+      "claim": "Every model in Tabby's registry carries a SHA-256, and the downloader re-fetches any file whose checksum does not match before it is served.",
+      "url": "https://github.com/TabbyML/tabby/blob/v0.32.0/crates/tabby-download/src/lib.rs"
+    },
+    {
+      "claim": "Tabby offers self-registration only when an SMTP server and an allowed email domain are both configured, so an install with no mail admits new people by invitation only.",
+      "url": "https://github.com/TabbyML/tabby/blob/v0.32.0/ee/tabby-webserver/src/service/auth.rs"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The bill does not go away, it changes shape and usually goes up. Tabby needs an NVIDIA GPU, and a rented GPU instance costs more per month than Copilot Pro does, every month, idle or not. This entry earns its keep on a machine you already own with a card already in it. On a rented box, do the arithmetic before the install, not after.",
+    "The code is Apache-2.0 except the ee/ directory, which carries a separate enterprise licence, and that directory is not a corner: the web dashboard, the accounts database and the whole web server live in it. What you install here is the free tier of a commercial product, governed by TabbyML's subscription terms, not a fully open-source stack.",
+    "The models arrive at first run and are pinned by name, not by file. Tabby resolves the two names in the compose file against a registry on a branch upstream can change, then verifies what it downloads against the SHA-256 that registry publishes. So the download is integrity-checked and the version is reproducible only as long as that mapping holds. The completion model this install uses, StarCoder-1B, is also under BigCode-OpenRAIL-M, which is a use-restricted licence rather than an open-source one.",
+    "A 1B completion model is not a frontier model. You get inline completions and a chat panel that knows your indexed repositories. You do not get Copilot's agent mode, its code review, its cloud agents, or access to the large models the paid tiers meter, and no amount of self-hosting produces them.",
+    "No mail, by design. Leaving SMTP unset is what keeps self-registration closed, and the price is that the administrator password has no reset path and second users arrive only by an invitation you generate."
+  ],
+  "sources": {
+    "compose": "https://tabby.tabbyml.com/docs/quick-start/installation/docker-compose/",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://tabby.tabbyml.com/docs/quick-start/installation/docker/",
+    "models": "https://tabby.tabbyml.com/docs/models/",
+    "upgrade": "https://tabby.tabbyml.com/docs/administration/upgrade/",
+    "image": "https://github.com/TabbyML/tabby/blob/v0.32.0/docker/Dockerfile.cuda",
+    "registry": "https://github.com/TabbyML/tabby/blob/v0.32.0/crates/tabby-download/src/lib.rs",
+    "auth": "https://github.com/TabbyML/tabby/blob/v0.32.0/ee/tabby-webserver/src/service/auth.rs",
+    "license": "https://github.com/TabbyML/tabby/blob/v0.32.0/ee/LICENSE",
+    "gpuRuntime": "https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html"
+  },
+  "related": [
+    "librechat",
+    "coolify",
+    "code-server"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "1b69b8c8b35059166f4a16be04a4a00aaa33345d825ef3476299a7f4ad0eea7f"
+}

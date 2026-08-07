@@ -1,0 +1,35 @@
+# Gatus · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker deployment .. https://github.com/TwiN/gatus/blob/v5.36.0/README.md#docker
+#   configuration ...... https://github.com/TwiN/gatus/blob/v5.36.0/README.md#configuration
+#   storage ............ https://github.com/TwiN/gatus/blob/v5.36.0/README.md#storage
+#   image build ........ https://github.com/TwiN/gatus/blob/v5.36.0/Dockerfile
+#
+# One service, no database container: storage is SQLite in the /data mount,
+# because upstream's default is memory and upstream says memory does not survive
+# a restart. The config directory is mounted rather than the single file, since
+# Gatus polls the loaded path for changes and upstream reports that binding the
+# file hides them. No healthcheck and no `user:` line: the image is built FROM
+# scratch and carries the binary and the CA bundle, so there is no shell to run
+# a check with and no user database to name a user from. No .env: this install
+# generates no secret. Digest read from ghcr.io on 2026-08-06; the manifest list
+# covers amd64, arm64 and arm/v7.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  gatus:
+    image: ghcr.io/twin/gatus:v5.36.0@sha256:c5f210d095fa78e6efaa20ffeb14803f2ba4f10615e16a6d12087697149617f0
+    container_name: gatus
+    restart: unless-stopped
+    environment:
+      # DEBUG here while a check fails for a reason the dashboard will not say.
+      GATUS_LOG_LEVEL: INFO
+    volumes:
+      # config.yaml is the product. Read only: Gatus never writes here.
+      - /srv/gatus/config:/config:ro
+      # data.db, the SQLite file holding every result and every uptime figure.
+      - /srv/gatus/data:/data
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8132.
+      - "127.0.0.1:8132:8080"

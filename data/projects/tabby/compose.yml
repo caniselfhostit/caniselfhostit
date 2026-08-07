@@ -1,0 +1,48 @@
+# Tabby · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker compose ....... https://tabby.tabbyml.com/docs/quick-start/installation/docker-compose/
+#   docker run ........... https://tabby.tabbyml.com/docs/quick-start/installation/docker/
+#   models registry ...... https://tabby.tabbyml.com/docs/models/
+#   upgrade .............. https://tabby.tabbyml.com/docs/administration/upgrade/
+#
+# One service, and it wants an NVIDIA GPU: the image is built from
+# docker/Dockerfile.cuda against CUDA 12.4.1, its llama-server links
+# libcuda.so.1, and there is no CPU-only build to fall back to. Everything
+# Tabby keeps sits under TABBY_ROOT, which the image sets to /data: accounts in
+# ee/db.sqlite, the search index, and three model files fetched on first start.
+# Digests read on 2026-08-06, same on Docker Hub and ghcr.io; amd64 only.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  tabby:
+    image: tabbyml/tabby:0.32.0@sha256:8de9da4d266b5cd0fb54fe1ffaa772311e5d886453ba1c3a0d1bbcee893e71a9
+    container_name: tabby
+    restart: unless-stopped
+    # Upstream's own quick start, plus the embedding model the config
+    # defaults to, which is downloaded alongside these two.
+    command: serve --model StarCoder-1B --chat-model Qwen2-1.5B-Instruct --device cuda
+    env_file: /srv/tabby/.env
+    environment:
+      # No anonymous usage reports leave this box.
+      TABBY_DISABLE_USAGE_COLLECTION: "1"
+    volumes:
+      - /srv/tabby/data:/data
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8134.
+      - "127.0.0.1:8134:8080"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      # The dashboard answers unauthenticated; the /v1 API does not. The
+      # long start period is the 3 GB model download on first boot.
+      test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://127.0.0.1:8080/"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 600s

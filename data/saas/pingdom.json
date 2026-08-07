@@ -1,0 +1,84 @@
+{
+  "slug": "pingdom",
+  "name": "Pingdom",
+  "domain": "pingdom.com",
+  "whyPeoplePay": "Pingdom watches your site from over a hundred places that are not your site, and that vantage point is the part a single self-hosted instance cannot honestly reproduce. The bill also buys real user monitoring from the browsers of actual visitors, SMS alerts that still arrive on the morning your own infrastructure is the thing that broke, and a public status page somebody else keeps online. SolarWinds sells the synthetic half and the real-user half as separate quantities added to one subscription.",
+  "plans": [
+    {
+      "name": "Synthetic Monitoring · 10 uptime checks",
+      "priceMonthly": 18,
+      "unit": "usage",
+      "seatsIncluded": null,
+      "note": "The smallest step on the quantity slider: 10 uptime checks, 1 advanced transaction check, 50 SMS alerts, unlimited users. $16.50/mo billed annually."
+    },
+    {
+      "name": "Synthetic Monitoring · 50 uptime checks",
+      "priceMonthly": 78,
+      "unit": "usage",
+      "seatsIncluded": null,
+      "note": "50 uptime checks, 10 advanced checks, 200 SMS alerts. $71.50/mo billed annually."
+    },
+    {
+      "name": "Synthetic Monitoring · 100 uptime checks",
+      "priceMonthly": 149,
+      "unit": "usage",
+      "seatsIncluded": null,
+      "note": "100 uptime checks, 20 advanced checks, 350 SMS alerts. $136.42/mo billed annually. The slider continues past this to 30,000 checks at $28,548/mo."
+    },
+    {
+      "name": "Real User Monitoring · 100,000 pageviews",
+      "priceMonthly": 18,
+      "unit": "usage",
+      "seatsIncluded": null,
+      "note": "A separate quantity from the synthetic checks, added to the same subscription. Unlimited sites and users, 13-month retention. $16.50/mo billed annually."
+    },
+    {
+      "name": "Real User Monitoring · 1 million pageviews",
+      "priceMonthly": 118,
+      "unit": "usage",
+      "seatsIncluded": null,
+      "note": "$107.83/mo billed annually. The slider continues to 1 billion pageviews at $23,400/mo."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The page offers a request-quote form for 500K to over 5M pageviews a month."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://www.pingdom.com/pricing/",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The pricing page computes its visible figures in JavaScript. These numbers are the monthly and annual values carried in the quantity selector on that page, read on 2026-08-06, with the monthly-billed figure recorded and the annual-billed equivalent in each plan note. Confidence is medium rather than high for two reasons: third-party summaries published in 2026 quote a $10 to $15 entry price for synthetic monitoring, which we could not reproduce on the vendor's own page, and Pingdom sells by sliding quantity rather than by named plan, so the plan names above are ours. There is no free tier; the page offers a 30-day trial that includes both products."
+  },
+  "ranked": [
+    {
+      "project": "gatus",
+      "rationale": "The closest match to what Pingdom's synthetic tier is actually used for, and the honest one about the difference. Checks, pass conditions, alert rules and the public status page are declared in a single YAML file you own, so a monitor is a diff rather than a form, and the conditions go past `is it 200` to response time, JSON body fields, certificate expiry and domain expiry. What it cannot do is watch from a hundred cities, and it cannot report the outage that takes down the machine it runs on, which is why the page tells you to keep one free external check pointed at it."
+    },
+    {
+      "project": "uptime-kuma",
+      "rationale": "The same job with the opposite ergonomics: monitors are clicked into a signed-in dashboard rather than declared in a file, and the notification integrations are broader out of the box. Pick it if you want to add a check on your phone at midnight. Pick Gatus if the checks belong in version control and the public status page is the point rather than a side feature."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Kener",
+      "repo": "https://github.com/rajnandan1/kener",
+      "note": "MIT, and the most actively developed status page in this list: releases through July 2026 and commits this month. Upstream describes it as combining public status page essentials with admin workflows, so incidents and monitors are managed in a browser rather than in a file. Its own compose file runs Redis beside the app and asks for a secret key and a public origin before the first boot, which is two services and a credential where Gatus is one binary and one file."
+    },
+    {
+      "name": "Statping-ng",
+      "repo": "https://github.com/statping-ng/statping-ng",
+      "note": "The community continuation of the original Statping, GPL-3.0, and the honest note here is maintenance: the newest release and the newest commit are both from June 2025, over a year before we looked. It still runs, but a status page you cannot expect a security fix for is a different proposition from one you can."
+    },
+    {
+      "name": "Vigil",
+      "repo": "https://github.com/valeriansaliou/vigil",
+      "note": "Closest to Gatus in shape: one Rust binary, MPL-2.0, everything declared in a single TOML file, still shipping releases (v1.29.0, March 2026). It aims at monitoring a distributed infrastructure of microservices rather than a handful of public URLs, so the configuration is organised around nodes and replicas. Gatus is ranked above it on the strength of its condition language and the number of protocols it can check."
+    }
+  ]
+}

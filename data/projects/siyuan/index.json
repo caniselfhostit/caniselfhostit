@@ -1,0 +1,94 @@
+{
+  "slug": "siyuan",
+  "name": "SiYuan",
+  "tagline": "A block-referencing outliner with daily notes and two-way links, served from one container to whatever browser you open next.",
+  "repo": "siyuan-note/siyuan",
+  "site": "https://b3log.org/siyuan/en/",
+  "category": "notes-wikis",
+  "replaces": [
+    {
+      "saas": "roam-research",
+      "plan": "Pro",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/siyuan-note/siyuan/blob/v3.7.3/README.md",
+  "local": {
+    "fit": "caveat",
+    "note": "On your own computer this answers only at http://localhost:8141, so the phone you would reach for at the moment worth writing down cannot open it, and the graph is only ever as current as the last time you sat at this desk."
+  },
+  "quote": {
+    "text": "Does not support desktop and mobile application connections, only supports use on browsers",
+    "source": "SiYuan README, Docker deployment limitations",
+    "url": "https://github.com/siyuan-note/siyuan/blob/v3.7.3/README.md",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Upstream lists three limitations for the Docker deployment: no desktop or mobile application connections, no export to PDF, HTML or Word, and no Markdown file import.",
+      "url": "https://github.com/siyuan-note/siyuan/blob/v3.7.3/README.md"
+    },
+    {
+      "claim": "The kernel refuses to boot inside a container when no access authorization code is set, printing that the parameter must be set and exiting with a security-risk code unless SIYUAN_ACCESS_AUTH_CODE_BYPASS is true.",
+      "url": "https://github.com/siyuan-note/siyuan/blob/v3.7.3/kernel/util/working.go"
+    },
+    {
+      "claim": "Every sync provider SiYuan offers, its own cloud, S3, WebDAV and a local directory, is checked against a paid account before a sync runs, and sync is switched off and the config saved when that check fails.",
+      "url": "https://github.com/siyuan-note/siyuan/blob/v3.7.3/kernel/model/sync.go"
+    },
+    {
+      "claim": "The image entrypoint creates a user and group from PUID and PGID, chowns the mounted workspace to them on every start, and re-execs the kernel as that user with the workspace path it parsed.",
+      "url": "https://github.com/siyuan-note/siyuan/blob/v3.7.3/kernel/entrypoint.sh"
+    },
+    {
+      "claim": "GET /api/system/version and GET /api/system/bootProgress are registered without the auth middleware, so both answer before anyone has unlocked the workspace, while every request to the app itself goes through it.",
+      "url": "https://github.com/siyuan-note/siyuan/blob/v3.7.3/kernel/api/router.go"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The browser is the client, and upstream says so in one line: this deployment does not accept desktop or mobile application connections. That is less of a loss than it sounds, because it is also how Roam works. Every device opens the same graph on your server and there is nothing to reconcile. What you give up is the offline app, so with no signal there is no capture, and the SiYuan apps in the app stores are for a different way of running this software.",
+    "Getting your graph in is the hard part, and this install does not solve it. Upstream lists Markdown import as unsupported in the Docker deployment, along with export to PDF, HTML and Word, so a Roam export cannot be dropped into the running server. The workable route is to import on a SiYuan desktop install and copy the resulting workspace folder onto the box, and that is an afternoon of its own rather than a step in the prompt.",
+    "Sync is a paid feature you will not be using. Every provider the app offers, its own cloud, S3, WebDAV and even a plain local folder, is gated behind a SiYuan account with either a subscription or the one-time PRO purchase. This install needs none of it, because one workspace on one server is the thing sync exists to fake, but the settings screen will show you buttons that quietly refuse.",
+    "One code, no account, no reset link. The lock screen code generated during install is the entire access control: there are no users, no roles and no way back in if it is lost with the .env file. Back up the archive somewhere that is not the server, and put the code in a password manager the same minute it is created.",
+    "It is AGPL-3.0 and open, and it is made by a small team, B3log, operating as Yunnan Liandi Technology Co., Ltd. in China. The activity is real: 45,000 stars, a stable release on 2026-07-21 and alpha builds most weeks. The paid membership funds it, and the free half, which is everything this install runs, is what they say it is."
+  ],
+  "sources": {
+    "compose": "https://github.com/siyuan-note/siyuan/blob/v3.7.3/README.md",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://github.com/siyuan-note/siyuan/blob/v3.7.3/kernel/entrypoint.sh",
+    "api": "https://github.com/siyuan-note/siyuan/blob/v3.7.3/docs/API.md",
+    "auth": "https://github.com/siyuan-note/siyuan/blob/v3.7.3/kernel/model/session.go",
+    "boot": "https://github.com/siyuan-note/siyuan/blob/v3.7.3/kernel/util/working.go",
+    "routes": "https://github.com/siyuan-note/siyuan/blob/v3.7.3/kernel/api/router.go",
+    "sync": "https://github.com/siyuan-note/siyuan/blob/v3.7.3/kernel/model/sync.go",
+    "screens": "https://github.com/siyuan-note/siyuan/blob/v3.7.3/app/appearance/langs/en.json",
+    "pricing": "https://b3log.org/siyuan/en/pricing.html"
+  },
+  "related": [
+    "trilium",
+    "obsidian-livesync",
+    "memos"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "a7d9849925190ac7d2a5837163a93eede42c135944406a4c3e5b989f81271841"
+}

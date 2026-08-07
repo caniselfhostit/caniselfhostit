@@ -1,0 +1,47 @@
+# code-server · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker install ..... https://coder.com/docs/code-server/install
+#   faq and config ..... https://coder.com/docs/code-server/FAQ
+#   requirements ....... https://coder.com/docs/code-server/requirements
+#   release image ...... https://github.com/coder/code-server/blob/v4.131.0/ci/release-image/Dockerfile
+#
+# One service, and it is a development machine: VS Code's open-source core with
+# a browser front end, the terminal it opens, and whatever gets installed from
+# inside it. The image runs as uid 1000, the `coder` user baked into it, and
+# binds code-server to 0.0.0.0:8080, so the three host directories below are
+# owned by 1000. No `user:` line: the entrypoint runs fixuid first.
+#
+# PASSWORD arrives from /srv/code-server/.env, mode 600. code-server reads it,
+# then deletes it from its own environment before starting anything, so the
+# integrated terminal never inherits it. Telemetry and the update check are off
+# in config/code-server/config.yaml, written before the first start. No Docker
+# socket is mounted, deliberately.
+#
+# Tag and digest read from Docker Hub on 2026-08-06; amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  code-server:
+    image: codercom/code-server:4.131.0@sha256:3623e6362abdec6258472882b06fdeec9d6ce2ad3fda316b3c5d7ed092b89add
+    container_name: code-server
+    restart: unless-stopped
+    # PASSWORD, and nothing else, generated on this server.
+    env_file: /srv/code-server/.env
+    volumes:
+      # config.yaml lives at config/code-server/config.yaml on the host.
+      - /srv/code-server/config:/home/coder/.config
+      # Extensions, editor settings and the machine id.
+      - /srv/code-server/local:/home/coder/.local
+      # The working tree. Empty until the user puts code in it.
+      - /srv/code-server/project:/home/coder/project
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8137.
+      - "127.0.0.1:8137:8080"
+    healthcheck:
+      # /healthz needs no authentication and never triggers a heartbeat.
+      test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://127.0.0.1:8080/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s

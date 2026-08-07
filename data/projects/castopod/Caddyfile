@@ -1,0 +1,26 @@
+# Castopod · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.castopod.org/getting-started/docker.html and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile with <DOMAIN> replaced by the hostname
+# pointed at this box. That hostname is also CP_BASEURL in .env: the address
+# inside your feed and inside every audio URL it hands a podcast app.
+
+<DOMAIN> {
+	# No `encode`: the bulk of this site is compressed audio. There is
+	# deliberately no X-Frame-Options either, because Castopod ships an
+	# embeddable player and framing it elsewhere is the point of it.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# 8135 is the loopback port compose publishes here, not a container port
+	# and not open in the firewall. Caddy sets X-Forwarded-Proto itself, the
+	# only thing telling Castopod this arrived over TLS.
+	reverse_proxy 127.0.0.1:8135
+}

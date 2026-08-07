@@ -1,0 +1,95 @@
+{
+  "slug": "wg-easy",
+  "name": "wg-easy",
+  "tagline": "A WireGuard server with a web interface that hands your phone a QR code and gets out of the way.",
+  "repo": "wg-easy/wg-easy",
+  "site": "https://wg-easy.github.io/wg-easy/latest/",
+  "category": "passwords-security",
+  "replaces": [
+    {
+      "saas": "nordvpn",
+      "plan": "Basic",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 512,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/wg-easy/wg-easy/blob/v15.3.0/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Every configuration this creates says Endpoint = localhost:51820, which means the machine reading the file, so a config sent to your phone points the phone at itself: on your own computer this is a WireGuard server for that one computer, and a sleeping laptop is not a VPN anything can dial."
+  },
+  "quote": {
+    "text": "This error indicates that the WireGuard interface wg0 does not exist. This can happen if the WireGuard kernel module is not loaded or if the interface was not created properly.",
+    "source": "wg-easy documentation, FAQ",
+    "url": "https://github.com/wg-easy/wg-easy/blob/v15.3.0/docs/content/faq.md",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "WireGuard is a kernel module, and upstream names a missing one as the cause of the wg0 interface failing to appear, with modprobe wireguard on the host as the fix.",
+      "url": "https://github.com/wg-easy/wg-easy/blob/v15.3.0/docs/content/faq.md"
+    },
+    {
+      "claim": "The INIT_ variables are read only during the container's first start, and upstream recommends removing them once the setup is done so the password is not left exposed.",
+      "url": "https://github.com/wg-easy/wg-easy/blob/v15.3.0/docs/content/advanced/config/unattended-setup.md"
+    },
+    {
+      "claim": "The web UI listens on 51821 by default and INSECURE decides whether it will accept a login over a plain http connection, which is why this install keeps it false behind Caddy and true only on the local path.",
+      "url": "https://github.com/wg-easy/wg-easy/blob/v15.3.0/docs/content/advanced/config/optional-config.md"
+    },
+    {
+      "claim": "Upstream's own firewall instruction for this install is a single port, UDP 51820, because WireGuard is the transport and no reverse proxy can carry it.",
+      "url": "https://github.com/wg-easy/wg-easy/blob/v15.3.0/docs/content/examples/tutorials/basic-installation.md"
+    },
+    {
+      "claim": "The published image runs as root, keeps all of its state in /etc/wireguard, and carries a health check that passes only once wg show reports an interface.",
+      "url": "https://github.com/wg-easy/wg-easy/blob/v15.3.0/Dockerfile"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "For general browsing this makes you more identifiable, not less. NordVPN's exit IP is shared by thousands of people at once, which is the part that hides you; a VPS exit IP is yours alone, rented in your name, and every site you visit through it sees one stable address that belongs to one person. If anonymous browsing was what you were paying for, keep paying for it.",
+    "No country hopping, and nothing unblocks. You get the one country your server is in, and the streaming services that recognise datacenter address ranges will recognise this one. Geography is most of what a commercial VPN sells and none of what this installs.",
+    "What it does replace is worth having: an encrypted tunnel on a network you do not trust, a way back into your own machines and services from anywhere, and the DNS your devices resolve through set by you. Those three are real, they are what a VPN was before it became a privacy product, and they cost you a server instead of a subscription.",
+    "There is no no-logs promise here, audited or otherwise, because you are the operator. Your server sees every connection, your hosting provider sees the traffic leaving it, and nobody has paid an auditor to say otherwise. That is more control and less deniability at the same time.",
+    "The keys are one SQLite file. Every device you enrol has its private key in /srv/wg-easy/etc_wireguard, which means an archive that leaks is every tunnel opened and an archive you lose is every phone re-enrolled by hand. Back it up encrypted, and treat that file the way you would treat the vault of a password manager."
+  ],
+  "sources": {
+    "compose": "https://github.com/wg-easy/wg-easy/blob/v15.3.0/docs/content/getting-started.md",
+    "caddy": "https://github.com/wg-easy/wg-easy/blob/v15.3.0/docs/content/examples/tutorials/caddy.md",
+    "install": "https://github.com/wg-easy/wg-easy/blob/v15.3.0/docs/content/examples/tutorials/basic-installation.md",
+    "config": "https://github.com/wg-easy/wg-easy/blob/v15.3.0/docs/content/advanced/config/optional-config.md",
+    "unattended": "https://github.com/wg-easy/wg-easy/blob/v15.3.0/docs/content/advanced/config/unattended-setup.md",
+    "reverseProxyless": "https://github.com/wg-easy/wg-easy/blob/v15.3.0/docs/content/examples/tutorials/reverse-proxyless.md",
+    "firstRun": "https://github.com/wg-easy/wg-easy/blob/v15.3.0/docs/content/guides/setup.md",
+    "cli": "https://github.com/wg-easy/wg-easy/blob/v15.3.0/docs/content/guides/cli.md",
+    "troubleshooting": "https://github.com/wg-easy/wg-easy/blob/v15.3.0/docs/content/faq.md",
+    "image": "https://github.com/wg-easy/wg-easy/blob/v15.3.0/Dockerfile",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "vaultwarden",
+    "home-assistant",
+    "uptime-kuma"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "ca7c7eea38fa8de21e3c89afd201ec36777d4c4e10e3321b3c73a954cfba3aec"
+}

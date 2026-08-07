@@ -1,0 +1,28 @@
+# wg-easy · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://github.com/wg-easy/wg-easy/blob/v15.3.0/docs/content/examples/tutorials/caddy.md
+# and https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. Caddy carries the
+# admin UI and nothing else: the tunnel itself is UDP on 51820 and never passes
+# through here.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	header {
+		# The admin UI issues client keys, so a downgrade on one request is a
+		# stolen tunnel. HSTS is not optional here.
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8133 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8133
+}

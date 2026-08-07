@@ -1,0 +1,91 @@
+{
+  "slug": "sync-com",
+  "name": "Sync.com",
+  "domain": "sync.com",
+  "whyPeoplePay": "Sync.com sells cloud storage the company itself cannot read: the files are encrypted before they leave your device, and the keys stay with you. That is a genuinely different promise from most drive services, and what you pay for on top of it is the ordinary shape of a cloud drive built around it, apps on every platform, share links with expiry and passwords, a versioned trash, and a Canadian company that stays answerable for the copy it holds.",
+  "plans": [
+    {
+      "name": "Personal 150GB",
+      "priceMonthly": 4,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "150 GB. $4 per month billed monthly, $3.50 per month billed annually, as the page showed them on 2026-08-06."
+    },
+    {
+      "name": "Personal 1TB",
+      "priceMonthly": 16,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "1 TB. Regular price $16 per month billed monthly, $12 per month billed annually. A 'Save 50% for 1 year' banner was live on 2026-08-06 showing $8 and $6, which is a first-year rate rather than the standing price."
+    },
+    {
+      "name": "Pro Solo 5TB",
+      "priceMonthly": 32,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "5 TB. Regular price $32 per month billed monthly, $28 per month billed annually, discounted to $16 and $14 under the same first-year promotion."
+    },
+    {
+      "name": "Teams 1TB",
+      "priceMonthly": 8,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "1 TB per user, minimum 3 users. $8 per user per month billed monthly, $6 billed annually, halved under the first-year promotion."
+    },
+    {
+      "name": "Teams 2TB",
+      "priceMonthly": 12,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "2 TB per user, minimum 3 users. $12 per user per month billed monthly, $9 billed annually."
+    },
+    {
+      "name": "Teams 10TB",
+      "priceMonthly": 18,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "10 TB per user, minimum 3 users. $18 per user per month billed monthly, $15 billed annually."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only, and the page states a 100-user minimum."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://www.sync.com/pricing/",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The pricing page is JS-rendered and was running a 'Save 50% for 1 year' promotion on the day it was read, so every tile showed a discounted figure beside a struck-through one. We record the regular monthly-billed price and put the annual and promotional figures in each plan note, because savings math built on a first-year rate overstates what the second year costs. The individual and team ladders live on separate tabs and were read on the same day. There is no permanently free tier on the page, only a 30-day trial."
+  },
+  "ranked": [
+    {
+      "project": "syncthing",
+      "rationale": "The only option here that keeps the zero-knowledge property rather than trading it for control. Syncthing's untrusted-device mode lets the always-on server you rent hold nothing but ciphertext, decrypted only on the machines that know the folder password, while your own devices sync plaintext straight to each other. That is the same arrangement Sync.com sells, with you as the operator. What you give up is everything built around the storage: no share links, no browser access to your files, no team permissions, and a feature upstream still marks beta."
+    },
+    {
+      "project": "nextcloud",
+      "rationale": "The answer if what you actually miss is the cloud drive, not the cryptography. Nextcloud is server-centric: files live on a machine you run, a browser can open them, share links work, and there are calendars and documents alongside. The trade is exactly the one Syncthing refuses to make, because the server reads your files unless you add its end-to-end encryption layer, which is narrower than it sounds and does not cover the web interface. It is also a database, a PHP stack and a maintenance rhythm rather than one container."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Cryptomator",
+      "repo": "https://github.com/cryptomator/cryptomator",
+      "note": "Actively maintained, GPL-3.0, and the closest thing to Sync.com's client-side encryption as a standalone piece: it makes an encrypted vault inside a folder that any storage service holds without being able to read it. It syncs nothing by itself, so it is a layer you put on top of a sync tool rather than a replacement for one, and the mobile apps are paid."
+    },
+    {
+      "name": "Rclone",
+      "repo": "https://github.com/rclone/rclone",
+      "note": "Actively maintained and MIT, with a crypt remote that gives client-side encryption over roughly seventy storage backends. It is a copy and sync command you schedule, not a daemon watching for changes, so continuous two-way sync between your own machines is not what it is for. Worth knowing about as the tool that moves an encrypted archive off the box on backup night."
+    },
+    {
+      "name": "Unison",
+      "repo": "https://github.com/bcpierce00/unison",
+      "note": "Still maintained and GPL-3.0 after decades, and genuinely good at two-way reconciliation over ssh. It is a program you run rather than one that runs, has no mobile client, and offers nothing like an untrusted peer holding ciphertext, so it answers a smaller question than this page asks."
+    }
+  ]
+}

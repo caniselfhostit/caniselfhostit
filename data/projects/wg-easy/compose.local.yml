@@ -1,0 +1,43 @@
+# wg-easy · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   optional config .... https://github.com/wg-easy/wg-easy/blob/v15.3.0/docs/content/advanced/config/optional-config.md
+#   unattended setup ... https://github.com/wg-easy/wg-easy/blob/v15.3.0/docs/content/advanced/config/unattended-setup.md
+#   no reverse proxy ... https://github.com/wg-easy/wg-easy/blob/v15.3.0/docs/content/examples/tutorials/reverse-proxyless.md
+#
+# One service. Paths are relative to ~/selfhost/wg-easy/ and both mounts are
+# ordinary bind mounts, so the database and the archives show up in Finder or
+# Explorer. Two differences from the VPS file: INSECURE is true, upstream's
+# setting for running without a reverse proxy, and ./backups is mounted so
+# step 8 writes its archive from inside the container.
+#
+# Same tag and digest as the VPS file, read from ghcr.io on 2026-08-06.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  wg-easy:
+    image: ghcr.io/wg-easy/wg-easy:15.3.0@sha256:93bbd593e07bab98d02807a28770ac87ab6c48818e319e68c1f66561feb99876
+    container_name: wg-easy
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      # Nothing terminates TLS here, so the session cookie cannot be Secure.
+      INSECURE: "true"
+      DISABLE_IPV6: "true"
+    volumes:
+      - ./etc_wireguard:/etc/wireguard
+      - ./backups:/backups
+    ports:
+      # The tunnel: the one port here that is not on loopback. A WireGuard
+      # listener answers nothing to a packet it cannot verify.
+      - "51820:51820/udp"
+      # The admin UI. Loopback only: no other device on the wifi reaches 8133.
+      - "127.0.0.1:8133:51821"
+    cap_add:
+      # Creating wg0, its routes, and the NAT rule the PostUp hook adds.
+      - NET_ADMIN
+    sysctls:
+      # Routing out of eth0, and the mark wg-quick sets on its own packets so
+      # the kernel does not drop them as martians on the way back.
+      - net.ipv4.ip_forward=1
+      - net.ipv4.conf.all.src_valid_mark=1

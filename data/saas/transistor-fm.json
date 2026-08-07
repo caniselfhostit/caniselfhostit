@@ -1,0 +1,70 @@
+{
+  "slug": "transistor-fm",
+  "name": "Transistor",
+  "domain": "transistor.fm",
+  "whyPeoplePay": "Transistor sells the unglamorous half of podcasting: a feed URL that keeps answering years after you published episode one, storage and bandwidth for audio files that are large and get requested all at once, and download numbers somebody else keeps. The meter on the plan ladder is the honest shape of it. You are renting bandwidth and a promise to keep serving it, and the price steps up when your show gets listened to.",
+  "plans": [
+    {
+      "name": "Starter",
+      "priceMonthly": 19,
+      "unit": "flat",
+      "seatsIncluded": null,
+      "note": "20K downloads a month, unlimited podcasts and team members, 50 private podcast subscribers. $190 a year on annual billing, which the page advertises as twelve months for the price of ten."
+    },
+    {
+      "name": "Professional",
+      "priceMonthly": 49,
+      "unit": "flat",
+      "seatsIncluded": null,
+      "note": "100K downloads a month, 500 private podcast subscribers. $490 a year on annual billing."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": 99,
+      "unit": "flat",
+      "seatsIncluded": null,
+      "note": "250K downloads a month, 3,000 private podcast subscribers. $990 a year on annual billing."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": 199,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Shown as $199+ per month, or $1,990+ a year, for more than 250,000 downloads a month or more than 3,000 private subscribers. A starting figure with a contact link, not a published rate."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://transistor.fm/pricing/",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "Monthly-billed figures recorded. The pricing table carries a monthly/annual toggle and advertises twelve months for the price of ten on annual billing, so each annual figure here is ten times the monthly one. Enterprise is the only row shown with a plus sign and a contact link, so its 199 is a floor rather than a rate."
+  },
+  "ranked": [
+    {
+      "project": "castopod",
+      "rationale": "The only one here built to be a podcast host and nothing else: it publishes the RSS feed, serves the audio, counts the downloads itself and speaks the Podcasting 2.0 namespace, so Apple Podcasts and Spotify take the feed without a translation layer. It also federates, which no paid host offers. What you take on is the part Transistor's meter is really charging for, because every download now leaves your server on your bandwidth, and the feed URL is a promise you keep renewing."
+    },
+    {
+      "project": "peertube",
+      "rationale": "Video-first, and honest about the gap: it publishes Podcast 2.0 RSS feeds that AntennaPod and Apple Podcasts accept, so an audio-only channel does work as a podcast. But the upload flow, the storage sizing and the whole interface are built around video, and the podcast feed is a well-supported export rather than the product. Pick it if you were going to publish video anyway and want the feed as well."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "AzuraCast",
+      "repo": "https://github.com/AzuraCast/AzuraCast",
+      "note": "A web radio station manager, AGPL-3.0 and actively maintained, whose podcast module publishes episodes and an RSS feed alongside the live stream. Worth it if you want a 24/7 station as well as a show; a lot of running machinery if you only want the feed."
+    },
+    {
+      "name": "Podlove Publisher",
+      "repo": "https://github.com/podlove/podlove-publisher",
+      "note": "MIT, actively maintained, and a WordPress plugin rather than an application, so it is the right answer only if you already run WordPress and want the podcast to live inside it. Your podcast then inherits WordPress's update and security workload."
+    },
+    {
+      "name": "Podcast Generator",
+      "repo": "https://github.com/PodcastGenerator/PodcastGenerator",
+      "note": "GPL-3.0, a PHP podcast publisher that ran from 2006 and whose repository was archived in 2026 with the dates in its own description. Listed because it is the project people still find first; do not start a new show on it."
+    }
+  ]
+}

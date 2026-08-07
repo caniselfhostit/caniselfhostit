@@ -1,0 +1,92 @@
+{
+  "slug": "code-server",
+  "name": "code-server",
+  "tagline": "VS Code in a browser tab, running on a machine you own, with the terminal and the toolchain that come with it.",
+  "repo": "coder/code-server",
+  "site": "https://coder.com/docs/code-server",
+  "category": "automation-dev",
+  "replaces": [
+    {
+      "saas": "codesandbox",
+      "plan": "Pro",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "MIT",
+  "officialCompose": "none",
+  "local": {
+    "fit": "caveat",
+    "note": "On your own computer this answers only at http://localhost:8137, so the tablet or borrowed laptop you would have opened the editor on cannot reach it, and what you keep is a pinned Linux toolchain in a container sitting beside your own files rather than on top of them."
+  },
+  "quote": {
+    "text": "Though code-server takes the open-source core of VS Code and allows you to run it in the browser, it is not entirely equivalent to Microsoft's VS Code.",
+    "source": "code-server documentation, FAQ",
+    "url": "https://coder.com/docs/code-server/FAQ",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "The published image runs as uid 1000 under a user named coder, exposes 8080, and its entrypoint binds code-server to 0.0.0.0:8080 after running fixuid.",
+      "url": "https://github.com/coder/code-server/blob/v4.131.0/ci/release-image/Dockerfile"
+    },
+    {
+      "claim": "code-server reads its password from $PASSWORD or $HASHED_PASSWORD and then deletes both from its own environment, so the processes it starts, including the integrated terminal, do not inherit them.",
+      "url": "https://github.com/coder/code-server/blob/v4.131.0/src/node/cli.ts"
+    },
+    {
+      "claim": "The login route allows 2 attempts a minute plus 12 an hour before it refuses further tries, and successful logins do not count against that limit.",
+      "url": "https://github.com/coder/code-server/blob/v4.131.0/src/node/routes/login.ts"
+    },
+    {
+      "claim": "Extensions come from the Open VSX gallery because Microsoft's terms state that Marketplace offerings are intended for use only with Visual Studio products and services, and Live Share and the Remote extensions are unavailable as a result.",
+      "url": "https://coder.com/docs/code-server/FAQ"
+    },
+    {
+      "claim": "The /healthz endpoint needs no authentication and reports the heartbeat, which reads expired until a browser is actually holding the editor open.",
+      "url": "https://github.com/coder/code-server/blob/v4.131.0/src/node/routes/health.ts"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "This is a remote shell on your server behind one password. code-server ships VS Code's integrated terminal, so whoever holds that password can run commands as the container's coder user, on the three folders mounted from the host, with passwordless sudo inside the container. The install generates 256 bits of randomness for it, never prints it, and the login route refuses more than 2 attempts a minute plus 12 an hour. Treat that one string the way you would treat an SSH key.",
+    "Extensions come from Open VSX, not Microsoft's marketplace. Upstream says plainly that this is not entirely equivalent to Microsoft's VS Code, and Microsoft's terms restrict Marketplace offerings to Visual Studio products and services. Most things you use are on Open VSX; Live Share and the Remote extensions are closed source and are on neither. Check the two or three extensions you actually depend on before you migrate a working setup.",
+    "You bring the code. The editor opens an empty folder on a fresh server, and it fills when you clone into it. Nothing is synced from your laptop and there is no template gallery, so the first ten minutes are a git clone and installing whatever your project needs.",
+    "No throwaway environments. CodeSandbox's product is a fresh machine per branch, per pull request, per shared link, discarded when you are done. This is one persistent box you administer: when you break the toolchain, you are the person who fixes it, and there is no reset button behind the URL.",
+    "You own the backups, and they have a hole in them. The archive covers the editor config, your extensions and settings, and the working tree. Anything you apt-get into the running container is not in it and disappears at the next image pull, so a toolchain worth keeping belongs in your project's own configuration."
+  ],
+  "sources": {
+    "compose": "https://coder.com/docs/code-server/install",
+    "caddy": "https://coder.com/docs/code-server/guide",
+    "install": "https://coder.com/docs/code-server/FAQ",
+    "requirements": "https://coder.com/docs/code-server/requirements",
+    "image": "https://github.com/coder/code-server/blob/v4.131.0/ci/release-image/Dockerfile",
+    "config": "https://github.com/coder/code-server/blob/v4.131.0/src/node/cli.ts",
+    "health": "https://github.com/coder/code-server/blob/v4.131.0/src/node/routes/health.ts",
+    "login": "https://github.com/coder/code-server/blob/v4.131.0/src/node/routes/login.ts",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "coolify",
+    "grist",
+    "tabby"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "116671b6e72c0b98f835ce142ea186e54ac77548a6d2f42b96ee16db3cadbfae"
+}

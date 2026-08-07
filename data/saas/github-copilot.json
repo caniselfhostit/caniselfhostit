@@ -1,0 +1,80 @@
+{
+  "slug": "github-copilot",
+  "name": "GitHub Copilot",
+  "domain": "github.com",
+  "whyPeoplePay": "Copilot's real product is that somebody else owns the hardware. A large model answers in the time it takes you to keep typing, on machines you never provision, from an extension that is already in your editor and already knows your repository. The subscription also buys the tiers above autocomplete: an agent that opens pull requests, review comments, and metered access to whichever frontier model shipped last month.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "A capped allowance of completions and chat requests per month, on automatically selected models only. No card required."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 10,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Unlimited completions plus a monthly credit allowance the page states as $15. Sold monthly; the plans page advertises no annual discount."
+    },
+    {
+      "name": "Pro+",
+      "priceMonthly": 39,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Adds access to the premium models and a monthly credit allowance the page states as $70."
+    },
+    {
+      "name": "Max",
+      "priceMonthly": 100,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "The top individual tier, with a monthly credit allowance the page states as $200."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": 19,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per granted seat per month, for organisations, with policy controls over what the model may see."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": 39,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per granted seat per month, adding the enterprise-only knowledge and review features."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://github.com/features/copilot/plans",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "Free, Pro, Pro+ and Max read from github.com/features/copilot/plans; Business and Enterprise from docs.github.com/en/copilot/about-github-copilot/plans-for-github-copilot on the same day, because the plans page routes organisations to sales rather than printing their rate. Every figure is the monthly-billed one, which is the only one either page shows."
+  },
+  "ranked": [
+    {
+      "project": "tabby",
+      "rationale": "The only option here that is a whole server rather than a client: it holds the models, indexes your repositories, issues tokens to editors, and speaks to extensions that already exist for VS Code, IntelliJ and Vim. That completeness is what makes it a replacement rather than a project. The honest cost is hardware. Tabby wants an NVIDIA GPU and has no CPU-only image, so this pays off on a desktop with a card already in it and loses to a $10 subscription on a rented GPU box."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Continue",
+      "repo": "https://github.com/continuedev/continue",
+      "note": "Apache-2.0, actively developed, and the strongest client on this list: it puts completions and an agent in VS Code and JetBrains against whatever model endpoint you point it at. It is not a server, though, so it does not replace Copilot on its own. It replaces the extension and leaves you to supply the model, which is either an API key with a metered bill or a machine like the one Tabby wants."
+    },
+    {
+      "name": "Ollama",
+      "repo": "https://github.com/ollama/ollama",
+      "note": "MIT, and the easiest way to get a coding model answering on your own machine, including on Apple Silicon where Tabby's container cannot go. What it is not is a Copilot: there is no completion protocol, no repository index and no accounts, so you assemble the rest from an editor plugin and your own configuration. Worth knowing about precisely because it covers the Macs this catalogue's Tabby entry has to refuse."
+    },
+    {
+      "name": "FauxPilot",
+      "repo": "https://github.com/fauxpilot/fauxpilot",
+      "note": "The original open Copilot server, still the reference people remember, and not maintained: the last commit landed in April 2024 and it targets a model generation that has been superseded twice over. We list it so you can stop looking for it. Do not start here."
+    }
+  ]
+}

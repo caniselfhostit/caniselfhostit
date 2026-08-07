@@ -1,0 +1,51 @@
+{
+  "slug": "roam-research",
+  "name": "Roam Research",
+  "domain": "roamresearch.com",
+  "whyPeoplePay": "Roam sells a way of writing that did not exist before it: every paragraph is an addressable block, you reference blocks instead of copying them, and a daily note gives you somewhere to put a thought without deciding where it belongs first. People who think this way do not want a different note app, they want that one, and the subscription buys a hosted graph that is already there, on every device, with the mobile apps and the sharing and the backups handled by somebody else. There is no free tier under it, only a 31-day trial, so the graph and the bill start on the same day.",
+  "plans": [
+    {
+      "name": "Pro",
+      "priceMonthly": 15,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$15 a month billed monthly, which the same panel also prints as $180 a year. Paying annually instead is $165 a year, shown as $13.75 a month. A 31-day free trial is offered, and the panel's own footnote says it is valid only if you have never had a plan."
+    },
+    {
+      "name": "Believer",
+      "priceMonthly": null,
+      "unit": "one-time",
+      "seatsIncluded": 1,
+      "note": "$500 paid once, covering five years, which the panel prints as $8.33 a month or $100 a year. It lists everything in Pro plus first access to new features, community calls with the team and priority support. Recorded with no monthly price because there is no monthly billing to record."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://roamresearch.com/",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "roamresearch.com serves a single-page application whose HTML carries nothing but a title, so there is no pricing page to read. These figures are the strings in the vendor's own subscription panel, read out of https://roamresearch.com/js/compiled/main.js on 2026-08-06: the plan names, the $15 / month and $165 / year rates with their $180 / year and $13.75 / month captions, and the $500 / 5 years Believer row. Confidence is medium because we read the code that renders the panel rather than the panel itself, and because a signed-in account may be offered rates this bundle does not contain. No free tier appears anywhere in it, only the 31-day trial."
+  },
+  "ranked": [
+    {
+      "project": "siyuan",
+      "rationale": "The only one here that keeps the shape and the server. Blocks with real block references, two-way links, daily notes and an outliner that zooms into any block, served from one container so every device opens the same graph in a browser exactly the way the hosted product works. What you take on is stated by upstream rather than discovered later: this deployment is browser-only, so the SiYuan apps in the app stores are not part of it, Markdown import is unavailable here, and the sync settings inside the app belong to a paid SiYuan account you do not need and should not turn on. One lock screen code is the whole gate, and the graph is JSON files you can read on your own disk."
+    },
+    {
+      "project": "trilium",
+      "rationale": "The better answer if what you actually kept from Roam was the writing rather than the graph. Trilium is a tree of notes with relations, attachments and scripting in one container over one SQLite file, and it is a calmer, more finished piece of software than anything else on this list. It is also honestly a different tool: notes are pages in a hierarchy that you link between, not blocks you reference and transclude, so the daily-note-plus-block-ref habit does not survive the move. Ranked second for a Roam refugee and first for anyone who was quietly using Roam as an outline-shaped filing cabinet."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Logseq",
+      "repo": "https://github.com/logseq/logseq",
+      "note": "AGPL-3.0, actively maintained, 2.0.1 released on 2026-07-13, and the closest thing to Roam in feel that exists: blocks, references, daily journals, over plain Markdown files you own. It is not on the ranked list because there is nothing to self-host. Logseq is a desktop and mobile application that opens a folder, and the Dockerfile in its repository builds the static web bundle behind nginx rather than a server that holds a graph. Hosting Logseq means hosting the folder and whatever syncs it, which is a different project than this one."
+    },
+    {
+      "name": "Athens",
+      "repo": "https://github.com/athensresearch/athens",
+      "note": "The open-source Roam clone people still name first, and it is over. The repository's own description reads that Athens is no longer maintained, the last commit landed in February 2023, and GitHub reports no recognised license for it. Listed here so that finding it in an old thread does not cost anyone an evening."
+    }
+  ]
+}

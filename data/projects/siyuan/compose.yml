@@ -1,0 +1,54 @@
+# SiYuan · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker deployment .. https://github.com/siyuan-note/siyuan/blob/v3.7.3/README.md
+#   image entrypoint ... https://github.com/siyuan-note/siyuan/blob/v3.7.3/kernel/entrypoint.sh
+#   kernel http api .... https://github.com/siyuan-note/siyuan/blob/v3.7.3/docs/API.md
+#   access gate ........ https://github.com/siyuan-note/siyuan/blob/v3.7.3/kernel/model/session.go
+#
+# One service and one workspace directory. The `command:` line is not optional:
+# from v3.7.0 the kernel is a subcommand tree and the entrypoint pulls
+# --workspace out of the arguments, puts it back in front of whatever is left,
+# and hands the rest to the kernel, so `serve` has to be written here.
+#
+# The lock screen code arrives as SIYUAN_ACCESS_AUTH_CODE out of the env file
+# instead of on the command line, where every process listing inside the
+# container would carry it. Upstream documents both spellings and says the
+# command line wins when both are set, so only one is used here.
+#
+# PUID and PGID are the ids the entrypoint creates a user for and re-execs as,
+# and it chowns the mounted workspace to them on every start. SIYUAN_LANG pins
+# the interface language so the check in step 7 has one right answer; upstream
+# states it is applied on every start-up and overrides the language chosen in
+# Settings. Tag and digest read from Docker Hub on 2026-08-06; the image
+# publishes amd64, arm64, armv7 and armv8.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  siyuan:
+    image: b3log/siyuan:v3.7.3@sha256:908faf8ec55d391d95244982c081edabbaec118552d01fc3dc189d098cc0ffc8
+    container_name: siyuan
+    restart: unless-stopped
+    command: ["serve", "--workspace=/siyuan/workspace"]
+    env_file: /srv/siyuan/.env
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "UTC"
+      SIYUAN_LANG: "en"
+    volumes:
+      # conf/, data/ and temp/ appear under here on the first start. Notebooks
+      # are folders of .sy JSON files under data/, and anything pasted into a
+      # note lands beside them in data/assets.
+      - /srv/siyuan/workspace:/siyuan/workspace
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8141.
+      - "127.0.0.1:8141:6806"
+    healthcheck:
+      # Registered without the auth middleware, so it answers whether or not
+      # anyone has unlocked the workspace yet.
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:6806/api/system/version"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s

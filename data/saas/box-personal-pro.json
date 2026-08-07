@@ -1,0 +1,86 @@
+{
+  "slug": "box-personal-pro",
+  "name": "Box",
+  "domain": "box.com",
+  "whyPeoplePay": "Box sells a filing cabinet that other companies are willing to audit. The sync and the sharing are table stakes; what the money buys is retention policies, legal holds, e-signature and governance sitting on the same files, plus an operator who answers when a regulator asks where a document went. Personal Pro is the small end of that: 100 GB, a 5 GB upload ceiling, and somebody else keeping the lights on.",
+  "plans": [
+    {
+      "name": "Individual",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "10 GB of storage and a 250 MB limit on any one file."
+    },
+    {
+      "name": "Personal Pro",
+      "priceMonthly": 14,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "100 GB of storage and a 5 GB file size limit. Around $120 a year on the annual plan, which the page presents as roughly $10 a month."
+    },
+    {
+      "name": "Business Starter",
+      "priceMonthly": 7,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Minimum 3 users, 100 GB shared, 2 GB file size limit. $5 per user per month on the annual plan, the figure Box advertises in its own page title."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": 20,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Minimum 3 users, unlimited storage, 5 GB file size limit. About $15 per user per month billed annually."
+    },
+    {
+      "name": "Business Plus",
+      "priceMonthly": 33,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Minimum 3 users, 15 GB file size limit. About $25 per user per month billed annually."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": 47,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Minimum 3 users, 50 GB file size limit. About $35 per user per month billed annually."
+    },
+    {
+      "name": "Enterprise Plus",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Annual billing only. Box's pricing page says to switch to annual billing to see a figure, and publishes none for month-to-month."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://www.box.com/pricing/individual",
+    "currency": "USD",
+    "confidence": "low",
+    "note": "Box renders every price client-side behind a bot check, so box.com/pricing and box.com/pricing/individual return the plan names, storage limits and file size limits but no dollar figures at all. The plan ladder, the storage and the upload ceilings here are Box's own; the USD amounts are the monthly-billed figures reported consistently by several independent pricing trackers read on the same day, cross-checked against Box's own euro page (Personal Pro at 12 euro a month, Business Starter at 6, Business at 18) and against Box's own page title, which advertises 'from $5 per user/month' for annual Business Starter. Treat the dollar amounts as approximate until someone re-reads them in a browser."
+  },
+  "ranked": [
+    {
+      "project": "seafile",
+      "rationale": "The closest thing to Box's core loop that one person can operate. Seafile splits every file into deduplicated blocks, so its desktop clients move only what changed rather than re-uploading a 2 GB video because you renamed it, and a library is versioned and shareable by link the way a Box folder is. The trade is narrow and honest: the community edition has no content search inside documents, no audit log and no folder-level permission matrix, which are exactly the features Box's business tiers exist to sell."
+    },
+    {
+      "project": "nextcloud",
+      "rationale": "The right answer if what you actually miss about Box is the surrounding platform rather than the syncing. Nextcloud brings calendar, contacts, an office suite, e-signature and a large app ecosystem onto the same files, which is far closer to Box's product than Seafile is. It is also a much larger thing to run and slower on big libraries, because it stores files as files and tracks them in the database rather than moving blocks. Pick it for breadth, pick Seafile for sync that keeps up."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "OpenCloud",
+      "repo": "https://github.com/opencloud-eu/opencloud",
+      "note": "Apache-2.0, a 2025 fork of ownCloud Infinite Scale started by people who had worked on it, and the more active of the two: releases through v7.4.0 in the weeks before we looked, with commits daily. A single Go binary with S3 and Keycloak in the supported path, which makes it a genuinely modern answer and also a younger one. We have not installed it."
+    },
+    {
+      "name": "ownCloud Infinite Scale",
+      "repo": "https://github.com/owncloud/ocis",
+      "note": "Apache-2.0, the original Go rewrite of ownCloud, still shipping (v8.0.7 the week we checked) under Kiteworks ownership after the 2023 acquisition. Not abandoned, but the OpenCloud fork drew off part of the team, so the honest read is two live projects sharing an ancestor rather than one successor. Worth a look if you already run ownCloud; we have not installed it."
+    }
+  ]
+}

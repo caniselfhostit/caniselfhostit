@@ -1,0 +1,59 @@
+{
+  "slug": "codesandbox",
+  "name": "CodeSandbox",
+  "domain": "codesandbox.io",
+  "whyPeoplePay": "CodeSandbox sells the machine you did not have to set up. A link opens a running development environment in seconds, a branch or a pull request gets its own copy, a template starts a project before you have installed anything, and the whole thing can be embedded in a document or handed to a stranger who has no toolchain at all. You are paying for provisioning, for the sandbox being disposable, and for somebody else keeping the VMs warm.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "400 VM credits a month and a cap on how many sandboxes a workspace keeps."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 12,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$9 a month on the annual plan. A base allowance of 1,000 VM credits a month; more are bought as add-ons, so the bill moves with how long the machines stay awake."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://codesandbox.io/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "codesandbox.io/pricing and the pricing pages under codesandbox.io/docs both answered our fetch with HTTP 403, so these figures were corroborated by search against CodeSandbox's own subscription and credit-usage documentation rather than read off the vendor page directly. Two things are genuinely uncertain: whether Pro is billed per workspace or per editor once a second person joins, and what a real monthly bill looks like once VM credit add-ons are counted, because credits are consumed by machine uptime rather than by seats. Re-check both against the live page before quoting a saving."
+  },
+  "ranked": [
+    {
+      "project": "code-server",
+      "rationale": "The closest thing to the editor half of CodeSandbox that you can run yourself: the same VS Code workbench, the same keybindings, the same terminal, reachable from any browser on a machine you control. What it does not reproduce is the part CodeSandbox actually charges for, which is a fresh disposable VM per branch and a link that boots one for someone else. This is one persistent environment that you maintain, and the honest trade is that you swap instant provisioning for never being metered."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Coder",
+      "repo": "https://github.com/coder/coder",
+      "note": "The workspace manager from the same company, and the closer structural match to CodeSandbox: it provisions per-developer environments from Terraform templates, handles multiple users, and treats workspaces as things you create and destroy. It is also a platform rather than an install, with a control plane, a database and a provisioner to operate, so it belongs on a team's roadmap rather than in a one-command entry. AGPL-3.0, actively released."
+    },
+    {
+      "name": "OpenVSCode Server",
+      "repo": "https://github.com/gitpod-io/openvscode-server",
+      "note": "Upstream VS Code with the web server switched on, tracking Microsoft's releases closely and still shipping, though at a slower cadence than code-server. The difference that decides it for a public hostname is authentication: their Docker image runs with --without-connection-token by default, which their README states plainly means anyone who reaches the host and port gets the IDE. You would be supplying the login layer yourself."
+    },
+    {
+      "name": "Gitpod Self-Hosted",
+      "repo": "https://github.com/gitpod-io/gitpod",
+      "note": "The obvious CodeSandbox analogue on paper, and not a live option in practice. The repository is still worked on, but its releases stop at 2022.11.3 in June 2023, and there is nothing newer to install self-hosted. Listed so nobody spends an evening discovering that."
+    }
+  ]
+}

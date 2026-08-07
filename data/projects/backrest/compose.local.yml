@@ -1,0 +1,45 @@
+# Backrest · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   readme and docker ... https://github.com/garethgeorge/backrest/blob/v1.14.1/README.md
+#   getting started ..... https://garethgeorge.github.io/backrest/introduction/getting-started
+#   entrypoint defaults . https://github.com/garethgeorge/backrest/blob/v1.14.1/cmd/docker-entrypoint/main.go
+#
+# One service on the computer you are sitting at. Every path is relative to
+# ~/selfhost/backrest/, which lets one file work on macOS, Linux and Windows.
+# ../.. is the home directory two levels up, read-only: the files this install
+# exists to copy somewhere safe. A restored file lands in ./restore.
+# ./backups is mounted because the container writes its state as root, so on
+# Linux step 8's archive is taken by the container. The VPS file needs no such
+# mount: there, sudo does that job on the host.
+#
+# Tag and digest read from ghcr.io on 2026-08-06; the image publishes amd64,
+# arm64, arm/v6, arm/v7 and 386.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  backrest:
+    image: ghcr.io/garethgeorge/backrest:v1.14.1@sha256:b852979754281026230cc69fb11428e6d57c9a97784ab4a444ffc7934c53a215
+    container_name: backrest
+    restart: unless-stopped
+    environment:
+      BACKREST_PORT: "0.0.0.0:9898"
+      BACKREST_CONFIG: /config/config.json
+      BACKREST_DATA: /data
+      XDG_CACHE_HOME: /cache
+      BACKREST_RESTIC_COMMAND: /bin/restic
+      TZ: UTC
+    volumes:
+      # Repository URIs, schedules and the login hash, from step 4.
+      - ./config:/config
+      - ./data:/data
+      # restic's cache: rebuildable, and it grows with the repo index.
+      - ./cache:/cache
+      - ./restore:/restore
+      # Where step 8 writes the archive of this configuration.
+      - ./backups:/backups
+      # Your home folder, read-only. The plan picks folders inside it.
+      - ../..:/userdata:ro
+    ports:
+      # Loopback only: no other device on the wifi can reach 8136.
+      - "127.0.0.1:8136:9898"

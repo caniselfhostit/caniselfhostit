@@ -1,0 +1,32 @@
+# Tabby · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://tabby.tabbyml.com/docs/quick-start/installation/docker/ and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. Tabby serves a
+# plain HTTP listener on 8080 and terminates nothing itself.
+
+<DOMAIN> {
+	# The dashboard bundle and the JSON responses compress well; Caddy's
+	# default matcher leaves everything else alone.
+	encode zstd gzip
+
+	# Tabby sets no transport or frame headers of its own. HSTS is on
+	# because every request here carries a session cookie or an editor's
+	# access token.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8134 is the loopback port compose publishes here. It is not a
+	# container port and it is not open in the firewall. Caddy flushes the
+	# streamed completions as they arrive and upgrades the dashboard's
+	# /subscriptions WebSocket with no extra configuration.
+	reverse_proxy 127.0.0.1:8134
+}

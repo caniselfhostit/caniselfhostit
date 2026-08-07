@@ -1,0 +1,28 @@
+# Seafile · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://manual.seafile.com/13.0/setup/use_other_reverse_proxy/ and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy Prompt Zero installed, with
+# <DOMAIN> replaced by the hostname pointed at this box. It is also
+# SEAFILE_SERVER_HOSTNAME in .env, so the two stay the same string.
+
+<DOMAIN> {
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# No `encode`: these bytes are stored file blocks on /seafhttp.
+	# Upstream's nginx sample drops the body limit, the request buffering
+	# and the read timeout here; Caddy already streams and caps nothing
+	# unless told to, so do not add `request_body max_size`.
+	#
+	# 8140 is the loopback port compose publishes, not a container port,
+	# and not open in the firewall.
+	reverse_proxy 127.0.0.1:8140
+}

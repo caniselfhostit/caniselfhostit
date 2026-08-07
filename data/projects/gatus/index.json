@@ -1,0 +1,95 @@
+{
+  "slug": "gatus",
+  "name": "Gatus",
+  "tagline": "A public status page whose entire configuration is one YAML file you own: the checks, the pass conditions and the alerting, declared once and served as a page.",
+  "repo": "TwiN/gatus",
+  "site": "https://gatus.io",
+  "category": "monitoring",
+  "replaces": [
+    {
+      "saas": "pingdom",
+      "plan": "Synthetic Monitoring · 10 uptime checks",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 0
+  },
+  "resources": {
+    "ramMinMB": 512,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 9,
+  "license": "Apache-2.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/TwiN/gatus/blob/v5.36.0/.examples/docker-compose-sqlite-storage/compose.yaml",
+  "local": {
+    "fit": "caveat",
+    "note": "A status page exists so other people can read it, and this one answers only at http://localhost:8132, so nobody you would send it to can open it; the checks also run only while the computer is awake, and a laptop asleep overnight records no outage because it records nothing."
+  },
+  "quote": {
+    "text": "Because the data is stored in memory, the data will not survive a restart.",
+    "source": "Gatus README, Storage",
+    "url": "https://github.com/TwiN/gatus/blob/v5.36.0/README.md#storage",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Gatus stores results in memory by default and upstream states that memory storage does not survive a restart, which is why this install sets the storage type to sqlite with a path on a mounted volume.",
+      "url": "https://github.com/TwiN/gatus/blob/v5.36.0/README.md#storage"
+    },
+    {
+      "claim": "The dashboard, the endpoint statuses API and the badges are served without authentication unless security.basic or security.oidc is configured, and the one route that writes anything answers 401 to a call carrying no bearer token.",
+      "url": "https://github.com/TwiN/gatus/blob/v5.36.0/api/api.go"
+    },
+    {
+      "claim": "The published image is built FROM scratch, sets PORT to 8080, and reads its configuration from config/config.yaml, which is why the compose file mounts a directory at /config and carries no healthcheck.",
+      "url": "https://github.com/TwiN/gatus/blob/v5.36.0/Dockerfile"
+    },
+    {
+      "claim": "Gatus reloads its configuration while running, and the documented default when the updated file is invalid is that the application exits rather than continuing on the old configuration.",
+      "url": "https://github.com/TwiN/gatus/blob/v5.36.0/README.md#reloading-configuration-on-the-fly"
+    },
+    {
+      "claim": "Pingdom sells checks run from over 100 locations worldwide, which is the one thing a single self-hosted instance cannot reproduce.",
+      "url": "https://www.pingdom.com/synthetic-monitoring/"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "One vantage point, and it cannot see itself die. Pingdom checks your site from over 100 locations; this checks it from wherever you put the container, and if that machine or its network is the thing that fails, the page that would have told you is down too. Run it somewhere other than the servers it watches, and keep one free external check pointed at it. This is the one place where paying nobody is not the right answer.",
+    "The configuration file is the product, and that cuts both ways. Every monitor, every pass condition and every alert rule lives in one YAML file you can read, diff and keep in a note, and there is no admin screen to click instead. It also means a mis-indented line is an outage: Gatus rereads the file while it runs and exits when the new one does not parse, so the container restarts into the same broken file until you fix it.",
+    "The status page is public, because that is what a status page is. There is no login, no account and nothing to rotate, and the flip side is that the name and the URL of every endpoint you add are published to anyone who loads the page. An internal admin URL in that file is an internal admin URL on the open web. Upstream's security.basic and security.oidc settings put the page behind a password if you would rather; this install does not use either.",
+    "You own the alerting path, and it ships switched off. Every provider needs a webhook or a key from a service you sign up for, so the install leaves a commented Slack block and nothing live. Send yourself a deliberate failure the day you wire one up, because an untested alert channel is silence with extra steps.",
+    "No probes in other countries, no real user monitoring, no SMS gateway and no on-call rotation. Those four are most of what the paid tiers are actually selling."
+  ],
+  "sources": {
+    "compose": "https://github.com/TwiN/gatus/blob/v5.36.0/README.md#docker",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://github.com/TwiN/gatus/blob/v5.36.0/README.md#configuration",
+    "conditions": "https://github.com/TwiN/gatus/blob/v5.36.0/README.md#conditions",
+    "storage": "https://github.com/TwiN/gatus/blob/v5.36.0/README.md#storage",
+    "security": "https://github.com/TwiN/gatus/blob/v5.36.0/README.md#security",
+    "alerting": "https://github.com/TwiN/gatus/blob/v5.36.0/README.md#alerting",
+    "reload": "https://github.com/TwiN/gatus/blob/v5.36.0/README.md#reloading-configuration-on-the-fly",
+    "api": "https://github.com/TwiN/gatus/blob/v5.36.0/api/api.go",
+    "image": "https://github.com/TwiN/gatus/blob/v5.36.0/Dockerfile",
+    "example": "https://github.com/TwiN/gatus/blob/v5.36.0/.examples/docker-compose-sqlite-storage/compose.yaml"
+  },
+  "related": [
+    "uptime-kuma",
+    "healthchecks",
+    "grafana"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "badafc1b971af2cf9a4042a604ea1592bfee56c7431214c59971b232515dff40"
+}

@@ -1,0 +1,95 @@
+{
+  "slug": "backrest",
+  "name": "Backrest",
+  "tagline": "A web UI and a scheduler over restic, so the backups you keep meaning to set up have somewhere to be configured and something to watch them.",
+  "repo": "garethgeorge/backrest",
+  "site": "https://garethgeorge.github.io/backrest/",
+  "category": "files-docs",
+  "replaces": [
+    {
+      "saas": "backblaze-personal-backup",
+      "plan": "Personal Backup",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "GPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/garethgeorge/backrest/blob/v1.14.1/README.md",
+  "local": {
+    "fit": "good",
+    "note": "This is the path Backrest was built for, with one consequence worth saying out loud: a plan scheduled for 3am runs only if the computer is awake at 3am, so on a laptop the honest setting is an interval that fires when the lid opens."
+  },
+  "quote": {
+    "text": "Make sure to save a copy of your repository credentials and encryption keys (e.g. password) in a safe place. Losing these will prevent you from restoring your data.",
+    "source": "Backrest documentation, Getting Started",
+    "url": "https://garethgeorge.github.io/backrest/introduction/getting-started",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Backrest runs every operation through restic, and the published image ships the restic binary it was built against, so nothing is downloaded at start-up.",
+      "url": "https://garethgeorge.github.io/backrest/docs/operations"
+    },
+    {
+      "claim": "A Backrest that starts with no configuration file writes itself a default one with authentication disabled, and the request middleware serves every API route when the auth block is absent or disabled.",
+      "url": "https://github.com/garethgeorge/backrest/blob/v1.14.1/internal/auth/middleware.go"
+    },
+    {
+      "claim": "The docker entrypoint defaults BACKREST_PORT to 0.0.0.0:9898, BACKREST_DATA to /data, BACKREST_CONFIG to /config/config.json and XDG_CACHE_HOME to /cache.",
+      "url": "https://github.com/garethgeorge/backrest/blob/v1.14.1/cmd/docker-entrypoint/main.go"
+    },
+    {
+      "claim": "A web login password is stored in config.json as a bcrypt hash that has then been base64 encoded, which is what caddy hash-password piped into base64 produces.",
+      "url": "https://github.com/garethgeorge/backrest/blob/v1.14.1/internal/auth/auth.go"
+    },
+    {
+      "claim": "A hand-written configuration file has to carry a version number: a config with content and a version of 0 is rejected at start-up rather than migrated.",
+      "url": "https://github.com/garethgeorge/backrest/blob/v1.14.1/internal/config/migrations/migrations.go"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Unlimited storage for a flat fee per computer is genuinely hard to beat, and this does not beat it. Backblaze charges one price whether you have 200 GB or 8 TB; a bucket charges by the gigabyte every month, forever. Below a few hundred gigabytes you are usually ahead, above a terabyte you are usually not, and the honest saving is the software fee rather than the storage bill.",
+    "You become the person who tests restores. Nothing here emails you when a plan has not run in three weeks, and a backup nobody has restored is a hope rather than a backup. The install ends by making you restore one file, and that habit is the whole product.",
+    "The repository password is unrecoverable by design. restic encrypts before anything leaves the machine, which is the good news and the bad news: lose that password and the snapshots are noise to you as much as to anyone else. It belongs in a password manager on the day you create it, next to a copy of config.json.",
+    "This backs up the machine it runs on. On a server that is the server's data; on your own computer it is your own files. It is not an agent for the household's other laptops, and Backblaze's per-computer licence covering every drive attached to that computer has no equivalent here.",
+    "No mailed hard drive when the restore is 4 TB, no phone app that finds a file from the car, and no support desk. Those are what the subscription is actually selling, and none of them arrives with the container."
+  ],
+  "sources": {
+    "compose": "https://github.com/garethgeorge/backrest/blob/v1.14.1/README.md",
+    "caddy": "https://garethgeorge.github.io/backrest/cookbooks/reverse-proxy-examples",
+    "install": "https://garethgeorge.github.io/backrest/introduction/getting-started",
+    "auth": "https://github.com/garethgeorge/backrest/blob/v1.14.1/internal/auth/auth.go",
+    "config": "https://github.com/garethgeorge/backrest/blob/v1.14.1/proto/v1/config.proto",
+    "entrypoint": "https://github.com/garethgeorge/backrest/blob/v1.14.1/cmd/docker-entrypoint/main.go",
+    "image": "https://github.com/garethgeorge/backrest/blob/v1.14.1/Dockerfile.alpine",
+    "api": "https://garethgeorge.github.io/backrest/docs/api",
+    "operations": "https://garethgeorge.github.io/backrest/docs/operations",
+    "hashPassword": "https://caddyserver.com/docs/command-line",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "nextcloud",
+    "vaultwarden",
+    "syncthing"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "cd6931366511b892c78c8582f04c059f1bbabdf84a2cfa6bf9637f6263e64a19"
+}

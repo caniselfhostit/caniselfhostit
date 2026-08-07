@@ -1,0 +1,26 @@
+# PrestaShop · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://devdocs.prestashop-project.org/9/basics/installation/environments/docker/ and
+# https://caddyserver.com/docs/caddyfile/directives/reverse_proxy
+#
+# Append this to /etc/caddy/Caddyfile with <DOMAIN> replaced by the hostname
+# pointed at this box, the same value as PS_DOMAIN in .env.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	# PrestaShop sets its own cache and cookie headers; these are the rest. The
+	# referrer is trimmed so a checkout URL does not travel onward.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# 8138 is the loopback port compose publishes here, not a container port and
+	# not open in the firewall. reverse_proxy sets X-Forwarded-Proto itself,
+	# which is how PrestaShop knows a request is https.
+	reverse_proxy 127.0.0.1:8138
+}

@@ -1,0 +1,66 @@
+{
+  "slug": "nordvpn",
+  "name": "NordVPN",
+  "domain": "nordvpn.com",
+  "whyPeoplePay": "NordVPN sells three things, and only one of them is a tunnel. The first is a shared exit address: your traffic leaves from an IP that thousands of other subscribers are using at the same moment, which is what makes it hard to attribute back to you. The second is geography, thousands of servers in dozens of countries so a streaming catalog or a news site sees a local visitor. The third is a promise about records, a no-logs policy that an outside auditor has been paid to test, backed by a company that would lose its business if the promise broke. A server you rent gives you an exit IP nobody else shares, in one country, audited by nobody. That is not a worse version of the same product. It is a different product, and the honest place to start is which of the three you were actually buying.",
+  "plans": [
+    {
+      "name": "Basic",
+      "priceMonthly": 12.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Billed monthly. The 1-year plan advertises $4.99/mo ($59.88 up front) and the 2-year plan $3.09/mo ($83.43 up front); both are first-term rates that renew higher."
+    },
+    {
+      "name": "Plus",
+      "priceMonthly": 15.29,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Adds the password manager and breach scanner. 1-year $5.49/mo ($65.88), 2-year $3.59/mo ($96.93), both first-term rates."
+    },
+    {
+      "name": "Complete",
+      "priceMonthly": 18.69,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Adds 1 TB of encrypted cloud storage. 1-year $6.99/mo ($83.88), 2-year $4.99/mo ($143.73), both first-term rates."
+    },
+    {
+      "name": "Prime",
+      "priceMonthly": 25.29,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Adds identity-theft cover. 1-year $8.99/mo ($107.88), 2-year $6.99/mo ($188.73), both first-term rates."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://gizmodo.com/best-vpn/nordvpn/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "nordvpn.com/pricing returned HTTP 403 to every request we made on 2026-08-06, so the ladder here was read from a price tracker on that date and cross-checked against a second one, which disagreed on which tier carries the $18.69 monthly rate. Treat the monthly figures as close rather than exact. The larger uncertainty is structural: NordVPN's advertised 1-year and 2-year per-month rates are first-term prices and the page states the price rises at renewal without printing the renewal figure, so the monthly-billed number recorded here is the only rate on the page that does not change on you."
+  },
+  "ranked": [
+    {
+      "project": "wg-easy",
+      "rationale": "The only honest answer to half of what NordVPN sells, and it says which half. wg-easy is a WireGuard server with a web interface that issues client configurations and QR codes, so a phone joins in about a minute and the official WireGuard apps do the rest. What it gives you is an encrypted tunnel on a coffee-shop network, a way back into your own machines from anywhere, and control of the DNS your devices resolve through. What it cannot give you is the shared exit address: your VPS IP is yours alone, which makes general browsing through it more identifying than your home connection, not less."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Headscale",
+      "repo": "https://github.com/juanfont/headscale",
+      "note": "A self-hosted implementation of the Tailscale control server, so your devices form a mesh and talk to each other directly rather than routing everything through one box you rent. That is a better shape than wg-easy for reaching your own machines from anywhere, and a worse one for the single-exit-node use, and it still leans on Tailscale's clients and its login flow. Actively developed, BSD-3-Clause, and upstream is clear it is not affiliated with Tailscale."
+    },
+    {
+      "name": "NetBird",
+      "repo": "https://github.com/netbirdio/netbird",
+      "note": "A WireGuard-based overlay network with its own clients, SSO and per-peer access rules, and a self-hosted control plane. It is the fullest replacement for a company VPN on this list and also the largest thing to operate: the self-hosted stack is several services rather than one container. Licensing is split, BSD-3-Clause for most of the tree with the management, signal and relay directories under AGPL-3.0, which is worth reading before you build on it."
+    },
+    {
+      "name": "Firezone",
+      "repo": "https://github.com/firezone/firezone",
+      "note": "WireGuard-based remote access with resource-level policies and an admin portal, Apache-2.0 and actively developed. Its current generation is built around Firezone's own hosted control plane and clients, so the self-hosted story is less of a single compose file than wg-easy's and more of a platform decision. Worth knowing about if the requirement is per-user access to named internal resources rather than one tunnel for everything."
+    }
+  ]
+}

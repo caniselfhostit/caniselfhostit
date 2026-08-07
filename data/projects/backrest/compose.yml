@@ -1,0 +1,42 @@
+# Backrest · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   readme and docker ... https://github.com/garethgeorge/backrest/blob/v1.14.1/README.md
+#   getting started ..... https://garethgeorge.github.io/backrest/introduction/getting-started
+#   entrypoint defaults . https://github.com/garethgeorge/backrest/blob/v1.14.1/cmd/docker-entrypoint/main.go
+#
+# One service. Backrest is a web UI and a scheduler over restic, and the image
+# ships the restic it was built against at /bin/restic, so nothing is fetched
+# at start-up. It runs as root because the files it reads under /srv were
+# written by other services as other users. /userdata is /srv, read-only, so a
+# restore cannot go home; that is what the writable /restore is for.
+#
+# Tag and digest read from ghcr.io on 2026-08-06; the image publishes amd64,
+# arm64, arm/v6, arm/v7 and 386.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  backrest:
+    image: ghcr.io/garethgeorge/backrest:v1.14.1@sha256:b852979754281026230cc69fb11428e6d57c9a97784ab4a444ffc7934c53a215
+    container_name: backrest
+    restart: unless-stopped
+    environment:
+      BACKREST_PORT: "0.0.0.0:9898"
+      BACKREST_CONFIG: /config/config.json
+      BACKREST_DATA: /data
+      XDG_CACHE_HOME: /cache
+      BACKREST_RESTIC_COMMAND: /bin/restic
+      TZ: UTC
+    volumes:
+      # Repository URIs, schedules and the login hash, written in step 3.
+      - /srv/backrest/config:/config
+      # oplog.sqlite, the JWT signing secret, the per-task logs.
+      - /srv/backrest/data:/data
+      # restic's cache: rebuildable, and it grows with the repository index.
+      - /srv/backrest/cache:/cache
+      - /srv/backrest/restore:/restore
+      # The data this server holds: everything in this catalogue lives in /srv.
+      - /srv:/userdata:ro
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8136.
+      - "127.0.0.1:8136:9898"

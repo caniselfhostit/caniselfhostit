@@ -1,0 +1,95 @@
+{
+  "slug": "syncthing",
+  "name": "Syncthing",
+  "tagline": "Your files sync between your own devices, with the always-on server holding ciphertext it cannot read.",
+  "repo": "syncthing/syncthing",
+  "site": "https://syncthing.net",
+  "category": "files-docs",
+  "replaces": [
+    {
+      "saas": "sync-com",
+      "plan": "Personal 1TB",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 512,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "MPL-2.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/syncthing/syncthing/blob/v2.1.3/README-Docker.md",
+  "local": {
+    "fit": "caveat",
+    "note": "On your own computer this is one peer among your devices rather than the always-on one, so two machines exchange changes only while both are awake and there is no untrusted server holding an encrypted copy for you."
+  },
+  "quote": {
+    "text": "It is possible to set a password on a folder when it's shared with another device. Data sent will be encrypted by this password, and data received will be decrypted by the same password.",
+    "source": "Syncthing documentation, Untrusted (Encrypted) Devices",
+    "url": "https://docs.syncthing.net/users/untrusted.html",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "A folder shared with an untrusted device is encrypted with a password held only by the trusted devices, and on the untrusted device the folder type must be set to Receive Encrypted.",
+      "url": "https://docs.syncthing.net/users/untrusted.html"
+    },
+    {
+      "claim": "Upstream marks the untrusted-device feature with a warning that it should still be considered beta or testing only.",
+      "url": "https://docs.syncthing.net/users/untrusted.html"
+    },
+    {
+      "claim": "Global discovery, local discovery, relaying and NAT traversal all default to true, so a device talks to Syncthing's community discovery, relay and STUN servers unless those settings are turned off.",
+      "url": "https://docs.syncthing.net/users/config.html"
+    },
+    {
+      "claim": "The sync protocol uses 22000/TCP and 22000/UDP for QUIC, while 21027/UDP carries local discovery broadcasts and multicasts on the local segment only.",
+      "url": "https://docs.syncthing.net/users/firewall.html"
+    },
+    {
+      "claim": "syncthing generate accepts --gui-user and --gui-password, reading the password from standard input when the argument is a single dash, and stores it as a bcrypt hash.",
+      "url": "https://docs.syncthing.net/users/syncthing.html"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The server is not the copy of record. Syncthing is peer to peer: your own devices hold the files and reconcile with each other, and the rented box is one more peer that happens to never sleep. Delete a file on your laptop and it goes on every device that is paired, so file versioning per folder, not the server, is what saves you from yourself.",
+    "The zero-knowledge property is real here, and it costs you the recovery story. The install configures the server folder as Receive Encrypted, so what sits on that disk is ciphertext under a password you typed on your own machine and never sent to the server. Nobody can reset it, nobody can recover it, and upstream still labels the feature beta.",
+    "That choice is one-way. Receive Encrypted can only be set when a folder is first added, and upstream disables the dropdown afterwards. Getting it wrong means removing the folder, deleting the data on the server and adding it again, so it is worth reading step 7 twice.",
+    "Your devices talk to community infrastructure by default. Global discovery, relaying, NAT traversal and crash reporting are all on out of the box and point at servers the Syncthing project runs. The server install turns all of them off, because a box with a public address needs none; the install on your own computer leaves discovery and relaying on and says so, because with no inbound port they are how a connection gets made at all.",
+    "No web sharing links, no browser access to your files, no team folders with permissions, and no versioned trash you can browse from a phone. Syncthing moves files between devices you own; every one of those is what Sync.com sells on top of that."
+  ],
+  "sources": {
+    "compose": "https://github.com/syncthing/syncthing/blob/v2.1.3/README-Docker.md",
+    "caddy": "https://docs.syncthing.net/users/reverseproxy.html",
+    "install": "https://docs.syncthing.net/users/syncthing.html",
+    "config": "https://docs.syncthing.net/users/config.html",
+    "untrusted": "https://docs.syncthing.net/users/untrusted.html",
+    "ports": "https://docs.syncthing.net/users/firewall.html",
+    "security": "https://docs.syncthing.net/users/security.html",
+    "versioning": "https://docs.syncthing.net/users/versioning.html",
+    "image": "https://github.com/syncthing/syncthing/blob/v2.1.3/Dockerfile",
+    "health": "https://github.com/syncthing/syncthing/blob/v2.1.3/lib/api/api.go",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "nextcloud",
+    "seafile",
+    "backrest"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "8152efd09bad44d6a7a6dad1dee50cc96cc7f3cc94aaa6198e0bc10ba45ae656"
+}

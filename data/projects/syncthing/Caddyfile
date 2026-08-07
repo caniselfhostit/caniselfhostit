@@ -1,0 +1,28 @@
+# Syncthing · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.syncthing.net/users/reverseproxy.html and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. It carries the
+# web GUI only: the sync protocol on 22000 is a device-to-device TLS session
+# that a reverse proxy cannot terminate.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	# Syncthing sets nosniff and SAMEORIGIN itself. HSTS and the referrer
+	# policy are added here: every request carries a session cookie for a
+	# device holding somebody's files.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8139 is the loopback port compose publishes. Not a container port, and
+	# not open in the firewall.
+	reverse_proxy 127.0.0.1:8139
+}

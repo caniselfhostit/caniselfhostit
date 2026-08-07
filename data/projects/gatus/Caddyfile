@@ -1,0 +1,29 @@
+# Gatus · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://github.com/TwiN/gatus/blob/v5.36.0/README.md#deployment and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed, with
+# <DOMAIN> replaced by the hostname pointed at this box. Everything served here
+# is public on purpose: a status page nobody can open is a log file.
+
+<DOMAIN> {
+	# Gatus compresses its own responses when the browser asks, so this mostly
+	# covers what the container hands over uncompressed.
+	encode zstd gzip
+
+	# About how the page is framed and referred to, not about protecting a
+	# session. There is no session here: no accounts, no login, no cookie.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8132 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8132
+}

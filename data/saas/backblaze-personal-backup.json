@@ -1,0 +1,59 @@
+{
+  "slug": "backblaze-personal-backup",
+  "name": "Backblaze Computer Backup",
+  "domain": "backblaze.com",
+  "whyPeoplePay": "Backblaze sells one decision you never have to make again: everything on the computer, and on the drives plugged into it, goes to their cloud for a flat fee, with no quota to watch and no folder to choose. The agent runs whether or not you remember it exists, the price does not move when your photo library doubles, and when the laptop is gone they will courier you a hard drive with your files on it. Unlimited storage for a fixed price per computer is the part nobody self-hosting can match on cost alone.",
+  "plans": [
+    {
+      "name": "Personal Backup",
+      "priceMonthly": 9,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Per computer, unlimited data, external drives included. The billing toggle also offers $8.25 a month billed yearly ($99 a year) and $7.88 a month billed two-yearly ($189)."
+    },
+    {
+      "name": "Business Backup",
+      "priceMonthly": 8.25,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "The business page prints one figure, $99 per computer per year, which is $8.25 a month; it adds a console for managing several people over the personal product and says month, yearly or two-year billing is available."
+    },
+    {
+      "name": "Enterprise Control",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only: the pricing page says let's talk. Its comparison table prices the Enterprise Control layer at an added $24 per year per computer over Business."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-06",
+    "source": "https://www.backblaze.com/cloud-backup/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The pricing page renders its billing toggle in JavaScript and printed only the $99/year figure to us. The monthly $9, the $8.25 yearly equivalent and the $7.88 two-year equivalent were read from backblaze.com/cloud-backup/personal on the same day, and the $99 per computer wording and the $24 per year Enterprise Control line from backblaze.com/cloud-backup/business. The three figures are consistent with each other, but confidence is medium because no single page showed all of them at once."
+  },
+  "ranked": [
+    {
+      "project": "backrest",
+      "rationale": "The closest honest answer, as long as you understand the swap. Backblaze backs up your computer to their cloud; Backrest is a web UI and a scheduler over restic, so it backs up whatever machine it runs on to storage you choose, and it is the storage that still costs money. Run it on your own computer and you have replaced the software, kept the encryption, and taken on being the person who tests restores. Run it on a server and it is backing up the server, which is a different job Backblaze never did for you."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Kopia",
+      "repo": "https://github.com/kopia/kopia",
+      "note": "The peer alternative, and the one that is a single program rather than a UI over another tool: its own repository format, its own deduplication, a desktop app and a server mode, under Apache-2.0 and actively released (v0.23.1 in June 2026). Two reasons it is not the pick here. It is still on a 0.x version line, and its server mode brings its own user model and TLS story, so the install is a longer page than a single container behind the Caddy you already run."
+    },
+    {
+      "name": "Duplicati",
+      "repo": "https://github.com/duplicati/duplicati",
+      "note": "The most widely installed of these and the one with the longest memory of trouble: for years the 2.0 line carried a beta label while people ran it on real data anyway. It is actively maintained, with a stable channel that moved in July 2026 alongside beta and canary channels, and a web UI that most people find friendlier than restic's command line. Check the licence yourself before committing: GitHub reports it as unrecognised rather than a named SPDX identifier."
+    },
+    {
+      "name": "UrBackup",
+      "repo": "https://github.com/uroni/urbackup_backend",
+      "note": "The closest thing here to what Backblaze actually does: a server you run plus a client agent on every machine, doing whole-image and file backups over your network, under AGPL-3.0 and still shipping (server 2.5.37 in April 2026). That shape is also the cost. You install and update an agent on each computer, the backups land on hardware you own rather than offsite, and the two together are a bigger standing commitment than one container and a bucket."
+    }
+  ]
+}

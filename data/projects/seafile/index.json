@@ -1,0 +1,93 @@
+{
+  "slug": "seafile",
+  "name": "Seafile",
+  "tagline": "File sync and share on a box you own, with versioned libraries and clients that move only the blocks that changed.",
+  "repo": "haiwen/seafile",
+  "site": "https://www.seafile.com",
+  "category": "files-docs",
+  "replaces": [
+    {
+      "saas": "box-personal-pro",
+      "plan": "Personal Pro",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 3,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 5
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 110,
+  "license": "AGPL-3.0-only",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://manual.seafile.com/13.0/repo/docker/ce/seafile-server.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Seafile exists to keep the same files on every device you own, and on your own computer it can only serve the one it is running on, so the phone in your pocket cannot sync and a share link you send lands nowhere."
+  },
+  "quote": {
+    "text": "In general, we recommend that you have at least 2G RAM and a 2-core CPU (> 2GHz).",
+    "source": "Seafile Admin Manual, Installation of Seafile Server Community Edition with Docker",
+    "url": "https://manual.seafile.com/13.0/setup/setup_ce_by_docker/",
+    "checkedOn": "2026-08-06"
+  },
+  "citations": [
+    {
+      "claim": "Seafile's components ship under different licences: the server core is AGPLv3, the Seahub web interface is Apache License v2, and the desktop syncing client is GPLv2.",
+      "url": "https://manual.seafile.com/13.0/"
+    },
+    {
+      "claim": "Since Seafile 13 the recommended cache service is Redis, and memcached is no longer integrated into Seafile Docker by default.",
+      "url": "https://manual.seafile.com/13.0/config/env/"
+    },
+    {
+      "claim": "Upstream documents removing the SeaDoc editor by taking seadoc.yml out of COMPOSE_FILE and setting ENABLE_SEADOC to false, which is what leaves this install at three containers.",
+      "url": "https://manual.seafile.com/13.0/extension/setup_seadoc/"
+    },
+    {
+      "claim": "Behind a reverse proxy other than upstream's own Caddy, the seafile service listens on port 80, and upstream's sample configuration turns off the body size limit and the request buffering and raises the read timeout so large uploads are not interrupted.",
+      "url": "https://manual.seafile.com/13.0/setup/use_other_reverse_proxy/"
+    },
+    {
+      "claim": "Full-text search inside documents, granular folder and subfolder permissions, audit logs, S3 storage backends and clustering are Professional Edition features rather than community edition ones.",
+      "url": "https://www.seafile.com/en/product/seafile_on_premise/"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The community edition cannot search inside your documents. Box finds a phrase in a contract; Seafile CE finds the file by its name. Full-text search, audit logs, folder-level permission matrices, S3 storage and clustering are all Professional Edition, which needs a paid licence file and Elasticsearch alongside it. If the reason you pay Box is that you can find things, read that sentence twice before you migrate.",
+    "The licence is a stack, not a line. Upstream states it plainly: the server core is AGPLv3, the Seahub web interface is Apache-2.0, and the desktop syncing client you will install on every machine is GPLv2. All three are open source, and the record here names the server core because that is the part this install runs.",
+    "Your files are blocks, and the names live in a database. Seafile deduplicates every file into content-addressed blocks under seafile-data and keeps the filenames, the libraries and the sharing in three MySQL databases. A backup that has one and not the other is not a backup: it is blocks with no names, or names with no blocks. Take the dump and the archive together, and restore both at least once.",
+    "Deleting does not free the disk. Blocks stay until you run Seafile's garbage collection, which is a job you schedule and own. On a library you use heavily, the disk grows for a while after you thought you cleaned up.",
+    "No mail, no e-signature, no retention policy, no legal hold. This install configures no SMTP, so there are no invitation or password-reset emails and you create accounts by hand. The governance features around the file are most of what Box's business tiers actually sell, and none of them is here."
+  ],
+  "sources": {
+    "compose": "https://manual.seafile.com/13.0/setup/setup_ce_by_docker/",
+    "caddy": "https://manual.seafile.com/13.0/setup/use_other_reverse_proxy/",
+    "install": "https://manual.seafile.com/13.0/config/env/",
+    "requirements": "https://manual.seafile.com/13.0/setup/system_requirements/",
+    "backup": "https://manual.seafile.com/13.0/administration/backup_recovery/",
+    "seadoc": "https://manual.seafile.com/13.0/extension/setup_seadoc/",
+    "garbageCollection": "https://manual.seafile.com/13.0/administration/seafile_gc/",
+    "license": "https://manual.seafile.com/13.0/",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "nextcloud",
+    "syncthing",
+    "immich"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "cb9336097e4a5fdbb0b19fbfa50134c3cee277dcf45aae411a5c1e948c79c9cd"
+}
