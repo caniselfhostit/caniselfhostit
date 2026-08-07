@@ -1,0 +1,59 @@
+{
+  "slug": "canny",
+  "name": "Canny",
+  "domain": "canny.io",
+  "whyPeoplePay": "Canny's product is the loop, not the board. Feedback arrives from a widget, an inbox, a sales call or an integration, gets matched against what people have already asked for, carries the name of the account that asked, and comes back out as a public roadmap and a changelog your users are notified about. The board is the visible part; the bill is attached to knowing which paying customer wants which thing, and being able to tell them when it shipped.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 5,
+      "note": "25 tracked users and 5 managers. Upstream defines a tracked user as anyone with a post, vote or comment attributed to them."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 99,
+      "unit": "usage",
+      "seatsIncluded": 10,
+      "note": "$99/mo month-to-month at the entry tier of 100 tracked users, or $79/mo billed yearly. The price steps up as tracked users grow, reaching about $1,349/mo month-to-month at 5,000. Includes 10 managers."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only, billed yearly. The pricing page says contact us, and this is the only tier that carries SSO and CRM integrations."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://canny.io/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The pricing page advertises the annual-billed figure for Pro ($79/mo) most prominently, while Canny's own billing-plans help article gives $99/mo month-to-month at the same entry tier; we record the month-to-month figure and put the annual equivalent in the plan note. Confidence is medium because Pro is not a flat rate: it steps up with tracked users, so $99 is the floor for 100 tracked users rather than what a growing board pays. Plans named Starter and Growth still appear in third-party write-ups; upstream says those are legacy tiers grandfathered for accounts opened before 9 May 2025."
+  },
+  "ranked": [
+    {
+      "project": "fider",
+      "rationale": "The only one of these that is a maintained, two-container install of the thing you actually open: a board where customers post ideas, everyone votes, and you set the status that drives the roadmap view. What you take on is mail. Fider has no passwords, so an SMTP relay is not an optional extra here, it is the front door, and the board cannot even be created until a confirmation email lands. Budget the weekend for the relay, not for the app."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Astuto",
+      "repo": "https://github.com/riggraz/astuto",
+      "note": "AGPL-3.0 and the closest like-for-like alternative on features, with boards, votes, statuses and OAuth built in. The repository is archived and read-only on GitHub, its last push was January 2026 and its last release, v1.1.2, was March 2025. An archived upstream is a poor place to start a board you intend to keep for years."
+    },
+    {
+      "name": "LogChimp",
+      "repo": "https://github.com/logchimp/logchimp",
+      "note": "Actively released, v0.9.1 in July 2026, and still pre-1.0. The licence is AGPLv3 with a carve-out: everything under packages/server/ee and packages/theme/src/ee is under a separate commercial licence, so part of the tree is readable but not yours to run."
+    },
+    {
+      "name": "ClearFlask",
+      "repo": "https://github.com/clearflask/clearflask",
+      "note": "Apache-2.0 and actively released, with a richer product than the others: prioritisation, credits and a changelog. Self-hosting it wants a DynamoDB-compatible store, MySQL or Elasticsearch for search, and S3-compatible object storage, which upstream bundles as a LocalStack compose profile. That is a stack to operate rather than an app to install."
+    }
+  ]
+}

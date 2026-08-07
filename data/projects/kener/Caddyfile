@@ -1,0 +1,31 @@
+# Kener · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://kener.ing/docs/v4/setup/deployment and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed, with
+# <DOMAIN> replaced by the hostname pointed at this box. That same hostname is
+# ORIGIN in .env: Kener hands ORIGIN to SvelteKit for the cross-site check on
+# every form post, so if the two disagree the page loads and the sign-in fails.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		# The status page is public and the manage screens behind it are not,
+		# and both share a hostname. SAMEORIGIN protects the second, at the cost
+		# of the badge embeds Kener offers for other people's sites.
+		X-Frame-Options "SAMEORIGIN"
+		# Upstream reads the Origin header when the browser sends one and falls
+		# back to SameSite=Lax cookies when it does not, so this costs nothing.
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8179 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8179
+}

@@ -1,0 +1,42 @@
+# Typebot · the Caddy site blocks for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.typebot.com/self-hosting/deploy/docker and
+# https://caddyserver.com/docs/automatic-https
+#
+# Two site blocks, because Typebot is two applications that cannot share a
+# hostname. Append this to /etc/caddy/Caddyfile with <DOMAIN> replaced by the
+# hostname pointed at this box; bot.<DOMAIN> needs its own A record on the
+# same address.
+
+<DOMAIN> {
+	# The builder. Sign-in codes land here and every bot design sits behind
+	# that session, so nothing on this name should be framed by another site.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	encode zstd gzip
+
+	# 8177 is a loopback port, not a container port, and not in the firewall.
+	reverse_proxy 127.0.0.1:8177
+}
+
+bot.<DOMAIN> {
+	# The viewer, embedded in other people's pages on purpose, so no frame
+	# restriction. An AI block streams, so this route flushes every write.
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	reverse_proxy 127.0.0.1:8977 {
+		flush_interval -1
+	}
+}

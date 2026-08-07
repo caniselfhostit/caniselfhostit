@@ -1,0 +1,65 @@
+# XWiki · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   image tags .... https://github.com/docker-library/official-images/blob/master/library/xwiki
+#   image sources . https://github.com/xwiki/xwiki-docker/tree/master/17/postgres-tomcat
+#
+# Two services, every path relative to ~/selfhost/xwiki/ so one file works on
+# macOS, Linux and Windows. The database is a named volume, not a bind mount,
+# because PostgreSQL chowns its data directory to its own uid and a Windows
+# home bind cannot allow that. The permanent directory stays a bind mount: it
+# holds the flavor, the Solr index and every attachment, file storage having
+# been XWiki's attachment default since 10.5. `init: true` reaps LibreOffice's
+# orphans. 17.10.11 is the LTS line. Digests read 2026-08-07; both multi-arch.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: postgres:18.4-alpine@sha256:9a8afca54e7861fd90fab5fdf4c42477a6b1cb7d293595148e674e0a3181de15
+    container_name: xwiki-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: xwiki
+      POSTGRES_USER: xwiki
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      # Upstream initialises it this way; encoding is fixed at create time.
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale-provider=builtin --locale=C.UTF-8"
+    volumes:
+      - xwiki-pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U xwiki -d xwiki"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other container.
+
+  xwiki:
+    image: xwiki:17.10.11-postgres-tomcat@sha256:f1b36072ed82d2e7414b3b12b670d4ddf981f32698f70a8fa8deb606fe989621
+    container_name: xwiki
+    restart: unless-stopped
+    init: true
+    # DB_PASSWORD arrives from ./.env, mode 600. The entrypoint writes it
+    # and the three below into WEB-INF/hibernate.cfg.xml.
+    env_file: ./.env
+    environment:
+      DB_HOST: postgres
+      DB_DATABASE: xwiki
+      DB_USER: xwiki
+      # No JAVA_OPTS: setenv.sh gives Tomcat a 1024 MB heap, and JAVA_OPTS
+      # is where you raise it.
+    volumes:
+      - ./data:/usr/local/xwiki
+    healthcheck:
+      # Tomcat boots, then XWiki builds its schema: long start period.
+      test: ["CMD-SHELL", "curl -fsS -o /dev/null http://127.0.0.1:8080/bin/view/Main/ || exit 1"]
+      interval: 15s
+      retries: 20
+      start_period: 300s
+    ports:
+      # Loopback only: no other device on the wifi can reach 8172.
+      - "127.0.0.1:8172:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  xwiki-pgdata:

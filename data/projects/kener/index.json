@@ -1,0 +1,93 @@
+{
+  "slug": "kener",
+  "name": "Kener",
+  "tagline": "A public status page with the incidents, the maintenance windows and the monitors behind it, all managed in a browser rather than a config file.",
+  "repo": "rajnandan1/kener",
+  "site": "https://kener.ing",
+  "category": "monitoring",
+  "replaces": [
+    {
+      "saas": "uptime",
+      "plan": "Website Monitoring · 10 basic checks",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 80,
+  "license": "MIT",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/rajnandan1/kener/blob/v4.1.2/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "A status page is for other people to read, and this one answers only at http://localhost:8179, so nobody you would send it to can open it; the checks also stop while the computer sleeps, and hours with no results read as clean rather than as a gap."
+  },
+  "quote": {
+    "text": "Redis is required for BullMQ queues, caching, and scheduler",
+    "source": "Kener docker-compose.yml, v4.1.2",
+    "url": "https://github.com/rajnandan1/kener/blob/v4.1.2/docker-compose.yml",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "Redis is required in Kener v4, not optional: the environment reference marks REDIS_URL as a required variable alongside KENER_SECRET_KEY and ORIGIN, which is why this install runs two containers rather than one.",
+      "url": "https://kener.ing/docs/v4/setup/environment-variables"
+    },
+    {
+      "claim": "DATABASE_URL defaults to SQLite at ./database/kener.sqlite.db when it is not set, so a self-hosted Kener needs no Postgres or MySQL container.",
+      "url": "https://kener.ing/docs/v4/setup/database-setup"
+    },
+    {
+      "claim": "The published image runs as the non-root node user, exposes port 3000, and carries its own health check against /healthcheck, and the Knex migrations and seeds run at start-up.",
+      "url": "https://github.com/rajnandan1/kener/blob/v4.1.2/Dockerfile"
+    },
+    {
+      "claim": "/healthcheck answers 200 with a status of degraded when the database or Redis is down, and only ?strict=1 turns a failed dependency into a 503, so a bare 200 is not proof the checks are running.",
+      "url": "https://github.com/rajnandan1/kener/blob/v4.1.2/scripts/main.ts"
+    },
+    {
+      "claim": "On an install with no users the sign-in page is a Create Admin Account form, and upstream's signup action refuses once one user exists, so claiming the first account closes registration for good.",
+      "url": "https://github.com/rajnandan1/kener/blob/v4.1.2/src/routes/(account)/account/signin/+page.server.ts"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "One vantage point, and it cannot see itself die. Uptime.com runs every check from several of its own locations; this checks from wherever you put the container, and if that machine or its network is what fails, the page that would have said so is down with it. Run it somewhere other than the servers it watches, and keep one free external check pointed at it. This is the one place where paying nobody is not the right answer.",
+    "Two containers, because Redis is not optional. Upstream's own compose file calls it required for the queues, the cache and the scheduler, so a Kener whose Redis is unhappy is a status page that has quietly stopped checking anything. The trap is that /healthcheck still answers 200 in that state and only says degraded in the body, so build your own monitoring of this monitor around ?strict=1.",
+    "The status page is public, because that is what a status page is. There is no login on it, and the name and description of every monitor you add are published to anyone who loads the page, so an internal admin URL in a monitor is an internal admin URL on the open web. What is behind a login is the manage side: incidents, maintenance windows, users and the monitors themselves.",
+    "You own the alerting path and it ships switched off. Every provider needs a webhook or a key from a service you sign up for, and mail needs an SMTP relay or a Resend key you supply. Send yourself a deliberate failure the day you wire one up, because an untested alert channel is silence with extra steps.",
+    "No probes in other countries, no transaction checks that click through a signup flow, no SMS gateway and no subscriber notification list. Those four are most of what the paid tiers are actually selling."
+  ],
+  "sources": {
+    "compose": "https://kener.ing/docs/v4/setup/deployment",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://kener.ing/docs/v4/setup/environment-variables",
+    "database": "https://kener.ing/docs/v4/setup/database-setup",
+    "quickstart": "https://kener.ing/docs/v4/getting-started/quick-start",
+    "image": "https://github.com/rajnandan1/kener/blob/v4.1.2/Dockerfile",
+    "health": "https://github.com/rajnandan1/kener/blob/v4.1.2/scripts/main.ts",
+    "setup": "https://github.com/rajnandan1/kener/blob/v4.1.2/src/routes/(account)/account/signin/+page.server.ts",
+    "seed": "https://github.com/rajnandan1/kener/blob/v4.1.2/src/lib/server/db/seedPagesData.ts"
+  },
+  "related": [
+    "gatus",
+    "uptime-kuma",
+    "healthchecks"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "2d5a164d3006aa797575d559098ebf59211dadb05f95adcc55b298ea88dc28b5"
+}

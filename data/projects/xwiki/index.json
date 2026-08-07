@@ -1,0 +1,93 @@
+{
+  "slug": "xwiki",
+  "name": "XWiki",
+  "tagline": "A structured enterprise wiki with spaces, macros and per-page rights, on a hostname you own and a database you can dump.",
+  "repo": "xwiki/xwiki-platform",
+  "site": "https://www.xwiki.org",
+  "category": "notes-wikis",
+  "replaces": [
+    {
+      "saas": "confluence",
+      "plan": "Standard",
+      "seatsAssumed": 5
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 3072,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 120,
+  "license": "LGPL-2.1-or-later",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/xwiki/xwiki-docker/blob/master/17/postgres-tomcat/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "The wiki answers only at http://localhost:8172, so nobody you would share a space with can open it and neither can your own phone: on this path a team wiki is a notebook for one."
+  },
+  "quote": {
+    "text": "The installation process requires internet access and it might take a few minutes to complete depending on the internet bandwidth and the load of the remote extension repository.",
+    "source": "XWiki platform, Distribution Wizard messages",
+    "url": "https://github.com/xwiki/xwiki-platform/blob/xwiki-platform-17.10.11/xwiki-platform-core/xwiki-platform-oldcore/src/main/resources/ApplicationResources.properties",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "The official image downloads only the XWiki WAR at build time, so the default set of wiki pages is not in the image and the setup wizard fetches it from upstream's extension repository on the first boot.",
+      "url": "https://github.com/xwiki/xwiki-docker/blob/master/17/postgres-tomcat/Dockerfile"
+    },
+    {
+      "claim": "XWiki gives a signed-out visitor access to the Distribution Wizard only while the main wiki has no registered user, and refuses it as soon as one exists.",
+      "url": "https://github.com/xwiki/xwiki-platform/blob/xwiki-platform-17.10.11/xwiki-platform-core/xwiki-platform-extension/xwiki-platform-extension-distribution/src/main/java/org/xwiki/extension/distribution/internal/DefaultDistributionManager.java"
+    },
+    {
+      "claim": "Attachment content has defaulted to filesystem storage rather than the database since XWiki 10.5, which puts uploaded files in the permanent directory the image mounts at /usr/local/xwiki.",
+      "url": "https://github.com/xwiki/xwiki-platform/blob/xwiki-platform-17.10.11/xwiki-platform-tools/xwiki-platform-tool-configuration-resources/src/main/resources/xwiki.cfg.vm"
+    },
+    {
+      "claim": "The image starts Tomcat with a 1024 MB heap because upstream states the container default of 512 MB is not enough for XWiki, and JAVA_OPTS is the documented way to raise it.",
+      "url": "https://github.com/xwiki/xwiki-docker/blob/master/17/postgres-tomcat/tomcat/setenv.sh"
+    },
+    {
+      "claim": "The 17.10.x tags are the long-term-support line and the 18.x tags are the current stable line, both published for amd64 and arm64v8.",
+      "url": "https://github.com/docker-library/official-images/blob/master/library/xwiki"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The first boot is a download, not an unpack. The official image ships the XWiki WAR and nothing else, so the setup wizard fetches the default set of wiki pages from upstream's extension repository the first time you open the site: minutes on a progress bar, and a server with no outbound internet cannot finish the install at all.",
+    "Whoever opens the URL first becomes the administrator. XWiki hands its setup wizard to a signed-out visitor for exactly as long as the wiki has no registered user, which is what makes walking away from a half-finished install on a hostname that already resolves a real risk rather than a theoretical one.",
+    "Two backup artifacts, not one. Pages, revisions and comments are rows in PostgreSQL, but attachment content has been files on disk since XWiki 10.5, in the permanent directory. A dump restored without that directory gives you every page back with every attachment a broken link.",
+    "It is Java and it wants the memory. Tomcat starts with a 1 GB heap and the same container runs LibreOffice for office import and export, with PostgreSQL beside it, so the cheap 2 GB VPS tier is the wrong box and the symptom is an OOM kill rather than a message about memory.",
+    "Confluence import is a contributed extension, not a shipped feature. xwiki-contrib/confluence reads Confluence's XML export and is actively maintained, but you install it yourself from the Extension Manager afterwards, and it converts storage format and page structure rather than promising macro-for-macro fidelity."
+  ],
+  "sources": {
+    "compose": "https://github.com/xwiki/xwiki-docker/blob/master/17/postgres-tomcat/docker-compose.yml",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://github.com/xwiki/xwiki-docker/blob/master/17/postgres-tomcat/Dockerfile",
+    "entrypoint": "https://github.com/xwiki/xwiki-docker/blob/master/17/postgres-tomcat/xwiki/docker-entrypoint.sh",
+    "memory": "https://github.com/xwiki/xwiki-docker/blob/master/17/postgres-tomcat/tomcat/setenv.sh",
+    "tags": "https://github.com/docker-library/official-images/blob/master/library/xwiki",
+    "storage": "https://github.com/xwiki/xwiki-platform/blob/xwiki-platform-17.10.11/xwiki-platform-tools/xwiki-platform-tool-configuration-resources/src/main/resources/xwiki.cfg.vm",
+    "wizard": "https://github.com/xwiki/xwiki-platform/blob/xwiki-platform-17.10.11/xwiki-platform-core/xwiki-platform-extension/xwiki-platform-extension-distribution/src/main/java/org/xwiki/extension/distribution/internal/DefaultDistributionManager.java",
+    "importer": "https://github.com/xwiki-contrib/confluence"
+  },
+  "related": [
+    "docmost",
+    "bookstack",
+    "openproject"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "1fb6398be9236dff9fa2480a26e5064887d228c1c01dfaa6d1c7a6e83d15307c"
+}

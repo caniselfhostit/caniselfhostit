@@ -1,0 +1,65 @@
+{
+  "slug": "tooljet-cloud",
+  "name": "ToolJet",
+  "domain": "tooljet.com",
+  "whyPeoplePay": "ToolJet Cloud sells the weeks between a spreadsheet and a real admin panel, and then the part that keeps it alive: a drag-and-drop canvas over your own databases and APIs, a hosted place to keep the tables you have nowhere else to put, and somebody else patching the thing your operations team clicks buttons on every Tuesday. The meter is per builder, which is honest about what they are selling, because the people who only open the apps cost you nothing until you cross an end-user cap. What the higher tiers add is the paperwork an employer eventually asks for: single sign-on, custom user groups, audit logs and your own branding on the login page.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 2,
+      "note": "Up to 2 builders, 50 end users, 2 apps and 100 AI credits a month, with community Slack support."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 79,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per builder per month, billed monthly; the page advertises 20% off on annual billing. Adds up to 50 end users, 5 apps, 2,000 AI credits per builder, custom styling, version control and email support."
+    },
+    {
+      "name": "Team",
+      "priceMonthly": 199,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per builder per month, billed monthly; 20% off annually. Adds up to 100 end users, unlimited apps, SSO, custom user groups, white labelling, a custom domain, audit logs, Git sync and priority support. Sold at the same figure for self-hosted deployments."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": 3000,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "The page states a starting price of $3,000 a month rather than a per-seat rate. Adds unlimited end users, SCIM provisioning, custom AI models, custom data retention, premium SLAs and a dedicated support manager, with air-gapped deployment available."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://www.tooljet.ai/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Read from tooljet.ai/pricing on 2026-08-07 and cross-checked the same day against the matching page at tooljet.com/pricing, which agreed on every figure. Confidence is medium rather than high because the page renders its numbers in JavaScript behind a monthly-versus-annual toggle and third-party pricing round-ups published this year disagree with it, quoting a Team tier at $249 and a Starter tier we could not find on either official page. The recorded figures are the monthly-billed ones; the page advertises 20% off for annual billing without printing the annual totals. Enterprise is recorded as a starting price, not a quote, because the page states one."
+  },
+  "ranked": [
+    {
+      "project": "tooljet",
+      "rationale": "The same company writes it, from the same repository, and points its own documentation at the compose file, which makes this one of the rare cases where self-hosting is the vendor's own path rather than a workaround. You get the builder, the query editor, the ToolJet Database and every connector in the marketplace, uncapped on builders, end users and apps, which is the whole per-builder meter gone. What you take on is three containers, one PostgreSQL holding three databases, an image published for amd64 only, and a licence key you never buy: SSO, custom user groups, audit logs, white labelling, Git sync and multi-environment deployment live behind that key in two private submodules and are not in what you install."
+    },
+    {
+      "project": "appsmith",
+      "rationale": "The other end of the same trade, and the one to pick if you are choosing an internal-tools builder cold rather than leaving a ToolJet bill. Its community edition is Apache-2.0 end to end instead of open source with a paid half kept out of the repository, and the community around it is larger, so the answer to your third-day question is more likely to already be written down. The install is one container instead of three, at the cost of an image that runs MongoDB, Redis and PostgreSQL inside itself and wants 8 GB of RAM. ToolJet ranks first on this page because this page is ToolJet's own cloud, and swapping a product for itself is a shorter journey than swapping it for a rival."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Budibase",
+      "repo": "https://github.com/Budibase/budibase",
+      "note": "Actively developed, releasing continuously, and pleasant to build in, with a built-in database if you do not already have one. The licence is why it is not ranked: GitHub reports no single licence for the repository, and Budibase's own licensing guidelines say to consider the project GPLv3 overall while paid features live in packages/pro under the Business Source License, which is not open source and forbids running modified code that bypasses their licence checks. Read that before you build a company's tools on it."
+    },
+    {
+      "name": "Lowcoder",
+      "repo": "https://github.com/lowcoder-org/lowcoder",
+      "note": "AGPL-3.0 at the root, a genuine app builder with a canvas and a query editor, and the lightest of the three to run. It is also much the smallest project here: the last tagged release was in January 2026 and commits since have been steady rather than frequent, so a bug you find is a bug you may end up fixing. Worth a look if ToolJet and Appsmith are both heavier than the box you have."
+    }
+  ]
+}

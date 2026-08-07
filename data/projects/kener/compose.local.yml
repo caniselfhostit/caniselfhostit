@@ -1,0 +1,54 @@
+# Kener · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   deployment ......... https://kener.ing/docs/v4/setup/deployment
+#   environment ........ https://kener.ing/docs/v4/setup/environment-variables
+#   database ........... https://kener.ing/docs/v4/setup/database-setup
+#   image build ........ https://github.com/rajnandan1/kener/blob/v4.1.2/Dockerfile
+#
+# Two services, on the computer you are sitting at, every path relative to
+# ~/selfhost/kener/ so one file works on macOS, Linux and Windows. Redis is not
+# optional in v4: upstream calls it required for the queues, the cache and the
+# scheduler, and its /data is a named volume because that image chowns its data
+# directory to its own uid, which a Windows bind mount cannot allow. The
+# database stays a bind mount and DATABASE_URL is unset, so upstream defaults
+# to SQLite there, under the node user uid 1000, hence step 3's Linux-only
+# chown. Digests read on 2026-08-07; both images publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  redis:
+    image: redis:7.4.10-alpine@sha256:e7723ff73d963f5cc6d9c4643ea3d989527a402a319239054e9472a7fb9219a2
+    container_name: kener-redis
+    restart: unless-stopped
+    volumes:
+      # Queue state only: monitors and results are in the SQLite file below.
+      - kener-redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # No `ports:` at all: 6379 is reachable only from the other container.
+
+  kener:
+    image: ghcr.io/rajnandan1/kener:v4.1.2@sha256:239ab635b900b3fe0a4e22f5599f77525211d1b7a25b8fcf3d173936ddacc1cc
+    container_name: kener
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      # Redis is on the compose network only, so this carries no credential.
+      REDIS_URL: redis://redis:6379
+      NODE_ENV: production
+    volumes:
+      # kener.sqlite.db: every monitor, incident, page, user and result.
+      - ./database:/app/database
+    ports:
+      # Loopback only: no other device on the wifi can reach 8179.
+      - "127.0.0.1:8179:3000"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+volumes:
+  kener-redis-data:

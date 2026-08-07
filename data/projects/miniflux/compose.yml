@@ -1,0 +1,69 @@
+# Miniflux · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker install ..... https://miniflux.app/docs/docker.html
+#   configuration ...... https://miniflux.app/docs/configuration.html
+#   database ........... https://miniflux.app/docs/database.html
+#   requirements ....... https://miniflux.app/docs/requirements.html
+#
+# Two services: Miniflux and the PostgreSQL that holds every feed, every entry
+# and the one account. Miniflux keeps nothing of its own on disk, so there is no
+# application data volume in this file and the database is the whole backup
+# surface. Upstream supports PostgreSQL 11 and above. The regular image is used
+# rather than the -distroless one: both publish amd64 and arm64, but the regular
+# image is built on Alpine and has a shell, so `docker compose exec` can look
+# inside it when something is wrong. Tags and digests were read from the
+# registries on 2026-08-07.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: postgres:18.4-alpine@sha256:9a8afca54e7861fd90fab5fdf4c42477a6b1cb7d293595148e674e0a3181de15
+    container_name: miniflux-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: miniflux
+      POSTGRES_USER: miniflux
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - /srv/miniflux/postgres:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U miniflux -d miniflux"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other container.
+
+  miniflux:
+    image: miniflux/miniflux:2.3.3@sha256:49d7b60987616387c306a8023087b31f2c9b7b21288b523026cb04058e8b6dbb
+    container_name: miniflux
+    restart: unless-stopped
+    env_file: /srv/miniflux/.env
+    environment:
+      # Hex rather than base64 in the connection string on purpose: upstream
+      # warns that a password carrying special characters can be rejected in
+      # this URL form unless it is URL encoded, and hex has none to encode.
+      DATABASE_URL: postgres://miniflux:${DB_PASSWORD}@postgres:5432/miniflux?sslmode=disable
+      # Miniflux runs its own SQL migrations and exits at start-up when the
+      # schema is behind the binary, so this stays set through every upgrade.
+      RUN_MIGRATIONS: "1"
+      # The single account is built from ADMIN_USERNAME and ADMIN_PASSWORD in
+      # .env on the first start, and every start after that logs that it is
+      # skipping because the user exists. Miniflux has no self-registration, so
+      # this is the only door into the instance.
+      CREATE_ADMIN: "1"
+      # Caddy terminates TLS and speaks plain http to this container, so the
+      # session cookie has to be told it travels over https or the browser
+      # will not keep it.
+      HTTPS: "1"
+    healthcheck:
+      # Upstream's own health check: the binary asks its own /healthcheck
+      # route, which answers 200 only when the database answers as well.
+      test: ["CMD", "/usr/bin/miniflux", "-healthcheck", "auto"]
+      interval: 10s
+      retries: 12
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8180.
+      - "127.0.0.1:8180:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy

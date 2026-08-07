@@ -1,0 +1,46 @@
+# Baserow · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker install ..... https://baserow.io/docs/installation%2Finstall-with-docker
+#   variable reference . https://baserow.io/docs/installation%2Fconfiguration
+#   capacity guidance .. https://baserow.io/docs/installation%2Finstall-on-aws
+#   supported versions . https://baserow.io/docs/installation%2Fsupported
+#
+# One service, and it is five processes wearing one hat. Upstream's all-in-one
+# image runs a PostgreSQL 15 and a Redis inside this same container next to the
+# Django backend, the Nuxt web frontend and a Caddy of its own, and keeps every
+# byte of that under /baserow/data. That is why no database service appears
+# below, and why the RAM floor is 4 GB rather than the few hundred megabytes a
+# web application on its own would want.
+#
+# BASEROW_CADDY_ADDRESSES is pinned to :80 so the container's Caddy serves plain
+# http and never asks Let's Encrypt for anything. The host Caddy already holds
+# the hostname and terminates TLS, so only the container's port 80 is published.
+# Tag and digest were read from Docker Hub on 2026-08-07; the image publishes
+# amd64 and arm64. The image carries its own HEALTHCHECK, so this file adds
+# none.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  baserow:
+    image: baserow/baserow:2.3.3@sha256:41adb3493379403946a493f30873f743bb65b19b5f387d630ec75f41e25d5b5b
+    container_name: baserow
+    restart: unless-stopped
+    env_file: /srv/baserow/.env
+    environment:
+      # :80 keeps the inner Caddy on plain http and off the ACME path.
+      BASEROW_CADDY_ADDRESSES: ":80"
+      # The host Caddy terminates TLS and sets X-Forwarded-Proto itself, which
+      # is the condition upstream names for turning this on. Without it the
+      # paginated API hands out http:// links for an https-only service.
+      BASEROW_ENABLE_SECURE_PROXY_SSL_HEADER: "yes"
+      # One celery worker running both the fast and the slow queue. Upstream
+      # names this pair as the way to lower the image's memory use, and the
+      # price is that a large export can delay a realtime row update.
+      BASEROW_AMOUNT_OF_WORKERS: "1"
+      BASEROW_RUN_MINIMAL: "yes"
+    volumes:
+      - /srv/baserow/data:/baserow/data
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8175.
+      - "127.0.0.1:8175:80"

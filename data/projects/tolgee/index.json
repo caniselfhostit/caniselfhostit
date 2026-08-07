@@ -1,0 +1,93 @@
+{
+  "slug": "tolgee",
+  "name": "Tolgee",
+  "tagline": "Translation keys, in-context editing and an API your own app calls, on a hostname you own, with no key quota and no seat count.",
+  "repo": "tolgee/tolgee-platform",
+  "site": "https://tolgee.io",
+  "category": "automation-dev",
+  "replaces": [
+    {
+      "saas": "tolgee-cloud",
+      "plan": "Team",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 3
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "Apache-2.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://docs.tolgee.io/platform/self_hosting/running_with_docker",
+  "local": {
+    "fit": "caveat",
+    "note": "Everything answers at http://localhost:8178, so the SDK only reaches it from an application running on this same computer and no translator on another machine can open a key: on this path Tolgee is a private editor for one person's strings."
+  },
+  "quote": {
+    "text": "When authentication is disabled, there are no login screen and no permission control. Users get automatically logged in as the administrator account of the Tolgee instance.",
+    "source": "Tolgee configuration reference, tolgee.authentication.enabled",
+    "url": "https://docs.tolgee.io/platform/self_hosting/configuration",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "The Docker profile inside the image sets tolgee.authentication.enabled to false, and with authentication disabled Tolgee logs every caller in automatically as the administrator account, so an install that does not set TOLGEE_AUTHENTICATION_ENABLED has no login screen at all.",
+      "url": "https://docs.tolgee.io/platform/self_hosting/configuration"
+    },
+    {
+      "claim": "The authentication filter builds a super-token session for the initial user on any request that arrives with no credential whenever authentication is disabled, which is what makes an anonymous caller an administrator rather than a guest.",
+      "url": "https://github.com/tolgee/tolgee-platform/blob/v3.218.0/backend/security/src/main/kotlin/io/tolgee/security/authentication/AuthenticationFilter.kt"
+    },
+    {
+      "claim": "The tolgee/tolgee image runs a PostgreSQL inside its own container by default, and upstream removes that bundled database in Tolgee v4, so every setup relying on it has to move to an external PostgreSQL first. The bundled server is PostgreSQL 13, which reached end of life in November 2025.",
+      "url": "https://docs.tolgee.io/platform/self_hosting/running_with_docker"
+    },
+    {
+      "claim": "Everything under the ee/ and webapp/src/ee directories is governed by a separate Tolgee EE licence that permits non-commercial use only; everything outside those directories defaults to Apache License 2.0, which is why GitHub reports no single licence for the repository.",
+      "url": "https://github.com/tolgee/tolgee-platform/blob/v3.218.0/LICENSE"
+    },
+    {
+      "claim": "The published image is built on postgres:13.23-alpine with a Temurin JRE copied in, exposes 8080, declares /data as a volume, and carries its own healthcheck against /actuator/health every ten seconds with twenty retries.",
+      "url": "https://github.com/tolgee/tolgee-platform/blob/v3.218.0/docker/app/Dockerfile"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The shipped Docker image has no login screen. Tolgee's docker profile sets authentication to false, and false does not mean a default password, it means every request is served as the administrator, with a super token, to anyone who finds the hostname. This install sets TOLGEE_AUTHENTICATION_ENABLED to true and then proves it by checking that an anonymous API call comes back as nobody. If you install Tolgee any other way, that check is the first minute's work and it is not optional.",
+    "The licence is split, and the split is where the money is. Everything outside ee/ and webapp/src/ee is Apache-2.0, and those two directories carry Tolgee's own EE licence, which permits non-commercial use only. That is what the paid editions sell: single sign-on and the rest of the enterprise column. What you install here is uncapped on keys, seats and projects, and stops short of that list.",
+    "You own a PostgreSQL, and the one inside the image is a dead end. The tolgee/tolgee image is built on postgres:13 and will start a database inside itself unless told not to; upstream deprecated that and removes it in v4, and PostgreSQL 13 went end of life in November 2025. This install runs a separate PostgreSQL 17, which means backups are a pg_dump rather than a folder copy.",
+    "No mail, so no invitations and no password resets. Tolgee works fine without SMTP, which is why this install skips it, but the administrator password generated during setup is the whole way back in, and a second translator arrives only by an invitation you cannot send until you configure mail. Put that password in a password manager on day one.",
+    "The half that makes Tolgee Tolgee is work in your repository, not on this server. In-context editing means adding the SDK to your application and giving it an API key that can edit translations, which is why that key belongs in a development configuration rather than a shipped bundle. Machine translation and the AI features also stop being metered credits and become API keys you bring from Google, DeepL or whoever you already pay."
+  ],
+  "sources": {
+    "compose": "https://docs.tolgee.io/platform/self_hosting/running_with_docker",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://docs.tolgee.io/platform/self_hosting/configuration",
+    "image": "https://github.com/tolgee/tolgee-platform/blob/v3.218.0/docker/app/Dockerfile",
+    "auth": "https://github.com/tolgee/tolgee-platform/blob/v3.218.0/backend/security/src/main/kotlin/io/tolgee/security/authentication/AuthenticationFilter.kt",
+    "security": "https://github.com/tolgee/tolgee-platform/blob/v3.218.0/backend/app/src/main/kotlin/io/tolgee/configuration/WebSecurityConfig.kt",
+    "schema": "https://github.com/tolgee/tolgee-platform/blob/v3.218.0/backend/data/src/main/resources/db/changelog/schema.xml",
+    "license": "https://github.com/tolgee/tolgee-platform/blob/v3.218.0/LICENSE",
+    "sdk": "https://docs.tolgee.io/js-sdk/integrations/react/installation"
+  },
+  "related": [
+    "weblate",
+    "formbricks",
+    "code-server"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "eda8069e719a23c37a41a36bf441b57c910c491d949a9fb053169f75a29e99dc"
+}

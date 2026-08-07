@@ -1,0 +1,53 @@
+# Countly Lite · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream sources, not copied from a repository:
+#   single-image build . https://github.com/Countly/countly-server/blob/25.03.51/Dockerfile-core
+#   api config keys .... https://github.com/Countly/countly-server/blob/25.03.51/api/config.sample.js
+#
+# Every path is relative to ~/selfhost/countly/, so one file works on macOS,
+# Linux and Windows. countly-core runs an nginx, the collection API on 3001 and
+# the dashboard on 6001 inside one image under runit. The database is a named
+# volume because MongoDB chowns /data/db to a uid Docker Desktop cannot grant on
+# a Windows home-directory mount, and it is the only volume because fileStorage
+# defaults to gridfs. Digests read on 2026-08-07; countly-core is amd64 only.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  mongodb:
+    image: mongo:8.0.28@sha256:98605bfa1bb2a15dd82109e1d78ad31527a9a744909fab4606076fa71a0ae515
+    container_name: countly-db
+    restart: unless-stopped
+    command: ["mongod", "--bind_ip_all", "--quiet"]
+    volumes:
+      - countly-mongo:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "quit(db.adminCommand('ping').ok ? 0 : 1)"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 20s
+    # No `ports:`, no user and no password, as upstream's own compose runs it.
+
+  countly:
+    image: countly/countly-core:25.03.51@sha256:e3d94902a3c4c609fdda3895ea4326693c5f30289cf2f6a84e35b9773a182c03
+    container_name: countly
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      # The empty middle component means "the API and the dashboard both".
+      COUNTLY_CONFIG__MONGODB_HOST: mongodb
+      COUNTLY_CONFIG__FILESTORAGE: gridfs
+      # One Node heap per worker, so this is a ceiling, not a target.
+      COUNTLY_CONFIG_API_API_WORKERS: "2"
+      # Upstream ships an Intercom widget and reporting to stats.count.ly on.
+      COUNTLY_CONFIG_FRONTEND_WEB_USE_INTERCOM: "false"
+      COUNTLY_CONFIG_FRONTEND_WEB_TRACK: none
+    ports:
+      # Loopback only: no other device on the wifi can reach 8174.
+      - "127.0.0.1:8174:80"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+volumes:
+  countly-mongo:

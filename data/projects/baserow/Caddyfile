@@ -1,0 +1,37 @@
+# Baserow · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://baserow.io/docs/installation%2Finstall-with-docker,
+# https://baserow.io/docs/installation%2Fconfiguration and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also BASEROW_PUBLIC_URL in .env. The container's own Caddy decides whether a
+# request is for Baserow by comparing the Host header against that value, so
+# the two have to stay the same string or the API routes stop answering.
+
+<DOMAIN> {
+	# The web frontend is a large JavaScript bundle and the API answers JSON.
+	# The container's Caddy compresses neither, so this is the only place it
+	# happens. Uploaded files are served from the same hostname and Caddy
+	# leaves already-compressed images alone.
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# Realtime collaboration holds a websocket open on /ws/, and reverse_proxy
+	# carries that upgrade with no extra directive. Caddy also sets
+	# X-Forwarded-Proto here, which is what lets the container be told it is
+	# behind https.
+	#
+	# 8175 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8175
+}

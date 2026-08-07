@@ -1,0 +1,33 @@
+# Tolgee · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.tolgee.io/platform/self_hosting/running_with_docker and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also TOLGEE_FRONT_END_URL in .env and the apiUrl every SDK carries, so pick
+# the one you intend to keep.
+
+<DOMAIN> {
+	# Spring Boot exposes health, info and prometheus on this port and
+	# Tolgee permits anything outside /api and /v2 without a token. Health
+	# has a job here; the other two hand a stranger every metric it keeps.
+	@management path /actuator/info /actuator/prometheus /actuator/prometheus/*
+	respond @management 403
+
+	# HSTS is the one Tolgee cannot send for itself, and a project API key
+	# rides in a header on every SDK request. The other three repeat what
+	# the application already sends, for answers Caddy makes itself.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# 8178 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8178
+}

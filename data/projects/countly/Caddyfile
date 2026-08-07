@@ -1,0 +1,27 @@
+# Countly Lite · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://github.com/Countly/countly-server/blob/25.03.51/bin/config/nginx.server.conf
+# and https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile with <DOMAIN> replaced by the hostname
+# pointed at this box. Every SDK you add later posts its events to that name.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	header {
+		# Every page you measure loads /sdk/web/countly.min.js from this host,
+		# so a downgrade on one of them is a downgrade on all of them.
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# No X-Frame-Options on purpose: the rating and survey widgets are served
+	# from this host to be drawn in a frame on your own site. 8174 is the
+	# loopback port compose publishes here, and the nginx inside the image is
+	# what splits /i and /o off to the collection API.
+	reverse_proxy 127.0.0.1:8174
+}

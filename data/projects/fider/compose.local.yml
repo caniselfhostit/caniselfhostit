@@ -1,0 +1,57 @@
+# Fider · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker hosting ... https://docs.fider.io/hosting-instance
+#   configuration .... https://github.com/getfider/fider/blob/v0.36.0/app/pkg/env/env.go
+#
+# Two services, paths relative to ~/selfhost/fider/ so one file works on
+# macOS, Linux and Windows. The database is a named volume, not a bind mount:
+# the PostgreSQL image chowns its data directory to a uid Docker Desktop
+# cannot grant on a Windows home directory. Upstream wants PostgreSQL 12 or
+# newer and runs the floating getfider/fider:stable; this pins 16, and v0.36.0
+# by digest, the newest version tag the registry carries. BLOB_STORAGE
+# defaults to sql, so images are rows too, and LOG_SQL is off because
+# upstream's default writes every log line into a table nothing reads.
+# Digests read on 2026-08-07; both images publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: postgres:16.14-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
+    container_name: fider-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: fider
+      POSTGRES_USER: fider
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - fider-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fider -d fider"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other container.
+
+  fider:
+    image: getfider/fider:v0.36.0@sha256:466669b3c932158d7fc082d4037ad881fce6c5cd49cf973e15d9bcaedc27889a
+    container_name: fider
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      DATABASE_URL: postgres://fider:${POSTGRES_PASSWORD}@postgres:5432/fider?sslmode=disable
+      LOG_SQL: "false"
+    healthcheck:
+      # `fider ping` ships in the image and asks its own /_health route.
+      test: ["CMD", "./fider", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+    ports:
+      - "127.0.0.1:8181:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  fider-pgdata:

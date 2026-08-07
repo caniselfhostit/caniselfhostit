@@ -1,0 +1,96 @@
+{
+  "slug": "countly",
+  "name": "Countly Lite",
+  "tagline": "Sessions, custom events and crashes from your own apps, collected on a hostname you own, with no monthly event meter.",
+  "repo": "Countly/countly-server",
+  "site": "https://countly.com",
+  "category": "analytics",
+  "replaces": [
+    {
+      "saas": "amplitude",
+      "plan": "Plus",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 4096,
+    "ramMeasuredMB": null,
+    "diskGB": 20,
+    "arm64": false,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 120,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/Countly/countly-server/blob/25.03.51/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Every SDK has to post its events to http://localhost:8174, which means the reader's own computer in the reader's own browser, so on this path Countly measures software you run on this machine and nothing anyone else ever opens."
+  },
+  "quote": {
+    "text": "You cannot remove any Countly logo or branding either from source code or user interface and/or any other interface that can be publicly seen by end user.",
+    "source": "Countly LICENSE.md, Countly Lite License",
+    "url": "https://github.com/Countly/countly-server/blob/25.03.51/LICENSE.md",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "The licence file at this tag states Countly is provided under AGPL-3.0 with a modified Section 7 that forbids removing Countly's name or logo from the source or from any interface an end user can see, which is why GitHub reports no licence for the repository.",
+      "url": "https://github.com/Countly/countly-server/blob/25.03.51/LICENSE.md"
+    },
+    {
+      "claim": "Upstream's single-image build runs an nginx, the collection API on port 3001 and the dashboard on port 6001 together under runit, so one container is three processes.",
+      "url": "https://github.com/Countly/countly-server/blob/25.03.51/Dockerfile-core"
+    },
+    {
+      "claim": "Upstream's own health-check script calls two endpoints, the dashboard's /ping and the collection API's /o/ping, and both go through the nginx inside the image.",
+      "url": "https://github.com/Countly/countly-server/blob/25.03.51/bin/commands/scripts/healthcheck/accessibility.sh"
+    },
+    {
+      "claim": "The /setup registration screen is rendered only while the members collection is empty, and once the first account exists that URL redirects to /login, which is what makes it a check on whether an install has been claimed.",
+      "url": "https://github.com/Countly/countly-server/blob/25.03.51/frontend/express/app.js"
+    },
+    {
+      "claim": "The Enterprise plugin list names drill, funnels, retention_segments, flows, cohorts, surveys, ab-testing, revenue and heatmaps, and none of those directories exist in the open repository this image is built from.",
+      "url": "https://github.com/Countly/countly-server/tree/25.03.51/plugins"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The free server collects; the paid one analyses. Countly Lite ships sessions, views, custom events with segmentation, device, browser, OS and country breakdowns, crash reporting, push, star ratings, remote config, alerts, hooks, dashboards, the data manager, the compliance hub and both the read and write APIs. Funnels, cohorts, user flows, retention, A/B testing, surveys, revenue, heatmaps and drill, the free-form segmentation engine, are Enterprise plugins whose directories are not in the open repository at all. If funnels are the reason you are leaving Amplitude, read that sentence twice.",
+    "The licence is AGPL-3.0 with a modified Section 7 that forbids removing Countly's name or logo from the source or from any screen an end user can see. GitHub reports no licence for the repository because of it, and the README describes Lite as open-source and non-commercial while the licence file itself adds no non-commercial term. It is copyleft with a branding condition attached, and worth reading yourself before you build a product on it.",
+    "One architecture. Upstream publishes the image for amd64 only, so an Apple Silicon Mac or an arm64 VPS has nothing to pull and both prompts stop at step 1 rather than pretending otherwise.",
+    "You own a MongoDB, and it is the entire install. Every account, application, session, event and uploaded file is a document in it, and file storage defaults to a second database beside the first, so there is no directory to copy instead. Backups are a mongodump of everything, restores are a mongorestore, and the .env beside it carries the password secret without which those accounts come back with no working password.",
+    "Nothing is counted until an SDK is sending. The install ends on an empty dashboard, and the hostname you chose at step 1 is the address baked into every app and page you instrument, so changing it later means shipping all of them again."
+  ],
+  "sources": {
+    "compose": "https://github.com/Countly/countly-server/blob/25.03.51/Dockerfile-core",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://github.com/Countly/countly-server/blob/25.03.51/api/config.sample.js",
+    "dashboardConfig": "https://github.com/Countly/countly-server/blob/25.03.51/frontend/express/config.sample.js",
+    "health": "https://github.com/Countly/countly-server/blob/25.03.51/bin/commands/scripts/healthcheck/accessibility.sh",
+    "setup": "https://github.com/Countly/countly-server/blob/25.03.51/frontend/express/app.js",
+    "writeApi": "https://github.com/Countly/countly-server/blob/25.03.51/api/utils/requestProcessor.js",
+    "proxy": "https://github.com/Countly/countly-server/blob/25.03.51/bin/config/nginx.server.conf",
+    "plugins": "https://github.com/Countly/countly-server/tree/25.03.51/plugins",
+    "license": "https://github.com/Countly/countly-server/blob/25.03.51/LICENSE.md",
+    "sdk": "https://github.com/Countly/countly-sdk-web/blob/master/examples/example_helpers.html",
+    "upgrade": "https://github.com/Countly/countly-server/releases"
+  },
+  "related": [
+    "plausible",
+    "umami",
+    "matomo"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "6d05fd98746908ff8104b2ae0549590a35146ac27ab67000bd386375bf34f78e"
+}

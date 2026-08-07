@@ -1,0 +1,60 @@
+# Tolgee · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   running with docker . https://docs.tolgee.io/platform/self_hosting/running_with_docker
+#   configuration ....... https://docs.tolgee.io/platform/self_hosting/configuration
+#   image build ......... https://github.com/tolgee/tolgee-platform/blob/v3.218.0/docker/app/Dockerfile
+#
+# Two services: Tolgee and the PostgreSQL holding every key, translation and
+# account. The tolgee/tolgee image is built on postgres:13 and starts that
+# bundled database itself unless told not to. Upstream deprecated it and removes
+# it in v4, so this file uses the external database shape their own docs
+# document, on the PostgreSQL 17 their example names. Digests read from the
+# registries on 2026-08-07; both publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: postgres:17.10-alpine@sha256:742f40ea20b9ff2ff31db5458d127452988a2164df9e17441e191f3b72252193
+    container_name: tolgee-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tolgee
+      POSTGRES_USER: tolgee
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - /srv/tolgee/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tolgee -d tolgee"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other container.
+
+  tolgee:
+    image: tolgee/tolgee:v3.218.0@sha256:1955a9e28fb247bc0404809432d0ee179b43966f5080b8100a70333375db4382
+    container_name: tolgee
+    restart: unless-stopped
+    env_file: /srv/tolgee/.env
+    environment:
+      # The docker profile in this image ships this false, and false means no
+      # login screen and every caller already an administrator.
+      TOLGEE_AUTHENTICATION_ENABLED: "true"
+      # Nobody signs themselves up. New people arrive by invitation.
+      TOLGEE_AUTHENTICATION_REGISTRATIONS_ALLOWED: "false"
+      # Do not start the PostgreSQL bundled in this image.
+      TOLGEE_POSTGRES_AUTOSTART_ENABLED: "false"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/tolgee
+      SPRING_DATASOURCE_USERNAME: tolgee
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      # Upstream sends daily project, language and user counts. Not from here.
+      TOLGEE_TELEMETRY_ENABLED: "false"
+    volumes:
+      # File storage, plus the JWT key Tolgee falls back to.
+      - /srv/tolgee/data:/data
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8178.
+      - "127.0.0.1:8178:8080"
+    # No healthcheck stanza: the image declares its own on /actuator/health.
+    depends_on:
+      postgres:
+        condition: service_healthy

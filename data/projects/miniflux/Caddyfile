@@ -1,0 +1,29 @@
+# Miniflux · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://miniflux.app/docs/howto.html,
+# https://caddyserver.com/docs/caddyfile/directives/reverse_proxy and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also BASE_URL in .env, and Miniflux builds its session cookie and every link
+# it renders from BASE_URL, so the two have to agree exactly.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# Upstream asks a proxy for X-Forwarded-Proto and X-Forwarded-For, and
+	# Caddy's reverse_proxy sends both by default, so there is nothing to add
+	# here. 8180 is the loopback port compose publishes on this host. It is
+	# not a container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8180
+}

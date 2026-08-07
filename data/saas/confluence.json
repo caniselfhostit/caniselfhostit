@@ -1,0 +1,69 @@
+{
+  "slug": "confluence",
+  "name": "Confluence",
+  "domain": "atlassian.com",
+  "whyPeoplePay": "Confluence is where a company's decisions go to be findable later, and most of its value is the gravity around it rather than the editor: Jira issues that link both ways, a permission model that mirrors the org chart, and a search that has already indexed eight years of meeting notes nobody would migrate by hand. Teams pay Atlassian to keep all of that available, backed up and audited without anyone on staff owning it.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 10,
+      "note": "Free forever for up to 10 users, with 2 GB of storage and community support."
+    },
+    {
+      "name": "Standard",
+      "priceMonthly": 6.7,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per user per month billed monthly, the rate for the first 100 users. Annual billing is sold in brackets instead: $1,000 a year for up to 15 users, $3,350 for up to 50, $6,700 for up to 100."
+    },
+    {
+      "name": "Premium",
+      "priceMonthly": 13.2,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per user per month billed monthly, the rate for the first 100 users. Annual brackets are $2,000 a year for up to 15 users, $6,600 for up to 50, $13,200 for up to 100."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only, billed annually. The page sends you to a contact form rather than a number."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://www.atlassian.com/software/confluence/pricing",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "The page renders its prices in JavaScript, but the same figures are in the server-rendered product data it ships with, which states them as $6.70 and $13.20 per user per month for the default 11-user monthly selection. Monthly-billed figures are recorded here because Atlassian's annual plans are bracket prices for a range of users rather than a per-seat rate, so the annual equivalents are in each plan note instead."
+  },
+  "ranked": [
+    {
+      "project": "xwiki",
+      "rationale": "The one on this list built to the same shape as Confluence rather than to a lighter one. Structured spaces, macros you can write in the page itself, a rights model that goes per space and per page, and an extension manager that installs the rest: two decades of the same idea, LGPL, with your content in a PostgreSQL you can dump. The costs are honest ones. It is Java, so it wants 3 GB rather than 1, the first boot downloads its own interface before it will show you a page, and its default look is a wiki rather than a modern document editor."
+    },
+    {
+      "project": "docmost",
+      "rationale": "The right answer if what your team actually used Confluence for was writing together in a nice editor. Real-time co-editing, nested pages inside spaces, an interface people will recognise from Notion, and a Postgres behind it. It is younger and narrower than XWiki: no macro language, a thinner permission model, and its Notion-style database feature is a paid commercial add-on rather than part of the free build."
+    },
+    {
+      "project": "bookstack",
+      "rationale": "The one to pick when the honest answer is that your Confluence is a pile of pages nobody can find. BookStack forces shelves, books, chapters and pages, and that structure is the whole product. It is a small PHP application beside a MariaDB and it will be running before the others have finished their first boot. What you give up is the extensibility: no macro language, no extension marketplace, and no realtime co-editing."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Wiki.js",
+      "repo": "https://github.com/requarks/wiki",
+      "note": "A good-looking wiki with a wide storage-backend story, and the most-starred option here. We are not ranking it because of where the project sits: the 3.0 rewrite has been in development for years with no 3.x release on the releases page, and the shipping line is still 2.5.x point releases, most recently v2.5.314 in May 2026. That is maintenance, not abandonment, but it is a strange thing to start a five-year wiki on."
+    },
+    {
+      "name": "Outline",
+      "repo": "https://github.com/outline/outline",
+      "note": "The nicest editor of anything we looked at, and a genuinely fast search. Not ranked because of the licence rather than the software: it is Business Source License 1.1, which is source-available and not open source, and its additional use grant forbids running it as a commercial document service. Fine for your own team, a term you have to read before you build on it."
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "slug": "inoreader",
+  "name": "Inoreader",
+  "domain": "inoreader.com",
+  "whyPeoplePay": "Inoreader is the reader for people whose feeds are a workload rather than a habit. The free tier caps how much you can follow and the paid one lifts it, but the real sell is everything bolted around the reading: rules that file and tag on arrival, monitoring feeds that watch sites and searches that publish no RSS at all, newsletters routed into the same inbox, and an AI layer that reads the pile down to a short list. You are paying for somebody else to poll a few thousand sources on time and to keep the mobile apps in sync while you are not looking.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Free forever, with a capped number of feeds. The vendor presents it as the beginner tier and does not mention advertising on the pricing page; secondary reporting says it is ad-supported."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 9.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Monthly-billed figure, marked most popular. The same page advertises $7.50/month billed annually, about $90 a year."
+    },
+    {
+      "name": "Team",
+      "priceMonthly": 44.99,
+      "unit": "flat",
+      "seatsIncluded": 3,
+      "note": "The smallest Team size, billed monthly, from inoreader.com/pricing/enterprise. The ladder runs 3, 5, 10, 20 and 50 members at $44.99, $74.99, $119.99, $224.99 and $374.99 a month, each with a dearer Intelligence variant."
+    },
+    {
+      "name": "Custom",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The pricing page sells add-ons and API access this way, and the enterprise page asks anyone outside the fixed Team sizes to get in touch."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://www.inoreader.com/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Free, Pro and Custom were read off inoreader.com/pricing on 2026-08-07 and the Team ladder off inoreader.com/pricing/enterprise the same day. Confidence is medium rather than high for two reasons: the pricing page renders its plans in the browser, so a fetch can return a shell instead of the numbers, and the one claim that shapes the comparison, that the free tier is ad-supported, comes from secondary reporting rather than the vendor's own page copy. The $9.99 monthly and $7.50 annual figures agree with independent 2026 reporting, which is why they are here at all. Re-read the page and raise this to high."
+  },
+  "ranked": [
+    {
+      "project": "miniflux",
+      "rationale": "Matches the thing Inoreader is actually used for every day: open it, read what arrived, close it. Miniflux is a single Go binary with a keyboard-driven interface and no JavaScript framework in front of it, so it opens on a phone browser as fast as it does on a desk, and its Google Reader and Fever APIs mean the reader app you already like keeps working with your server behind it. What it does not attempt is the rest of the Inoreader pitch: no rules engine, no monitoring feeds for sites without RSS, no newsletter inbox, no AI filtering. If those are why you pay, this is not the swap."
+    },
+    {
+      "project": "freshrss",
+      "rationale": "Second here and first elsewhere, which is an honest split rather than a hedge. FreshRSS is the featureful choice: extensions, themes, real multi-user support for a household or a small team, WebSub for feeds that push, and a community that has been maintaining all of it for a decade. It already anchors our Feedly page for exactly those reasons. Miniflux ranks above it on this page only because Inoreader's core sell is a fast reader you open every day, and minimalism is the whole of Miniflux's design where it is one option among many in FreshRSS. Both are excellent, and the deciding question is whether you want a reader you configure or a reader you do not."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Tiny Tiny RSS",
+      "repo": "https://github.com/tt-rss/tt-rss",
+      "note": "GPL-3.0 and genuinely alive: the project moved off its self-hosted GitLab to GitHub and had commits this month. It is out on distribution posture rather than health. There are zero releases and zero git tags, and the container registry publishes only `latest` and `sha-<commit>` tags, so there is no version number to pin. Every install here is a claim about a specific version on a specific date, and a rolling image cannot carry one."
+    },
+    {
+      "name": "CommaFeed",
+      "repo": "https://github.com/Athou/commafeed",
+      "note": "Apache-2.0, actively developed, and properly pinnable: versioned tags such as 7.2.1 exist alongside the floating ones. The reason it is not the pick is editorial, not disqualifying. The image comes as a matrix, four database backends crossed with a native build and a JVM build, and choosing among those is a decision we have not made or tested. A reasonable person could rank it first."
+    },
+    {
+      "name": "NewsBlur",
+      "repo": "https://github.com/samuelclay/NewsBlur",
+      "note": "MIT, actively developed, and the closest thing on this list to Inoreader's ambitions, including training filters on what you read. Its own docker-compose file declares twelve services, among them PostgreSQL, MongoDB, Redis, Elasticsearch, a Celery worker and haproxy. By our rubric that is ongoing operations before you have read a page of documentation, which is a fair trade for the product and the wrong trade for a reader replacing one subscription."
+    }
+  ]
+}

@@ -55,7 +55,7 @@
     {
       "name": "Baserow",
       "repo": "https://github.com/baserow/baserow",
-      "note": "GitHub's licence API reports NOASSERTION because the LICENSE file splits the tree: the core is MIT, the premium/ and enterprise/ directories carry their own separate licences, and the docs are CC BY-SA. The MIT core is real and the project is releasing (2.3.3 in July 2026). It expects PostgreSQL, Redis and its own web server, so it is a larger install than the one ranked above."
+      "note": "GitHub's licence API reports NOASSERTION because the LICENSE file splits the tree: the core is MIT, the premium/ and enterprise/ directories carry their own separate licences, and the docs are CC BY-SA. The MIT core is real and the project is releasing (2.3.3 in July 2026). It has since earned its own page in this catalog as the Baserow Cloud answer, where its all-in-one install is written up in full. On this page Grist keeps the top spot for the lighter single container and Python formulas."
     },
     {
       "name": "Teable",

@@ -2,7 +2,7 @@
 # Cloudflare Workers static assets honor this file (same as public/_headers).
 # GENERATED: node scripts/generate-redirects.mjs . > public/_redirects
 # The validator fails CI when this file drifts from what data/ implies.
-# 90 pairs, 3 rules each (slashed, bare, .md mirror), all 301.
+# 100 pairs, 3 rules each (slashed, bare, .md mirror), all 301.
 /self-host/vaultwarden/          /self-host/1password/  301
 /self-host/vaultwarden           /self-host/1password/  301
 /self-host/vaultwarden.md        /self-host/1password.md  301
@@ -39,15 +39,24 @@
 /self-host/photoprism/           /self-host/adobe-lightroom/  301
 /self-host/photoprism            /self-host/adobe-lightroom/  301
 /self-host/photoprism.md         /self-host/adobe-lightroom.md  301
+/self-host/countly/              /self-host/amplitude/  301
+/self-host/countly               /self-host/amplitude/  301
+/self-host/countly.md            /self-host/amplitude.md  301
 /self-host/audiobookshelf/       /self-host/audible/  301
 /self-host/audiobookshelf        /self-host/audible/  301
 /self-host/audiobookshelf.md     /self-host/audible.md  301
 /self-host/backrest/             /self-host/backblaze-personal-backup/  301
 /self-host/backrest              /self-host/backblaze-personal-backup/  301
 /self-host/backrest.md           /self-host/backblaze-personal-backup.md  301
+/self-host/baserow/              /self-host/baserow-cloud/  301
+/self-host/baserow               /self-host/baserow-cloud/  301
+/self-host/baserow.md            /self-host/baserow-cloud.md  301
 /self-host/calcom/               /self-host/calendly/  301
 /self-host/calcom                /self-host/calendly/  301
 /self-host/calcom.md             /self-host/calendly.md  301
+/self-host/xwiki/                /self-host/confluence/  301
+/self-host/xwiki                 /self-host/confluence/  301
+/self-host/xwiki.md              /self-host/confluence.md  301
 /self-host/healthchecks/         /self-host/cronitor/  301
 /self-host/healthchecks          /self-host/cronitor/  301
 /self-host/healthchecks.md       /self-host/cronitor.md  301
@@ -87,6 +96,9 @@
 /self-host/chatwoot/             /self-host/intercom/  301
 /self-host/chatwoot              /self-host/intercom/  301
 /self-host/chatwoot.md           /self-host/intercom.md  301
+/self-host/weblate/              /self-host/lokalise/  301
+/self-host/weblate               /self-host/lokalise/  301
+/self-host/weblate.md            /self-host/lokalise.md  301
 /self-host/listmonk/             /self-host/mailchimp/  301
 /self-host/listmonk              /self-host/mailchimp/  301
 /self-host/listmonk.md           /self-host/mailchimp.md  301
@@ -192,6 +204,12 @@
 /self-host/postiz/               /self-host/buffer/  301
 /self-host/postiz                /self-host/buffer/  301
 /self-host/postiz.md             /self-host/buffer.md  301
+/self-host/fider/                /self-host/canny/  301
+/self-host/fider                 /self-host/canny/  301
+/self-host/fider.md              /self-host/canny.md  301
+/self-host/typebot/              /self-host/chatbase/  301
+/self-host/typebot               /self-host/chatbase/  301
+/self-host/typebot.md            /self-host/chatbase.md  301
 /self-host/code-server/          /self-host/codesandbox/  301
 /self-host/code-server           /self-host/codesandbox/  301
 /self-host/code-server.md        /self-host/codesandbox.md  301
@@ -207,6 +225,9 @@
 /self-host/grafana/              /self-host/grafana-cloud/  301
 /self-host/grafana               /self-host/grafana-cloud/  301
 /self-host/grafana.md            /self-host/grafana-cloud.md  301
+/self-host/miniflux/             /self-host/inoreader/  301
+/self-host/miniflux              /self-host/inoreader/  301
+/self-host/miniflux.md           /self-host/inoreader.md  301
 /self-host/wallabag/             /self-host/instapaper/  301
 /self-host/wallabag              /self-host/instapaper/  301
 /self-host/wallabag.md           /self-host/instapaper.md  301
@@ -261,12 +282,21 @@
 /self-host/kimai/                /self-host/toggl-track/  301
 /self-host/kimai                 /self-host/toggl-track/  301
 /self-host/kimai.md              /self-host/toggl-track.md  301
+/self-host/tolgee/               /self-host/tolgee-cloud/  301
+/self-host/tolgee                /self-host/tolgee-cloud/  301
+/self-host/tolgee.md             /self-host/tolgee-cloud.md  301
+/self-host/tooljet/              /self-host/tooljet-cloud/  301
+/self-host/tooljet               /self-host/tooljet-cloud/  301
+/self-host/tooljet.md            /self-host/tooljet-cloud.md  301
 /self-host/castopod/             /self-host/transistor-fm/  301
 /self-host/castopod              /self-host/transistor-fm/  301
 /self-host/castopod.md           /self-host/transistor-fm.md  301
 /self-host/wekan/                /self-host/trello/  301
 /self-host/wekan                 /self-host/trello/  301
 /self-host/wekan.md              /self-host/trello.md  301
+/self-host/kener/                /self-host/uptime/  301
+/self-host/kener                 /self-host/uptime/  301
+/self-host/kener.md              /self-host/uptime.md  301
 /self-host/adventurelog/         /self-host/wanderlog-pro/  301
 /self-host/adventurelog          /self-host/wanderlog-pro/  301
 /self-host/adventurelog.md       /self-host/wanderlog-pro.md  301

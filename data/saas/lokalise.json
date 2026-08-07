@@ -1,0 +1,70 @@
+{
+  "slug": "lokalise",
+  "name": "Lokalise",
+  "domain": "lokalise.com",
+  "whyPeoplePay": "Lokalise sells the thing between your repository and a translated product: a place where developers push keys, translators fill them in without touching code, and the result comes back through an API, a CLI and integrations with the tools both sides already live in. The money is really for the middle of that sentence. Somebody has to keep the glossary and the translation memory consistent, run the review workflow, hand a designer a screenshot with the right string in it, and get professional translation ordered and delivered without anyone emailing a spreadsheet. Under the plan ladder it now sells, the meter is processed words per year rather than stored keys, and the seat counts are how many people get the advanced half of that.",
+  "plans": [
+    {
+      "name": "Explorer",
+      "priceMonthly": 144,
+      "unit": "flat",
+      "seatsIncluded": 5,
+      "note": "Described on the vendor page as being for teams that want the essentials, done right and fast. The vendor help centre lists 5 advanced seats (10 maximum), unlimited basic seats, 60,000 processed words a year (500,000 maximum), 5 projects and 10 target languages."
+    },
+    {
+      "name": "Growth",
+      "priceMonthly": 375,
+      "unit": "flat",
+      "seatsIncluded": 10,
+      "note": "Described as being for scaling teams that need better automation and control. The help centre lists 10 advanced seats (15 maximum), unlimited basic seats, 300,000 processed words a year (1.5 million maximum), and unlimited projects and target languages. An independent pricing tracker read on the same day puts this tier at $499 a month, which is the strongest sign that the figure recorded here is the annual-billed rate."
+    },
+    {
+      "name": "Advanced",
+      "priceMonthly": 999,
+      "unit": "flat",
+      "seatsIncluded": 15,
+      "note": "Described as being for teams with complex, multi-product workflow and setups. The help centre lists 15 advanced seats, unlimited basic seats and 1 million processed words a year (3 million maximum)."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": 40,
+      "note": "Quote only; the page sends this tier to a demo booking. Described as being for global orgs with bespoke security and support needs. The help centre lists 40 advanced seats and 3 million processed words a year (15 million maximum)."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://lokalise.com/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The plan names, their one-line descriptions and the three dollar figures above are what lokalise.com/pricing served on 2026-08-07. Two things keep this at medium confidence. The page carries a Billed monthly and Billed yearly toggle, and only one set of numbers appears in the HTML we could read, so we cannot say from the page itself which billing period $144, $375 and $999 belong to. An independent pricing tracker read the same day reports the middle tier at $499 a month, which fits the reading that these are annual-billed rates and month-to-month is roughly a third higher. The seat, word, project and language limits come from the vendor's own help centre article on the new price plans, read the same day. Open the page with the billing toggle visible before quoting anyone a saving."
+  },
+  "ranked": [
+    {
+      "project": "weblate",
+      "rationale": "The one that replaces the workflow rather than the screen. Weblate's translations are commits in your own git repositories: it clones the repo, translators work in a browser, and it pushes the changed files back on a schedule or into a pull request, which is the same shape as the Lokalise integration you are paying for and the reason two decades of open source projects and agencies run it. It is GPL-3.0 with no feature held back, it has the format coverage and the quality checks that make a review workflow mean something, and it carries a translation memory and a glossary you own. The trade is honest: nobody sells you professional translation inside it, the machine-translation engines are accounts you bring, and the git write access has to be granted by hand once before any of it commits anything."
+    },
+    {
+      "project": "tolgee",
+      "rationale": "The one to pick if what you actually liked about Lokalise was the editing experience rather than the git plumbing. Tolgee's distinctive move is in-context translation: an SDK in your app turns every string on the running page into something you can alt-click and fix, which closes the gap between seeing a bad label and fixing it faster than any file-based tool can. It ranks second here because that convenience is bought with a dependency in your application code, and because the repository-native, commit-it-back workflow that makes Weblate a drop-in for a Lokalise git integration is not the centre of what Tolgee does."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Traduora",
+      "repo": "https://github.com/ever-co/ever-traduora",
+      "note": "AGPL-3.0, and the simplest of the group: projects, terms, translations, a clean API and format exports, with no git integration to configure. Read its activity carefully before betting on it. The repository still gets commits, but the most recent ones are documentation and README maintenance by its corporate owner, and the last tagged release is v0.21.0 from June 2025, so the software you would run today is more than a year old. Left off the ranked list for that reason rather than for anything about its design."
+    },
+    {
+      "name": "Pontoon",
+      "repo": "https://github.com/mozilla/pontoon",
+      "note": "BSD-3-Clause, Mozilla's own localization platform, and genuinely alive: commits land most days and it runs the translation of Firefox. It also syncs with version control, so it answers the same question Weblate does. It is not ranked because it is built to be Mozilla's deployment rather than yours: there is no published Docker image and no tagged release since 2018, the deployment story is a Django application you stand up and keep upgrading from the main branch, and the install is a project rather than an evening."
+    },
+    {
+      "name": "Accent",
+      "repo": "https://github.com/mirego/accent",
+      "note": "BSD-3-Clause, Elixir and GraphQL, maintained by the agency that built it, with a tagged release in June 2026. It takes the developer-first position hardest: a CLI that syncs files, a review flow built around asynchronous handoff, and a deliberately small feature surface. It stays off the ranked list because it authenticates against an outside identity provider by design, which turns the first hour of the install into a signup somewhere else, and because it has a smaller format list than the two above."
+    }
+  ]
+}

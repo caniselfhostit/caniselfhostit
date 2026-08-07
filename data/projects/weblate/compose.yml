@@ -1,0 +1,90 @@
+# Weblate · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker install ..... https://docs.weblate.org/en/latest/admin/install/docker.html
+#   repository access .. https://docs.weblate.org/en/latest/vcs.html
+#   image .............. https://github.com/WeblateOrg/docker/blob/main/Dockerfile
+#
+# Three services: Weblate, the PostgreSQL holding every string and translation,
+# and the Valkey carrying its cache and its Celery queue. Upstream runs the same
+# three and reaches Valkey through REDIS_HOST, which is why the service is named
+# for what it is and the variable is not. The Weblate image runs as uid 1000 and
+# refuses to start when /app/data is not writable, so step 2 hands it that
+# directory and /app/cache. Digests read on 2026-08-07, amd64 and arm64 both.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: postgres:18.4-alpine@sha256:9a8afca54e7861fd90fab5fdf4c42477a6b1cb7d293595148e674e0a3181de15
+    container_name: weblate-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: weblate
+      POSTGRES_USER: weblate
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - /srv/weblate/postgres:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U weblate -d weblate"]
+      interval: 10s
+      retries: 12
+    # No `ports:`: 5432 only reaches the other containers.
+
+  valkey:
+    image: valkey/valkey:9.1.1-alpine@sha256:ee91f7a174ac4d6a6b0685b3a60e321f0a9dbbb691f9b0e285be2ba1d1be8328
+    container_name: weblate-cache
+    restart: unless-stopped
+    # Upstream's own line: one snapshot 60 seconds after a key changed.
+    command: ["valkey-server", "--save", "60", "1", "--loglevel", "warning"]
+    read_only: true
+    volumes:
+      - /srv/weblate/valkey:/data
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 10s
+      retries: 12
+    # No `ports:`: 6379 never leaves the compose network.
+
+  weblate:
+    image: weblate/weblate:2026.8.1.0@sha256:44cd8cc84c41079fa9559d7f3cb7e9b80990f2b1ef975868423e322a507edc1b
+    container_name: weblate
+    restart: unless-stopped
+    env_file: /srv/weblate/.env
+    environment:
+      # Required upstream: every link Weblate prints is built out of it.
+      WEBLATE_SITE_DOMAIN: <DOMAIN>
+      WEBLATE_SITE_TITLE: Weblate
+      # localhost is listed because the image health-checks itself over it.
+      WEBLATE_ALLOWED_HOSTS: <DOMAIN>,localhost
+      WEBLATE_ADMIN_NAME: Weblate admin
+      WEBLATE_ADMIN_EMAIL: <ADMIN_EMAIL>
+      # Nobody signs themselves up: translators arrive on an invitation link.
+      WEBLATE_REGISTRATION_OPEN: "0"
+      # Caddy terminates TLS, so Weblate is told the outside is https.
+      WEBLATE_ENABLE_HTTPS: "1"
+      WEBLATE_SECURE_PROXY_SSL_HEADER: HTTP_X_FORWARDED_PROTO,https
+      WEBLATE_IP_PROXY_HEADER: HTTP_X_FORWARDED_FOR
+      # Upstream mails tracebacks to the admin by default; no mail here.
+      WEBLATE_ADMIN_NOTIFY_ERROR: "0"
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: weblate
+      POSTGRES_USER: weblate
+      REDIS_HOST: valkey
+      REDIS_PORT: "6379"
+    volumes:
+      - /srv/weblate/data:/app/data
+      - /srv/weblate/cache:/app/cache
+    # Everything written lands in the two mounts above. Upstream's own shape.
+    read_only: true
+    tmpfs:
+      - /run
+      - /tmp
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8173.
+      - "127.0.0.1:8173:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy

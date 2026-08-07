@@ -1,0 +1,95 @@
+{
+  "slug": "tooljet",
+  "name": "ToolJet",
+  "tagline": "The internal-tools builder ToolJet sells, installed from ToolJet's own repository, with no per-builder meter and no end-user cap.",
+  "repo": "ToolJet/ToolJet",
+  "site": "https://www.tooljet.ai",
+  "category": "automation-dev",
+  "replaces": [
+    {
+      "saas": "tooljet-cloud",
+      "plan": "Pro",
+      "seatsAssumed": 3
+    }
+  ],
+  "tierFactors": {
+    "containers": 3,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 4
+  },
+  "resources": {
+    "ramMinMB": 4096,
+    "ramMeasuredMB": null,
+    "diskGB": 20,
+    "arm64": false,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 120,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/ToolJet/ToolJet/blob/v3.20.208-lts/deploy/docker/docker-compose-db.yaml",
+  "local": {
+    "fit": "caveat",
+    "note": "Every app you build answers only at http://localhost:8176, so the colleague you meant to hand the form to gets a connection error, and on an Apple Silicon Mac the amd64-only image runs under emulation, which works and is slow."
+  },
+  "quote": {
+    "text": "We highly recommend using LTS versions for most users. These versions are prioritized for bug fixes, updates, and overall stability, ensuring a reliable experience.",
+    "source": "ToolJet documentation, Deployment Version",
+    "url": "https://docs.tooljet.ai/docs/setup/choose-your-tooljet/",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's own in-built-PostgreSQL compose file runs three services: the ToolJet server, PostgreSQL, and the PostgREST that serves the ToolJet Database.",
+      "url": "https://github.com/ToolJet/ToolJet/blob/v3.20.208-lts/deploy/docker/docker-compose-db.yaml"
+    },
+    {
+      "claim": "The community-edition image starts a Redis of its own inside the container, bound to that container's loopback, so a single-instance install needs no separate Redis service.",
+      "url": "https://github.com/ToolJet/ToolJet/blob/v3.20.208-lts/docker/ce-entrypoint.sh"
+    },
+    {
+      "claim": "LOCKBOX_MASTER_KEY is a 32-byte hex string that encrypts datasource credentials and SECRET_KEY_BASE a 64-byte hex string that encrypts session cookies, and upstream documents openssl rand as the way to make both.",
+      "url": "https://docs.tooljet.ai/docs/setup/env-vars/"
+    },
+    {
+      "claim": "The paid half of ToolJet is two git submodules, ToolJet/ee-frontend and ToolJet/ee-server, whose repositories are not public, so the code the AGPL-3.0 licence covers is the community edition and the rest is not published at all.",
+      "url": "https://github.com/ToolJet/ToolJet/blob/v3.20.208-lts/.gitmodules"
+    },
+    {
+      "claim": "The server answers /health and /api/health with a body containing \"works\":\"yeah\" plus a licence status, which on the community edition reports invalid and expired.",
+      "url": "https://github.com/ToolJet/ToolJet/blob/v3.20.208-lts/server/src/modules/app/service.ts"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The repository you install from is AGPL-3.0, and the paid half is not in it. ToolJet keeps its enterprise code in two private git submodules, so unlike projects that ship a visible enterprise/ directory there is nothing to read and nothing to accidentally build. The split is real: single sign-on, custom user groups and granular permissions, audit logs, white labelling and a custom login domain, Git sync, multi-environment deployment and SCIM provisioning are what the paid plans sell. What you install is uncapped on builders, end users and apps and stops short of that list.",
+    "No arm64. Upstream publishes the community-edition image for amd64 only, so an arm64 VPS cannot run this at all and the install stops at preflight rather than half way. On an Apple Silicon Mac the local path works through Docker Desktop's emulation, and the first boot takes several times what it does on an Intel machine.",
+    "One key stands between a backup and every credential in it. LOCKBOX_MASTER_KEY encrypts each database password, API key and token you hand to a datasource, and it lives in .env rather than in the database, so the backup is two artifacts that have to travel together. Restore the dump beside a freshly generated key and every app comes back with no working connection.",
+    "No mail means no invitations and no password resets. This install configures no SMTP, which the core loop does not need, but the day you add a second person you either configure mail or edit the database by hand, and a forgotten administrator password has no reset link. Put it in a password manager on day one.",
+    "Three containers and one PostgreSQL holding three databases: the application's, the ToolJet Database your tables live in, and a sample one the server seeds. The backup is a pg_dumpall rather than a pg_dump for exactly that reason, and PostgREST spends the first minutes of a fresh install restarting until the migrations have made the function it needs."
+  ],
+  "sources": {
+    "compose": "https://docs.tooljet.ai/docs/setup/docker/",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://docs.tooljet.ai/docs/setup/env-vars/",
+    "requirements": "https://docs.tooljet.ai/docs/setup/system-requirements/",
+    "database": "https://docs.tooljet.ai/docs/tooljet-db/tooljet-database/",
+    "versions": "https://docs.tooljet.ai/docs/setup/choose-your-tooljet/",
+    "health": "https://github.com/ToolJet/ToolJet/blob/v3.20.208-lts/server/src/modules/app/service.ts",
+    "signup": "https://github.com/ToolJet/ToolJet/blob/v3.20.208-lts/server/src/modules/onboarding/guards/signup-disable.guard.ts",
+    "onboarding": "https://github.com/ToolJet/ToolJet/blob/v3.20.208-lts/frontend/src/modules/onboarding/pages/SetupAdminPage/components/SetupAdminForm/SetupAdminForm.jsx",
+    "image": "https://github.com/ToolJet/ToolJet/blob/v3.20.208-lts/docker/ce-entrypoint.sh",
+    "license": "https://github.com/ToolJet/ToolJet/blob/v3.20.208-lts/.gitmodules"
+  },
+  "related": [
+    "appsmith",
+    "grist",
+    "baserow"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "5b9dfe421f1826f09c314a5461d631e734c8922a9eead4ca4ed779d5cf879f25"
+}

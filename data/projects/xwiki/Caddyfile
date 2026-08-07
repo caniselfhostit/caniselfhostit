@@ -1,0 +1,29 @@
+# XWiki · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://github.com/xwiki/xwiki-docker/blob/master/17/postgres-tomcat/docker-compose.yml and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. XWiki builds the
+# links inside a page relative to the request it answered, so it follows this
+# hostname without being told it.
+
+<DOMAIN> {
+	# Pages, search results and the JavaScript bundles are all text.
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# 8172 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall. XWiki's realtime
+	# editing rides a WebSocket, and reverse_proxy performs that upgrade
+	# with no extra directive.
+	reverse_proxy 127.0.0.1:8172
+}

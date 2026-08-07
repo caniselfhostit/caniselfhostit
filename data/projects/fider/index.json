@@ -1,0 +1,95 @@
+{
+  "slug": "fider",
+  "name": "Fider",
+  "tagline": "A feedback board on your own domain: customers post ideas, everyone votes, and nobody bills you per tracked user.",
+  "repo": "getfider/fider",
+  "site": "https://fider.io",
+  "category": "work-pm",
+  "replaces": [
+    {
+      "saas": "canny",
+      "plan": "Pro",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": true,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 210,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://docs.fider.io/hosting-instance",
+  "local": {
+    "fit": "caveat",
+    "note": "On your own computer the board answers only at http://localhost:8181, so the customers whose feedback you wanted cannot open it and what you have is a private list of your own ideas with a vote button."
+  },
+  "quote": {
+    "text": "You need a valid SMTP server to start the application, or you will see panic: could not find environment variable named 'EMAIL_SMTP_HOST' errors.",
+    "source": "Fider documentation, Hosting on Docker",
+    "url": "https://docs.fider.io/hosting-instance",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "Upstream requires PostgreSQL 12 or newer and either an SMTP server or a Mailgun account, and its own compose example runs two services with the application on container port 3000.",
+      "url": "https://docs.fider.io/hosting-instance"
+    },
+    {
+      "claim": "JWT_SECRET, DATABASE_URL and EMAIL_NOREPLY are marked required, BASE_URL is mandatory in the default single-host mode, and with no Mailgun or SES credentials the mail type falls back to SMTP, which then forces EMAIL_SMTP_HOST and EMAIL_SMTP_PORT to be set.",
+      "url": "https://github.com/getfider/fider/blob/v0.36.0/app/pkg/env/env.go"
+    },
+    {
+      "claim": "The unauthenticated /_health route pings the database and returns a small JSON object reading status Healthy, which is also what the image's own health check asks for through fider ping.",
+      "url": "https://github.com/getfider/fider/blob/v0.36.0/app/cmd/routes.go"
+    },
+    {
+      "claim": "Until a board exists, single-host mode redirects every tenant route to /signup, and setting SIGNUP_DISABLED makes that installer answer 404 instead.",
+      "url": "https://github.com/getfider/fider/blob/v0.36.0/app/handlers/signup.go"
+    },
+    {
+      "claim": "LOG_SQL defaults to true, which inserts every log line at or above the configured level into a logs table in the same database, and no background job trims it.",
+      "url": "https://github.com/getfider/fider/blob/v0.36.0/app/services/log/sql/sql.go"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "You get the board, not the suite. Fider gives you posts, votes, statuses, comments, tags, a roadmap view built from those statuses, an admin area and a REST API. Canny's price covers that plus a changelog your users are notified about, deduplication of incoming requests, and integrations that attach a request to the account that asked for it and to the ticket that answers it. If what you open every week is the board, this is a fair trade; if it is the customer record next to each vote, it is not.",
+    "Mail is the product, not a nicety. Fider has no passwords at all: signing in is a link mailed to you, creating the board in the first place means following a confirmation email, and the container refuses to start until it is told where to post mail. A relay that silently refuses your messages is a locked front door, so this install stops and asks for relay credentials before it starts anything.",
+    "Nine years of releases, still on 0.x. Fider tagged v0.1.0 in March 2017 and v0.36.1 in July 2026, lately about one release every one to three months, which is slower and more conservative than most of this catalogue. The registry lags the tags as well: v0.36.1 shipped on GitHub with no image published under that name, so this install pins v0.36.0, the newest version tag Docker Hub actually carries, rather than the floating stable tag upstream's own guide uses.",
+    "One PostgreSQL holds all of it. Posts, votes, comments, accounts and uploaded images are rows, because BLOB_STORAGE defaults to sql, so a single dump is the whole backup and there is no object store to secure. Upstream also defaults LOG_SQL to true, which writes every log line into a table nothing reads and no job trims; this install turns that off so the database stays the product rather than the logfile.",
+    "No SSO, no CRM linkage, no revenue weighting. Those are what the paid tiers sell on top of a board, and the code here does not have them. Anyone who can receive email can make an account on your board unless you set it private in the admin area, which is a setting you choose rather than a default this install picks for you."
+  ],
+  "sources": {
+    "compose": "https://docs.fider.io/hosting-instance",
+    "caddy": "https://docs.fider.io/how-to-enable-ssl",
+    "install": "https://github.com/getfider/fider/blob/v0.36.0/app/pkg/env/env.go",
+    "health": "https://github.com/getfider/fider/blob/v0.36.0/app/cmd/routes.go",
+    "image": "https://github.com/getfider/fider/blob/v0.36.0/Dockerfile",
+    "signup": "https://github.com/getfider/fider/blob/v0.36.0/app/handlers/signup.go",
+    "tenant": "https://github.com/getfider/fider/blob/v0.36.0/app/middlewares/tenant.go",
+    "logging": "https://github.com/getfider/fider/blob/v0.36.0/app/services/log/sql/sql.go",
+    "registry": "https://hub.docker.com/r/getfider/fider/tags",
+    "releases": "https://github.com/getfider/fider/releases",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "formbricks",
+    "glitchtip",
+    "listmonk"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "14319bc82f17058c1f6c18eda18d229c21d193df02a522a7bbb4f623a89fcb61"
+}

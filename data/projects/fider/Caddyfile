@@ -1,0 +1,29 @@
+# Fider · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.fider.io/hosting-instance,
+# https://docs.fider.io/how-to-enable-ssl and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also BASE_URL in .env, and Fider builds every sign-in link it mails out of
+# BASE_URL, so the two have to agree exactly.
+
+<DOMAIN> {
+	# Fider already sets Content-Security-Policy, X-Content-Type-Options and
+	# Referrer-Policy itself, so this adds only the two it does not: HSTS,
+	# because the way in is a link that arrives by mail, and a framing rule,
+	# because Fider ships no embeddable widget.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Frame-Options "SAMEORIGIN"
+		-Server
+	}
+
+	encode zstd gzip
+
+	# 8181 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8181
+}

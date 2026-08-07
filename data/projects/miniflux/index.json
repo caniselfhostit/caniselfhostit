@@ -1,0 +1,94 @@
+{
+  "slug": "miniflux",
+  "name": "Miniflux",
+  "tagline": "A feed reader with nothing in it but feeds: one Go binary, one database, and a Google Reader API the phone apps already speak.",
+  "repo": "miniflux/v2",
+  "site": "https://miniflux.app",
+  "category": "reading-bookmarks",
+  "replaces": [
+    {
+      "saas": "inoreader",
+      "plan": "Pro",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 70,
+  "license": "Apache-2.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/miniflux/v2/blob/2.3.3/contrib/docker-compose/caddy.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Miniflux polls feeds only while this computer is awake, and http://localhost:8180 is reachable from nothing else, so the phone reader app that is the usual reason to run Miniflux cannot connect and the reading happens where the install is."
+  },
+  "quote": {
+    "text": "Only PostgreSQL >= 11 is supported.",
+    "source": "Miniflux documentation, Requirements",
+    "url": "https://miniflux.app/docs/requirements.html",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "CREATE_ADMIN builds the single account from ADMIN_USERNAME and ADMIN_PASSWORD during start-up, and the documented options list carries no setting for open registration or public sign-up.",
+      "url": "https://miniflux.app/docs/configuration.html"
+    },
+    {
+      "claim": "Upstream publishes the image on Docker Hub, GitHub Container Registry and Quay, and documents the container health check as the miniflux binary calling its own endpoint with -healthcheck auto.",
+      "url": "https://miniflux.app/docs/docker.html"
+    },
+    {
+      "claim": "A database password carrying special characters can be rejected inside the URL form of DATABASE_URL unless it is URL encoded, which is why this install generates a hex one.",
+      "url": "https://miniflux.app/docs/database.html"
+    },
+    {
+      "claim": "The Google Reader API is switched on by choosing a username and password under Settings then Integrations, and upstream names Capy Reader, NetNewsWire, Reeder Classic and RSS Guard as clients.",
+      "url": "https://miniflux.app/docs/google_reader.html"
+    },
+    {
+      "claim": "The published Alpine image exposes port 8080, sets LISTEN_ADDR to 0.0.0.0:8080 and runs as uid 65534, while the distroless variant is built from a base image that carries no shell.",
+      "url": "https://github.com/miniflux/v2/blob/2.3.3/packaging/docker/alpine/Dockerfile"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "You own a PostgreSQL, and it is the only thing you own. Miniflux writes nothing to disk of its own, which keeps the install small and makes the backup singular: everything you have ever subscribed to and everything you have read is in one database that has to be dumped rather than copied.",
+    "The omissions are the product. No AI summarising, no monitoring feeds that turn a page without RSS into one, no newsletter inbox, no rules engine. Inoreader sells all four, and an upstream that keeps saying no to them is the reason this stays a single binary you never think about.",
+    "The phone is a second decision, and it is yours. There is no first-party app. You switch on the Google Reader or Fever API in your own settings, pick a second username and password there, and point a third-party client at your hostname. It works, and nobody does that step for you.",
+    "Polling is outbound and on your schedule, which is 60 minutes out of the box. A publisher that rate-limits your server's IP is now your problem, and a box that is down is a reader that quietly stops collecting rather than one that tells you.",
+    "Nobody can sign up, which is a security property on day one and a chore afterwards. Miniflux has no registration screen at all, so every extra account, for a partner or a housemate, is one you create by hand in the admin screen."
+  ],
+  "sources": {
+    "compose": "https://miniflux.app/docs/docker.html",
+    "caddy": "https://miniflux.app/docs/howto.html",
+    "install": "https://miniflux.app/docs/configuration.html",
+    "database": "https://miniflux.app/docs/database.html",
+    "requirements": "https://miniflux.app/docs/requirements.html",
+    "cli": "https://miniflux.app/docs/cli.html",
+    "image": "https://github.com/miniflux/v2/blob/2.3.3/packaging/docker/alpine/Dockerfile",
+    "health": "https://github.com/miniflux/v2/blob/2.3.3/internal/http/server/routes.go",
+    "apis": "https://miniflux.app/docs/google_reader.html",
+    "tls": "https://caddyserver.com/docs/caddyfile/directives/reverse_proxy"
+  },
+  "related": [
+    "freshrss",
+    "wallabag",
+    "linkding"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "f047bee6f26f32b1afe4d65a2d3edaff458284d72355de065a4c016fb3acb46b"
+}

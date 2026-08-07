@@ -1,0 +1,73 @@
+{
+  "slug": "chatbase",
+  "name": "Chatbase",
+  "domain": "chatbase.co",
+  "whyPeoplePay": "Chatbase sells the shortest distance between a pile of help-centre pages and a chat bubble that answers questions about them. You point it at a website or upload some documents, it does the retrieval and the model calls for you, and the widget goes live the same afternoon with no key to manage and no server to run. The meter is message credits, and the plans above the first one are really buying credits, seats and the integrations that put the same agent in a helpdesk, a phone line or an outbound campaign.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "50 message credits a month, one agent, and agents are deleted after 14 days of inactivity."
+    },
+    {
+      "name": "Hobby",
+      "priceMonthly": 40,
+      "unit": "flat",
+      "seatsIncluded": 2,
+      "note": "700 message credits a month and 2 workspace seats. $384 a year on annual billing, which the page shows as $32/month."
+    },
+    {
+      "name": "Standard",
+      "priceMonthly": 150,
+      "unit": "flat",
+      "seatsIncluded": 3,
+      "note": "4,000 message credits a month, 3 seats, and the tier where API access, helpdesk, voice and outbound campaigns start. $1,440 a year on annual billing, shown as $120/month."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 500,
+      "unit": "flat",
+      "seatsIncluded": 5,
+      "note": "15,000 message credits a month and 5 seats. $4,800 a year on annual billing, shown as $400/month."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The page lists SSO, white-labelling, audit logs, SLAs and zero data retention here."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://www.chatbase.co/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The pricing page renders its numbers in JavaScript and every automated read we took on 2026-08-07 came back with the yearly toggle applied, showing $32, $120 and $400 alongside the $384, $1,440 and $4,800 annual totals. The monthly-billed figures recorded here, $40, $150 and $500, are the 20% higher rate those annual totals imply and were corroborated against an independent pricing write-up updated 2026-06-03. Credit allowances are the ones the vendor page itself showed on the day; the same third-party page reports 500 rather than 700 for Hobby, so treat that one line as the least certain. Add-ons sit on top of every plan and move the real bill more than the plan does: $40 per 1,000 extra message credits, $300 a year per extra agent, and $1,188 a year to remove the Powered By Chatbase badge."
+  },
+  "ranked": [
+    {
+      "project": "typebot",
+      "rationale": "The honest swap is a different shape, and worth understanding before you install it. Typebot is a conversational flow builder: you draw the conversation, branch it on what people answer, and every reply lands in a results table you own, with no message-credit meter and no $1,188 a year to take somebody else's badge off your own site. Its AI blocks call OpenAI, Anthropic, Mistral, Groq and others with a key you hold, so the answers are metered per token and billed to you rather than converted into credits. What it does not do is Chatbase's headline trick: point it at your help centre and let it answer from the pages. There is no built-in ingestion, embedding or retrieval, so a support bot here is a flow you design plus, if you want free-text answers, a prompt you write and a provider you pay. If what you actually wanted was a form rather than a conversation, the form builders in this catalogue are the shorter road."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Dify",
+      "repo": "https://github.com/langgenius/dify",
+      "note": "The closest thing on this list to what Chatbase actually sells: document ingestion, a vector store, retrieval and an agent builder in one product, with a knowledge base you upload files to. Two caveats. The licence is a modified Apache 2.0 with added conditions, so you may not run it as a multi-tenant service and may not remove the console branding without a commercial licence. And the self-hosted stack is large, roughly nine containers including a vector database, which is a weekend and an ongoing operational load rather than an evening."
+    },
+    {
+      "name": "Flowise",
+      "repo": "https://github.com/FlowiseAI/Flowise",
+      "note": "A drag-and-drop builder for LLM chains and retrieval pipelines, popular and moving fast, Apache 2.0 for everything outside the enterprise directory, which is under a separate commercial licence and holds the SSO and workspace features. It gets you closer to Chatbase's retrieval story than Typebot does, and further from Chatbase's finished widget: you are assembling the bot from nodes rather than filling in a product. Judge it on whether you want to own that pipeline."
+    },
+    {
+      "name": "Botpress",
+      "repo": "https://github.com/botpress/v12",
+      "note": "Check which repository you are looking at, because the name moved. botpress/botpress is now the SDK, CLI and integrations for Botpress Cloud, MIT-licensed but not a server you host. The self-hostable product is Botpress v12, AGPL-3.0, in this separate repository, and it has been in maintenance for years: the last tagged release is v12.30.9 from June 2023 and the last commit lands in April 2025. It was a genuinely good visual bot builder. Starting a new install on it in 2026 means adopting an application nobody is patching."
+    }
+  ]
+}

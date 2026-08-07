@@ -1,0 +1,98 @@
+{
+  "slug": "typebot",
+  "name": "Typebot",
+  "tagline": "Draw a conversation, publish it on your own domain, and keep every answer in a database you own.",
+  "repo": "baptisteArno/typebot.io",
+  "site": "https://typebot.io",
+  "category": "marketing-content",
+  "replaces": [
+    {
+      "saas": "chatbase",
+      "plan": "Hobby",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 3,
+    "externalDb": true,
+    "needsSmtp": true,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 15,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 240,
+  "license": "FSL-1.1-ALv2",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/baptisteArno/typebot.io/blob/v3.17.2/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Every bot you publish here answers at http://localhost:8977 and an id, which resolves on this computer and nowhere else, so the people you wanted to talk to the bot get a connection error instead of question one."
+  },
+  "quote": {
+    "text": "Typebot server itself does not perform SSL termination. It only runs on unencrypted HTTP.",
+    "source": "Typebot documentation, Docker",
+    "url": "https://docs.typebot.com/self-hosting/deploy/docker",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "Typebot ships as two applications, a builder and a viewer, each with its own image and its own port, and upstream's reverse-proxy example gives them separate hostnames with separate DNS records.",
+      "url": "https://docs.typebot.com/self-hosting/deploy/docker"
+    },
+    {
+      "claim": "ENCRYPTION_SECRET must be exactly 32 characters, NEXTAUTH_URL and NEXT_PUBLIC_VIEWER_URL are both required and must be publicly accessible URLs, DISABLE_SIGNUP closes new sign-ups, and ADMIN_EMAIL names the address that gets an UNLIMITED plan on user creation.",
+      "url": "https://docs.typebot.com/self-hosting/configuration"
+    },
+    {
+      "claim": "The builder registers no sign-in provider at all unless a mail from-address or an OAuth client is configured: the provider list is built from NEXT_PUBLIC_SMTP_FROM and the OAuth client ids, and an empty list renders a sign-in page telling you to configure one.",
+      "url": "https://github.com/baptisteArno/typebot.io/blob/v3.17.2/packages/auth/src/lib/providers.ts"
+    },
+    {
+      "claim": "With DISABLE_SIGNUP set, upstream's sign-in callback rejects a new user unless the address is in ADMIN_EMAIL or holds a workspace invitation, which is what lets this install open with registration already closed.",
+      "url": "https://github.com/baptisteArno/typebot.io/blob/v3.17.2/packages/auth/src/lib/nextAuth.ts"
+    },
+    {
+      "claim": "The FREE workspace plan is capped at 200 chats a month and one seat in upstream's own constants, and the UNLIMITED plan returns an infinite limit for both, which is why this install sets DEFAULT_WORKSPACE_PLAN.",
+      "url": "https://github.com/baptisteArno/typebot.io/blob/v3.17.2/packages/billing/src/constants.ts"
+    },
+    {
+      "claim": "Redis is optional in Typebot and is used only to rate limit sign-in requests by IP and to enable multiple media uploads on WhatsApp, which is why this install runs three containers instead of upstream's four.",
+      "url": "https://docs.typebot.com/self-hosting/configuration"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Source-available, not open source. Typebot is under the Functional Source License 1.1 with an Apache 2.0 future grant: you may run it, modify it and redistribute it for any purpose that is not a competing use, meaning you may not offer it to other people as a product that substitutes for Typebot. Each version turns Apache 2.0 two years after release. For one business running its own bots that boundary is nowhere near you; for an agency reselling hosted bots it is the whole question.",
+    "It does not train on your documents. This is the honest gap, and it is the main thing Chatbase sells. Typebot is a conversational flow builder: you draw the conversation, branch it on answers, and collect results. Its AI blocks call OpenAI, Anthropic, Mistral, Groq and others with a key you hold, so answers are metered per token and billed to you. There is no ingestion, no embedding and no retrieval over your own pages, so a bot that answers from your help centre is something you assemble, not something you switch on.",
+    "Two hostnames, not one. The builder and the viewer are separate Next.js servers that both own the root path, so this install puts the builder on the hostname you choose and the viewer on that same hostname with a bot prefix, and both need an A record. The viewer's hostname is the one inside every link and embed you hand out, which makes it the one you cannot change your mind about later.",
+    "Mail is the front door. Signing in is a six-digit code emailed to you, there is no password to fall back on, and Typebot registers no sign-in method at all until a relay is configured. This install asks for relay credentials before it starts anything, and it leaves out upstream's optional Redis, whose only jobs are rate-limiting those sign-in requests by IP and multi-file WhatsApp uploads.",
+    "No file uploads, no WhatsApp, no phone. Media uploads inside bots need S3-compatible storage on a third hostname and this install configures none, so upstream switches those blocks off. The helpdesk, voice, telephony and outbound-campaign features on the tiers you are leaving are a different product, not a settings page here."
+  ],
+  "sources": {
+    "compose": "https://docs.typebot.com/self-hosting/deploy/docker",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://docs.typebot.com/self-hosting/configuration",
+    "env": "https://github.com/baptisteArno/typebot.io/blob/v3.17.2/packages/env/src/index.ts",
+    "auth": "https://github.com/baptisteArno/typebot.io/blob/v3.17.2/packages/auth/src/lib/providers.ts",
+    "registration": "https://github.com/baptisteArno/typebot.io/blob/v3.17.2/packages/auth/src/lib/nextAuth.ts",
+    "health": "https://github.com/baptisteArno/typebot.io/blob/v3.17.2/apps/viewer/src/app/api/%5B%5B...rest%5D%5D/router.ts",
+    "image": "https://github.com/baptisteArno/typebot.io/blob/v3.17.2/Dockerfile",
+    "plans": "https://github.com/baptisteArno/typebot.io/blob/v3.17.2/packages/billing/src/constants.ts",
+    "license": "https://github.com/baptisteArno/typebot.io/blob/v3.17.2/LICENSE"
+  },
+  "related": [
+    "formbricks",
+    "heyform",
+    "librechat"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "efe6ee5eaf05071e1c11e85395295bb9e57e4c4560c28ce2df0b412532568178"
+}

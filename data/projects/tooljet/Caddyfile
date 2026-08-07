@@ -1,0 +1,29 @@
+# ToolJet · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from https://docs.tooljet.ai/docs/setup/docker/
+# and https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile with <DOMAIN> replaced by the hostname
+# pointed at this box. That hostname is also TOOLJET_HOST in .env.
+
+<DOMAIN> {
+	# ToolJet sends a Content-Security-Policy carrying `frame-ancestors *`,
+	# which lets any site load this editor in an iframe. This rewrites that
+	# one directive with a regular expression and leaves the rest alone.
+	header Content-Security-Policy "frame-ancestors [^;]+" "frame-ancestors 'self'"
+
+	header {
+		# Nothing in the container knows it is served over https.
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	encode zstd gzip
+
+	# 8176 is the loopback port compose publishes here, not a container port
+	# and not open in the firewall. reverse_proxy carries the editor's
+	# multiplayer WebSocket with no extra configuration.
+	reverse_proxy 127.0.0.1:8176
+}

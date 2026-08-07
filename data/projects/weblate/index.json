@@ -1,0 +1,92 @@
+{
+  "slug": "weblate",
+  "name": "Weblate",
+  "tagline": "Continuous localization that lives in your git repositories: translators work in a browser, Weblate commits the result back.",
+  "repo": "WeblateOrg/weblate",
+  "site": "https://weblate.org",
+  "category": "automation-dev",
+  "replaces": [
+    {
+      "saas": "lokalise",
+      "plan": "Growth",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 3,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 3072,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 120,
+  "license": "GPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/WeblateOrg/docker-compose/blob/main/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Weblate only polls your repositories and pushes commits while this computer is awake, and nobody you invite can open http://localhost:8173, so on the local path it is a workbench for one person over their own repositories rather than a place a team meets."
+  },
+  "quote": {
+    "text": "The corresponding private SSH key can not currently have a password, so ensure it is well protected.",
+    "source": "Weblate documentation, Weblate SSH key",
+    "url": "https://docs.weblate.org/en/latest/vcs.html",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's own compose file runs three services and reaches its cache through REDIS_HOST, which is why this install pairs Weblate with a PostgreSQL and a Valkey rather than anything else.",
+      "url": "https://github.com/WeblateOrg/docker-compose/blob/main/docker-compose.yml"
+    },
+    {
+      "claim": "The published image exposes port 8080, declares /app/data and /app/cache as volumes, runs as uid 1000, and carries a health check with a five-minute start period because migrations run in that window.",
+      "url": "https://github.com/WeblateOrg/docker/blob/main/Dockerfile"
+    },
+    {
+      "claim": "Upstream states 3 GB of RAM, 2 CPU cores and 1 GB of storage as the minimum for running Weblate, its database and a web server on a single host.",
+      "url": "https://docs.weblate.org/en/latest/admin/install.html"
+    },
+    {
+      "claim": "While WEBLATE_ADMIN_PASSWORD is set the admin account is adjusted to match it on every container start, and upstream warns that keeping a password in the configuration file is a risk.",
+      "url": "https://docs.weblate.org/en/latest/admin/install/docker.html"
+    },
+    {
+      "claim": "An administrator can copy an invitation link straight out of the pending-invitations list, so a second translator can be added on an install that has no mail server at all.",
+      "url": "https://github.com/WeblateOrg/weblate/blob/weblate-2026.8.1/weblate/templates/manage/users.html"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The reason to run this is also the part nobody can automate for you. Weblate's whole trick is that translations are commits in your own git repositories, and that only starts once you take the key it generates for itself under Manage, SSH keys and add its public half on your code host with write access. That is a browser session on an account you hold, it takes ten minutes, and until it is done you have a very good translation editor that pushes nowhere.",
+    "No mail, and that is a real edge you should see clearly. This install closes registration and creates one administrator, so nothing needs to send an email for the core loop to work: you add translators by copying an invitation link out of the Manage screen. What you do not have is self-service signup and password reset. The day you want strangers to register themselves, you are configuring a mail server.",
+    "You own a PostgreSQL and a data directory, and the data directory is the interesting one. It holds the cloned repositories, the translation memory, and the VCS private key, which upstream says plainly cannot carry a passphrase. Losing it means re-authorising Weblate on every code host it was connected to, so the archive in step 8 is not optional housekeeping.",
+    "It wants 3 GB of RAM before it wants anything else. The first boot runs migrations and builds static assets, which is the hungriest moment of the install, and a box sized for a small web app dies there rather than later. On a laptop the number that matters is Docker Desktop's allocation, not the machine's.",
+    "No managed translation vendors, no AI word allowance, no SSO, and nobody to call. Ordering professional translation inside the tool, the yearly machine-translation quota and the single sign-on are what the paid platforms are actually selling on top of the editor, and none of them arrives with this."
+  ],
+  "sources": {
+    "compose": "https://docs.weblate.org/en/latest/admin/install/docker.html",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://docs.weblate.org/en/latest/admin/install.html",
+    "image": "https://github.com/WeblateOrg/docker/blob/main/Dockerfile",
+    "start": "https://github.com/WeblateOrg/docker/blob/main/start",
+    "vcs": "https://docs.weblate.org/en/latest/vcs.html",
+    "users": "https://github.com/WeblateOrg/weblate/blob/weblate-2026.8.1/weblate/templates/manage/users.html",
+    "releases": "https://hub.docker.com/r/weblate/weblate"
+  },
+  "related": [
+    "tolgee",
+    "code-server",
+    "grafana"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "f728c4024874e2b069a2762dc40ef854c5ea9bd3ee50ac171fc1fe4c43358b30"
+}

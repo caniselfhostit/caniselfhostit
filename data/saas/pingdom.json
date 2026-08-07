@@ -68,7 +68,7 @@
     {
       "name": "Kener",
       "repo": "https://github.com/rajnandan1/kener",
-      "note": "MIT, and the most actively developed status page in this list: releases through July 2026 and commits this month. Upstream describes it as combining public status page essentials with admin workflows, so incidents and monitors are managed in a browser rather than in a file. Its own compose file runs Redis beside the app and asks for a secret key and a public origin before the first boot, which is two services and a credential where Gatus is one binary and one file."
+      "note": "MIT, and the most actively developed status page in this list: releases through July 2026 and commits this month. Upstream describes it as combining public status page essentials with admin workflows, so incidents and monitors are managed in a browser rather than in a file. It has since earned its own page in this catalog as the Uptime answer, where its two-service install is written up in full. On this page Gatus keeps the top spot for the one-binary, one-file shape."
     },
     {
       "name": "Statping-ng",

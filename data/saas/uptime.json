@@ -1,0 +1,95 @@
+{
+  "slug": "uptime",
+  "name": "Uptime.com",
+  "domain": "uptime.com",
+  "whyPeoplePay": "Uptime.com checks your site from places that are not your site, and that is the half a single self-hosted instance cannot honestly reproduce: even the entry subscription runs each check from three of twelve locations, so a regional outage looks different from a dead server. The bill also buys transaction checks that click through a signup flow, SMS alerts that still arrive on the morning your own infrastructure is what broke, and a hosted status page with a subscriber list somebody else keeps online. It is sold as four separate quantity sliders added to one subscription rather than as named plans, which is why the second line of your invoice is usually the status page.",
+  "plans": [
+    {
+      "name": "Website Monitoring · 10 basic checks",
+      "priceMonthly": 9,
+      "unit": "usage",
+      "seatsIncluded": null,
+      "note": "The first step on the website-monitoring slider: 10 basic checks, 1 advanced check, 25 SMS alerts. $84/yr billed annually, which is $7/mo."
+    },
+    {
+      "name": "Website Monitoring · 50 basic checks",
+      "priceMonthly": 38,
+      "unit": "usage",
+      "seatsIncluded": null,
+      "note": "50 basic checks, 5 advanced checks, 75 SMS alerts. $360/yr billed annually."
+    },
+    {
+      "name": "Website Monitoring · 200 basic checks",
+      "priceMonthly": 150,
+      "unit": "usage",
+      "seatsIncluded": null,
+      "note": "200 basic checks, 15 advanced checks, 200 SMS alerts. $1,440/yr billed annually. The slider continues past this to 30,000 basic checks at $13,343/mo."
+    },
+    {
+      "name": "Status Pages · 1 page",
+      "priceMonthly": 13,
+      "unit": "usage",
+      "seatsIncluded": null,
+      "note": "A separate module added to the same subscription: 1 status page, 250 subscribers. $120/yr billed annually. The slider continues to 100 pages and 150,000 subscribers at $513/mo."
+    },
+    {
+      "name": "Real User Monitoring · 50,000 data points",
+      "priceMonthly": 7,
+      "unit": "usage",
+      "seatsIncluded": null,
+      "note": "Another module on the same subscription, measured in RUM data points per month. $60/yr billed annually. The slider continues to 10 million data points at $938/mo."
+    },
+    {
+      "name": "Probe Server Locations · 86 locations",
+      "priceMonthly": 38,
+      "unit": "usage",
+      "seatsIncluded": null,
+      "note": "Widens where the checks run from: 86 check locations, 5 locations per check. $360/yr billed annually. The first step of this module costs nothing and already gives 12 locations at 3 per check, so every paid subscription watches from outside your network by default."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The pricing page offers custom pricing for large organisations rather than a figure."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://uptime.com/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Uptime.com does not sell named plans. Its pricing page is a calculator with four modules, each a quantity slider, and the figures above are the monthly and yearly values that page carries for the steps named, read on 2026-08-07, with the monthly-billed figure recorded and the annual-billed equivalent in each plan note. Confidence is medium for two reasons: the plan names above are ours, because the sliders have none, and the vendor's own materials still refer to a legacy Starter, Essential, Premium and Custom ladder, with a 2023 announcement putting Starter at $20/mo for 20 basic checks. We could not reconcile that ladder with what the pricing page sells today, so treat the module figures as current and the named tiers as history. The page advertises over 20% off for annual billing and a 30-day guarantee, and shows no free tier."
+  },
+  "ranked": [
+    {
+      "project": "kener",
+      "rationale": "The closest thing here to what an Uptime.com subscription is actually for: a status page you would show customers, with the monitoring behind it rather than bolted on. Monitors, incidents, maintenance windows and multiple pages are managed in a signed-in browser, so declaring an incident is a form rather than a commit, and the page a visitor sees carries the incident timeline that most self-hosted monitors leave out. What you take on is two containers instead of one, because Redis is not optional in v4, and a single vantage point where Uptime.com sells twelve."
+    },
+    {
+      "project": "gatus",
+      "rationale": "The one to pick if the checks belong in version control. Every monitor, pass condition and alert rule lives in one YAML file you own, and the conditions go past `is it 200` to response time, JSON body fields, certificate expiry and DNS records, which is closer to what Uptime.com's advanced checks are sold for. The status page is plainer than Kener's and there is no incident timeline to publish, so it ranks second here for the reader who came looking for the page rather than the checks."
+    },
+    {
+      "project": "uptime-kuma",
+      "rationale": "The broadest notification support of the three and the fastest to get a monitor running, from one container with no Redis and no database to operate. Its status pages exist but are the side feature rather than the product, so pick it when the alerts matter more than what the public sees. The honest line applies to all three and to this one first, because it is the one people run on the same box as everything else: a monitor cannot report the outage that takes down the machine it is running on."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Cachet",
+      "repo": "https://github.com/cachethq/cachet",
+      "note": "The best known self-hosted status page by a distance, 15k stars, and the one whose licence needs reading before you deploy it. The 3.x branch is busy, but the newest tagged release is v2.4.1 from November 2023, and 3.x ships a custom Alt Three licence that permits use and modification while forbidding redistribution as a standalone product, with composer.json declaring `proprietary`. It is a status page only: no checks, no scheduler, so something else has to tell it what is down."
+    },
+    {
+      "name": "Upptime",
+      "repo": "https://github.com/upptime/upptime",
+      "note": "MIT, 17k stars, actively developed, and not self-hosted in the sense this catalogue means. The checks run as GitHub Actions on a schedule in a repository you fork, the history is commits, and the status page is GitHub Pages, so there is no container and no server, and also no sub-five-minute interval and no data anywhere but GitHub. A real answer for a small public page, a poor one for anything private."
+    },
+    {
+      "name": "cstate",
+      "repo": "https://github.com/cstate/cstate",
+      "note": "MIT, a Hugo theme that renders a static status page from markdown files, latest release 6.0.1 in July 2025. Nothing runs: no checks, no database, no process to keep alive, which makes it the cheapest possible way to publish an incident and useless for noticing one. Worth knowing about if what you actually want from Uptime.com is the page and you already have monitoring elsewhere."
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+# Typebot · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker install .. https://docs.typebot.com/self-hosting/deploy/docker
+#   configuration ... https://docs.typebot.com/self-hosting/configuration
+#
+# Three services, paths relative to ~/selfhost/typebot/ so one file works on
+# macOS, Linux and Windows. Builder on 8177, viewer on 8977: two Next.js
+# servers each owning the root path, and only the builder migrates the
+# database. PostgreSQL keeps its data in a named volume, not a bind mount,
+# because the image chowns that directory to a uid Docker Desktop cannot grant
+# on a Windows home directory. Digests read 2026-08-07, all multi-arch.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: postgres:16.14-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: typebot
+      POSTGRES_USER: typebot
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - typebot-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U typebot -d typebot"]
+      interval: 10s
+      retries: 12
+
+  builder:
+    image: baptistearno/typebot-builder:3.17.2@sha256:a67edf944eb64e885a3660d8bbd11102b9d468d31dbf4b7f6170e4cd2ceaa9d3
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      DATABASE_URL: postgresql://typebot:${POSTGRES_PASSWORD}@postgres:5432/typebot
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/auth/providers').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 15s
+      retries: 24
+      start_period: 120s
+    ports:
+      # Loopback only: no other device on the wifi can reach 8177.
+      - "127.0.0.1:8177:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  viewer:
+    image: baptistearno/typebot-viewer:3.17.2@sha256:70f1dd949f2246432650cfda082c01e45089fb129369ceee6632d57b9c5f2b7e
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      DATABASE_URL: postgresql://typebot:${POSTGRES_PASSWORD}@postgres:5432/typebot
+    ports:
+      # Loopback only: no other device on the wifi can reach 8977.
+      - "127.0.0.1:8977:3000"
+    depends_on:
+      builder:
+        condition: service_healthy
+
+volumes:
+  typebot-pgdata:

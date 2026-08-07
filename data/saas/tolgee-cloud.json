@@ -1,0 +1,79 @@
+{
+  "slug": "tolgee-cloud",
+  "name": "Tolgee",
+  "domain": "tolgee.io",
+  "whyPeoplePay": "Tolgee sells the awkward half of localisation as a service. The platform half is a hosted place where developers, translators and the machine-translation providers meet, with the key count, the seats and the AI credits metered on one bill. The distinctive half is in-context editing: an SDK in your running application lets someone click a string on the page and fix it, which only works if the editor is reachable from wherever that application runs. Paid tiers buy headroom on keys and seats, glossaries and professional translation, and above those the things a procurement form asks for, single sign-on, ISO 27001 and a named account manager. The free tier is real rather than a trial, 500 keys and 3 seats with no card, which is why the first bill usually arrives the week a project outgrows a few hundred strings.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 3,
+      "note": "500 keys, 3 seats, 10,000 machine-translation credits, all standard localization features and all integrations. No card required."
+    },
+    {
+      "name": "Team",
+      "priceMonthly": 49,
+      "unit": "flat",
+      "seatsIncluded": 4,
+      "note": "2,000 keys and 4 seats included, plus 1,000,000 MT credits. Figure is the euro amount the page shows as 49 a month billed annually; extra capacity is pay-as-you-go at 5 a month per 1,000 keys and 8 a month per extra seat."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": 179,
+      "unit": "flat",
+      "seatsIncluded": 8,
+      "note": "5,000 keys and 8 seats, adding professional translation, translation-memory management, AI playground, QA checks, webhooks and more content-delivery configs. Euro amount, billed annually; extra seats 14 a month."
+    },
+    {
+      "name": "Advanced",
+      "priceMonthly": 499,
+      "unit": "flat",
+      "seatsIncluded": 20,
+      "note": "20,000 keys and 20 seats, adding branching, granular permissions, labels, Slack integration and custom content storage. Euro amount, billed annually; extra seats 22 a month."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. Keys, seats and MT credits are all listed as negotiable, and the tier adds single sign-on, premium support, a dedicated Slack channel, an account manager, team training, ISO 27001 and GDPR paperwork."
+    },
+    {
+      "name": "On-Premises",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only, described as monthly or annual licensing tailored to your needs. This is the paid self-hosted edition, for teams that need advanced features or more seats than the free self-hosted build gives; the community build this page ranks is a different thing and costs nothing."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://tolgee.io/pricing",
+    "currency": "USD",
+    "confidence": "low",
+    "note": "Read this before you quote a number. Tolgee prices in euro and publishes no dollar ladder anywhere on the page, so every figure above is the euro amount, recorded unconverted rather than turned into dollars we could not source. Treat the currency field as this catalogue's launch limitation, not as a claim about the bill. The page also shows only annual-billed rates in its served markup: the Monthly toggle redraws the cards in the browser, so the month-to-month prices were not readable and are not recorded. Annual billing is advertised as two months free, which puts month-to-month roughly a fifth above each figure here. Included keys, seats and MT credits, and the pay-as-you-go rates for extra keys and seats, come from the detailed comparison table on the same page on the same day."
+  },
+  "ranked": [
+    {
+      "project": "tolgee",
+      "rationale": "The same repository the cloud runs, published by the same company, and the one place the in-context editing story survives self-hosting intact: the SDKs, the CLI, the REST API, the Figma plugin and the alt-click editor are all in the Apache-2.0 core. What self-hosting removes is exactly what the pricing page is built on, the key count and the seat count, and both become whatever your PostgreSQL will hold. Two costs are real. The Docker image ships with authentication disabled, so an install that does not deliberately turn it on hands every visitor a session as the administrator, and that is the first thing to check rather than the last. And the ee/ directory carries a separate non-commercial licence covering what the paid editions sell, so this is the free tier of a commercial product rather than a fully open stack."
+    },
+    {
+      "project": "weblate",
+      "rationale": "Second place here, and the better answer if the translations belong in a git repository rather than in a database. Weblate is GPL-3.0, older, and built around committing translated files back to your own repo, with a translator-facing workflow, quality checks and a large community of open-source projects already using it. The reasons it is second on this page are specific: it is a heavier install, and it answers a different question. Tolgee is what tolgee.io actually sells, so replacing that subscription with the vendor's own build is the like-for-like swap, and the in-context editor a developer clicks through in their own running app is Tolgee's, not Weblate's."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Ever Traduora",
+      "repo": "https://github.com/ever-co/ever-traduora",
+      "note": "AGPL-3.0, the closest thing here to an API-first translation platform: projects, terms, locales and imports or exports in most of the formats you would ask for, all behind a documented REST API. Read the pace honestly before committing to it. The last tagged release is v0.21.0 from June 2025 and the commits landing since have been dependency bumps and a framework upgrade rather than features, so it is maintained rather than developed. It is not ranked because there is no in-context editing SDK, which is the half of Tolgee this page is about."
+    },
+    {
+      "name": "Accent",
+      "repo": "https://github.com/mirego/accent",
+      "note": "BSD-3-Clause, from an agency that built it for its own work, and the one on this list with the clearest opinion: translation files are versioned, every change is a revision you can look at, and a CLI syncs them from your repository. v1.30.5 shipped in June 2026 and the project is still moving. It is Elixir and Phoenix over PostgreSQL, which is a fine stack and an unfamiliar one to operate for most people reading this page, and there is no in-context editor. Worth a look if a reviewable history of every string matters more than clicking one in a browser."
+    }
+  ]
+}

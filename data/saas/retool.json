@@ -50,7 +50,7 @@
     {
       "name": "ToolJet",
       "repo": "https://github.com/ToolJet/ToolJet",
-      "note": "The nearest rival to Appsmith on features and the more active repository of the two, releasing continuously. AGPL-3.0 at the root, with the paid half kept in two private git submodules, ToolJet/ee-frontend and ToolJet/ee-server, so the code you can read is genuinely AGPL and the code behind the licence key is not published at all. We ranked Appsmith first on the simpler licence and the single-container install; if you would rather have the newer builder and do not mind AGPL, this is the one to look at."
+      "note": "The nearest rival to Appsmith on features and the more active repository of the two, releasing continuously. AGPL-3.0 at the root, with the paid half kept in two private git submodules, ToolJet/ee-frontend and ToolJet/ee-server, so the code you can read is genuinely AGPL and the code behind the licence key is not published at all. It has since earned its own page in this catalog as the ToolJet Cloud answer, where its LTS install is written up in full. On this page Appsmith keeps the top spot for the simpler licence and the single-container install."
     },
     {
       "name": "Budibase",

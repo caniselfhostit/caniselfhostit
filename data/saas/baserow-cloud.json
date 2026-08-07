@@ -1,0 +1,65 @@
+{
+  "slug": "baserow-cloud",
+  "name": "Baserow",
+  "domain": "baserow.io",
+  "whyPeoplePay": "Baserow sells a shared table a whole team edits at once, with views, forms, linked records and an API, and it sells it twice: once as hosting you rent, once as software you download. The subscription buys somebody else running the PostgreSQL every row lands in, the upgrades, the backups and a European company you can name in a data-processing agreement. It also buys features, which is the part worth reading before you cancel: the bill is per user per month, it climbs with the number of people allowed to open the workspace rather than with the amount of data, and the views most teams reach for second, kanban and calendar and timeline, sit above the free tier along with the permissions model.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": null,
+      "note": "The page lists 3,000 rows per workspace, 2 GB of storage, 2,000 automation credits, and grid, form and gallery views."
+    },
+    {
+      "name": "Premium",
+      "priceMonthly": 12,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per user per month billed monthly; the page shows $10 per user per month when billed yearly. Raises the workspace to 50,000 rows and 20 GB, and adds the kanban, survey, calendar and timeline views, personal views and the AI features."
+    },
+    {
+      "name": "Advanced",
+      "priceMonthly": 22,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per user per month billed monthly; the page shows $18 per user per month when billed yearly. Raises the workspace to 250,000 rows and 100 GB, and adds role-based permissions, field and view permissions, custom roles, snapshots, audit logs and XML, JSON and Excel export."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The page says on request and lists 1,000,000 rows per workspace, 1,000 GB of storage, unlimited external app users, secure file serving, custom application domains and implementation support."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://baserow.io/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The pricing page draws its plan cards in the browser and opens on the yearly-billing toggle, so the monthly-billed figures recorded here ($12 and $22 per user) were read alongside the yearly ones ($10 and $18 per user) from the same page on the same day, and the yearly pair was corroborated against third-party listings. Confidence is medium rather than high because we have not seen the monthly-billed pair confirmed in a checkout, and because the self-hosted licence keys the same company sells for Premium, Advanced and Enterprise carry no public price on this page at all."
+  },
+  "ranked": [
+    {
+      "project": "baserow",
+      "rationale": "It is the same product from the same company, and self-hosting is the path they document rather than one they tolerate: Baserow B.V. publishes the image, writes the install guide and ships a compose file it calls the recommended way to run it. The grids, forms, formulas, linked tables and REST API come across whole, and the row and storage caps that define the paid tiers do not exist on your own disk. Two costs, both honest. The all-in-one image is one container running a PostgreSQL, a Redis, a Django, a Nuxt and a Caddy together, so the floor is 4 GB and the first boot takes minutes. And the split in the LICENSE file is real: kanban, calendar, timeline and survey views, personal views, row comments and dashboard widgets are premium, and permissions, audit logs, snapshots, custom roles and SSO are advanced or enterprise. What you stop paying for is the seat meter, not the feature ladder."
+    },
+    {
+      "project": "grist",
+      "rationale": "Second place here, and the answer if the spreadsheet half is what you came for rather than the Baserow half. Grist gives you formulas written in Python instead of a bespoke expression language, access rules that reach down to the individual row, and documents that are plain SQLite files you can copy, all from a single container with no database process at all. It is the lighter install of the two and it lands in an evening. What it is not is Baserow: you leave behind the interface you already know, the automations, and any chance of moving between the hosted plan and your own server without an export."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "NocoDB",
+      "repo": "https://github.com/nocodb/nocodb",
+      "note": "The closest thing to Airtable's feel in this category and the busiest project on this page, with 2026.08.0 released in August 2026 and commits landing daily. It is not the ranked pick because of the licence rather than the software: a commit in January 2026 moved the project to the source-available Sustainable Use License, applied in LICENSE.md to both the master and develop branches. Maintained, and no longer open source. Not tested by us."
+    },
+    {
+      "name": "Teable",
+      "repo": "https://github.com/teableio/teable",
+      "note": "GitHub reports no single licence here either, and for a third reason: the two core applications are AGPL-3.0 with additional Section 7 brand-protection terms while the packages/ directory is MIT. Development is fast to the point of noise, with releases published daily through August 2026, and it wants a PostgreSQL of its own rather than bringing one. Interesting, moving quickly, and not something we would point a first-time self-hoster at yet. Not tested by us."
+    }
+  ]
+}

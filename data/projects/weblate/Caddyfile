@@ -1,0 +1,32 @@
+# Weblate · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.weblate.org/en/latest/admin/install/docker.html and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also WEBLATE_SITE_DOMAIN in compose.yml: Weblate builds every link it prints
+# out of that value, so the two have to say the same thing.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	# No frame header here on purpose. Django sets X-Frame-Options itself,
+	# and one set at this layer would override the application's answer
+	# without the application knowing.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# 8173 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall. Caddy sets
+	# X-Forwarded-For and X-Forwarded-Proto itself and ignores what the
+	# client sent, which is what WEBLATE_IP_PROXY_HEADER and
+	# WEBLATE_SECURE_PROXY_SSL_HEADER read. No upstream response timeout,
+	# so a first clone of a large repository has as long as it needs.
+	reverse_proxy 127.0.0.1:8173
+}

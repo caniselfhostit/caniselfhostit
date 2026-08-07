@@ -1,0 +1,58 @@
+# Countly Lite · the deterministic fallback. Authored by caniselfhostit from the
+# upstream sources, not copied from a repository:
+#   single-image build . https://github.com/Countly/countly-server/blob/25.03.51/Dockerfile-core
+#   api config keys .... https://github.com/Countly/countly-server/blob/25.03.51/api/config.sample.js
+#
+# countly-core is upstream's single-image build: an nginx, the collection API on
+# 3001 and the dashboard on 6001 all run inside it under runit.
+#
+# MongoDB runs with no user and no password, as upstream's compose does, which
+# is acceptable only because it publishes no port. fileStorage defaults to
+# gridfs, so uploads are documents in the database and the countly service needs
+# no volume: all of the state is in MongoDB. Digests read on 2026-08-07;
+# countly-core is amd64 only, which is why step 1 stops on arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  mongodb:
+    image: mongo:8.0.28@sha256:98605bfa1bb2a15dd82109e1d78ad31527a9a744909fab4606076fa71a0ae515
+    container_name: countly-db
+    restart: unless-stopped
+    command: ["mongod", "--bind_ip_all", "--quiet"]
+    volumes:
+      - /srv/countly/mongo:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "quit(db.adminCommand('ping').ok ? 0 : 1)"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 20s
+    # No `ports:` at all: 27017 is reachable only from the other container.
+
+  countly:
+    image: countly/countly-core:25.03.51@sha256:e3d94902a3c4c609fdda3895ea4326693c5f30289cf2f6a84e35b9773a182c03
+    container_name: countly
+    restart: unless-stopped
+    env_file: /srv/countly/.env
+    environment:
+      # The empty middle component means "the API and the dashboard both".
+      COUNTLY_CONFIG__MONGODB_HOST: mongodb
+      COUNTLY_CONFIG__FILESTORAGE: gridfs
+      # Upstream forks one worker per core; each is a Node heap of its own.
+      COUNTLY_CONFIG_API_API_WORKERS: "2"
+      # Caddy terminates TLS and the dashboard cannot see that from in here.
+      # Told, it stamps X-Forwarded-Proto https before its own session
+      # middleware runs, which is what marks the cookie Secure.
+      COUNTLY_CONFIG_FRONTEND_WEB_SECURE_COOKIES: "true"
+      COUNTLY_CONFIG_FRONTEND_COOKIE_SECURE: "true"
+      # Upstream ships an Intercom widget on and usage reporting to
+      # stats.count.ly on. Both off.
+      COUNTLY_CONFIG_FRONTEND_WEB_USE_INTERCOM: "false"
+      COUNTLY_CONFIG_FRONTEND_WEB_TRACK: none
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8174.
+      - "127.0.0.1:8174:80"
+    depends_on:
+      mongodb:
+        condition: service_healthy

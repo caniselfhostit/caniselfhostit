@@ -1,0 +1,79 @@
+# ToolJet · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker deployment .. https://docs.tooljet.ai/docs/setup/docker/
+#   variable reference . https://docs.tooljet.ai/docs/setup/env-vars/
+#   sizing ............. https://docs.tooljet.ai/docs/setup/system-requirements/
+#   tooljet database ... https://docs.tooljet.ai/docs/tooljet-db/tooljet-database/
+#
+# Upstream's in-built-PostgreSQL deployment in our layout: the ToolJet server,
+# one PostgreSQL holding the three databases it makes for itself, and the
+# PostgREST the ToolJet Database is read through. No Redis service: the -ce
+# image starts one in its own container. -ce is the community edition, the tree
+# AGPL-3.0 covers; the paid half sits in two private git submodules. Digests
+# read 2026-08-07.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: postgres:16.14-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
+    container_name: tooljet-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tooljet_production
+      POSTGRES_USER: tooljet
+      POSTGRES_PASSWORD: ${PG_PASS}
+    volumes:
+      - /srv/tooljet/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tooljet -d tooljet_production"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other containers.
+
+  tooljet:
+    image: tooljet/tooljet-ce:v3.20.208-lts@sha256:78cb01a47c2a0f5efde54ebf2ff3d4c704c1523e1a6b497df65697028701f3c9
+    container_name: tooljet
+    restart: unless-stopped
+    # amd64 only, named rather than guessed. PORT is 3000, not 80, because
+    # this image runs as a non-root user.
+    platform: linux/amd64
+    env_file: /srv/tooljet/.env
+    command: ["npm", "run", "start:prod"]
+    environment:
+      SERVE_CLIENT: "true"
+      PORT: "3000"
+      # Three databases are made on the first boot.
+      PG_HOST: postgres
+      PG_USER: tooljet
+      PG_DB: tooljet_production
+      TOOLJET_DB_HOST: postgres
+      TOOLJET_DB_USER: tooljet
+      TOOLJET_DB_PASS: ${PG_PASS}
+      TOOLJET_DB: tooljet_db
+      PGRST_HOST: http://postgrest:3000
+      # No browser makes an account except the first administrator's, and
+      # neither of the next two phones home, which upstream ships them doing.
+      DISABLE_SIGNUPS: "true"
+      DISABLE_TOOLJET_TELEMETRY: "true"
+      CHECK_FOR_UPDATES: "false"
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8176.
+      - "127.0.0.1:8176:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgrest:
+    image: postgrest/postgrest:v12.2.0@sha256:2cf1efd2c9c2e7606610c113cc73e936d8ce9ba089271cb9cbf11aa564bc30c7
+    container_name: tooljet-postgrest
+    restart: unless-stopped
+    environment:
+      PGRST_DB_URI: postgres://tooljet:${PG_PASS}@postgres:5432/tooljet_db
+      PGRST_JWT_SECRET: ${PGRST_JWT_SECRET}
+      PGRST_DB_PRE_CONFIG: postgrest.pre_config
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # Restarts until ToolJet's first boot has made tooljet_db and its
+    # postgrest.pre_config function. No `ports:` here either.

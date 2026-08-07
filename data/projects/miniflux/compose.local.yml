@@ -1,0 +1,60 @@
+# Miniflux · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker install ..... https://miniflux.app/docs/docker.html
+#   configuration ...... https://miniflux.app/docs/configuration.html
+#   database ........... https://miniflux.app/docs/database.html
+#
+# Two services on the computer the reader is sitting at. Paths are relative to
+# ~/selfhost/miniflux/, so one file works on macOS, Linux and Windows. Miniflux
+# writes nothing to disk, so the database is the whole backup surface, and it is
+# a named volume because PostgreSQL chowns that directory to its own uid, which
+# a home-directory bind mount cannot allow on Windows. No TLS here, so the VPS
+# file's HTTPS setting is absent. Digests read on 2026-08-07.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: postgres:18.4-alpine@sha256:9a8afca54e7861fd90fab5fdf4c42477a6b1cb7d293595148e674e0a3181de15
+    container_name: miniflux-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: miniflux
+      POSTGRES_USER: miniflux
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - miniflux-pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U miniflux -d miniflux"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other container.
+
+  miniflux:
+    image: miniflux/miniflux:2.3.3@sha256:49d7b60987616387c306a8023087b31f2c9b7b21288b523026cb04058e8b6dbb
+    container_name: miniflux
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      # Hex, not base64: upstream warns special characters can be rejected in
+      # this URL form unless URL encoded.
+      DATABASE_URL: postgres://miniflux:${DB_PASSWORD}@postgres:5432/miniflux?sslmode=disable
+      # Miniflux exits when the schema is behind the binary, so this stays set.
+      RUN_MIGRATIONS: "1"
+      # The one account comes from ADMIN_USERNAME and ADMIN_PASSWORD in .env;
+      # later starts log a skip. Miniflux has no self-registration.
+      CREATE_ADMIN: "1"
+    healthcheck:
+      # Upstream's own: the binary asks its own /healthcheck route.
+      test: ["CMD", "/usr/bin/miniflux", "-healthcheck", "auto"]
+      interval: 10s
+      retries: 12
+    ports:
+      # Loopback only; the same host port the VPS compose file publishes.
+      - "127.0.0.1:8180:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  miniflux-pgdata:

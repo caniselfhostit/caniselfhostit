@@ -1,0 +1,60 @@
+{
+  "slug": "amplitude",
+  "name": "Amplitude",
+  "domain": "amplitude.com",
+  "whyPeoplePay": "Amplitude answers questions a pageview counter cannot: how many people who signed up last month reached the second step, which cohort keeps coming back, where the drop is inside a flow you built. That is a different job from web analytics, and the part you are paying for is the query engine that will answer it over hundreds of millions of events in a few seconds, plus the people who keep that engine running while your product team asks it something new every afternoon.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "usage",
+      "seatsIncluded": null,
+      "note": "The page says 2M Events/month forever, with no credit card, and includes basic product analytics, 10K monthly session replays and 2,000 AI feedback records."
+    },
+    {
+      "name": "Plus",
+      "priceMonthly": 49,
+      "unit": "usage",
+      "seatsIncluded": null,
+      "note": "The pricing page prices this as Starts at $0 with the first 2M Events/month free, scaling up to 70M Events, and prints no rate above that allowance. Third-party pricing trackers report $49 a month billed annually as the entry rate, which is the figure recorded here; the vendor's own page does not show it."
+    },
+    {
+      "name": "Growth",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Custom, event based pricing, contact sales. Includes 20K monthly session replays."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Custom, event based pricing, contact sales. Includes 50K monthly session replays."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://amplitude.com/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Amplitude has moved to event-based pricing and its public page now shows Free, Starts at $0 for Plus, and Custom for Growth and Enterprise, with an estimator behind a credit card rather than a rate card. The $49 recorded against Plus is the annual-billed entry rate reported by third-party pricing trackers, corroborated but not printed on the vendor page, which is why this entity is medium confidence. Growth and Enterprise are quote-only and third-party contract data puts real spend far above any published figure."
+  },
+  "ranked": [
+    {
+      "project": "countly",
+      "rationale": "The only entry here built for the same shape of data: an SDK in your app posts sessions, custom events, user properties and crashes to a server you own, and there is no monthly event meter on the other end. Be clear about where the line falls, because it falls exactly where Amplitude earns its money. The open Lite server ships collection, the event and segment reports, crash reporting, push, ratings, remote config and the read and write APIs. Funnels, cohorts, user flows, retention and A/B testing are Enterprise plugins whose directories are not in the open repository at all. So this replaces the pipeline and the dashboard, and it does not replace the analysis."
+    },
+    {
+      "project": "matomo",
+      "rationale": "Worth naming because it is the one people reach for next, and worth being precise about: Matomo and the other web analytics tools in this catalogue count visits to pages, and Amplitude counts events inside a product. Matomo will track custom events and goals and give you a visitor profile, which covers a real slice of the question, and its Funnels plugin is a paid licence on the Marketplace even when you host it yourself. Pick it if what you actually want is your site's traffic without a hit meter, not your product's behaviour."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "PostHog",
+      "repo": "https://github.com/PostHog/posthog",
+      "note": "Feature for feature the closest open-source answer to this question: funnels, cohorts, retention, session replay and feature flags in one product. It is not in the ranked list because upstream says self-hosted deployments are officially unsupported, tells you the hobby deployment is for well under a million events a month, and keeps every paid-plan feature cloud-only. Underneath it is ClickHouse, Kafka, Redis and Postgres, which is a stack to operate rather than an install to finish. If you want it, their advice and ours agree: use their cloud."
+    }
+  ]
+}
