@@ -1,0 +1,47 @@
+{
+  "slug": "nextdns",
+  "name": "NextDNS",
+  "domain": "nextdns.io",
+  "whyPeoplePay": "NextDNS sells DNS that is already everywhere: blocklists, analytics and per-device profiles without running a resolver at home. You pay so phones on cellular and laptops in cafes keep the same policy without a VPN back to your house.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Limited monthly queries."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 1.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Unlimited queries on the advertised Pro tier; confirm current price on the vendor page."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://nextdns.io/pricing",
+    "currency": "USD",
+    "confidence": "low",
+    "note": "Confirm the Pro figure on nextdns.io/pricing before quoting savings; DNS products change promotions often. Recorded as a low flat monthly for a single household config."
+  },
+  "ranked": [
+    {
+      "project": "adguard-home",
+      "rationale": "Network-wide DNS blocking you run yourself. Best on a home LAN where you control the router; a public VPS as recursive DNS is a different and riskier shape."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Pi-hole",
+      "repo": "https://github.com/pi-hole/pi-hole",
+      "note": "The classic ad-blocking DNS. Surveyed, not installed here; AdGuard Home was ranked for a single-container image and a modern UI."
+    },
+    {
+      "name": "Blocky",
+      "repo": "https://github.com/0xERR0R/blocky",
+      "note": "Lightweight DNS proxy with blocklists. Surveyed only."
+    }
+  ]
+}

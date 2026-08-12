@@ -29,7 +29,7 @@
   "ranked": [
     {
       "project": "linkwarden",
-      "rationale": "The only self-hosted option that matches the reason people pay Raindrop: it keeps its own copy of every page it saves, as a screenshot, a PDF and a single-file HTML archive, so a dead link is still readable years later. It costs a PostgreSQL you operate and a headless browser that wants real memory, and searching inside those archives needs MeiliSearch, which our install leaves out."
+      "rationale": "The only self-hosted option that matches the reason people pay Raindrop: it keeps its own copy of every page it saves, as a screenshot, a PDF and a single-file HTML archive, so a dead link is still readable years later. It costs a PostgreSQL you operate and a headless browser that wants real memory, and searching inside those archives needs MeiliSearch (now in this catalog as the Algolia answer), which our Linkwarden install leaves out."
     }
   ],
   "evaluatedNotTested": []

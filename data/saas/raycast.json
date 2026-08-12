@@ -1,0 +1,47 @@
+{
+  "slug": "raycast",
+  "name": "Raycast",
+  "domain": "raycast.com",
+  "whyPeoplePay": "Raycast sells a fast launcher and a library of extensions that sit in front of the workday on macOS: clipboard history, snippets, AI, and team features that feel worth a few dollars when the alternative is a pile of single-purpose utilities.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Core launcher free."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 8,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Pro features including cloud sync and AI limits; confirm on raycast.com/pricing."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://www.raycast.com/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Pro around $8/user/month as commonly listed. IT Tools only replaces the habit of pasting into a random web utility (encoders, converters, generators). It does not replace Raycast as a launcher, window manager, clipboard history, or extension host."
+  },
+  "ranked": [
+    {
+      "project": "it-tools",
+      "rationale": "A self-hosted chest of encoder/converter/generator utilities so secrets never leave your browser for a random website. It is not a Raycast replacement for window management or extensions; it is the honest swap for the web-tool half of the habit."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Alfred",
+      "repo": "https://www.alfredapp.com/",
+      "note": "Paid launcher; not self-hosted software."
+    },
+    {
+      "name": "CyberChef",
+      "repo": "https://github.com/gchq/CyberChef",
+      "note": "Offline toolkit with a different UX. Surveyed only."
+    }
+  ]
+}

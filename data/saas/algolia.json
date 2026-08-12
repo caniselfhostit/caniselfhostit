@@ -1,0 +1,52 @@
+{
+  "slug": "algolia",
+  "name": "Algolia",
+  "domain": "algolia.com",
+  "whyPeoplePay": "Algolia sells search that feels instant on someone else's infrastructure: typo tolerance, ranking rules, analytics and a dashboard your PM can open, billed on records and search operations so the invoice grows with success.",
+  "plans": [
+    {
+      "name": "Build",
+      "priceMonthly": 0,
+      "unit": "usage",
+      "seatsIncluded": 1,
+      "note": "Free tier with usage caps; overage and higher tiers are usage-priced."
+    },
+    {
+      "name": "Grow",
+      "priceMonthly": null,
+      "unit": "usage",
+      "seatsIncluded": 1,
+      "note": "Usage-based; no honest flat monthly number without a traffic assumption."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://www.algolia.com/pricing",
+    "currency": "USD",
+    "confidence": "low",
+    "note": "Algolia is usage-priced on records and search operations. We do not invent a bill from operations you have not counted. Re-read the pricing page with your record and search volume before comparing."
+  },
+  "ranked": [
+    {
+      "project": "meilisearch",
+      "rationale": "A self-hosted search engine API with typo tolerance and a simple HTTP interface. You run the binary, hold the master key, create a search-scoped API key for browsers, and keep the indexes on disk you control. License at the pin is MIT AND BUSL-1.1 with EE features under BUSL."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Typesense",
+      "repo": "https://github.com/typesense/typesense",
+      "note": "The closest Algolia-shaped rival: typo-tolerant instant search with an API-key model. GPL-3.0 (a copyleft server some teams need to clear with legal), 26k stars, actively developed with official versioned typesense/typesense images. Meilisearch keeps the top spot here for the permissive-core licence and lighter single-binary operational story, not on capability."
+    },
+    {
+      "name": "Sonic",
+      "repo": "https://github.com/valeriansaliou/sonic",
+      "note": "MPL-2.0, 21k stars, active, with versioned valeriansaliou/sonic images (v1.7 line). A search backend rather than a search product: it returns matching IDs from a normalized index and leaves relevance, typo-tolerance and ranking to your application, so it answers a lighter question than Algolia does."
+    },
+    {
+      "name": "ZincSearch",
+      "repo": "https://github.com/zincsearch/zincsearch",
+      "note": "Apache-2.0 in the repository's LICENSE even though GitHub's API reports NOASSERTION. Elasticsearch-shaped API rather than Algolia-shaped, and the maintainers' energy has visibly moved to their OpenObserve product; pushes had slowed to a stop by mid-2026. Surveyed for completeness, not a live contender."
+    }
+  ]
+}

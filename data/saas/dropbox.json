@@ -68,6 +68,11 @@
       "name": "Syncthing",
       "repo": "https://github.com/syncthing/syncthing",
       "note": "A different model, and the honest one to put on this list: no server, no web interface for your files, no share links you can send to anyone. It keeps folders identical across machines that can reach each other, which is the half of Dropbox most people actually use, and there is no hub to back up because every copy is a copy. If you never needed a URL to hand a stranger, it is less to run than anything else here."
+    },
+    {
+      "name": "File Browser",
+      "repo": "https://github.com/filebrowser/filebrowser",
+      "note": "Was considered for a thin web-UI-over-a-folder answer. Dropped 2026-08-07: upstream formally archived the project on 2026-09-01 with a README banner that there will be no further releases or security fixes and several security classes are wontfix. Archived upstream is disqualifying for this catalog."
     }
   ]
 }

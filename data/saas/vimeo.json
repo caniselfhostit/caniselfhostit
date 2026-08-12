@@ -67,7 +67,7 @@
     {
       "name": "Jellyfin",
       "repo": "https://github.com/jellyfin/jellyfin",
-      "note": "GPL-2.0, very actively maintained, apps on nearly every TV and phone. A private media server for files you already own, which is a different job: nothing in it publishes a video to the open web or gives you an embed code, so it replaces a media cabinet rather than a Vimeo account."
+      "note": "GPL-2.0, very actively maintained, apps on nearly every TV and phone. A private media server for files you already own, which is a different job: nothing in it publishes a video to the open web or gives you an embed code, so it replaces a media cabinet rather than a Vimeo account. It has since earned its own page in this catalog as the Plex answer, where its install is written up in full. On this page PeerTube keeps the top spot for public upload, transcoding and embed."
     }
   ]
 }

@@ -1,0 +1,27 @@
+# Meilisearch · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker .............. https://www.meilisearch.com/docs/guides/misc/docker
+#   security ............ https://www.meilisearch.com/docs/learn/security/basic_security
+#   configuration ....... https://www.meilisearch.com/docs/resources/self_hosting/configuration/reference
+#   license ............. https://github.com/meilisearch/meilisearch/blob/v1.52.0/LICENSE
+#
+# One container on the computer you are sitting at. Paths are relative to
+# ~/selfhost/meilisearch/. MEILI_MASTER_KEY comes from ./.env. Tag and digest
+# are the v1.52.0 release read from Docker Hub on 2026-08-07.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  meilisearch:
+    image: getmeili/meilisearch:v1.52.0@sha256:d36e713e8f89483af1ab0d72011bbd503f5ab100b68ccbfad51c39e3f0a0567d
+    container_name: meilisearch
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      MEILI_ENV: production
+      MEILI_NO_ANALYTICS: "true"
+    volumes:
+      - ./data:/meili_data
+    ports:
+      # Loopback only: no other device on the wifi can reach 8203.
+      - "127.0.0.1:8203:7700"

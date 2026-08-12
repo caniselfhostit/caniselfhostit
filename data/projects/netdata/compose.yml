@@ -1,0 +1,41 @@
+# Netdata · the single-container install. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker .............. https://learn.netdata.cloud/docs/installing/docker
+#   reverse proxy ....... https://learn.netdata.cloud/docs/netdata-agent/configuration/securing-agents/running-the-agent-behind-a-reverse-proxy/caddy
+#   license table ....... https://github.com/netdata/netdata/blob/v2.10.4/README.md
+#
+# One container. Capabilities follow upstream docker docs for host metrics
+# visibility: SYS_PTRACE and SYS_ADMIN, plus apparmor:unconfined. The dashboard
+# has no built-in password on this path; Caddy basic_auth is the door. State
+# lives in config, lib and cache mounts. Tag and digest are v2.10.4 from Docker
+# Hub on 2026-08-07; amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  netdata:
+    image: netdata/netdata:v2.10.4@sha256:689145f603fed0ca341b4d8a0fb9910cd9d8c0590b0530cd24ae1912a9c7f8f3
+    container_name: netdata
+    restart: unless-stopped
+    hostname: netdata
+    pid: host
+    cap_add:
+      # Process inspection for per-process charts.
+      - SYS_PTRACE
+      # Host-level collectors that need admin-capable syscalls.
+      - SYS_ADMIN
+    security_opt:
+      # Upstream docker packaging uses unconfined AppArmor so collectors can
+      # read host paths the default profile blocks. This widens the container
+      # confinement boundary; do not treat it as free.
+      - apparmor:unconfined
+    volumes:
+      - /srv/netdata/config:/etc/netdata
+      - /srv/netdata/lib:/var/lib/netdata
+      - /srv/netdata/cache:/var/cache/netdata
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /etc/os-release:/host/etc/os-release:ro
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8207.
+      - "127.0.0.1:8207:19999"

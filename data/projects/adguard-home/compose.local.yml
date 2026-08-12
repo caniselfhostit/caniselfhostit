@@ -1,0 +1,24 @@
+# AdGuard Home · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker ............. https://github.com/AdguardTeam/AdGuardHome/wiki/Docker
+#
+# One container on the computer you are sitting at. Admin UI on loopback 8201
+# mapped to container 3000. Keep the wizard web interface on port 3000. DNS port
+# 53 is not published by default: binding host 53 needs care (and often root or
+# capabilities) and is documented as an optional LAN step, not a default.
+# Volumes are work/ and conf/. Digest for v0.107.78 read from Docker Hub on
+# 2026-08-07.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  adguard-home:
+    image: adguard/adguardhome:v0.107.78@sha256:1ea34eafe5dc691007946e8eaab7bf46b0de9412f39213d8c06e48b53bf9a6c5
+    container_name: adguard-home
+    restart: unless-stopped
+    volumes:
+      - ./work:/opt/adguardhome/work
+      - ./conf:/opt/adguardhome/conf
+    ports:
+      # Loopback only: no other device reaches the admin UI unless you rebind.
+      - "127.0.0.1:8201:3000"

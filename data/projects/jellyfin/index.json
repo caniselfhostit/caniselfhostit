@@ -1,0 +1,91 @@
+{
+  "slug": "jellyfin",
+  "name": "Jellyfin",
+  "tagline": "A free media system that streams movies, shows and music you already own, with no subscription tier and no account at a vendor.",
+  "repo": "jellyfin/jellyfin",
+  "site": "https://jellyfin.org",
+  "category": "photos-media",
+  "replaces": [
+    {
+      "saas": "plex",
+      "plan": "Pass",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 0
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 20,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "GPL-2.0-only",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://jellyfin.org/docs/general/installation/container",
+  "local": {
+    "fit": "good",
+    "note": "Playback on this computer is the common home-lab shape; friends on other networks only work if you later put it on a server with enough egress, which the local path deliberately does not do."
+  },
+  "quote": {
+    "text": "Jellyfin is a Free Software Media System that puts you in control of managing and streaming your media.",
+    "source": "Jellyfin documentation, Introduction",
+    "url": "https://jellyfin.org/docs/",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "Upstream documents a Docker install with config, cache and media volume mounts and HTTP on port 8096, and shows media as a bind of a path the operator already has.",
+      "url": "https://jellyfin.org/docs/general/installation/container"
+    },
+    {
+      "claim": "The first-run setup wizard creates the administrator account and can add media libraries; after completion the public system info reports StartupWizardCompleted true.",
+      "url": "https://jellyfin.org/docs/general/post-install/setup-wizard/"
+    },
+    {
+      "claim": "Hardware transcoding is optional and depends on host devices; software transcoding works without a GPU and is what a small VPS will do.",
+      "url": "https://jellyfin.org/docs/general/administration/hardware-acceleration/"
+    },
+    {
+      "claim": "Jellyfin is licensed under GPL-2.0.",
+      "url": "https://github.com/jellyfin/jellyfin/blob/master/LICENSE"
+    },
+    {
+      "claim": "Caddy obtains and renews TLS certificates automatically for any public hostname named in the Caddyfile.",
+      "url": "https://caddyserver.com/docs/automatic-https"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "You bring the media. There is no catalogue to rent and nothing appears that you did not put on disk. Illegal streaming is not a feature and not something this site helps with.",
+    "A home box is the usual shape. A VPS with a thin root disk is a remote access front door, not a library: the files live on storage you already own, and remote friends cost egress on every stream. Budget bandwidth the way you would budget a Netflix bill.",
+    "Transcoding eats CPU. A cheap VPS will choke on 4K-to-phone streams; match clients to direct-play formats or buy CPU headroom for the household you actually have.",
+    "You own the library metadata and the user accounts. Back up config (and cache if you care about rebuild time), not only the video files. Losing config loses users and watch state while the files remain.",
+    "No Live TV guide subscriptions, no paid plugin store, no vendor support line. Plugins are community code you choose to trust."
+  ],
+  "sources": {
+    "compose": "https://jellyfin.org/docs/general/installation/container",
+    "caddy": "https://jellyfin.org/docs/general/networking/caddy",
+    "install": "https://jellyfin.org/docs/general/installation/",
+    "wizard": "https://jellyfin.org/docs/general/post-install/setup-wizard/",
+    "backup": "https://jellyfin.org/docs/general/administration/backup-and-restore",
+    "hardware": "https://jellyfin.org/docs/general/administration/hardware-acceleration/",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "navidrome",
+    "audiobookshelf",
+    "immich"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "14090a4ac86274ea8a095040749217442b1b05d6d3d92ef7086ab755cd2b5f16"
+}

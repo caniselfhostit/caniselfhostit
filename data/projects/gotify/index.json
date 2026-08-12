@@ -1,0 +1,90 @@
+{
+  "slug": "gotify",
+  "name": "Gotify",
+  "tagline": "A self-hosted push notification server with a simple REST API and its own Android app.",
+  "repo": "gotify/server",
+  "site": "https://gotify.net",
+  "category": "monitoring",
+  "replaces": [
+    {
+      "saas": "pushover",
+      "plan": "Unlimited",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 256,
+    "ramMeasuredMB": null,
+    "diskGB": 2,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 8,
+  "license": "MIT",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://gotify.net/docs/install",
+  "local": {
+    "fit": "caveat",
+    "note": "Push only works while this computer is on, so an alert that arrives after sleep waits until the machine wakes, and a phone on cellular cannot reach localhost."
+  },
+  "quote": {
+    "text": "We wanted a simple server for sending and receiving messages (in real time per WebSocket).",
+    "source": "Gotify server README",
+    "url": "https://github.com/gotify/server/blob/v3.0.0/README.md",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "Upstream documents a Docker install that stores state in a mounted data directory and serves HTTP on port 80 inside the container.",
+      "url": "https://gotify.net/docs/install"
+    },
+    {
+      "claim": "The first admin user can be seeded with GOTIFY_DEFAULTUSER_NAME and GOTIFY_DEFAULTUSER_PASS environment variables.",
+      "url": "https://gotify.net/docs/config"
+    },
+    {
+      "claim": "Clients authenticate with application tokens when sending messages and client tokens when receiving them.",
+      "url": "https://gotify.net/docs/pushmsg"
+    },
+    {
+      "claim": "There is an official Android app; there is no first-party iOS app in the same repository family.",
+      "url": "https://github.com/gotify/android"
+    },
+    {
+      "claim": "Caddy obtains and renews TLS certificates automatically for any public hostname named in the Caddyfile.",
+      "url": "https://caddyserver.com/docs/automatic-https"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "There is no first-party iOS app. Android has the official Gotify client; iPhone users need a third-party client or another path such as ntfy.",
+    "You own the backups. The SQLite database under data/ and the .env file that holds the seeded admin password are the install. A restore without .env is a lockout.",
+    "You own delivery. If the box is down, nothing reaches the phone, and nobody else is watching the watcher.",
+    "Admin credentials are generated on the server into .env, never written into the compose file as standing defaults.",
+    "Message retention and plugins are yours to configure. Defaults will not match a cloud product's multi-year archive story."
+  ],
+  "sources": {
+    "compose": "https://gotify.net/docs/install",
+    "caddy": "https://gotify.net/docs/config#reverse-proxy",
+    "install": "https://gotify.net/docs/install",
+    "config": "https://gotify.net/docs/config",
+    "pushmsg": "https://gotify.net/docs/pushmsg",
+    "android": "https://github.com/gotify/android"
+  },
+  "related": [
+    "ntfy",
+    "uptime-kuma",
+    "healthchecks"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "c6df62fd11985cd3ca86abec90d918ccd268dace754101bb1df4b0f1e36070b7"
+}

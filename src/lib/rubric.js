@@ -313,7 +313,7 @@ export const OFFICIAL_COMPOSE = {
 };
 
 /** Pricing shapes for a SaaS plan. Matches how the vendors themselves bill. */
-export const PRICE_UNITS = ['flat', 'per-seat', 'usage', 'one-time', 'custom'];
+export const PRICE_UNITS = ['flat', 'per-seat', 'per-host', 'usage', 'one-time', 'custom'];
 
 /** How much we trust a recorded price. Anything below 'high' shows on the page. */
 export const CONFIDENCE_LEVELS = ['high', 'medium', 'low'];
@@ -366,6 +366,8 @@ export const SPDX_ALLOWLIST = [
   // Source-available — not open source, and the candor section has to say so
   'BSL-1.1',
   'BUSL-1.1',
+  // Dual expression used by Meilisearch (MIT core AND BUSL EE carve-out in one tree)
+  'MIT AND BUSL-1.1',
   'SSPL-1.0',
   'Elastic-2.0',
   'FSL-1.1',
@@ -377,6 +379,7 @@ export const SPDX_ALLOWLIST = [
 export const SOURCE_AVAILABLE_LICENSES = [
   'BSL-1.1',
   'BUSL-1.1',
+  'MIT AND BUSL-1.1',
   'SSPL-1.0',
   'Elastic-2.0',
   'FSL-1.1',

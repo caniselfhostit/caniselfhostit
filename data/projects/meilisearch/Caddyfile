@@ -1,0 +1,25 @@
+# Meilisearch · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://www.meilisearch.com/docs/learn/security/basic_security and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed, with
+# <DOMAIN> replaced by the hostname pointed at this box. Caddy runs under systemd
+# on the host. There is no Caddy container anywhere in this project. Auth is the
+# master key inside Meilisearch, not a browser login form.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8203 is the loopback port compose publishes; it is never in the firewall.
+	reverse_proxy 127.0.0.1:8203
+}

@@ -1,0 +1,26 @@
+# AdGuard Home · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker ............. https://github.com/AdguardTeam/AdGuardHome/wiki/Docker
+#   configuration ...... https://github.com/AdguardTeam/AdGuardHome/wiki/Configuration
+#
+# One container. Admin UI is published only on loopback at host 8201 mapped to
+# container 3000. DNS ports are deliberately NOT published on this VPS path: a
+# public open resolver is a liability, and household DNS belongs on a LAN host
+# or behind a VPN. During the first-run wizard the operator must keep the web
+# interface on port 3000 so this publish mapping continues to work after setup.
+# Volumes are work/ and conf/ (upstream's real paths), not an empty data/.
+# Digest for v0.107.78 read from Docker Hub on 2026-08-07.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  adguard-home:
+    image: adguard/adguardhome:v0.107.78@sha256:1ea34eafe5dc691007946e8eaab7bf46b0de9412f39213d8c06e48b53bf9a6c5
+    container_name: adguard-home
+    restart: unless-stopped
+    volumes:
+      - /srv/adguard-home/work:/opt/adguardhome/work
+      - /srv/adguard-home/conf:/opt/adguardhome/conf
+    ports:
+      # Loopback only: Caddy reaches the admin UI. Keep wizard web port at 3000.
+      - "127.0.0.1:8201:3000"

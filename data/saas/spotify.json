@@ -57,7 +57,7 @@
     {
       "name": "Jellyfin",
       "repo": "https://github.com/jellyfin/jellyfin",
-      "note": "GPL-2.0, released v10.11.11 in June 2026, one of the most actively maintained projects in this category. It is a whole media server: film, television, live TV and music in one install, with its own apps on phones, tablets and TV boxes. If you also have a video library, it answers both questions at once, which is a real argument for it. As a music player it is the weaker choice, because the music half is served by Jellyfin's own clients rather than by the Subsonic app ecosystem, and browsing a large tagged music collection is not what the interface was designed around."
+      "note": "GPL-2.0, released v10.11.11 in June 2026, one of the most actively maintained projects in this category. It is a whole media server: film, television, live TV and music in one install, with its own apps on phones, tablets and TV boxes. If you also have a video library, it answers both questions at once, which is a real argument for it. As a music player it is the weaker choice, because the music half is served by Jellyfin's own clients rather than by the Subsonic app ecosystem, and browsing a large tagged music collection is not what the interface was designed around. It has since earned its own page in this catalog as the Plex answer, where its install is written up in full. On this page Navidrome keeps the top spot for a music library with the Subsonic client ecosystem."
     },
     {
       "name": "Funkwhale",

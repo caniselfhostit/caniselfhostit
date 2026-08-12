@@ -1,0 +1,26 @@
+# AdGuard Home · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://github.com/AdguardTeam/AdGuardHome/wiki/Configuration#encryption and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed, with
+# <DOMAIN> replaced by the hostname pointed at this box. Caddy runs under systemd
+# on the host. There is no Caddy container anywhere in this project. This site
+# block fronts the admin UI only. It does not make this host a public DNS
+# resolver; port 53 stays closed on the VPS path.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8201 is the loopback port compose publishes; it is never in the firewall.
+	reverse_proxy 127.0.0.1:8201
+}

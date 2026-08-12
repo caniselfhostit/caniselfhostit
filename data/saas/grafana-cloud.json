@@ -43,7 +43,7 @@
     {
       "name": "Netdata",
       "repo": "https://github.com/netdata/netdata",
-      "note": "GitHub reports GPL-3.0, and that is accurate for the agent that collects and stores the metrics. The repository's own REDISTRIBUTED.md is the part worth reading before deciding it is fully open source: the dashboard the agent serves is the Netdata Cloud UI, redistributed under the proprietary Netdata Cloud UI License v1.0 rather than the GPL. Actively maintained, v2.10.4 in July 2026. It is also a different shape from the pick above, because it collects its own metrics rather than querying yours, so it answers 'what is this machine doing' rather than 'draw me the data I already have'."
+      "note": "GitHub reports GPL-3.0, and that is accurate for the agent that collects and stores the metrics. The repository's own REDISTRIBUTED.md is the part worth reading before deciding it is fully open source: the dashboard the agent serves is the Netdata Cloud UI, redistributed under the proprietary Netdata Cloud UI License v1.0 rather than the GPL. Actively maintained, v2.10.4 in July 2026. It is also a different shape from the pick above, because it collects its own metrics rather than querying yours, so it answers 'what is this machine doing' rather than 'draw me the data I already have'. It has since earned its own page in this catalog as the Datadog answer, where the agent install and the license split are written up in full. On this page Grafana keeps the top spot for dashboards over data you already store."
     },
     {
       "name": "VictoriaMetrics",

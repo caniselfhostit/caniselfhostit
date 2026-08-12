@@ -1,0 +1,31 @@
+# Gitea · the compose file for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker ............. https://docs.gitea.com/installation/install-with-docker
+#   config cheat sheet . https://docs.gitea.com/administration/config-cheat-sheet
+#
+# One service on the computer you are sitting at. Paths are relative to
+# ~/selfhost/gitea/. ROOT_URL is http://localhost:8208/ on this path. SSH is
+# not published. Digest read from Docker Hub on 2026-08-07 for tag 1.27.1.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  gitea:
+    image: gitea/gitea:1.27.1@sha256:34e3f6b75f5cbb6aebce588037fc5a53c84213e4d4b00da0a8d73e031a558e52
+    container_name: gitea
+    restart: unless-stopped
+    environment:
+      USER_UID: "1000"
+      USER_GID: "1000"
+      GITEA__database__DB_TYPE: sqlite3
+      GITEA__server__DOMAIN: localhost
+      GITEA__server__ROOT_URL: http://localhost:8208/
+      GITEA__server__DISABLE_SSH: "true"
+      GITEA__server__START_SSH_SERVER: "false"
+      # Flip to "true" after the first account claims the instance (step 7).
+      GITEA__service__DISABLE_REGISTRATION: "false"
+    volumes:
+      - ./data:/data
+    ports:
+      # Loopback only: no other device on the wifi can reach 8208.
+      - "127.0.0.1:8208:3000"

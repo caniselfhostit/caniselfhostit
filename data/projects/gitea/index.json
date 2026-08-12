@@ -1,0 +1,85 @@
+{
+  "slug": "gitea",
+  "name": "Gitea",
+  "tagline": "A lightweight self-hosted Git service with issues, PRs and package registries you run yourself.",
+  "repo": "go-gitea/gitea",
+  "site": "https://gitea.com",
+  "category": "automation-dev",
+  "replaces": [
+    {
+      "saas": "gitlab",
+      "plan": "Premium",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 0
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "MIT",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://docs.gitea.com/installation/install-with-docker",
+  "local": {
+    "fit": "caveat",
+    "note": "Git remotes that point at localhost only work on this computer, so a laptop and a desktop will not share the same origin without a real hostname later."
+  },
+  "quote": {
+    "text": "Gitea is a painless, self-hosted, all-in-one software development service.",
+    "source": "Gitea documentation home",
+    "url": "https://docs.gitea.com/",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "Upstream documents Docker installation with a data volume and HTTP on port 3000; SQLite is supported for small instances.",
+      "url": "https://docs.gitea.com/installation/install-with-docker"
+    },
+    {
+      "claim": "ROOT_URL must match the public URL or generated clone links and redirects will be wrong; DOMAIN and ROOT_URL are set via GITEA__server__* environment variables.",
+      "url": "https://docs.gitea.com/administration/config-cheat-sheet"
+    },
+    {
+      "claim": "DISABLE_REGISTRATION closes open signup so only an admin can create further users after the first account.",
+      "url": "https://docs.gitea.com/administration/config-cheat-sheet"
+    },
+    {
+      "claim": "Caddy obtains and renews TLS certificates automatically for any public hostname named in the Caddyfile.",
+      "url": "https://caddyserver.com/docs/automatic-https"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "SQLite is fine for a personal forge and wrong for a busy company. Plan Postgres when collaborators and CI multiply.",
+    "You own backups of the data volume: repositories, attachments, LFS objects and the database file move together under /data.",
+    "This install pushes and pulls over HTTPS with a personal access token. SSH is not published unless you deliberately open it later.",
+    "Actions, packages and SSO exist but are not GitHub's or GitLab's full ecosystem. Integrations may be missing.",
+    "No vendor SLA. When the disk fills, pushes fail for everyone you invited."
+  ],
+  "sources": {
+    "compose": "https://docs.gitea.com/installation/install-with-docker",
+    "caddy": "https://docs.gitea.com/administration/reverse-proxies",
+    "install": "https://docs.gitea.com/installation/install-with-docker",
+    "config": "https://docs.gitea.com/administration/config-cheat-sheet",
+    "sqlite": "https://docs.gitea.com/installation/database-prep"
+  },
+  "related": [
+    "code-server",
+    "uptime-kuma",
+    "vaultwarden"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "a7086c0a5d436217bf9c4df4a81636e1bc5f512de01d16c9926d75740c63b0d9"
+}

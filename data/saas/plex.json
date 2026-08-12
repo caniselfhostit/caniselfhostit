@@ -1,0 +1,47 @@
+{
+  "slug": "plex",
+  "name": "Plex",
+  "domain": "plex.tv",
+  "whyPeoplePay": "Plex sells a polished clients-everywhere media experience: TVs, phones, living-room apps, and optional hosted extras, with a Pass that unlocks mobile sync, hardware features and fewer nags. People pay for the clients and the convenience more than for the server binary.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Server free with limitations and nags."
+    },
+    {
+      "name": "Pass",
+      "priceMonthly": 6.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Plex Pass at $6.99/mo or $69.99/yr. Lifetime is $749.99 as of 2026-07-01 (was $249.99); a 5-year recurring option at $249.99 also appears on the plans page."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://www.plex.tv/plans/",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "Read from plex.tv/plans on 2026-08-07: Pass $6.99/mo, $69.99/yr, $249.99 for 5 years, $749.99 lifetime. Secondary sources (plex.tv blog, Thurrott, MacObserver) agree monthly/annual held flat after the July 2026 lifetime increase. The plans page is partially JS-rendered; figures above were confirmed in the rendered plan cards and press coverage of the same day."
+  },
+  "ranked": [
+    {
+      "project": "jellyfin",
+      "rationale": "The fully free media server with no Pass tier. You bring the library, the CPU for transcodes, and the clients; you drop the Plex account requirement and the upsells."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Emby",
+      "repo": "https://github.com/MediaBrowser/Emby",
+      "note": "Featureful and polished, with Premiere as the paid tier. Emby closed its previously open source in 2018, and Jellyfin is the community fork that carried that codebase on, which is why this page ranks the open continuation instead of the original. Surveyed, not tested."
+    },
+    {
+      "name": "Navidrome",
+      "repo": "https://github.com/navidrome/navidrome",
+      "note": "Music-only; already in this catalogue for Spotify-shaped cases."
+    }
+  ]
+}

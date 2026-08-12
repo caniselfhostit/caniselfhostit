@@ -1,0 +1,36 @@
+{
+  "slug": "visualping",
+  "name": "Visualping",
+  "domain": "visualping.io",
+  "whyPeoplePay": "Visualping sells page change detection without a server: screenshots, schedules, and alerts when a price, job listing or paragraph moves, billed by checks so the invoice scales with how many pages you watch.",
+  "plans": [
+    {
+      "name": "Starter",
+      "priceMonthly": 10,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Entry paid tier; exact check quotas move. Confirm on the vendor pricing page."
+    },
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Limited checks."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://visualping.io/pricing",
+    "currency": "USD",
+    "confidence": "low",
+    "note": "Visualping tiers and check limits change. Treat $10 Starter as indicative and re-read the page before quoting savings."
+  },
+  "ranked": [
+    {
+      "project": "changedetection",
+      "rationale": "Self-hosted page watches with notifications you wire yourself. One container to start; add a heavier browser fetcher only when JavaScript pages demand it."
+    }
+  ],
+  "evaluatedNotTested": []
+}

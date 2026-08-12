@@ -1,0 +1,38 @@
+# Gitea · the compose file for this service. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker ............. https://docs.gitea.com/installation/install-with-docker
+#   config cheat sheet . https://docs.gitea.com/administration/config-cheat-sheet
+#   reverse proxy ...... https://docs.gitea.com/administration/reverse-proxies
+#
+# One service. SQLite lives under /data (no separate database container).
+# ROOT_URL and DOMAIN must match the public hostname or clone links and
+# redirects will be wrong. SSH is not published on this host: git over HTTPS
+# with a personal access token is the path this install documents. After the
+# first account is created, set GITEA__service__DISABLE_REGISTRATION=true and
+# restart so the open signup door closes. Digest read from Docker Hub on
+# 2026-08-07 for tag 1.27.1.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  gitea:
+    image: gitea/gitea:1.27.1@sha256:34e3f6b75f5cbb6aebce588037fc5a53c84213e4d4b00da0a8d73e031a558e52
+    container_name: gitea
+    restart: unless-stopped
+    environment:
+      USER_UID: "1000"
+      USER_GID: "1000"
+      GITEA__database__DB_TYPE: sqlite3
+      GITEA__server__DOMAIN: <DOMAIN>
+      GITEA__server__ROOT_URL: https://<DOMAIN>/
+      GITEA__server__DISABLE_SSH: "true"
+      GITEA__server__START_SSH_SERVER: "false"
+      # Flip to "true" after the first account claims the instance (step 7).
+      GITEA__service__DISABLE_REGISTRATION: "false"
+    volumes:
+      # Repos, SQLite, attachments, avatars, app.ini.
+      - /srv/gitea/data:/data
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8208.
+      # No SSH port is published.
+      - "127.0.0.1:8208:3000"

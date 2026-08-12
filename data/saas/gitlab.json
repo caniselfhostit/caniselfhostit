@@ -1,0 +1,54 @@
+{
+  "slug": "gitlab",
+  "name": "GitLab",
+  "domain": "gitlab.com",
+  "whyPeoplePay": "GitLab sells the whole software delivery surface: Git hosting, CI, packages, security scanners and permissions in one product, billed per seat so engineering headcount is the invoice. People pay to avoid assembling that toolchain themselves.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Free SaaS tier with limits."
+    },
+    {
+      "name": "Premium",
+      "priceMonthly": 29,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "List price $29 per user per month billed annually on about.gitlab.com/pricing (read 2026-08-07)."
+    },
+    {
+      "name": "Ultimate",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Sales-led on the live pricing page: a custom-pricing contact path, not a number. $99 per user per month is the widely published list figure; treat it as unconfirmed until sales quotes you."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://about.gitlab.com/pricing/",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "Premium is $29 per user/month billed annually on the public pricing page (fetched 2026-08-07). Ultimate is sales-led with no public figure, so it is recorded quote-only here; $99/user/month circulates as the list figure but did not appear on the page. Self-hosted Gitea replaces Git hosting and light PR workflow far more than the full DevSecOps suite."
+  },
+  "ranked": [
+    {
+      "project": "gitea",
+      "rationale": "A lightweight self-hosted forge for repos, issues and PRs. One container with SQLite for personal scale; not a feature clone of GitLab Premium CI and security scanners."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Forgejo",
+      "repo": "https://codeberg.org/forgejo/forgejo",
+      "note": "Community hard fork of Gitea (soft fork from late 2022, hard fork decision early 2024 under Codeberg e.V.). Actively released (v15 line in 2026). License moved from MIT toward GPL-3.0-or-later for new work while retaining MIT on older code. Surveyed only this pass; not yet ranked."
+    },
+    {
+      "name": "GitLab CE",
+      "repo": "https://gitlab.com/gitlab-org/gitlab-foss",
+      "note": "Fuller GitLab experience, much heavier ops: a multi-service Omnibus install far beyond the one-container pick ranked on this page."
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+# IT Tools · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker run ......... https://github.com/CorentinTh/it-tools#self-host
+#
+# One service. Static web UI served by the image; no application database, no
+# accounts, no env secrets. Upstream publishes docker run lines rather than a
+# maintained multi-service compose file (officialCompose: none).
+# Tag 2024.10.22-7ca5933 was published 2024-10-22; digest read from Docker Hub
+# on 2026-08-07. See block 9 of the prompts for the age of this pin.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  it-tools:
+    image: corentinth/it-tools:2024.10.22-7ca5933@sha256:8b8128748339583ca951af03dfe02a9a4d7363f61a216226fc28030731a5a61f
+    container_name: it-tools
+    restart: unless-stopped
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8209.
+      - "127.0.0.1:8209:80"

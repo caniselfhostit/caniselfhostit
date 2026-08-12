@@ -1,0 +1,29 @@
+# Netdata · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://learn.netdata.cloud/docs/netdata-agent/configuration/securing-agents/running-the-agent-behind-a-reverse-proxy/caddy
+# https://caddyserver.com/docs/automatic-https and
+# https://caddyserver.com/docs/caddyfile/directives/basic_auth
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed, with
+# <DOMAIN> replaced by the hostname pointed at this box. The Netdata dashboard
+# has no login of its own on this install. Caddy basic_auth is the only door.
+# Needs Caddy 2.8 or newer (basic_auth spelling).
+
+<DOMAIN> {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# Credential lives in /etc/caddy/netdata-auth.conf (not published here).
+	import /etc/caddy/netdata-auth.conf
+
+	# 8207 is the loopback port compose publishes; it is never in the firewall.
+	reverse_proxy 127.0.0.1:8207
+}

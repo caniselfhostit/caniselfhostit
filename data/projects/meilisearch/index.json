@@ -1,0 +1,91 @@
+{
+  "slug": "meilisearch",
+  "name": "Meilisearch",
+  "tagline": "A typo-tolerant search API you run yourself, without per-search billing.",
+  "repo": "meilisearch/meilisearch",
+  "site": "https://www.meilisearch.com",
+  "category": "automation-dev",
+  "replaces": [
+    {
+      "saas": "algolia",
+      "plan": "Build",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "MIT AND BUSL-1.1",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://www.meilisearch.com/docs/guides/misc/docker",
+  "local": {
+    "fit": "good",
+    "note": "Search only answers on this computer's localhost port, which is what you want for a personal app, and useless as a shared production API until you put it on a server."
+  },
+  "quote": {
+    "text": "Only use the master key to manage API keys. Never use the master key to perform searches or other common operations.",
+    "source": "Meilisearch documentation, Securing your project",
+    "url": "https://www.meilisearch.com/docs/learn/security/basic_security",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "The official Docker image exposes port 7700 and stores indexes under a configurable data path (/meili_data by default).",
+      "url": "https://www.meilisearch.com/docs/guides/misc/docker"
+    },
+    {
+      "claim": "MEILI_MASTER_KEY must be set for a protected instance; without a master key, requests are not gated the way a public host requires.",
+      "url": "https://www.meilisearch.com/docs/learn/security/basic_security"
+    },
+    {
+      "claim": "At v1.52.0 the repository SPDX is MIT AND BUSL-1.1: parts of the tree are MIT and Meilisearch Enterprise Edition paths are under BUSL-1.1, not a separate product only.",
+      "url": "https://github.com/meilisearch/meilisearch/blob/v1.52.0/LICENSE"
+    },
+    {
+      "claim": "MEILI_NO_ANALYTICS deactivates built-in telemetry when set.",
+      "url": "https://www.meilisearch.com/docs/resources/self_hosting/configuration/reference"
+    },
+    {
+      "claim": "Caddy obtains and renews TLS certificates automatically for any public hostname named in the Caddyfile.",
+      "url": "https://caddyserver.com/docs/automatic-https"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Source-available, not open source for the whole tree: SPDX at the pinned tag is MIT AND BUSL-1.1. Community Edition search is MIT; Enterprise Edition paths (sharding, S3-streaming snapshots and related EE work) are BUSL-1.1 and are not free to run in production without a commercial agreement. This install runs the published image and the MIT-covered search API you index against; it does not unlock EE-only features.",
+    "This is a search engine API, not a hosted dashboard product. You still write the code that indexes documents and queries them. There is no browser sign-in to finish.",
+    "You own the master key. Anyone with it can read and write every index and mint other keys; it is generated on the server and never pasted into a browser. Search clients get a search-scoped key from /keys.",
+    "You own disk growth. Indexes are not free, and a large crawl without retention planning will fill the volume.",
+    "High availability, multi-region analytics dashboards and managed ranking labs are not in this container. Those are what Algolia sells."
+  ],
+  "sources": {
+    "compose": "https://www.meilisearch.com/docs/guides/misc/docker",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://www.meilisearch.com/docs/learn/getting_started/installation",
+    "security": "https://www.meilisearch.com/docs/learn/security/basic_security",
+    "config": "https://www.meilisearch.com/docs/resources/self_hosting/configuration/reference",
+    "license": "https://github.com/meilisearch/meilisearch/blob/v1.52.0/LICENSE",
+    "licenseEE": "https://github.com/meilisearch/meilisearch/blob/v1.52.0/LICENSE-EE"
+  },
+  "related": [
+    "appsmith",
+    "pocketbase",
+    "code-server"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "8110be50b1cdc0291374bc44295de21b18c3a22bfeb3bc56919adb467cbe531c"
+}

@@ -1,0 +1,32 @@
+# Netdata · the single-container install for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker .............. https://learn.netdata.cloud/docs/installing/docker
+#   license table ....... https://github.com/netdata/netdata/blob/v2.10.4/README.md
+#
+# One container on the computer you are sitting at. Paths are relative to
+# ~/selfhost/netdata/. Host mounts for /proc and /sys only work usefully on
+# Linux; on macOS and Windows Docker Desktop the charts reflect the VM more
+# than the host. Tag and digest are v2.10.4 from Docker Hub on 2026-08-07.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  netdata:
+    image: netdata/netdata:v2.10.4@sha256:689145f603fed0ca341b4d8a0fb9910cd9d8c0590b0530cd24ae1912a9c7f8f3
+    container_name: netdata
+    restart: unless-stopped
+    hostname: netdata
+    cap_add:
+      - SYS_PTRACE
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - ./config:/etc/netdata
+      - ./lib:/var/lib/netdata
+      - ./cache:/var/cache/netdata
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+    ports:
+      # Loopback only: no other device on the wifi can reach 8207.
+      - "127.0.0.1:8207:19999"

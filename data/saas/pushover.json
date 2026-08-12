@@ -1,0 +1,33 @@
+{
+  "slug": "pushover",
+  "name": "Pushover",
+  "domain": "pushover.net",
+  "whyPeoplePay": "Pushover sells a boring reliability promise: a message from a script reaches the phone that is already in your pocket, through Apple and Google's push networks, without you running a broker or nursing an app that falls asleep. The bill is small, and the value is that the path works when you are not looking at a dashboard.",
+  "plans": [
+    {
+      "name": "Unlimited",
+      "priceMonthly": null,
+      "unit": "one-time",
+      "seatsIncluded": 1,
+      "note": "$4.99 once per platform (iPhone/iPad, Android, Desktop). Delivery after purchase has no monthly fee; the separate Pushover for Teams product bills $5 per user per month."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://pushover.net/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Pushover's consumer product is a one-time app purchase. priceMonthly is null so we do not invent a subscription. Re-check the vendor page before quoting a monthly saving."
+  },
+  "ranked": [
+    {
+      "project": "ntfy",
+      "rationale": "The closest HTTP-shaped replacement: publish with curl, subscribe on phone apps, no per-message invoice. You take on the server, TLS, and locking down open topics."
+    },
+    {
+      "project": "gotify",
+      "rationale": "A self-hosted push server with its own Android app and a simple REST API. Fewer client platforms than ntfy, MIT licensed, one container."
+    }
+  ],
+  "evaluatedNotTested": []
+}

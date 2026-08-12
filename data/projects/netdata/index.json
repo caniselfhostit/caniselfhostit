@@ -1,0 +1,87 @@
+{
+  "slug": "netdata",
+  "name": "Netdata",
+  "tagline": "Per-second host metrics and dashboards from one container, without a per-host SaaS seat.",
+  "repo": "netdata/netdata",
+  "site": "https://www.netdata.cloud",
+  "category": "monitoring",
+  "replaces": [
+    {
+      "saas": "datadog",
+      "plan": "Pro",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "GPL-3.0-or-later",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://learn.netdata.cloud/docs/installing/docker",
+  "local": {
+    "fit": "caveat",
+    "note": "Metrics are about this machine only, and on macOS or Windows Docker Desktop the charts largely reflect the VM. A fleet still needs one agent per host or another product."
+  },
+  "quote": {
+    "text": "Netdata UI – Closed-source but free to use with Netdata Agent and Cloud.",
+    "source": "Netdata README, License",
+    "url": "https://github.com/netdata/netdata/blob/v2.10.4/README.md",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "Upstream documents an official Docker image with the dashboard on port 19999 and compose examples that mount config, lib and cache directories.",
+      "url": "https://learn.netdata.cloud/docs/installing/docker"
+    },
+    {
+      "claim": "The Netdata Agent is GPL v3 or later; the Netdata UI is closed-source under NCUL1 and free to use with the agent; Netdata Cloud is optional and separate.",
+      "url": "https://github.com/netdata/netdata/blob/v2.10.4/README.md"
+    },
+    {
+      "claim": "Upstream documents running the agent behind Caddy and points at Caddy authentication when the dashboard must not be public.",
+      "url": "https://learn.netdata.cloud/docs/netdata-agent/configuration/securing-agents/running-the-agent-behind-a-reverse-proxy/caddy"
+    },
+    {
+      "claim": "Caddy obtains and renews TLS certificates automatically for any public hostname named in the Caddyfile.",
+      "url": "https://caddyserver.com/docs/automatic-https"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "License split: the agent (collection, storage, ML, alerts, APIs) is GPL-3.0-or-later; the dashboard UI is closed-source under NCUL1, free to use with the agent and delivered with standard packages. Netdata Cloud is optional and separate. You are not installing a fully open-source UI stack.",
+    "This watches the host it runs on (and containers it can see). It is not multi-cloud APM with distributed tracing out of the box.",
+    "Privileged-looking capabilities improve visibility and increase blast radius. This install adds SYS_PTRACE and SYS_ADMIN and sets apparmor:unconfined per upstream docker packaging, not full privileged mode, and each is stated because collectors need them.",
+    "Without Caddy basic_auth, a public hostname is an unauthenticated map of the box. This install generates a password and asserts unauthenticated requests return 401.",
+    "You own retention on disk. Per-second metrics fill volumes if you never prune. No paid support contract when charts look wrong."
+  ],
+  "sources": {
+    "compose": "https://learn.netdata.cloud/docs/installing/docker",
+    "caddy": "https://learn.netdata.cloud/docs/netdata-agent/configuration/securing-agents/running-the-agent-behind-a-reverse-proxy/caddy",
+    "install": "https://learn.netdata.cloud/docs/installing/docker",
+    "security": "https://learn.netdata.cloud/docs/netdata-agent/securing-netdata-agents",
+    "license": "https://github.com/netdata/netdata/blob/v2.10.4/README.md",
+    "tls": "https://caddyserver.com/docs/automatic-https",
+    "basic_auth": "https://caddyserver.com/docs/caddyfile/directives/basic_auth"
+  },
+  "related": [
+    "grafana",
+    "uptime-kuma",
+    "glitchtip"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "59c7bd3a252ae529cf465b33b38d41af465d87f6eb98391e56f32f49d1358df8"
+}

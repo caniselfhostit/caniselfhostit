@@ -1,0 +1,86 @@
+{
+  "slug": "changedetection",
+  "name": "changedetection.io",
+  "tagline": "Watch web pages for changes and get notified when the text you care about moves.",
+  "repo": "dgtlmoon/changedetection.io",
+  "site": "https://changedetection.io",
+  "category": "monitoring",
+  "replaces": [
+    {
+      "saas": "visualping",
+      "plan": "Starter",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "Apache-2.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/dgtlmoon/changedetection.io/blob/0.55.8/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Checks only run while this computer is awake, so a price drop at 3am is invisible until the laptop opens again."
+  },
+  "quote": {
+    "text": "Detect web page content changes and get instant alerts.",
+    "source": "changedetection.io README at tag 0.55.8",
+    "url": "https://github.com/dgtlmoon/changedetection.io/blob/0.55.8/README.md",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "Upstream publishes a Docker image that stores state under /datastore and serves the UI on port 5000.",
+      "url": "https://github.com/dgtlmoon/changedetection.io/blob/0.55.8/README.md#docker"
+    },
+    {
+      "claim": "Password protection is a Settings UI field, or the SALTED_PASS environment variable holding a base64-encoded salt plus pbkdf2-hmac-sha256 hash; there is no PASSWORD env var.",
+      "url": "https://github.com/dgtlmoon/changedetection.io/wiki/Password-protection"
+    },
+    {
+      "claim": "Playwright or sockpuppetbrowser is a separate container wired through PLAYWRIGHT_DRIVER_URL for JavaScript-rendered pages; this install ships without it.",
+      "url": "https://github.com/dgtlmoon/changedetection.io/wiki/Playwright-content-fetcher"
+    },
+    {
+      "claim": "Caddy obtains and renews TLS certificates automatically for any public hostname named in the Caddyfile.",
+      "url": "https://caddyserver.com/docs/automatic-https"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "This install uses the plain HTTP fetcher only. Sites that render their price or stock status in JavaScript need a Playwright or sockpuppetbrowser sidecar (upstream wiki: Playwright-content-fetcher), which is a second container and real memory. Add it when a watch returns empty where the browser shows content.",
+    "You own the notification channels. Wire Discord, email, Slack or a webhook yourself via Apprise URLs; an untested channel is silence with extra steps.",
+    "You own the datastore. Watches, history and the password hash live under the /datastore mount. Lose that volume and the watches are gone.",
+    "Sites can ban noisy scrapers. Be polite with recheck intervals; this is not a load-testing tool.",
+    "Hosted browsers, polished visual diffs, multi-user teams and a vendor SLA are what Visualping sells. You trade those for ownership of the schedule and the data."
+  ],
+  "sources": {
+    "compose": "https://github.com/dgtlmoon/changedetection.io/blob/0.55.8/docker-compose.yml",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://github.com/dgtlmoon/changedetection.io/blob/0.55.8/README.md#docker",
+    "password": "https://github.com/dgtlmoon/changedetection.io/wiki/Password-protection",
+    "playwright": "https://github.com/dgtlmoon/changedetection.io/wiki/Playwright-content-fetcher",
+    "proxy": "https://github.com/dgtlmoon/changedetection.io/wiki/Running-changedetection.io-behind-a-reverse-proxy"
+  },
+  "related": [
+    "uptime-kuma",
+    "healthchecks",
+    "ntfy"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "f1543eefe77423918608fd9c3ed147c657c3ae114c72b560e0e54c6ef749e28c"
+}

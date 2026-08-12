@@ -1,0 +1,47 @@
+{
+  "slug": "datadog",
+  "name": "Datadog",
+  "domain": "datadoghq.com",
+  "whyPeoplePay": "Datadog sells observability as a product surface: hosts, APM, logs and dashboards on one bill that grows with infrastructure, so a team never wires Prometheus alone at 2am. Host-based infrastructure pricing is the tax on not running your own stack.",
+  "plans": [
+    {
+      "name": "Pro",
+      "priceMonthly": 15,
+      "unit": "per-host",
+      "seatsIncluded": 1,
+      "note": "Infrastructure monitoring is quoted per host per month; $15 is a common list starting point for Pro host metrics. Confirm current list price; real bills are modular and often negotiated."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-07",
+    "source": "https://www.datadoghq.com/pricing/",
+    "currency": "USD",
+    "confidence": "low",
+    "note": "Datadog pricing is modular (infra, APM, logs) and often negotiated. The Pro figure is a rough per-host infrastructure list anchor from public materials, not a promise of your invoice. Self-hosting Netdata replaces only a thin slice of the suite (host metrics and local dashboards), not full APM and log everything."
+  },
+  "ranked": [
+    {
+      "project": "netdata",
+      "rationale": "Per-second host metrics without a per-host SaaS seat. Honest about scope: one agent, deep system charts, closed-source UI under NCUL1, not full APM and log everything Datadog sells."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Grafana + Prometheus",
+      "repo": "https://github.com/prometheus/prometheus",
+      "note": "The standard open stack; more pieces than Netdata's single agent. Grafana is already in this catalogue."
+    },
+    {
+      "name": "SigNoz",
+      "repo": "https://github.com/SigNoz/signoz",
+      "note": "APM-shaped self-host option. Surveyed only."
+    }
+  ]
+}

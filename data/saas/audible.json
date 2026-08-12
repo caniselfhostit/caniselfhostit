@@ -50,7 +50,7 @@
     {
       "name": "Jellyfin",
       "repo": "https://github.com/jellyfin/jellyfin",
-      "note": "GPL-2.0, v10.11.11 released in June 2026 with a 12.0 release candidate in the open, and one of the most actively maintained projects in this category. It plays audiobooks and it has apps on phones, tablets and TV boxes. Two honest caveats: audiobooks are not what it is built around, so a long multi-file book is browsed as an album and resume behaviour is weaker than a purpose-built server's, and there is no podcast subscription handling without a plugin. If you already run it for film and television, adding the books there is a defensible choice; if audiobooks are the reason you are here, it is not the one to start with."
+      "note": "GPL-2.0, v10.11.11 released in June 2026 with a 12.0 release candidate in the open, and one of the most actively maintained projects in this category. It plays audiobooks and it has apps on phones, tablets and TV boxes. Two honest caveats: audiobooks are not what it is built around, so a long multi-file book is browsed as an album and resume behaviour is weaker than a purpose-built server's, and there is no podcast subscription handling without a plugin. It has since earned its own page in this catalog as the Plex answer, where its media-server install is written up in full. On this page Audiobookshelf keeps the top spot for audiobooks: if books are the reason you are here, start there rather than stretching a film server."
     },
     {
       "name": "Kavita",

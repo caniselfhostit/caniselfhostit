@@ -65,6 +65,7 @@ function swapPhrase(swap: any): string | null {
   if (!swap || typeof swap.monthlyCost !== 'number' || swap.monthlyCost <= 0) return null;
   const seats =
     swap.unit === 'per-seat' && swap.seatsAssumed > 1 ? `, ${swap.seatsAssumed} seats assumed` : '';
+  const perHost = swap.unit === 'per-host' ? ' per host' : '';
   const yearly =
     typeof swap.yearlyCost === 'number' && swap.yearlyCost > 0
       ? ` (${money(swap.yearlyCost)}/yr on the ${swap.plan} plan${seats})`
@@ -72,7 +73,7 @@ function swapPhrase(swap: any): string | null {
   // A metered plan is a rate, not a bill — the HTML page qualifies it, so the
   // mirror must too or it becomes the less careful of the two.
   const metered = swap.unit === 'usage' ? ' — a metered rate, not a whole bill' : '';
-  return `${money(swap.monthlyCost)}/mo you stop paying${yearly}${metered}`;
+  return `${money(swap.monthlyCost)}/mo${perHost} you stop paying${yearly}${metered}`;
 }
 
 /**

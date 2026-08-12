@@ -1,0 +1,84 @@
+{
+  "slug": "it-tools",
+  "name": "IT Tools",
+  "tagline": "A chest of offline-friendly developer utilities in the browser: encoders, converters, generators and more.",
+  "repo": "CorentinTh/it-tools",
+  "site": "https://it-tools.tech",
+  "category": "automation-dev",
+  "replaces": [
+    {
+      "saas": "raycast",
+      "plan": "Pro",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 0
+  },
+  "resources": {
+    "ramMinMB": 256,
+    "ramMeasuredMB": null,
+    "diskGB": 2,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 6,
+  "license": "GPL-3.0-only",
+  "officialCompose": "none",
+  "local": {
+    "fit": "good",
+    "note": "Utilities run entirely in the browser against this local copy, which is ideal for secrets you would never paste into a random website."
+  },
+  "quote": {
+    "text": "Useful tools for developer and people working in IT.",
+    "source": "IT Tools README",
+    "url": "https://github.com/CorentinTh/it-tools",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "Upstream publishes Docker images (Docker Hub and ghcr) via docker run examples; there is no multi-service official compose stack.",
+      "url": "https://github.com/CorentinTh/it-tools#self-host"
+    },
+    {
+      "claim": "The image is the built single-page app copied into an nginx static server; there is no server-side application to receive tool input, so tools run in the browser.",
+      "url": "https://github.com/CorentinTh/it-tools/blob/main/Dockerfile"
+    },
+    {
+      "claim": "The project is GPL-3.0 licensed.",
+      "url": "https://github.com/CorentinTh/it-tools/blob/main/LICENSE"
+    },
+    {
+      "claim": "Caddy obtains and renews TLS certificates automatically for any public hostname named in the Caddyfile.",
+      "url": "https://caddyserver.com/docs/automatic-https"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "This is a utility chest, not a SaaS with accounts and sync. Bookmarks and history stay in the browser.",
+    "The page is public by design: anyone who can reach the hostname can use every tool. Put Caddy basic_auth in front if that is not what you want.",
+    "Trust is the product: you run the code so JWT secrets and private keys are not pasted into a stranger's site. Audit updates like any dependency.",
+    "There is almost no server state to back up. The value is availability of the UI you control; backup is compose plus Caddyfile.",
+    "Upstream release cadence can be slow. The pinned image tag 2024.10.22-7ca5933 was published 2024-10-22 (about 21 months before this page's 2026-08-07 check)."
+  ],
+  "sources": {
+    "compose": "https://github.com/CorentinTh/it-tools#self-host",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://github.com/CorentinTh/it-tools",
+    "license": "https://github.com/CorentinTh/it-tools/blob/main/LICENSE",
+    "releases": "https://github.com/CorentinTh/it-tools/releases"
+  },
+  "related": [
+    "stirling-pdf",
+    "excalidraw",
+    "code-server"
+  ],
+  "pagePriority": 4,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "7cdcba59948ac3bf76d6d96ff8c0cf18901527b6efb5caeddada36433d0fbf7c"
+}

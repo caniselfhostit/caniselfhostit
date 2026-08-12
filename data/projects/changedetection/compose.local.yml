@@ -1,0 +1,24 @@
+# changedetection.io · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker ............. https://github.com/dgtlmoon/changedetection.io/blob/0.55.8/README.md#docker
+#   compose example .... https://github.com/dgtlmoon/changedetection.io/blob/0.55.8/docker-compose.yml
+#   password ........... https://github.com/dgtlmoon/changedetection.io/wiki/Password-protection
+#
+# One service on the computer you are sitting at. Paths are relative to
+# ~/selfhost/changedetection/. SALTED_PASS and BASE_URL come from ./.env.
+# No Playwright sidecar on this path either. Digest read from Docker Hub on
+# 2026-08-07 for tag 0.55.8.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  changedetection:
+    image: dgtlmoon/changedetection.io:0.55.8@sha256:5438423d5e906eff4e8f7886823482ad23f472bf7b8530ccaca89fb48c337882
+    container_name: changedetection
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./data:/datastore
+    ports:
+      # Loopback only: no other device on the wifi can reach 8205.
+      - "127.0.0.1:8205:5000"

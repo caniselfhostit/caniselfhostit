@@ -1,0 +1,95 @@
+{
+  "slug": "ntfy",
+  "name": "ntfy",
+  "tagline": "HTTP publish-subscribe push notifications to your phone, with no per-message bill.",
+  "repo": "binwiederhier/ntfy",
+  "site": "https://ntfy.sh",
+  "category": "monitoring",
+  "replaces": [
+    {
+      "saas": "pushover",
+      "plan": "Unlimited",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 256,
+    "ramMeasuredMB": null,
+    "diskGB": 2,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 9,
+  "license": "Apache-2.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://docs.ntfy.sh/install/#docker",
+  "local": {
+    "fit": "caveat",
+    "note": "Notifications only fire while this computer is awake, so a message you send after the lid closes is not delivered until it wakes, and a phone on the cellular network cannot reach localhost."
+  },
+  "quote": {
+    "text": "ntfy (pronounced \"notify\") is a simple HTTP-based pub-sub notification service.",
+    "source": "ntfy README",
+    "url": "https://github.com/binwiederhier/ntfy/blob/v2.27.0/README.md",
+    "checkedOn": "2026-08-07"
+  },
+  "citations": [
+    {
+      "claim": "Upstream publishes a multi-arch Docker image and documents a single-service install that serves HTTP on port 80 inside the container with command serve.",
+      "url": "https://docs.ntfy.sh/install/#docker"
+    },
+    {
+      "claim": "Access control is enabled by setting auth-file and auth-default-access; deny-all makes a private instance where anonymous publish and subscribe are refused until users and ACLs exist.",
+      "url": "https://docs.ntfy.sh/config/#access-control"
+    },
+    {
+      "claim": "Users can be created non-interactively with NTFY_PASSWORD=... ntfy user add, and admin role grants read-write on all topics.",
+      "url": "https://docs.ntfy.sh/config/#users-and-roles"
+    },
+    {
+      "claim": "Behind a reverse proxy, behind-proxy must be true so rate limiting uses X-Forwarded-For instead of treating every client as the proxy.",
+      "url": "https://docs.ntfy.sh/config/#behind-a-proxy-tls-etc"
+    },
+    {
+      "claim": "iOS instant notifications for self-hosted servers forward through an upstream base URL (typically ntfy.sh APNS); without it, delivery is delayed.",
+      "url": "https://docs.ntfy.sh/config/#ios-instant-notifications"
+    },
+    {
+      "claim": "Caddy obtains and renews TLS certificates automatically for any public hostname named in the Caddyfile.",
+      "url": "https://caddyserver.com/docs/automatic-https"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "This install is closed: auth-default-access is deny-all and anonymous publish returns 403. Your admin account is created on the CLI with ntfy user add, not in a browser signup form. Anyone who can guess a topic still cannot write to it without credentials.",
+    "You own the push path to phones. Point the Android or iOS app at your base URL and log in. Instant iOS delivery routes through ntfy.sh's APNS bridge when you set upstream-base-url; without that, iOS is delayed. That is a deliberate third-party hop, not free magic.",
+    "You own the backups. The cache database, the auth user database, and .env (the admin password) are the state. Lose auth without a backup and you rebuild accounts from scratch.",
+    "There is no SLA and no pager on call except you. If the box is down, so are the alerts that depended on it.",
+    "Rate limits and attachment size caps are yours to set. Defaults that felt fine on ntfy.sh can surprise you under a noisy script."
+  ],
+  "sources": {
+    "compose": "https://docs.ntfy.sh/install/#docker",
+    "caddy": "https://docs.ntfy.sh/config/#nginxapachecaddy",
+    "install": "https://docs.ntfy.sh/install/",
+    "config": "https://docs.ntfy.sh/config/",
+    "access": "https://docs.ntfy.sh/config/#access-control",
+    "ios": "https://docs.ntfy.sh/config/#ios-instant-notifications",
+    "publish": "https://docs.ntfy.sh/publish/"
+  },
+  "related": [
+    "gotify",
+    "uptime-kuma",
+    "healthchecks"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-07",
+  "contentHash": "53085a375313197680b59461f71bc919b407a0a32554fc517f7a4e49d64aee85"
+}

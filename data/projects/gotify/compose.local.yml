@@ -1,0 +1,22 @@
+# Gotify · the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   install ............ https://gotify.net/docs/install
+#   configuration ...... https://gotify.net/docs/config
+#
+# One container on the computer you are sitting at. Paths are relative to
+# ~/selfhost/gotify/. Admin seed credentials come from .env. Digest for
+# server:3.0.0 read from Docker Hub on 2026-08-07.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  gotify:
+    image: gotify/server:3.0.0@sha256:d75e89e0e28389c00c2556afe01282a37ee9756b0285799aa25214243aebd5e5
+    container_name: gotify
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./data:/app/data
+    ports:
+      # Loopback only: no other device on the wifi can reach 8206.
+      - "127.0.0.1:8206:80"

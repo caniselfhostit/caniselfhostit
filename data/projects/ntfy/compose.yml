@@ -1,0 +1,43 @@
+# ntfy · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker install ..... https://docs.ntfy.sh/install/#docker
+#   configuration ...... https://docs.ntfy.sh/config/
+#   access control ..... https://docs.ntfy.sh/config/#access-control
+#   behind a proxy ..... https://docs.ntfy.sh/config/#behind-a-proxy-tls-etc
+#
+# One container. Serve listens on port 80 inside the image. Auth is closed by
+# default (deny-all): anonymous publish and subscribe are refused until a user
+# is created with `ntfy user add`. Cache and auth live on separate mounts so a
+# backup can name each path. NTFY_BASE_URL comes from .env and must be the
+# public https URL (this file is the VPS path). behind-proxy is true because
+# Caddy on the host terminates TLS. Digest read from Docker Hub on 2026-08-07;
+# the manifest list covers amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  ntfy:
+    image: binwiederhier/ntfy:v2.27.0@sha256:f2419f405127afa868f10985c1a41449e673477cee1eb19994339a5ae8b592e7
+    container_name: ntfy
+    restart: unless-stopped
+    command: ["serve"]
+    env_file: /srv/ntfy/.env
+    environment:
+      # Public URL phones and curl use. Set in .env as https://your.hostname.
+      NTFY_BASE_URL: ${NTFY_BASE_URL}
+      NTFY_CACHE_FILE: /var/cache/ntfy/cache.db
+      NTFY_ATTACHMENT_CACHE_DIR: /var/cache/ntfy/attachments
+      # Auth database is created on first start when this path is set.
+      NTFY_AUTH_FILE: /var/lib/ntfy/user.db
+      # Private instance: no anonymous read or write to any topic.
+      NTFY_AUTH_DEFAULT_ACCESS: deny-all
+      # Web UI login form; users themselves are still created on the CLI.
+      NTFY_ENABLE_LOGIN: "true"
+      # Rate limits must use X-Forwarded-For; without this every client is Caddy.
+      NTFY_BEHIND_PROXY: "true"
+    volumes:
+      - /srv/ntfy/cache:/var/cache/ntfy
+      - /srv/ntfy/auth:/var/lib/ntfy
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8200.
+      - "127.0.0.1:8200:80"

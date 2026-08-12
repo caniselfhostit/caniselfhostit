@@ -1,0 +1,18 @@
+# IT Tools · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker run ......... https://github.com/CorentinTh/it-tools#self-host
+#
+# One service on the computer you are sitting at. Stateless static UI. Tag
+# 2024.10.22-7ca5933 published 2024-10-22; digest read from Docker Hub on
+# 2026-08-07.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  it-tools:
+    image: corentinth/it-tools:2024.10.22-7ca5933@sha256:8b8128748339583ca951af03dfe02a9a4d7363f61a216226fc28030731a5a61f
+    container_name: it-tools
+    restart: unless-stopped
+    ports:
+      # Loopback only: no other device on the wifi can reach 8209.
+      - "127.0.0.1:8209:80"
