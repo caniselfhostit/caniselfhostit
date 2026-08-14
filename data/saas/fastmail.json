@@ -1,0 +1,80 @@
+{
+  "slug": "fastmail",
+  "name": "Fastmail",
+  "domain": "fastmail.com",
+  "whyPeoplePay": "Fastmail sells the one part of email that is not software: a mail domain whose reputation has been earned over two decades, so the message you send arrives in an inbox rather than a spam folder. The bill also buys the IMAP and JMAP servers, the calendar and contacts, Masked Email, the web and mobile clients, and somebody else carrying the pager when a large receiver decides to throttle. Business plans are billed per user; personal plans are a flat rate for one, two or six people.",
+  "plans": [
+    {
+      "name": "Individual",
+      "priceMonthly": 6,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "One person. $5 per month billed yearly ($60 for 12 months). 60 GB total storage: 50 GB for mail, calendar and contacts, and 10 GB for file storage."
+    },
+    {
+      "name": "Duo",
+      "priceMonthly": 10,
+      "unit": "flat",
+      "seatsIncluded": 2,
+      "note": "Two people. $8 per month billed yearly ($96 for 12 months). 120 GB total storage, 60 GB per person."
+    },
+    {
+      "name": "Family",
+      "priceMonthly": 14,
+      "unit": "flat",
+      "seatsIncluded": 6,
+      "note": "Up to six people. $11 per month billed yearly ($132 for 12 months). Up to 360 GB total storage, 60 GB per person."
+    },
+    {
+      "name": "Basic",
+      "priceMonthly": 4,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Business tier for low storage needs. $3 per user per month billed yearly ($36 for 12 months). 6 GB total storage per user: 5 GB for mail, calendar and contacts and 1 GB for file storage."
+    },
+    {
+      "name": "Standard",
+      "priceMonthly": 6,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "The business tier the page marks most popular. $5 per user per month billed yearly ($60 for 12 months). 60 GB total storage per user, custom business addresses on your own domain."
+    },
+    {
+      "name": "Professional",
+      "priceMonthly": 10,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$9 per user per month billed yearly ($108 for 12 months). 150 GB total storage per user and an email retention archive for legal compliance."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-14",
+    "source": "https://www.fastmail.com/pricing/us/",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "The pricing page renders in the currency of the country it geolocates you to, and it served Canadian dollars to us. The USD figures above were read from https://www.fastmail.com/pricing/us/, the same page under its United States country path, and cross-checked against https://www.fastmail.com/data/pricing/us.json, the file the page's own currency selector fetches. priceMonthly is the month-to-month price; each note carries the cheaper yearly figure. Prices are tax-exclusive; 24-month and 36-month terms are cheaper again."
+  },
+  "ranked": [
+    {
+      "project": "stalwart",
+      "rationale": "The only entry in this catalog that is the mail server rather than something that hands mail to one. One Rust binary and one container speak SMTP, IMAP, JMAP, POP3, ManageSieve, CalDAV, CardDAV and WebDAV, with the spam filter, the DKIM signing and the DMARC reporting built in rather than bolted on, and every part of it configured through a web admin UI instead of a pile of files in /etc. What it cannot hand you is the part of Fastmail you are actually paying for: the reputation of the IP address your mail leaves from. That is earned over weeks with correct DNS, a matching PTR record and a sending pattern that does not look like a compromised box, and the page says so at the top rather than at the bottom."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Mailcow: dockerized",
+      "repo": "https://github.com/mailcow/mailcow-dockerized",
+      "note": "GPL-3.0, and the most complete self-hosted mail stack there is: Postfix, Dovecot, Rspamd, ClamAV, SOGo webmail, MariaDB, Redis and its own nginx and ACME containers, actively released on a calendar scheme (2026-07a, July 2026). The reason it is not the ranked answer here is structural rather than a judgement on quality: its docker-compose.yml declares 18 services, which lands it in this catalog's ONGOING OPS tier before the first command is typed, and its install flow is a generate-config script that wants the whole box rather than a compose file you read first. If you want a mail server with a webmail client included and you are prepared to run eighteen containers, this is the one to look at."
+    },
+    {
+      "name": "docker-mailserver",
+      "repo": "https://github.com/docker-mailserver/docker-mailserver",
+      "note": "MIT, one container, Postfix and Dovecot and Rspamd inside it, and the closest thing to a drop-in replacement for a hand-built Postfix box. Two honest notes. It has no web administration at all: accounts, aliases and settings are managed with a setup script and files under a config directory, which is a deliberate design choice and also the reason it loses to Stalwart on this page. And its release cadence has slowed: v15.1.0 is dated August 2025, a year before we looked, although commits continued into August 2026."
+    },
+    {
+      "name": "Mailu",
+      "repo": "https://github.com/Mailu/Mailu",
+      "note": "MIT (LICENSE.md at the 2024.06.58 tag), a multi-container stack with a web admin UI, Roundcube or SnappyMail webmail, and Rspamd, still shipping point releases in August 2026. It sits between the other two: fewer moving parts than Mailcow, a real admin UI unlike docker-mailserver. The version string is worth understanding before you pin it, because the 2024.06 line keeps receiving patch releases in 2026, so the year in the tag is the branch rather than the release date."
+    }
+  ]
+}

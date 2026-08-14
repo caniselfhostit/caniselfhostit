@@ -50,7 +50,7 @@
     {
       "name": "Twenty",
       "repo": "https://github.com/twentyhq/twenty",
-      "note": "The one everybody links to, and deservedly: 54k stars, commits every day, and an interface designed this decade rather than inherited from 2010. GitHub reports the licence as Other, and reading the LICENSE file explains why. Most of the tree is AGPLv3 with an added Section 7 permission for applications built on its APIs, the SDK and UI packages are MIT, and files carrying an `@license Enterprise` comment are under a separate commercial licence instead. Self-hosting is a multi-service stack with PostgreSQL, Redis and a worker. We have not tested it."
+      "note": "The one everybody links to, and deservedly: 54k stars, commits every day, and an interface designed this decade rather than inherited from 2010. GitHub reports the licence as Other, and reading the LICENSE file explains why. Most of the tree is AGPLv3 with an added Section 7 permission for applications built on its APIs, the SDK and UI packages are MIT, and files carrying an `@license Enterprise` comment are under a separate commercial licence instead. It has since earned its own page in this catalog as the Attio answer, where its install is written up in full: four services, a PostgreSQL you back up, and a worker that has to keep running. On this page EspoCRM keeps the top spot for covering more of what Pipedrive actually sells, quotes and documents included."
     },
     {
       "name": "SuiteCRM",

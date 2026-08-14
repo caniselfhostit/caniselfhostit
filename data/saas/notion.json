@@ -50,7 +50,7 @@
     {
       "name": "Outline",
       "repo": "https://github.com/outline/outline",
-      "note": "Actively developed and the nicest wiki editor of the group, but two things kept it off the tested list. It is Business Source License 1.1, not open source, converting to Apache-2.0 in 2030, and its self-hosted install expects an outside identity provider, so the first login is a Google or OIDC app you register somewhere else before anything works."
+      "note": "Actively developed and the nicest wiki editor of the group. It is Business Source License 1.1 rather than open source, with the pinned 1.9.2 converting to Apache 2.0 on 2030-07-21. Sign-in is the part to plan for, because there is no password anywhere in the product: the first workspace is claimed on a form the server shows only while none exists, and everyone returns afterwards through a link mailed to them, so an SMTP relay is part of the install rather than an optional extra. It has since earned its own page in this catalog as the Slite answer, where that install is written up in full. On this page Docmost keeps the top spot for importing a Notion export ZIP directly, so the migration is an upload rather than a rewrite."
     },
     {
       "name": "AFFiNE",

@@ -1,0 +1,25 @@
+# Stalwart · the Caddy site block for this service. Authored by caniselfhostit
+# from https://stalw.art/docs/install/security and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile with <DOMAIN> replaced by the hostname
+# pointed at this box, which is also STALWART_HOSTNAME in .env and has to match
+# the PTR record. The whole hostname is proxied, not only /admin: the same
+# listener serves JMAP, WebDAV, autoconfig, MTA-STS, OAuth and the
+# acme-challenge path answered while renewing the 465 and 993 certificate.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8189 is the loopback port compose publishes for the container's plain
+	# HTTP listener. Not a container port, not in the firewall.
+	reverse_proxy 127.0.0.1:8189
+}

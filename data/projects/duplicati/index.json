@@ -1,0 +1,115 @@
+{
+  "slug": "duplicati",
+  "name": "Duplicati",
+  "tagline": "A backup client with a web interface: schedules, versions, and AES-256 applied on your own machine before anything is uploaded to storage you chose.",
+  "repo": "duplicati/duplicati",
+  "site": "https://duplicati.com",
+  "category": "files-docs",
+  "replaces": [
+    {
+      "saas": "idrive",
+      "plan": "IDrive Personal · 5 TB",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "MIT",
+  "officialCompose": "none",
+  "local": {
+    "fit": "good",
+    "note": "This is the path Duplicati was built for, backing up the computer you are sitting at, with one consequence worth saying out loud: a job scheduled for 3am runs only if the machine is awake at 3am, so on a laptop the honest setting is a daily run that fires when the lid opens."
+  },
+  "quote": {
+    "text": "On the first launch, Duplicati will generate the database containing the server settings. This includes a signing key for JWT tokens and a randomly generated password for accessing the UI.",
+    "source": "Duplicati Docker image README, 2.3.0.4-stable",
+    "url": "https://github.com/duplicati/duplicati/blob/v2.3.0.4_stable_2026-07-09/ReleaseBuilder/Resources/Docker/README.md",
+    "checkedOn": "2026-08-12"
+  },
+  "citations": [
+    {
+      "claim": "The published image sets XDG_CONFIG_HOME to /data, declares /data as a volume, exposes 8200, and sets DUPLICATI__WEBSERVICE_PORT to 8200 and DUPLICATI__WEBSERVICE_INTERFACE to any, so the web interface listens on every address inside the container rather than on loopback.",
+      "url": "https://github.com/duplicati/duplicati/blob/v2.3.0.4_stable_2026-07-09/ReleaseBuilder/Resources/Docker/Dockerfile"
+    },
+    {
+      "claim": "The image entrypoint creates a user and drops privileges only when both UID and GID are supplied; with neither set it execs the command directly, so by default the container runs as root.",
+      "url": "https://github.com/duplicati/duplicati/blob/v2.3.0.4_stable_2026-07-09/ReleaseBuilder/Resources/Docker/run-as-user.sh"
+    },
+    {
+      "claim": "A Duplicati that starts with no password set generates a random one and logs a one-time sign-in link; upstream's own remedy is to supply DUPLICATI__WEBSERVICE_PASSWORD, and it recommends setting the allowed hostnames and SETTINGS_ENCRYPTION_KEY to reduce the risk of leaking credentials out of the settings database.",
+      "url": "https://github.com/duplicati/duplicati/blob/v2.3.0.4_stable_2026-07-09/ReleaseBuilder/Resources/Docker/README.md"
+    },
+    {
+      "claim": "Command line options become environment variables by prefixing DUPLICATI__ and turning dashes into underscores; the settings-encryption key is the exception and is read from the unprefixed SETTINGS_ENCRYPTION_KEY.",
+      "url": "https://github.com/duplicati/duplicati/blob/v2.3.0.4_stable_2026-07-09/Duplicati/Server/Program.cs"
+    },
+    {
+      "claim": "The hostname allow-list ships holding localhost, 127.0.0.1, [::1] and localhost.localdomain, and any value that parses as an IP address is accepted; every other Host fails validation until it is added.",
+      "url": "https://github.com/duplicati/duplicati/blob/v2.3.0.4_stable_2026-07-09/Duplicati/WebserverCore/Services/HostnameValidator.cs"
+    },
+    {
+      "claim": "That hostname filter is attached to the /api/v1 and /api/v2 route groups, which is why the static files and the /health endpoint answer over a public hostname while every API call behind them does not.",
+      "url": "https://github.com/duplicati/duplicati/blob/v2.3.0.4_stable_2026-07-09/Duplicati/WebserverCore/Extensions/WebApplicationExtensions.cs"
+    },
+    {
+      "claim": "The refusal is HTTP 403: the exception the filter throws declares that status code.",
+      "url": "https://github.com/duplicati/duplicati/blob/v2.3.0.4_stable_2026-07-09/Duplicati/WebserverCore/Exceptions/InvalidHostnameException.cs"
+    },
+    {
+      "claim": "Anonymous usage reporting is on by default at the Information level, and the reporter checks DO_NOT_TRACK=1 before anything is sent.",
+      "url": "https://github.com/duplicati/duplicati/blob/v2.3.0.4_stable_2026-07-09/Duplicati/Library/UsageReporter/Reporter.cs"
+    },
+    {
+      "claim": "The LICENSE at this tag is MIT, copyright Duplicati Inc, with an explicit carve-out: everything under the proprietary/ directory is licensed by proprietary/LICENSE instead, which requires a Duplicati Inc subscription for production use.",
+      "url": "https://github.com/duplicati/duplicati/blob/v2.3.0.4_stable_2026-07-09/LICENSE"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "You stop paying a subscription and start paying for storage, separately. IDrive sells the client and the terabytes on one invoice; Duplicati is only the client, so the backups have to land somewhere you supply: object storage billed by the gigabyte every month, an SFTP account, or a second machine you keep running. Below a few hundred gigabytes that usually beats a 5 TB plan you are not filling, and at several terabytes it often does not. Do the arithmetic against IDrive's standard price rather than its first-year one, because the first year is the number designed to be compared.",
+    "The passphrase is unrecoverable, on purpose. Duplicati encrypts with AES-256 on your machine before anything is uploaded, which is the reason a bucket at a company you have never met is an acceptable place to put your files, and also the reason a forgotten passphrase turns every one of those files into noise for you as much as for anyone else. It belongs in a password manager the day you type it, next to the archive of Duplicati's own settings database.",
+    "You become the person who tests restores. Nothing here emails you when a job has not run in three weeks, no phone app finds a file for you from the car, and no courier arrives with a drive when the restore is four terabytes. The install ends by making you restore one file, and that habit is the actual product. It also copies files rather than understanding them, so another service's database picked up mid-write can restore unreadable; where a service can write its own dump, back that up instead of its live data directory.",
+    "MIT with a carve-out worth knowing. The LICENSE at the pinned tag is MIT, copyright Duplicati Inc, and it excludes the proprietary/ directory, which carries its own licence requiring a Duplicati Inc subscription for production use. That directory holds the Microsoft 365 and Google Workspace connectors, disk-image support and the licence checker, and the company sells a hosted monitoring console alongside them. Nothing in this install touches those, and the core you run here is MIT.",
+    "This backs up the machine it runs on. On a server that is the server's data; on your own computer it is your own files. It is not an agent for the household's other laptops, and IDrive's plans covering several computers under one account have no equivalent here without running this once per machine."
+  ],
+  "sources": {
+    "compose": "https://github.com/duplicati/duplicati/blob/v2.3.0.4_stable_2026-07-09/ReleaseBuilder/Resources/Docker/README.md",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "image": "https://github.com/duplicati/duplicati/blob/v2.3.0.4_stable_2026-07-09/ReleaseBuilder/Resources/Docker/Dockerfile",
+    "entrypoint": "https://github.com/duplicati/duplicati/blob/v2.3.0.4_stable_2026-07-09/ReleaseBuilder/Resources/Docker/run-as-user.sh",
+    "options": "https://github.com/duplicati/duplicati/blob/v2.3.0.4_stable_2026-07-09/Duplicati/Server/WebServerLoader.cs",
+    "env": "https://github.com/duplicati/duplicati/blob/v2.3.0.4_stable_2026-07-09/Duplicati/Server/Program.cs",
+    "hostnames": "https://github.com/duplicati/duplicati/blob/v2.3.0.4_stable_2026-07-09/Duplicati/WebserverCore/Services/HostnameValidator.cs",
+    "hostnameFilter": "https://github.com/duplicati/duplicati/blob/v2.3.0.4_stable_2026-07-09/Duplicati/WebserverCore/Extensions/WebApplicationExtensions.cs",
+    "usageReporting": "https://github.com/duplicati/duplicati/blob/v2.3.0.4_stable_2026-07-09/Duplicati/Library/UsageReporter/Reporter.cs",
+    "api": "https://github.com/duplicati/duplicati/blob/v2.3.0.4_stable_2026-07-09/Duplicati/WebserverCore/Endpoints/V1/Auth.cs",
+    "health": "https://github.com/duplicati/duplicati/blob/v2.3.0.4_stable_2026-07-09/Duplicati/WebserverCore/DuplicatiWebserver.cs",
+    "password": "https://docs.duplicati.com/configuration-and-management/duplicati-access-password",
+    "destinations": "https://docs.duplicati.com/backup-destinations/destination-overview",
+    "license": "https://github.com/duplicati/duplicati/blob/v2.3.0.4_stable_2026-07-09/LICENSE",
+    "releases": "https://github.com/duplicati/duplicati/releases",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "backrest",
+    "syncthing",
+    "nextcloud"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-14",
+  "contentHash": "34302f5de2b3b4932a77361a5a06496632a30421415b4029ebd9969e90140d15"
+}

@@ -48,7 +48,7 @@
     {
       "name": "Duplicati",
       "repo": "https://github.com/duplicati/duplicati",
-      "note": "The most widely installed of these and the one with the longest memory of trouble: for years the 2.0 line carried a beta label while people ran it on real data anyway. It is actively maintained, with a stable channel that moved in July 2026 alongside beta and canary channels, and a web UI that most people find friendlier than restic's command line. Check the licence yourself before committing: GitHub reports it as unrecognised rather than a named SPDX identifier."
+      "note": "The most widely installed of these and the one with the longest memory of trouble: for years the 2.0 line carried a beta label while people ran it on real data anyway. It is actively maintained, with a stable channel that moved in July 2026 alongside beta and canary channels, and a web UI that most people find friendlier than restic's command line. It has since earned its own page in this catalog as the IDrive answer, where its install is written up in full along with the licence: the LICENSE at the pinned tag is MIT, with a proprietary/ directory carved out under separate terms, which is why GitHub reports no single named SPDX identifier. On this page Backrest keeps the top spot for the restic engine underneath it, which never carried the beta label Duplicati's 2.0 line wore for years."
     },
     {
       "name": "UrBackup",

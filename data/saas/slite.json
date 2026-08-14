@@ -1,0 +1,58 @@
+{
+  "slug": "slite",
+  "name": "Slite",
+  "domain": "slite.com",
+  "whyPeoplePay": "Slite sells a company wiki that someone else keeps tidy. The writing surface is deliberately plain, and the money goes on the things around it: an agent that answers questions out of your docs and your connected tools, a verification workflow that nags an owner when a page goes stale, and a management panel for bulk-fixing the mess a growing team makes. It bills per member per month, so the invoice grows on the day somebody joins rather than on the day anyone writes anything, and the AI features that justify the higher tier are metered in credits per seat on top of that.",
+  "plans": [
+    {
+      "name": "Basic",
+      "priceMonthly": 10,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$10 per user per month, the figure the pricing page prints under a Billed yearly label. Unlimited docs, AI search and answers inside Slite docs, the doc verification workflow, the knowledge management panel, MCP and API access, 5 GB of storage per user."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 20,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$20 per user per month, again billed yearly on the page. Adds the Slite Agent, search across connected tools, doc fact-checking with suggested fixes, agent workflows with 50 monthly credits per seat, OpenID SSO and a custom domain for public docs."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The card reads Custom pricing and links to Contact Sales. It adds reader-only seats, audit logs, SCIM provisioning, an SLA, a dedicated account manager and migration support."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-14",
+    "source": "https://slite.com/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The page publishes only annual-billed rates: both $10 and $20 carry the label Billed yearly, and there is no monthly toggle or monthly figure anywhere in the markup we read. Slite's own FAQ on the same page refers to a monthly plan, so a monthly-billed subscriber almost certainly pays more than these numbers, and we could not read how much. Everything else here was read from the live page and its comparison table on the checkedOn date."
+  },
+  "ranked": [
+    {
+      "project": "outline",
+      "rationale": "The closest thing to what a Slite workspace actually is: nested documents in collections, a fast editor two people can type in at once, comments, search across everything, and a REST API. Sign-in is the part to plan for, because there is no password anywhere in the product. The first workspace is claimed on a form the server shows only while none exists, which you want to do the minute the install answers, and after that everyone returns through a link mailed to them, so an SMTP relay is part of this install rather than an optional extra. What does not come across is the agent half: Ask, the cross-tool answers, the fact-checking and the agent workflows on Slite's paid tiers have no counterpart here. It is also Business Source License 1.1 rather than open source, converting to Apache 2.0 on 2030-07-21, and the grant forbids reselling it as a document service."
+    },
+    {
+      "project": "docmost",
+      "rationale": "The same shape of product with a different licence and a gentler front door: AGPL-3.0, spaces and nested pages, real-time editing, and a first account created with an email and a password on the setup screen, so nothing about mail has to work before you can log in. It takes the top spot on our Notion page for exactly that reason. Here it is second on a narrower point: Outline's editor, its search and its API are the closer match to how Slite is used day to day, and Docmost's Bases, the table-and-board feature, is a paid commercial add-on absent from the AGPL build. Pick Docmost instead if a genuinely open source licence, or not depending on an SMTP relay, matters more to you than the editor."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Wiki.js",
+      "repo": "https://github.com/requarks/wiki",
+      "note": "AGPL-3.0, and the most feature-complete wiki here on paper: page trees, several editors, granular permissions and a long list of auth backends. The reason it is not tested is cadence. What ships is still the 2.x line, whose latest release is v2.5.314 from 2026-05-01, and the branch it comes from has not been committed to since that day. Active work is on the 3.x rewrite, which has been in development for years, lives on a separate branch that was being committed to this week, and has never had a stable release or tag. Installing 2.x today means installing something whose successor will not be an upgrade."
+    },
+    {
+      "name": "AFFiNE",
+      "repo": "https://github.com/toeverything/AFFiNE",
+      "note": "Pages and a whiteboard in one canvas, moving fast, and now easier to pin than it used to be: the registry carries semver tags such as 0.27.3 alongside the daily canary builds. The reason it stays off the tested list is the licence split. The repository's LICENSE puts everything under packages/backend, which is the server you would self-host, under an Enterprise Edition licence whose text says the software may only be used in production with a valid AFFiNE Enterprise Edition subscription, while the README says the currently available Community Edition is free to self-host under MIT. Those two statements are in the same repository, and reconciling them is a conversation with a lawyer rather than a paragraph in an install prompt."
+    }
+  ]
+}

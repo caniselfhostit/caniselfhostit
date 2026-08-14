@@ -1,0 +1,99 @@
+{
+  "slug": "solidtime",
+  "name": "solidtime",
+  "tagline": "A modern time tracker with organisations, members, clients and billable rates, on a box that never counts seats.",
+  "repo": "solidtime-io/solidtime",
+  "site": "https://solidtime.io",
+  "category": "work-pm",
+  "replaces": [
+    {
+      "saas": "clockify",
+      "plan": "Basic",
+      "seatsAssumed": 3
+    }
+  ],
+  "tierFactors": {
+    "containers": 4,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 4
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 240,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/solidtime-io/self-hosting-examples/blob/main/1-docker-with-database/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "On your own computer solidtime answers at http://localhost:8184 and nowhere else, so the organisation, the members and the invitations are features you can see and cannot use, and a timer nobody but you can reach is a timer that stops when the lid closes."
+  },
+  "quote": {
+    "text": "Depending on your configuration of the APP_ENABLE_REGISTRATION environment variable, you can either create a user via the registration form or you need to create a user via the CLI. Per default the registration is disabled.",
+    "source": "solidtime self-hosting documentation, Docker guide",
+    "url": "https://docs.solidtime.io/self-hosting/guides/docker",
+    "checkedOn": "2026-08-14"
+  },
+  "citations": [
+    {
+      "claim": "Registration is off unless you switch it on: APP_ENABLE_REGISTRATION defaults to false at the pinned tag, and the sign-up action throws a validation error rather than creating a user while it is false.",
+      "url": "https://github.com/solidtime-io/solidtime/blob/v0.19.1/config/app.php"
+    },
+    {
+      "claim": "One image serves three roles. CONTAINER_MODE selects http, scheduler or worker and there is no combined mode, so a queue worker and a scheduler are separate containers of the same image.",
+      "url": "https://docs.solidtime.io/self-hosting/container-mode"
+    },
+    {
+      "claim": "Accounts are created with artisan admin:user:create, which generates and prints a random password unless --ask-for-password is passed, and --verify-email marks the address verified without sending anything.",
+      "url": "https://github.com/solidtime-io/solidtime/blob/v0.19.1/app/Console/Commands/Admin/UserCreateCommand.php"
+    },
+    {
+      "claim": "Two scheduled tasks are on by default and post to app.solidtime.io twice a day: an update check sending version, build and your APP_URL, and a telemetry ping adding counts of users, organisations, audits, projects, project members, clients, tasks and time entries.",
+      "url": "https://github.com/solidtime-io/solidtime/blob/v0.19.1/app/Service/ApiService.php"
+    },
+    {
+      "claim": "The open-source BillingContract returns true from hasSubscription and false from isBlocked, so a self-hosted organisation is treated as a paid one; the metered implementation lives in a cloud-only extension.",
+      "url": "https://github.com/solidtime-io/solidtime/blob/v0.19.1/app/Service/BillingContract.php"
+    },
+    {
+      "claim": "Upstream's own self-hosting example runs the application, a scheduler, a queue worker, PostgreSQL and a Gotenberg PDF renderer, publishing only the application port.",
+      "url": "https://github.com/solidtime-io/self-hosting-examples/blob/main/1-docker-with-database/docker-compose.yml"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "This is a young project on a 0.x line, and that is the first thing to weigh. The first tag is dated June 2024, the version pinned here is 0.19.1 from 7 August 2026, and upstream has been shipping roughly two releases a month through 2026. That cadence is a good sign about attention and a bad sign about stability: read the release notes rather than skimming the number, and expect the schema to move under you more often than a decade-old timesheet would move.",
+    "Four containers, not one. The published image runs one role at a time, chosen by CONTAINER_MODE, so the web server, the scheduler and the queue worker are three containers of the same image, plus a PostgreSQL. The worker is not optional decoration: every time entry you save queues a job that recalculates the spent time on its project and its task, so an install without it looks healthy and reports totals that never move.",
+    "No mail unless you set it up. This install runs with the log mailer, so a password-reset link or an organisation invitation is written into the container log instead of an inbox. That is workable for one person and a real obstacle to the team half of the product: inviting a colleague means fishing a signed URL out of `docker compose logs`.",
+    "Two things phone home by default, and this install turns both off. An update check and a telemetry ping post your instance URL to app.solidtime.io twice a day, and the telemetry one adds counts of your users, organisations, projects, clients, tasks and time entries. The compose file names both switches so you can decide for yourself rather than discover it later.",
+    "No paywall in the self-hosted build, and no PDF either. The open-source billing contract answers yes to every subscription check, so rounding, exports and more than one member are all on. The one thing missing is PDF report export, which needs a fifth container running Gotenberg; CSV, XLSX and ODS work without it."
+  ],
+  "sources": {
+    "compose": "https://github.com/solidtime-io/self-hosting-examples/blob/main/1-docker-with-database/docker-compose.yml",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://docs.solidtime.io/self-hosting/guides/docker",
+    "configuration": "https://docs.solidtime.io/self-hosting/configuration",
+    "containerMode": "https://docs.solidtime.io/self-hosting/container-mode",
+    "cli": "https://docs.solidtime.io/self-hosting/cli-commands",
+    "adminPanel": "https://docs.solidtime.io/self-hosting/super-admin-panel",
+    "image": "https://github.com/solidtime-io/solidtime/blob/v0.19.1/docker/prod/Dockerfile",
+    "entrypoint": "https://github.com/solidtime-io/solidtime/blob/v0.19.1/docker/prod/deployment/start-container",
+    "license": "https://github.com/solidtime-io/solidtime/blob/v0.19.1/LICENSE.md",
+    "releases": "https://github.com/solidtime-io/solidtime/releases"
+  },
+  "related": [
+    "kimai",
+    "invoice-ninja",
+    "leantime"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-14",
+  "contentHash": "d0926178a48efe092aad3ae51a9d528a457637800abca8ab6f79a804196b523c"
+}

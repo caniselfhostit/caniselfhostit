@@ -55,7 +55,7 @@
     {
       "name": "Budibase",
       "repo": "https://github.com/Budibase/budibase",
-      "note": "Actively developed and pleasant to build in, with its own built-in database if you do not already have one. The licence is the reason it is not ranked: GitHub reports no single licence for the repository, and Budibase's own guidelines say the project is GPLv3 overall while paid features live in packages/pro under the Business Source License, which is not open source and forbids running modified code that bypasses their licence checks. That is a real constraint to read before you build a company's tools on it."
+      "note": "Actively developed and pleasant to build in, with its own built-in database if you do not already have one. The licence is a split rather than a single line: the server is GPL-3.0, and the paid features in packages/pro are under the Business Source License, which is not open source and forbids running modified code that bypasses their licence checks. It has since earned its own page in this catalog as the Quickbase answer, where its install is written up in full and that split is disclosed package by package. On this page Appsmith keeps the top spot for a community edition that is Apache-2.0 end to end, and for being the closer swap when your data already lives in a database you run."
     },
     {
       "name": "Grist",

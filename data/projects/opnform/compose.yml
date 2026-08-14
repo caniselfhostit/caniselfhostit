@@ -1,0 +1,131 @@
+# OpnForm · the deterministic fallback. Authored by caniselfhostit from
+# https://docs.opnform.com/deployment/docker,
+# https://docs.opnform.com/configuration/environment-variables and
+# https://github.com/OpnForm/OpnForm/blob/v2.3.0/docker-compose.yml
+#
+# Seven services, upstream's own shape. The api image is php-fpm on 9000, so
+# the nginx ingress speaks FastCGI to it and proxies the rest to the Nuxt
+# client under one origin; the host's Caddy fronts that on 8186. api, worker
+# and scheduler are one image under three commands, and the queue is not
+# optional: an ordinary submission is dispatched to it, not written during the
+# request. Digests read from Docker Hub on 2026-08-14; amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+x-api: &api
+  image: jhumanj/opnform-api:2.3.0@sha256:4b71e200d420c7cd2f3bbc7d8d9431de922c5edb8e49a7679c2d09c858fa7329
+  restart: unless-stopped
+  env_file: /srv/opnform/.env
+  environment:
+    APP_ENV: production
+    APP_DEBUG: "false"
+    SELF_HOSTED: "true"
+    LOG_CHANNEL: errorlog
+    LOG_LEVEL: warning
+    DB_CONNECTION: pgsql
+    DB_HOST: db
+    DB_DATABASE: opnform
+    DB_USERNAME: opnform
+    REDIS_HOST: redis
+    CACHE_DRIVER: redis
+    QUEUE_CONNECTION: redis
+    SESSION_DRIVER: redis
+    LOCAL_FILESYSTEM_VISIBILITY: public
+    # Mail to the container log, not nowhere. Upstream's setup script refuses
+    # a production deploy with JWT validation skipped. The bridge range lets
+    # Laravel read the forwarded visitor address; never "*".
+    MAIL_MAILER: log
+    JWT_SKIP_IP_UA_VALIDATION: "false"
+    TRUSTED_PROXIES: 172.16.0.0/12
+    OPNFORM_ANONYMOUS_TELEMETRY_DISABLED: "true"
+  volumes:
+    - opnform-storage:/usr/share/nginx/html/storage
+
+services:
+  db:
+    image: postgres:16.15-alpine@sha256:ab5c955e9e57ae9879d4411ab49a912be9d162455676f7bf56e951b11ac73785
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: opnform
+      POSTGRES_USER: opnform
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - opnform-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U opnform -d opnform"]
+      interval: 10s
+      retries: 30
+
+  redis:
+    image: redis:7.4.10-alpine@sha256:e7723ff73d963f5cc6d9c4643ea3d989527a402a319239054e9472a7fb9219a2
+    restart: unless-stopped
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    command: ["sh", "-c", "exec redis-server --appendonly yes --requirepass \"$$REDIS_PASSWORD\""]
+    volumes:
+      - opnform-redis:/data
+    healthcheck:
+      test: ["CMD-SHELL", 'redis-cli -a "$$REDIS_PASSWORD" --no-auth-warning ping | grep -q PONG']
+      interval: 10s
+      retries: 30
+
+  api:
+    <<: *api
+    depends_on:
+      db: {condition: service_healthy}
+      redis: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD-SHELL", "php /usr/share/nginx/html/artisan about || exit 1"]
+      interval: 30s
+      timeout: 15s
+      retries: 5
+      # Long: it migrates before it answers, and the other four wait here.
+      start_period: 300s
+
+  worker:
+    <<: *api
+    command: ["php", "artisan", "queue:work"]
+    depends_on:
+      api: {condition: service_healthy}
+
+  scheduler:
+    <<: *api
+    command: ["php", "artisan", "schedule:work"]
+    depends_on:
+      api: {condition: service_healthy}
+
+  client:
+    image: jhumanj/opnform-client:2.3.0@sha256:1b46bef02db59525e21c9e403805c50839af8c257883430702f1157c6946c1c8
+    restart: unless-stopped
+    environment:
+      NUXT_PUBLIC_APP_URL: ${APP_URL}
+      NUXT_PUBLIC_API_BASE: ${APP_URL}/api
+      # Rendering on the server goes back through the ingress: Node cannot
+      # speak FastCGI. NUXT_API_SECRET is FRONT_API_SECRET renamed.
+      NUXT_PRIVATE_API_BASE: http://ingress/api
+      NUXT_API_SECRET: ${FRONT_API_SECRET}
+      NUXT_PUBLIC_ENV: production
+    depends_on:
+      api: {condition: service_healthy}
+
+  ingress:
+    image: nginx:1.30.4-alpine@sha256:97d490c12ba55b4946b01546d1c3ed324e8d41ab1c9fcb2a616aa470620e5b46
+    restart: unless-stopped
+    volumes:
+      - /srv/opnform/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      api: {condition: service_healthy}
+      client: {condition: service_started}
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8186.
+      - "127.0.0.1:8186:80"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/api/healthcheck || exit 1"]
+      interval: 30s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  opnform-postgres:
+  opnform-redis:
+  opnform-storage:

@@ -1,0 +1,43 @@
+# Duplicati · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker image readme . https://github.com/duplicati/duplicati/blob/v2.3.0.4_stable_2026-07-09/ReleaseBuilder/Resources/Docker/README.md
+#   image build ......... https://github.com/duplicati/duplicati/blob/v2.3.0.4_stable_2026-07-09/ReleaseBuilder/Resources/Docker/Dockerfile
+#
+# One service on the computer you are sitting at. Every path is relative to
+# ~/selfhost/duplicati/, which lets one file work on macOS, Linux and Windows.
+# ../.. is the home folder two levels up, read only: the files this install
+# exists to copy somewhere safe. No allowed-hostnames value is set here,
+# because localhost and bare IP addresses are on the API's list already.
+#
+# Tag and digest read from docker.io on 2026-08-12; the manifest list covers
+# amd64, arm64 and arm/v7.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  duplicati:
+    image: duplicati/duplicati:2.3.0.4-stable@sha256:01f8cb81ad7d548b7ceec61d696bb5d27d8057fee0ddee37c2b8a0ff1f1729f7
+    container_name: duplicati
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      # The container's clock zone. Schedules fire against it.
+      TZ: UTC
+      # Usage reporting ships on; this is upstream's own opt-out variable.
+      DO_NOT_TRACK: "1"
+    volumes:
+      # Duplicati-server.sqlite, the per-job databases, the JWT signing keys.
+      - ./data:/data
+      # Your home folder, read only. Restores go to ./restore instead.
+      - ../..:/source:ro
+      - ./restore:/restore
+    ports:
+      # Loopback only: no other device on the wifi can reach 8188.
+      - "127.0.0.1:8188:8200"
+    healthcheck:
+      # /health needs no token and no allowed hostname; curl is in the image.
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8200/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s

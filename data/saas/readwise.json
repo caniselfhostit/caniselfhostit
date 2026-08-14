@@ -1,0 +1,55 @@
+{
+  "slug": "readwise",
+  "name": "Readwise",
+  "domain": "readwise.io",
+  "whyPeoplePay": "Readwise sells the loop between reading and remembering. It pulls your highlights out of Kindle, Apple Books, Instapaper, Twitter and a dozen other places, mails you a handful of them every morning, and pushes the whole library into Notion or Obsidian so the notes end up where you actually write. The full plan then adds Reader, its own read-later app, so capture and review live in one subscription. What you are paying for is less the software than the integrations: the sync connectors are the part nobody wants to rebuild, and they are the part you cannot take with you.",
+  "plans": [
+    {
+      "name": "Lite",
+      "priceMonthly": 6.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Month-to-month figure from the payment panel on the pricing page; billed annually it is $5.59 a month, charged as $67.08 for 12 months. Daily Review by email and in the app, highlight browsing and search, sync from all sources. No Reader.",
+      "source": "https://readwise.io/pricing",
+      "checkedOn": "2026-08-14"
+    },
+    {
+      "name": "Full",
+      "priceMonthly": 12.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Month-to-month figure from the payment panel on the pricing page; billed annually it is $9.99 a month, charged as $119.88 for 12 months. Adds tags and notes on highlights, export to Notion, Obsidian and others, and the Reader read-later app. This is the plan a self-hosted replacement is measured against. A 30-day free trial and a 50% academic discount are advertised on the same page.",
+      "source": "https://readwise.io/pricing",
+      "checkedOn": "2026-08-14"
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-14",
+    "source": "https://readwise.io/pricing",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "Every figure here was read off readwise.io/pricing on 2026-08-14. The comparison table on that page advertises the billed-annually rates ($5.59 and $9.99 a month); the month-to-month rates ($6.99 and $12.99) and the annual totals ($67.08 and $119.88) come from the checkout panel on the same page. The month-to-month rate is the one recorded, because a subscriber who does not pay a year up front pays it. Two things worth correcting if you remember otherwise: the page sells Lite and Full, not a separate Reader-only tier, and Reader is bundled into Full. There is no free tier, only a 30-day trial."
+  },
+  "ranked": [
+    {
+      "project": "karakeep",
+      "rationale": "The closest thing to the shape people actually use Readwise for: one inbox you throw everything into, from a phone share sheet, a browser extension or an RSS feed, and an archive underneath that keeps a readable copy when the page dies. It tags what you save with an AI model, so the pile stays findable without you filing anything, and it full-text searches links, notes, images and PDFs together. Two honest gaps. It does not sync Kindle or Apple Books highlights and it sends no daily review email, so the spaced-repetition half of Readwise is absent. And the AI tagging is your own OpenAI key or your own Ollama box, so a bill Readwise folded into the subscription becomes a separate small one you watch. It costs three containers, including a headless browser that fetches whatever anyone with an account asks it to, which is why the install closes signups and proves they are closed."
+    },
+    {
+      "project": "linkwarden",
+      "rationale": "Linkwarden is the pure link-archive answer and holds its own page in this catalog as the Raindrop replacement, where it ranks first. It keeps a screenshot, a PDF and a single-file HTML copy of every page it saves, and its collections and collaboration are better thought through than Karakeep's lists. Karakeep ranks first here rather than Linkwarden for one reason: the Readwise shape is a capture-everything inbox with automatic organisation and something to read in, and Karakeep takes notes, images and PDFs as first-class items, tags them without being asked, and ships a reader view and mobile apps. If all you save is links and you would rather not run a headless browser and a search engine, Linkwarden is the smaller install and the better fit."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Readeck",
+      "repo": "https://codeberg.org/readeck/readeck",
+      "note": "AGPL-3.0, a single Go binary, and the calmest reader on this list: it saves the readable content of a page, adds highlights, labels and collections, and gets out of the way. Actively developed on Codeberg, where 0.23.0 shipped on 2026-08-14; the readeck/readeck repository on GitHub is a placeholder, so judge it by the Codeberg history. Left untested here because it is deliberately a read-later tool rather than a capture-everything inbox: no AI tagging, no images or PDFs as first-class items, no full-text search engine behind it."
+    },
+    {
+      "name": "Shiori",
+      "repo": "https://github.com/go-shiori/shiori",
+      "note": "MIT, a single Go binary, described by its own README as a simple bookmark manager, and it archives readable content by default with browser extensions alongside. Development is real but unhurried: v1.8.0 in September 2025 and commits through mid-2026. It is the option to reach for when you want one file and no dependencies, and it is the wrong comparison for Readwise, which is bought for organisation and review rather than for a list of saved URLs."
+    }
+  ]
+}

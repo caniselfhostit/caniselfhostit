@@ -1,0 +1,111 @@
+{
+  "slug": "ferretdb",
+  "name": "FerretDB",
+  "tagline": "The MongoDB wire protocol your drivers already speak, answered by a PostgreSQL you own and can back up.",
+  "repo": "FerretDB/FerretDB",
+  "site": "https://docs.ferretdb.io/",
+  "category": "automation-dev",
+  "replaces": [
+    {
+      "saas": "mongodb-atlas",
+      "plan": "Dedicated (M10)",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": false,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 75,
+  "license": "Apache-2.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://docs.ferretdb.io/installation/ferretdb/docker/",
+  "local": {
+    "fit": "caveat",
+    "note": "The database answers on 127.0.0.1:8191 and nowhere else, so the application you build on it has to run on this computer too, and the phone you wanted to test from cannot reach it at all."
+  },
+  "quote": {
+    "text": "An anonymous client may still connect to FerretDB without authentication, but they cannot access or perform actions on the database.",
+    "source": "FerretDB documentation, Authentication",
+    "url": "https://docs.ferretdb.io/security/authentication/",
+    "checkedOn": "2026-08-14"
+  },
+  "citations": [
+    {
+      "claim": "Upstream states that all drivers and applications compatible with MongoDB 5.0+ should be compatible with FerretDB, and the same page lists transactions, bulkWrite and every role-management command as not implemented, with error messages that may differ where the error names match.",
+      "url": "https://docs.ferretdb.io/migration/compatibility/"
+    },
+    {
+      "claim": "Authentication is enabled by default, FerretDB stores no usernames or passwords of its own and forwards credentials to PostgreSQL for validation, only SCRAM-SHA-256 is supported on the client, and authorization is not yet supported.",
+      "url": "https://docs.ferretdb.io/security/authentication/"
+    },
+    {
+      "claim": "The 2.7.0 release notes name DocumentDB v0.107.0-ferretdb-2.7.0 as the version this release works best with, and state that FerretDB 2.6.0 was skipped to align the DocumentDB and FerretDB version numbers.",
+      "url": "https://github.com/FerretDB/FerretDB/releases/tag/v2.7.0"
+    },
+    {
+      "claim": "FERRETDB_POSTGRESQL_URL, FERRETDB_LISTEN_ADDR (:27017 in Docker), FERRETDB_DEBUG_ADDR (:8088 in Docker), FERRETDB_STATE_DIR (/state in Docker), FERRETDB_AUTH and FERRETDB_TELEMETRY are the documented environment variables this install uses or deliberately leaves alone.",
+      "url": "https://docs.ferretdb.io/configuration/flags/"
+    },
+    {
+      "claim": "All FerretDB Docker images carry a HEALTHCHECK that behaves like the readiness probe, which checks that a MongoDB protocol client connection can be established and therefore that PostgreSQL and DocumentDB are configured correctly.",
+      "url": "https://docs.ferretdb.io/configuration/observability/"
+    },
+    {
+      "claim": "Telemetry defaults to undecided, which behaves as enabled with the first report delayed by one hour, and setting FERRETDB_TELEMETRY to disable turns it off at the documented cost of losing automated version checks.",
+      "url": "https://docs.ferretdb.io/telemetry/"
+    },
+    {
+      "claim": "The LICENSE file at tag v2.7.0 is the Apache License 2.0 in full, and it is the only license file in the repository at that tag.",
+      "url": "https://github.com/FerretDB/FerretDB/blob/v2.7.0/LICENSE"
+    },
+    {
+      "claim": "v2.7.0, released 2025-11-10, is still the newest release, and the default branch's most recent commit is a dependency bump dated 2026-02-07.",
+      "url": "https://github.com/FerretDB/FerretDB/releases"
+    },
+    {
+      "claim": "The company site at www.ferretdb.com answers 404 with a Squarespace expiry page, and upstream issue 5650, Website is down, has been open since 2026-05-19. The documentation, blog and cloud hosts are unaffected.",
+      "url": "https://github.com/FerretDB/FerretDB/issues/5650"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Compatibility is the whole question, and the answer is honest rather than complete. Upstream says drivers and applications built for MongoDB 5.0+ should work, and marks CRUD, indexes, aggregate, count and distinct supported. It also says transactions, bulkWrite, every role-management command, setParameter, killOp and profile are not implemented, and that error messages can differ where the error names match. Atlas Search, Atlas Vector Search, Charts and Triggers are services MongoDB runs beside the database and none of them exist here. mongodump and mongorestore work against FerretDB, so the data moves; anything built on transactions or on the Atlas services has to be rewritten first. Run your test suite against it before you migrate anything.",
+    "There is authentication and there is no authorization. FerretDB keeps no accounts: it forwards the credentials a client sends to PostgreSQL, which validates them over SCRAM-SHA-256. Upstream states plainly that authorization is not yet supported, so every valid login has full access to every database, and there is no read-only account to hand a reporting script.",
+    "You own a PostgreSQL, and you own a version pair. This runs two containers, and the FerretDB tag and the DocumentDB tag are matched: upstream names the DocumentDB release each FerretDB release works best with, and upgrading means the PostgreSQL image first, then ALTER EXTENSION documentdb UPDATE, then FerretDB. Move one without the other and you are on a combination nobody tested.",
+    "Nothing here is a managed service. Atlas gives you a replica set on three nodes, continuous backups with point-in-time restore, and autoscaling; this gives you one container on one disk, a backup you run yourself, and downtime whenever the box reboots. The wire protocol is not HTTP, so there is no reverse proxy and no certificate: the database answers on loopback, and reaching it from elsewhere means an SSH tunnel or FerretDB's own TLS listener with certificates you issue.",
+    "The project is quieter than it was, and you should know that before you commit data to it. Version 2.7.0 shipped on 2025-11-10 and is still the newest release; the default branch's last commit is a dependency bump dated 2026-02-07. The company's own site at www.ferretdb.com has been answering a Squarespace expiry page since at least May 2026, with the upstream bug report about it still open. What is demonstrably fine on the day this page was written: the repository is not archived, the documentation and the published images are live, and issues are still being filed. Read that as a real risk to weigh, not as a verdict, and note that the escape hatch is unusually good here because your data is sitting in an ordinary PostgreSQL."
+  ],
+  "sources": {
+    "compose": "https://docs.ferretdb.io/installation/ferretdb/docker/",
+    "caddy": "https://docs.ferretdb.io/security/tls-connections/",
+    "install": "https://docs.ferretdb.io/installation/documentdb/docker/",
+    "auth": "https://docs.ferretdb.io/security/authentication/",
+    "flags": "https://docs.ferretdb.io/configuration/flags/",
+    "observability": "https://docs.ferretdb.io/configuration/observability/",
+    "telemetry": "https://docs.ferretdb.io/telemetry/",
+    "compatibility": "https://docs.ferretdb.io/migration/compatibility/",
+    "migration": "https://docs.ferretdb.io/migration/migrating-from-mongodb/",
+    "pairing": "https://github.com/FerretDB/FerretDB/releases/tag/v2.7.0",
+    "license": "https://github.com/FerretDB/FerretDB/blob/v2.7.0/LICENSE"
+  },
+  "related": [
+    "pocketbase",
+    "meilisearch",
+    "baserow"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-14",
+  "contentHash": "e4d158635ae456ab454350be9859dd3d46ceb80d0e78ab28095a75c340773b1d"
+}

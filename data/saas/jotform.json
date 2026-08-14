@@ -65,7 +65,7 @@
     {
       "name": "OpnForm",
       "repo": "https://github.com/OpnForm/OpnForm",
-      "note": "Actively developed, and the nearest visual rival to HeyForm for the classic multi-field form: Laravel and Vue, a hosted plan alongside the source. Its licence file is AGPLv3 with a carve-out for an api/app/Enterprise directory under a separate licence, which is why GitHub reports it as unclassified rather than AGPL. We have not tested it, and that carve-out is the thing to read before you build on it."
+      "note": "Actively developed, and the nearest visual rival to HeyForm for the classic multi-field form: Laravel and Vue, a hosted plan alongside the source. Its licence file is AGPLv3 with a carve-out for an api/app/Enterprise directory under a separate licence, which is why GitHub reports it as unclassified rather than AGPL. It has since earned its own page in this catalog as the Tally answer, where its install is written up in full along with the two costs it carries: seven containers, because the API image is php-fpm rather than a web server, and a licence-free instance capped at two users in total. On this page HeyForm keeps the top spot for three containers and no user cap."
     },
     {
       "name": "Form.io",

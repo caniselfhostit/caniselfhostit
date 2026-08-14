@@ -1,0 +1,38 @@
+# Stalwart · the deterministic fallback. Authored by caniselfhostit from
+# https://stalw.art/docs/install/platform/docker and
+# https://stalw.art/docs/install/security
+#
+# DELIBERATE DEVIATION from every other entry in this catalog: 25, 465 and 993
+# are published on every interface rather than on 127.0.0.1, because other mail
+# servers open 25 themselves and clients open 465 and 993 themselves, over TLS
+# this container terminates. One port stays on loopback and Caddy alone reaches
+# it: 8189, the plain HTTP listener carrying the admin UI, JMAP, autoconfig and
+# the ACME challenge.
+#
+# One service: mail, accounts and configuration all live in an embedded RocksDB
+# under /var/lib/stalwart. While /etc/stalwart/config.json is absent the server
+# runs in bootstrap mode, one HTTP listener on 8080 and no mail ports;
+# afterwards it opens 25, 465, 993, 995, 4190, 443 and 8080, the last three
+# unpublished. No 587: upstream creates no listener on it. The image runs as
+# uid 2000 and ships its own HEALTHCHECK. Digest read 2026-08-14; amd64, arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  stalwart:
+    image: stalwartlabs/stalwart:v0.16.17@sha256:a8108e19bd927e172d4d8c128907b8dfc93fd180ae8ee07dccdd42cb97eb9dfa
+    container_name: stalwart
+    restart: unless-stopped
+    # Hostname, public URL and the bootstrap credential. Mode 600.
+    env_file: /srv/stalwart/.env
+    volumes:
+      # config.json, the RocksDB, the log path; all owned by uid 2000.
+      - /srv/stalwart/etc:/etc/stalwart
+      - /srv/stalwart/data:/var/lib/stalwart
+      - /srv/stalwart/log:/var/log/stalwart
+    ports:
+      - "25:25"
+      - "465:465"
+      - "993:993"
+      # Loopback only: the host's Caddy is the only thing that reaches 8189.
+      - "127.0.0.1:8189:8080"

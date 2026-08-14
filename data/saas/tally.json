@@ -1,0 +1,67 @@
+{
+  "slug": "tally",
+  "name": "Tally",
+  "domain": "tally.so",
+  "whyPeoplePay": "Tally inverted the form-builder bill. Forms and submissions are unlimited on the free plan, so nobody pays because a survey did well, and the builder itself types like a Notion page rather than like a form designer. What the money buys is everything around the form: your own branding off it, your own domain on it, teammates in the workspace, the visit and drop-off analytics, and the partial submissions that tell you where people gave up. It is a subscription for polish and for a team, not for capacity.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Unlimited forms and unlimited submissions within Tally's fair use guidelines, plus payments, signatures, file uploads with a 10 MB per-file cap, conditional logic and calculations, password protection, closing a form on a limit or date, answer piping, email notifications to yourself, 45+ languages, webhooks, and the Google Sheets, Notion, Airtable, Zapier and Make integrations."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 24,
+      "unit": "flat",
+      "seatsIncluded": null,
+      "note": "Removes Tally branding, adds custom (sub)domains, unlimited team members in shared workspaces, partial submissions, advanced customization and custom CSS, tailored and custom-domain email notifications, link-preview control, workspaces and folders, removal of the 10 MB upload cap, form visit and drop-off analytics, 30-day version history, and the Google Analytics and Meta Pixel integrations. The page offers a yearly option labelled 2 months off but prints no annual figure."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": 74,
+      "unit": "flat",
+      "seatsIncluded": null,
+      "note": "Everything in Pro, plus automatic deletion of submissions after a set retention period, respondent email verification, and version history extended to 90 days."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-14",
+    "source": "https://tally.so/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The plan cards are server-rendered, so the two monthly figures were read directly off the page as $24 and $74 per month. Two things we could not read and have therefore not recorded as numbers: the currency is printed as a bare dollar sign with no code anywhere on the page, and Tally is a Belgian company billing from the EU, so USD is our reading of the symbol rather than a stated fact; and the yearly prices sit behind a JavaScript toggle, so the page states only that paying yearly is 2 months off and never prints the annual total."
+  },
+  "ranked": [
+    {
+      "project": "opnform",
+      "rationale": "The closest match to the shape Tally actually sells: a block-style builder a non-developer can drive, unlimited forms and submissions with no meter on either, file uploads, conditional logic, webhooks and an embed script, on a hostname you own. It is the honest first answer here and also the expensive one to run, because the API image is php-fpm rather than a web server, so the shipped stack is seven containers with an nginx ingress in front. Two hard limits to price in before you start: a licence-free self-hosted instance is capped at two users in total, and this install configures no mail, so the response notification Tally sends you for free does not arrive."
+    },
+    {
+      "project": "heyform",
+      "rationale": "Pick this when the install cost matters more than matching Tally feature for feature. HeyForm is three containers and an evening against OpnForm's seven and a weekend, it has no seat cap of its own, and the drag-and-drop builder, the logic and the submissions inbox all do the job. It holds the top spot on this catalogue's Jotform page, where the classic multi-field form is the whole question. OpnForm ranks first here instead because the Tally question is a builder that feels like writing a document with a generous free core behind it, and OpnForm answers that shape more directly. What you give up either way is the same: no partial submissions, no drop-off analytics."
+    },
+    {
+      "project": "formbricks",
+      "rationale": "The right answer if what you liked about Tally was the measurement rather than the form. Formbricks is built around surveys that catch people inside a product you already run, with completion and drop-off analytics as a first-class feature rather than a paid add-on, and an in-app widget Tally has no equivalent for. It is the heaviest install on this page and the least like Tally to look at, so choose it when the question is why people stopped answering."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "SurveyKing",
+      "repo": "https://github.com/javahuang/SurveyKing",
+      "note": "MIT, roughly 3,900 stars, and a Java and Spring Boot application rather than the PHP or Node stacks everything else here runs on, which makes it the odd one out to operate. We have not tested it. The reason it is a row rather than a ranking is cadence: the last push to the repository was 2025-11-13, so it had been quiet for nine months when we checked."
+    },
+    {
+      "name": "Form.io",
+      "repo": "https://github.com/formio/formio",
+      "note": "Actively developed, OSL-3.0, and a different product than the rest of this page: a form and data-management platform meant to be embedded in an application you are already building, with a JSON schema, a REST API and a renderer you drop into your own front end. Self-hosting it is a development project rather than an install, so it is the right answer only when a developer is going to own it."
+    },
+    {
+      "name": "OhMyForm",
+      "repo": "https://github.com/ohmyform/ohmyform",
+      "note": "Archived. The repository is read-only, AGPL-3.0, and its last push was 2024-10-31, so nothing gets a security fix. It still ranks near the top of every search for an open-source Typeform or Tally replacement, which is the only reason it is listed here: so you know it is finished before you spend an evening on it."
+    }
+  ]
+}

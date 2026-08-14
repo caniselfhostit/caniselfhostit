@@ -50,7 +50,7 @@
     {
       "name": "solidtime",
       "repo": "https://github.com/solidtime-io/solidtime",
-      "note": "The newest serious contender and the closest in feel to Toggl itself, AGPL-3.0 and actively developed with a Laravel backend, billable rates and a real API. We have not tested it, and it is young enough that the honest comparison is against Kimai's decade of invoicing edge cases rather than against its screenshots."
+      "note": "The newest serious contender and the closest in feel to Toggl itself, AGPL-3.0 and actively developed with a Laravel backend, billable rates and a real API. It has since earned its own page in this catalog as the Clockify answer, where its install is written up in full alongside the age: the first tag is June 2024, this is a 0.x line shipping roughly two releases a month, and it runs as four containers rather than one. On this page Kimai keeps the top spot for the decade of invoicing edge cases behind it."
     },
     {
       "name": "Traggo",

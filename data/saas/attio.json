@@ -1,0 +1,65 @@
+{
+  "slug": "attio",
+  "name": "Attio",
+  "domain": "attio.com",
+  "whyPeoplePay": "Attio sells a CRM you shape instead of one you conform to. Objects, attributes and views are yours to define, the email and calendar sync fills the timeline without anybody logging an activity, and the whole thing feels like a modern database rather than a 2010 sales tool. What you rent alongside it is somebody else's uptime, somebody else's backups and somebody else's enrichment data. The bill climbs on two axes at once: it is per seat every month, and the AI research, enrichment and agent features run on a monthly credit allowance that a busy workspace exhausts and then buys more of.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "per-seat",
+      "seatsIncluded": 3,
+      "note": "Up to 3 seats, up to 3 objects and 50,000 records. 100 seat credits per user per month and 250 workspace credits. Real-time contact syncing and automatic data enrichment."
+    },
+    {
+      "name": "Plus",
+      "priceMonthly": 44,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Billed monthly. $35 per user per month billed annually, which the page advertises as saving 20%. Up to 10 seats, 5 objects, 250,000 records. Adds private lists and enhanced email sending."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 99,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Billed monthly. $79 per user per month billed annually. Marked Popular. Unlimited seats, 12 objects, 1,000,000 records. First tier with Call Intelligence, sequences, permission controls and advanced reporting."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": 1,
+      "note": "Quote only, billed annually. Unlimited objects, unlimited teams, security and admin controls."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-12",
+    "source": "https://attio.com/pricing",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "Read from the rendered pricing page in USD on the date above. Each row records the monthly-billed figure, because the page defaults to the annual toggle and quoting only the annual rate would understate what a month-to-month subscriber pays. The credit allowances are part of the price and are not a ladder rung: seat credits run 100, 500, 1,000 and 2,500 per user per month, workspace credits 250, 1,500 and 10,000 per month, and extra workspace credits are sold in blocks starting at $70 to $85 per month for 5,000."
+  },
+  "ranked": [
+    {
+      "project": "twenty",
+      "rationale": "The self-hosted answer that starts from the same premise Attio does: a data model you define, records and views rather than fixed lead and opportunity screens, and a documented REST and GraphQL API over all of it. AGPLv3 with a marked commercial carve-out, shipped continuously, with an official Docker image and an upstream compose file its own team maintains. What you take on is a four-service stack, a PostgreSQL you back up, and a worker that has to keep running or the CRM answers pages while doing nothing on a schedule."
+    },
+    {
+      "project": "espocrm",
+      "rationale": "The mature PHP answer, and the one to pick if what you actually want is a full sales CRM out of the box: pipelines, quotes, campaigns, activities with reminders, and a decade of hardening behind them. It holds the top spot on our Pipedrive page for exactly that reason. It ranks second here because Attio's shape is the modern data-model-first one, and EspoCRM asks you to work inside its entities rather than design your own; its interface is also a generation older than the one Attio buyers are leaving."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "SuiteCRM",
+      "repo": "https://github.com/SuiteCRM/SuiteCRM",
+      "note": "AGPL-3.0 and actively maintained: the default branch was pushed on 2026-07-31 and v7.15.2 shipped the same day. It is the long-running fork of SugarCRM's community edition and it carries the heavyweight list in the box, quotes, contracts, campaigns, a workflow engine and reporting. It is also the least Attio-like thing here: a fixed enterprise data model, a PHP stack that wants a tuned LAMP host, and an interface that shows every one of its twenty years. No container from us yet."
+    },
+    {
+      "name": "Monica",
+      "repo": "https://github.com/monicahq/monica",
+      "note": "AGPL-3.0, 25k stars, and answering a different question: it is a personal CRM for remembering birthdays, conversations and the names of your friends' children. There are no custom objects, no pipelines and no API-first data model, so it does not replace an Attio seat. Development has slowed too, with the last push to its default branch in April 2026 and the last tagged release, v4.1.2, in May 2024. Listed because it surfaces in every CRM search and it is worth knowing it is the wrong tool for a revenue team."
+    }
+  ]
+}

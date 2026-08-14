@@ -1,0 +1,29 @@
+# solidtime · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.solidtime.io/self-hosting/configuration and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy Prompt Zero installed, with
+# <DOMAIN> replaced by the hostname pointed at this box. That hostname is also
+# APP_URL in .env, and the app rejects any Host that is neither it nor a
+# subdomain of it.
+
+<DOMAIN> {
+	# APP_ENABLE_REGISTRATION is already false in the app; this also takes the
+	# signup form off the hostname.
+	respond /register 404
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+	# No Content-Security-Policy: written untested it blanks a single-page app.
+	# No `encode`: the image runs Octane on FrankenPHP, whose own Caddy already
+	# compresses. 8184 is the loopback port compose publishes here, not a
+	# container port, and not open in the firewall.
+	reverse_proxy 127.0.0.1:8184
+}

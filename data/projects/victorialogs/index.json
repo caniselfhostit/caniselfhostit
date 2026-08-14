@@ -1,0 +1,95 @@
+{
+  "slug": "victorialogs",
+  "name": "VictoriaLogs",
+  "tagline": "One container that ingests, stores and queries your logs, on a disk you own, with no per-gigabyte meter.",
+  "repo": "VictoriaMetrics/VictoriaLogs",
+  "site": "https://docs.victoriametrics.com/victorialogs/",
+  "category": "monitoring",
+  "replaces": [
+    {
+      "saas": "axiom",
+      "plan": "Axiom Cloud",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 20,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "Apache-2.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/VictoriaMetrics/VictoriaLogs/tree/v1.52.0/deployment/docker",
+  "local": {
+    "fit": "caveat",
+    "note": "It runs happily on a laptop and collects the containers on that laptop, but a log store only holds what is shipped to it: a sleeping machine records nothing, and a VPS cannot reach a loopback port on your desk."
+  },
+  "quote": {
+    "text": "Both the single-node and cluster versions of VictoriaLogs are open source and free to use.",
+    "source": "VictoriaLogs README",
+    "url": "https://github.com/VictoriaMetrics/VictoriaLogs/blob/v1.52.0/README.md",
+    "checkedOn": "2026-08-14"
+  },
+  "citations": [
+    {
+      "claim": "Upstream documents a single Docker image serving HTTP on port 9428, a built-in web UI for querying at /select/vmui, and a LogsQL query API at /select/logsql/query.",
+      "url": "https://docs.victoriametrics.com/victorialogs/quickstart/"
+    },
+    {
+      "claim": "VictoriaLogs accepts logs via the Splunk HTTP Event Collector API, and upstream documents configuring Docker's built-in splunk log driver to send container output to it with no extra agent.",
+      "url": "https://docs.victoriametrics.com/victorialogs/data-ingestion/splunk/"
+    },
+    {
+      "claim": "Upstream states that all VictoriaLogs components must run inside a protected trusted network and that requests from the internet must be authorized before being proxied to them.",
+      "url": "https://docs.victoriametrics.com/victorialogs/security-and-lb/"
+    },
+    {
+      "claim": "Default retention is 7 days, changed with -retentionPeriod, and disk usage can be capped independently with -retention.maxDiskSpaceUsageBytes.",
+      "url": "https://docs.victoriametrics.com/victorialogs/"
+    },
+    {
+      "claim": "Caddy obtains and renews TLS certificates automatically for any public hostname named in the Caddyfile.",
+      "url": "https://caddyserver.com/docs/automatic-https"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Logs only. No metrics, no traces, no application performance monitoring, no dashboards and no alert rules in this container. Grafana is the dashboard answer in this catalog and GlitchTip is the error-tracking one; the alerting Axiom sells needs vmalert plus a notifier, which is a separate install.",
+    "There are no accounts. VictoriaLogs ships no sign-in form, no roles and no API tokens; its one optional Basic Auth flag pair still leaves /health, /ping and /robots.txt answering unauthenticated. This install therefore puts Caddy basic_auth in front of every path, generates the password on the server, and asserts a 401 before it reports success.",
+    "The install is the easy half. A log store is only worth what is shipped to it, and shipping is configuration on the containers you already run. This entry hands you one working path, Docker's built-in splunk log driver pointed at the loopback port, plus a query that proves a line landed. Everything past that is yours to wire.",
+    "You own retention and disk. Upstream's default is 7 days; this install sets 30 days with a 5 GiB ceiling on the data directory, and both numbers are yours to raise once you know your volume. Nobody sends a bill when the number is wrong, and nobody warns you either.",
+    "Apache-2.0 for the single-node and cluster builds. The -enterprise and -enterprise-fips image tags in the same Docker Hub repository are a separate commercial product with its own licence and key; this entry pins the plain tag and never touches them."
+  ],
+  "sources": {
+    "compose": "https://docs.victoriametrics.com/victorialogs/quickstart/",
+    "caddy": "https://docs.victoriametrics.com/victorialogs/security-and-lb/",
+    "install": "https://docs.victoriametrics.com/victorialogs/quickstart/",
+    "flags": "https://docs.victoriametrics.com/victorialogs/",
+    "ingestion": "https://docs.victoriametrics.com/victorialogs/data-ingestion/splunk/",
+    "querying": "https://docs.victoriametrics.com/victorialogs/querying/",
+    "security": "https://docs.victoriametrics.com/victorialogs/security-and-lb/",
+    "license": "https://github.com/VictoriaMetrics/VictoriaLogs/blob/v1.52.0/LICENSE",
+    "logdriver": "https://docs.docker.com/engine/logging/drivers/splunk/",
+    "tls": "https://caddyserver.com/docs/automatic-https",
+    "basic_auth": "https://caddyserver.com/docs/caddyfile/directives/basic_auth"
+  },
+  "related": [
+    "grafana",
+    "glitchtip",
+    "gatus"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-14",
+  "contentHash": "11457e5362fbfa32cd38ebb626fb4dcba50b81e1d238a95b4448494978469ef6"
+}

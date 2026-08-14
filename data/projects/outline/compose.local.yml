@@ -1,0 +1,80 @@
+# Outline · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation and source, not copied from a
+# repository:
+#   docker hosting ..... https://docs.getoutline.com/s/hosting/doc/docker-7pfeLP5a8t
+#   variables and smtp . https://github.com/outline/outline/blob/v1.9.2/.env.sample
+#   image .............. https://github.com/outline/outline/blob/v1.9.2/Dockerfile
+#
+# Three services on the computer you are sitting at, paths relative to
+# ~/selfhost/outline/ so one file works on macOS, Linux and Windows. Postgres
+# and Redis are named volumes, because both images chown their own data
+# directory and Docker Desktop cannot grant that on a Windows bind mount.
+# Attachments stay a real folder, ./data, owned by uid 1001.
+#
+# FORCE_HTTPS is the one line that differs from the VPS file: it defaults to
+# true, and with no proxy setting X-Forwarded-Proto it sends every request to
+# https://localhost, where nothing answers. The other four settings carry the
+# same values, and reasons, as the VPS file. Digests read on 2026-08-14.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: postgres:18.6-alpine@sha256:432b3b824c0769275ec9b0947736ef8b376d6997bcaa9de29818f613819c2feb
+    container_name: outline-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: outline
+      POSTGRES_USER: outline
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - outline-pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U outline -d outline"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 stays on the compose network.
+
+  redis:
+    image: redis:8.10.0-alpine@sha256:978f0e01593e65eed801f2402944efcd936d43b5027e4908a7897baf88ed6241
+    container_name: outline-redis
+    restart: unless-stopped
+    # appendonly persists every change; noeviction makes Redis refuse writes
+    # rather than silently drop a queued job when memory runs out.
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory-policy", "noeviction"]
+    volumes:
+      - outline-redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 6379 stays on the compose network.
+
+  outline:
+    image: outlinewiki/outline:1.9.2@sha256:32d76719c378931dd65d93945930ca380d8376a0337d98a991fcc12b266f33cf
+    container_name: outline
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      DATABASE_URL: postgres://outline:${DB_PASSWORD}@postgres:5432/outline
+      PGSSLMODE: disable
+      REDIS_URL: redis://redis:6379
+      FILE_STORAGE: local
+      WEB_CONCURRENCY: "1"
+      ENABLE_UPDATES: "false"
+      FORCE_HTTPS: "false"
+    volumes:
+      # Attachments, avatars and imported files, in a folder you can open.
+      - ./data:/var/lib/outline/data
+    ports:
+      # Loopback only: no other device can reach 8185.
+      - "127.0.0.1:8185:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  outline-pgdata:
+  outline-redis:

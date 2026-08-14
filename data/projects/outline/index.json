@@ -1,0 +1,98 @@
+{
+  "slug": "outline",
+  "name": "Outline",
+  "tagline": "Nested documents, an editor two people can type in at once and search across all of it, with every word in a Postgres you can dump.",
+  "repo": "outline/outline",
+  "site": "https://www.getoutline.com",
+  "category": "notes-wikis",
+  "replaces": [
+    {
+      "saas": "slite",
+      "plan": "Pro",
+      "seatsAssumed": 5
+    }
+  ],
+  "tierFactors": {
+    "containers": 3,
+    "externalDb": true,
+    "needsSmtp": true,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 3
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 210,
+  "license": "BSL-1.1",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://docs.getoutline.com/s/hosting/doc/docker-7pfeLP5a8t",
+  "local": {
+    "fit": "caveat",
+    "note": "Only this computer can open the wiki, and every sign-in link it mails and every share link it makes starts with http://localhost:8185, so anyone you invite receives an address that opens nothing on their machine."
+  },
+  "quote": {
+    "text": "To support sending outgoing transactional emails such as \"document updated\" or \"you've been invited\" you'll need to provide authentication for an SMTP server. This is also required to support email “magic link” sign-in.",
+    "source": "Outline documentation, SMTP",
+    "url": "https://docs.getoutline.com/s/hosting/doc/smtp-cqCJyZGMIB",
+    "checkedOn": "2026-08-14"
+  },
+  "citations": [
+    {
+      "claim": "Outline 1.9.2 is licensed under the Business Source License 1.1 with a change date of 2030-07-21 and Apache License 2.0 as the change license, and its additional use grant forbids using the work for a Document Service.",
+      "url": "https://github.com/outline/outline/blob/v1.9.2/LICENSE"
+    },
+    {
+      "claim": "A self-hosted install creates its first workspace and admin through POST /api/installation.create, a route mounted only when the instance is not cloud hosted and refused once any team exists, which is why claiming the workspace closes the door behind it.",
+      "url": "https://github.com/outline/outline/blob/v1.9.2/server/routes/api/installation/installation.ts"
+    },
+    {
+      "claim": "Email magic-link sign-in registers only when SMTP_HOST or SMTP_SERVICE is set, and it signs in a user who already exists rather than creating one, so mail is how everybody returns after the first session rather than how the first account is made.",
+      "url": "https://github.com/outline/outline/blob/v1.9.2/plugins/email/server/auth/email.ts"
+    },
+    {
+      "claim": "FILE_STORAGE defaults to s3 in the source and SECRET_KEY is validated as exactly 64 hexadecimal characters, so a local-attachment install has to set the first and generate the second with openssl rand -hex 32.",
+      "url": "https://github.com/outline/outline/blob/v1.9.2/server/env.ts"
+    },
+    {
+      "claim": "In production Outline opens its PostgreSQL connection with SSL unless PGSSLMODE is set to disable, and logs a fatal error when the database does not support SSL.",
+      "url": "https://github.com/outline/outline/blob/v1.9.2/server/storage/database.ts"
+    },
+    {
+      "claim": "With the update check left on, the server posts a hashed installation id together with its user, team, collection and document counts to updates.getoutline.com every 24 hours.",
+      "url": "https://github.com/outline/outline/blob/v1.9.2/server/utils/updates.ts"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Source-available, not open source. Outline is under the Business Source License 1.1: you may run it, change it and redistribute it, but the additional use grant forbids using it for a Document Service, upstream's term for a commercial offering that lets other people create their own teams and documents on your instance. Each release carries its own change date, and 1.9.2 becomes Apache 2.0 on 2030-07-21.",
+    "There is no password login, and never was. The first workspace is claimed on a form the server offers only while none exists, so the minutes between the container answering and you opening the page are a race anyone who knows the hostname can enter. After that, getting back in means a link mailed to you or a passkey, which makes an SMTP relay part of the install rather than a nicety, and a relay that quietly drops mail is a locked front door.",
+    "You own a PostgreSQL and a Redis. Documents, revisions and comments are rows, attachments are files under one directory, and SECRET_KEY from .env is what decrypts the encrypted columns in the dump, so those three travel together or the restore is a wiki nobody can sign in to. Redis is not backed up at all, because it holds live editor sessions and a job queue rather than content.",
+    "No agent, and that is most of what Slite now sells. Ask, doc fact-checking with suggested fixes, answers across your connected tools and the agent workflows on the paid tiers have no counterpart here. What you get is search across your own documents, a REST API, and whatever you wire to it yourself with a key you hold.",
+    "It phones home until you stop it. Left at its default the server posts a hashed install id and its user, team, collection and document counts to updates.getoutline.com once a day. This install sets ENABLE_UPDATES to false in compose.yml and says where to turn it back on, which is a decision rather than a default."
+  ],
+  "sources": {
+    "compose": "https://docs.getoutline.com/s/hosting/doc/docker-7pfeLP5a8t",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://github.com/outline/outline/blob/v1.9.2/.env.sample",
+    "smtp": "https://docs.getoutline.com/s/hosting/doc/smtp-cqCJyZGMIB",
+    "env": "https://github.com/outline/outline/blob/v1.9.2/server/env.ts",
+    "database": "https://github.com/outline/outline/blob/v1.9.2/server/storage/database.ts",
+    "setup": "https://github.com/outline/outline/blob/v1.9.2/server/routes/api/installation/installation.ts",
+    "health": "https://github.com/outline/outline/blob/v1.9.2/server/services/web.ts",
+    "image": "https://github.com/outline/outline/blob/v1.9.2/Dockerfile",
+    "license": "https://github.com/outline/outline/blob/v1.9.2/LICENSE"
+  },
+  "related": [
+    "docmost",
+    "bookstack",
+    "xwiki"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-14",
+  "contentHash": "918c4f67543bf547b11dcd7e3594db9bc7729ba523a79c098f072995d7f39a9a"
+}

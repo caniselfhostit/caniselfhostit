@@ -1,0 +1,55 @@
+# FerretDB · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker install ..... https://docs.ferretdb.io/installation/ferretdb/docker/
+#   documentdb image ... https://docs.ferretdb.io/installation/documentdb/docker/
+#   authentication ..... https://docs.ferretdb.io/security/authentication/
+#
+# FerretDB turns the MongoDB wire protocol into SQL; PostgreSQL beside it holds
+# the DocumentDB extension. The two tags are a matched pair: the 2.7.0 release
+# notes name 0.107.0-ferretdb-2.7.0 as its match. Move them together.
+#
+# Digests read from ghcr.io on 2026-08-14; both images publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: ghcr.io/ferretdb/postgres-documentdb:17-0.107.0-ferretdb-2.7.0@sha256:2386795ec2aa7ae559304361979f1dc5708d383ee9020ae63dadc2940dfe58f7
+    container_name: ferretdb-postgres
+    restart: unless-stopped
+    environment:
+      # Upstream requires a `postgres` database to exist before FerretDB
+      # connects, so this name is not a preference.
+      POSTGRES_DB: postgres
+      POSTGRES_USER: ferretdb
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - /srv/ferretdb/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ferretdb -d postgres"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the sibling container.
+
+  ferretdb:
+    image: ghcr.io/ferretdb/ferretdb:2.7.0@sha256:5706414241eb84f0515512c37b46db0f1b1eac9e5ceb7e4c2523211c184b1985
+    container_name: ferretdb
+    restart: unless-stopped
+    environment:
+      # FerretDB keeps no accounts: it forwards what a client sends to
+      # PostgreSQL, so this role is also the MongoDB login.
+      FERRETDB_POSTGRESQL_URL: "postgres://ferretdb:${POSTGRES_PASSWORD}@postgres:5432/postgres"
+      # Upstream's default `undecided` behaves as enabled after an hour. Off
+      # here; the cost is losing the new-version notice (step 9).
+      FERRETDB_TELEMETRY: disable
+    volumes:
+      # /state is a declared volume the image writes as uid 1000, holding the
+      # instance UUID and nothing of yours.
+      - /srv/ferretdb/state:/state
+    ports:
+      # Loopback only, and no reverse proxy: the wire protocol is not HTTP,
+      # so 8191 answers on this box alone.
+      - "127.0.0.1:8191:27017"
+    depends_on:
+      postgres:
+        condition: service_healthy

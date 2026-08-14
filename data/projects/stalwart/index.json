@@ -1,0 +1,99 @@
+{
+  "slug": "stalwart",
+  "name": "Stalwart",
+  "tagline": "The mail server itself: SMTP, IMAP, JMAP, CalDAV and CardDAV in one Rust binary, with the spam filter and the DKIM signing built in and every setting behind a web admin UI.",
+  "repo": "stalwartlabs/stalwart",
+  "site": "https://stalw.art",
+  "category": "comms-scheduling",
+  "replaces": [
+    {
+      "saas": "fastmail",
+      "plan": "Standard",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": true,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 1024,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 180,
+  "license": "AGPL-3.0-only",
+  "officialCompose": "none",
+  "local": {
+    "fit": "caveat",
+    "note": "A mail server on a laptop is not a mail server: nothing on the internet can open port 25 on it, no phone can reach port 993 on it, and a machine that sleeps stops being a mail exchanger when the lid closes. The local path publishes no mail port at all, and is honestly a sandbox for learning the admin interface and reading the DNS records it generates before you rent a server."
+  },
+  "quote": {
+    "text": "Correctly configured DNS records are essential for email delivery, client compatibility, and transport security.",
+    "source": "Stalwart documentation, Setting up DNS",
+    "url": "https://stalw.art/docs/install/dns",
+    "checkedOn": "2026-08-14"
+  },
+  "citations": [
+    {
+      "claim": "The first time Stalwart starts without a config.json it enters bootstrap mode, prints a one-time random administrator password to the console and opens the setup wizard, and the recovery credential can be pinned in advance with the STALWART_RECOVERY_ADMIN environment variable instead, which is what this install does so no credential ever lands in the container log.",
+      "url": "https://stalw.art/docs/install/security"
+    },
+    {
+      "claim": "Upstream recommends keeping 25, 465 and 993 open and calls 587, 143, 110, 995 and 4190 non-essential, and says port 8080 is provided mainly for initial setup and should be disabled afterwards to prevent unauthenticated, unencrypted access.",
+      "url": "https://stalw.art/docs/install/security"
+    },
+    {
+      "claim": "The web administration interface is not compiled into the server: it is a bundle downloaded from GitHub on first start, and both /admin and /account answer 404 until that download succeeds.",
+      "url": "https://stalw.art/docs/install/requirements"
+    },
+    {
+      "claim": "Upstream measures an idle server at roughly 100 MB of memory and calls 1 GB of RAM generally sufficient for a deployment serving around five to ten users.",
+      "url": "https://stalw.art/docs/install/requirements"
+    },
+    {
+      "claim": "The project is dual-licensed: the source is AGPL-3.0-only, and a separate proprietary Stalwart Enterprise License v2 covers the enterprise feature set, with 22 source files at the v0.16.17 tag carrying the SEL-only notice.",
+      "url": "https://github.com/stalwartlabs/stalwart/blob/v0.16.17/README.md"
+    },
+    {
+      "claim": "The default listener set created after setup is SMTP on 25, submissions on 465, IMAPS on 993, POP3S on 995, ManageSieve on 4190 and HTTP on 443 and 8080, with no listener on 587 at all.",
+      "url": "https://github.com/stalwartlabs/stalwart/blob/v0.16.17/crates/common/src/manager/defaults.rs"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Deliverability is not a setting, and this is the bullet to read twice. Correct MX, SPF, DKIM, DMARC and a PTR record that matches your hostname are the entry fee, not the finish line: a fresh IP address has no sending history, and that history is most of what Fastmail is actually selling you. Expect your first messages to be spam-foldered by large providers even with everything configured correctly, and expect to earn your way out of it over weeks by sending small volumes of mail that people open and reply to. Check before you start that your hosting provider will unblock outbound port 25, because most block it by default and a server that cannot open 25 receives mail and delivers none of it.",
+    "You are now the postmaster. Mail that bounces is your problem at 2am, a queue that stalls is your problem, and a mailbox lost to a bad restore is gone in a way a chat message never is. Ports 25, 465 and 993 are published on every interface rather than on loopback, because other mail servers and your own phone open them directly and no reverse proxy stands in for that, so this install has a genuinely public attack surface that the rest of this catalogue does not.",
+    "Dual-licensed, and the split matters. The source is AGPL-3.0-only and this install is the community build, which is the whole mail and collaboration server. A separate proprietary Stalwart Enterprise License covers multi-tenancy, per-tenant branding, account archiving and un-deletion, live telemetry and metric alerts, AI-assisted spam filtering, masked email and sharded or replicated storage. Those features are visible in the admin UI and need a paid key from Stalwart Labs to switch on; nothing you install here stops working without one.",
+    "The configuration lives in the database, not in files you can grep. One small config.json says which data store to open, and everything else, listeners, domains, DKIM keys, spam rules, TLS certificates, is a record in the embedded RocksDB edited through the web admin UI or the JMAP API. That makes the wizard genuinely load-bearing, it makes the backup a stop-the-container tar rather than a config copy, and it means the recovery path when you lock yourself out is an environment variable rather than an editor.",
+    "No webmail in the box, no migration wizard, no calendar UI. Stalwart serves JMAP, IMAP, CalDAV, CardDAV and WebDAV; the client that draws them is a separate application you install and host yourself. Moving an existing mailbox in is a separate tool and a separate afternoon."
+  ],
+  "sources": {
+    "compose": "https://stalw.art/docs/install/platform/docker",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://stalw.art/docs/install/get-started",
+    "security": "https://stalw.art/docs/install/security",
+    "requirements": "https://stalw.art/docs/install/requirements",
+    "dns": "https://stalw.art/docs/install/dns",
+    "acme": "https://stalw.art/docs/server/tls/acme/challenges/",
+    "image": "https://github.com/stalwartlabs/stalwart/blob/v0.16.17/Dockerfile",
+    "listeners": "https://github.com/stalwartlabs/stalwart/blob/v0.16.17/crates/common/src/manager/defaults.rs",
+    "bootstrap": "https://github.com/stalwartlabs/stalwart/blob/v0.16.17/crates/store/src/build/registry.rs",
+    "license": "https://github.com/stalwartlabs/stalwart/blob/v0.16.17/README.md",
+    "enterprise": "https://stalw.art/enterprise"
+  },
+  "related": [
+    "listmonk",
+    "keila",
+    "nextcloud"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-14",
+  "contentHash": "43486b2157a010b3b2ef353cd9261156deccff3e93f99fe9eeb5b543675e1399"
+}

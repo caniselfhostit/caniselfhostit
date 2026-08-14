@@ -1,0 +1,54 @@
+{
+  "slug": "mongodb-atlas",
+  "name": "MongoDB Atlas",
+  "domain": "mongodb.com",
+  "whyPeoplePay": "Atlas sells the operational half of a document database: a replica set someone else keeps alive across three availability zones, continuous backup with point-in-time restore, autoscaling, and a console your whole team can open. The database engine is the part you could run yourself; the pager rotation is what the invoice is actually for.",
+  "plans": [
+    {
+      "name": "Free (M0)",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "512 MB of storage on shared RAM and shared vCPU, described on the pricing page as free forever. The FAQ on the same page adds 32 MB of sort memory and up to 100 operations per second, which is the ceiling most people hit first."
+    },
+    {
+      "name": "Flex",
+      "priceMonthly": null,
+      "unit": "usage",
+      "seatsIncluded": 1,
+      "note": "Metered on operations per second: the page quotes $0.0110 per hour at the 0 to 100 ops/second base tier and $0.0411 per hour at 400 to 500, and states a Flex cluster costs between $8 and $30 for a month's usage. No honest flat number exists without a traffic assumption."
+    },
+    {
+      "name": "Dedicated (M10)",
+      "priceMonthly": 56.94,
+      "unit": "usage",
+      "seatsIncluded": 1,
+      "note": "The smallest dedicated tier: 2 GB RAM, 2 vCPUs, 10 GB of storage, billed at $0.08 per hour, which the page summarises as starting at $56.94 per month. Storage beyond the included amount, backups, data transfer and every add-on meter on top of that base."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-14",
+    "source": "https://www.mongodb.com/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The base cluster prices here were read from the pricing page on the stamped date and are exact. The confidence is medium because the base is not the bill: Atlas Search, Vector Search, Stream Processing, Data Federation, Charts, the SQL interface, Online Archive, backups and cloud data transfer are separate meters listed on the same page, and a real invoice is the sum of them. The vendor also replaced its serverless tier with the Flex tier, so older comparisons that quote serverless pricing no longer describe anything you can buy."
+  },
+  "ranked": [
+    {
+      "project": "ferretdb",
+      "rationale": "The only option here that keeps your existing MongoDB drivers and your existing query code. FerretDB answers the MongoDB wire protocol and stores documents in PostgreSQL with the DocumentDB extension, so an application talks to it unchanged, and the data underneath is a PostgreSQL cluster you can back up with tools that have existed for decades. Apache-2.0 at the pinned tag, two containers, and one credential. The honest limits are published rather than discovered: no transactions, no bulkWrite, no role management, and none of the Atlas services that sit beside the database. One caveat to weigh on the way in: the project has been quiet, with 2.7.0 the newest release since November 2025 and the main branch last moved in February 2026, while the company's own website has been expired since May 2026. The repository is not archived and the images and documentation are live, and the data underneath is plain PostgreSQL, which is the best escape hatch any option on this page offers."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "MongoDB Community Server",
+      "repo": "https://github.com/mongodb/mongo",
+      "note": "The thing Atlas hosts, self-hosted. It is the highest-compatibility answer by definition, and it is not ranked here because of its licence: the repository ships LICENSE-Community.txt, the Server Side Public License v1, which is source-available rather than open source and is the licence change that caused FerretDB to exist. For a personal or internal install the SSPL's service clause never fires, so if you are content with those terms the honest advice is to run this and skip the compatibility question entirely. What you do not get is a permissive licence, and what you still do not get is the managed operations Atlas is charging for. Active repository, 28.5k stars."
+    },
+    {
+      "name": "Apache CouchDB",
+      "repo": "https://github.com/apache/couchdb",
+      "note": "Apache-2.0, 6.9k stars, actively developed, latest release line 3.5.2. A document database with a genuinely different shape: the API is HTTP and JSON rather than the MongoDB wire protocol, so no MongoDB driver connects to it and no existing query code carries over. Its multi-primary replication is better than anything in this comparison if offline-first sync is what you actually want. Surveyed here because it answers the same need with a different contract, not because it is a drop-in replacement for Atlas."
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+# Budibase · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker install ... https://docs.budibase.com/docs/docker
+#   start-up script .. https://github.com/Budibase/budibase/blob/3.41.3/hosting/single/runner.sh
+#
+# One service, and it is a crowded one. Upstream's all-in-one image runs
+# CouchDB, the Clouseau search indexer, a Structured Query Server, Redis,
+# MinIO, an internal PostgreSQL and a LiteLLM proxy alongside the Budibase
+# server and worker, all under pm2 behind an nginx inside the container. That
+# is why no database service appears below, why the RAM floor is 6 GB, and
+# why everything the instance keeps, including the .env of generated secrets
+# it writes on first boot, lives under the one /data mount.
+#
+# CUSTOM_DOMAIN is deliberately never set: it makes the container run certbot
+# for a certificate of its own, and the host's Caddy already terminates TLS.
+# The container's 443 is never published, only its plain-http 80. The image
+# ships its own HEALTHCHECK, so none is declared here. Tag and digest read
+# from the registry on 2026-08-12; amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  budibase:
+    image: budibase/budibase:3.41.3@sha256:f05b90c2b8afc951feb99931bb4646d2c94af37d9c576ef3c4e01d4fdc296dc1
+    container_name: budibase
+    restart: unless-stopped
+    env_file: /srv/budibase/.env
+    environment:
+      # Upstream ships product analytics on for self-hosted instances. The
+      # string "0" is the off switch: backend-core coerces "0" and "false"
+      # to a disabled value before anything reads it.
+      ENABLE_ANALYTICS: "0"
+    volumes:
+      - /srv/budibase/data:/data
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8187.
+      - "127.0.0.1:8187:80"

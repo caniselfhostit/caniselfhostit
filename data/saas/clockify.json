@@ -1,0 +1,79 @@
+{
+  "slug": "clockify",
+  "name": "Clockify",
+  "domain": "clockify.me",
+  "whyPeoplePay": "Clockify gives the timer away and charges for the paperwork around it. Tracking is free for a small team, and then the things a business actually needs, adding time on somebody else's behalf, hiding pages from regular users, historical billable rates, approvals, invoicing and audit trails, arrive one tier at a time and are billed for every active or invited person on the Team page. What a company is really renting is the administrative layer plus the certainty that the hours are somewhere other than a spreadsheet.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 5,
+      "note": "The pricing page prices this at $0 \"For up to 5 users\" and lists unlimited tracking, timesheet, calendar, mobile and desktop apps, team activity and reports."
+    },
+    {
+      "name": "Basic",
+      "priceMonthly": 4.99,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$3.99 per seat per month billed annually, or 4.99 if billed monthly. This is the tier that adds billable rates, historical rates, adding time for other people, bulk edit, required fields and export and share."
+    },
+    {
+      "name": "Standard",
+      "priceMonthly": 6.99,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$5.49 per seat per month billed annually, or 6.99 if billed monthly. Adds time off, invoicing, approval, lock time, and attendance and overtime."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 9.99,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$7.99 per seat per month billed annually, or 9.99 if billed monthly. Adds scheduling, forecasting, expenses, labor cost and profit, and budgets and estimates."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": 14.99,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$11.99 per seat per month billed annually, or 14.99 if billed monthly. Adds single sign-on, a custom subdomain, SCIM provisioning, account control and an audit log."
+    },
+    {
+      "name": "CAKE.com Bundle",
+      "priceMonthly": 15.99,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$12.99 per seat per month billed annually, or 15.99 if billed monthly. Bundles Enterprise Clockify with Pumble and Plaky, the other two products of the same parent."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-14",
+    "source": "https://clockify.me/pricing",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "Every figure here is in the HTML the page serves, not drawn by JavaScript: the annual price sits next to each plan name and the monthly one follows it as \"(or N if billed monthly)\". The page also states the billing rule plainly, that every active or invited user on the Team page occupies one paid seat, owners and admins included, and that deactivated users do not."
+  },
+  "ranked": [
+    {
+      "project": "solidtime",
+      "rationale": "The closest thing to Clockify's shape that you can run yourself: a modern tracker interface, organisations with members and roles, clients, projects and tasks, and billable rates set per organisation, per project or per member. Nothing in the self-hosted build is metered, because the open-source billing contract answers yes to every subscription check, so rounding, exports and more than one member are all available. Be clear-eyed about the age: the project's first tag is June 2024, this is a 0.x line shipping roughly two releases a month, and it is four containers rather than one. Reports export as CSV, XLSX and ODS; PDF needs a fifth container this install does not run."
+    },
+    {
+      "project": "kimai",
+      "rationale": "The decade-old answer, and it holds its own page in this catalogue as the Toggl Track replacement. Kimai has a decade of invoicing edge cases behind it, ships invoices and exports out of the box, and runs in two containers instead of four, so if billing the hours is the whole point it is the safer bet. solidtime ranks first here because this page is about Clockify's shape specifically: the modern timer interface, the organisation-and-member model with roles, and rates attached to members rather than only to projects. Kimai's interface is older and its member model is thinner, and that is exactly the trade."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Traggo",
+      "repo": "https://github.com/traggo/server",
+      "note": "GPL-3.0 and still maintained, with v0.8.3 tagged in March 2026 and commits through July 2026, but a deliberately different model: entries carry tags rather than belonging to a customer and a project, and there is no invoicing and no billable rate. A searchable log of where the hours went, not something you bill from."
+    },
+    {
+      "name": "TimeTagger",
+      "repo": "https://github.com/almarklein/timetagger",
+      "note": "GPL-3.0, confirmed in the LICENSE file, and the README says plainly that the licence is there to stop other parties using the code commercially; contributors sign a CLA granting the author the right to use their work on the hosted timetagger.app service. Single-author Python and SQLite, tag-based like Traggo, aimed at one freelancer rather than an organisation with members and rates. Latest release v26.1.3, February 2026."
+    }
+  ]
+}

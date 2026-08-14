@@ -1,0 +1,13 @@
+# FerretDB · this service gets no Caddy site block, and this file is the record
+# of that decision rather than something to append to /etc/caddy/Caddyfile.
+#
+# Authored by caniselfhostit from
+# https://docs.ferretdb.io/security/tls-connections/ and
+# https://caddyserver.com/docs/caddyfile/directives/reverse_proxy
+#
+# The MongoDB wire protocol on TCP 27017 is binary traffic on a long-lived
+# socket, not HTTP: `reverse_proxy` has nothing to carry and no hostname to
+# certify. Reaching 127.0.0.1:8191 from off this box means an ssh port forward,
+# or FERRETDB_LISTEN_TLS with certificates you issue. Never a proxy.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.

@@ -54,7 +54,7 @@
     {
       "name": "Budibase",
       "repo": "https://github.com/Budibase/budibase",
-      "note": "Actively developed, releasing continuously, and pleasant to build in, with a built-in database if you do not already have one. The licence is why it is not ranked: GitHub reports no single licence for the repository, and Budibase's own licensing guidelines say to consider the project GPLv3 overall while paid features live in packages/pro under the Business Source License, which is not open source and forbids running modified code that bypasses their licence checks. Read that before you build a company's tools on it."
+      "note": "Actively developed, releasing continuously, and pleasant to build in, with a built-in database if you do not already have one. The licence is a split: the server is GPL-3.0, and the paid features in packages/pro are under the Business Source License, which is not open source and forbids running modified code that bypasses their licence checks. It has since earned its own page in this catalog as the Quickbase answer, where its install is written up in full and that split is disclosed package by package. On this page ToolJet keeps the top spot for being the same software this page is about, published by the same vendor from the same repository."
     },
     {
       "name": "Lowcoder",

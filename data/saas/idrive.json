@@ -1,0 +1,72 @@
+{
+  "slug": "idrive",
+  "name": "IDrive",
+  "domain": "idrive.com",
+  "whyPeoplePay": "IDrive sells one price that covers both halves of a backup: the agent that watches your folders and the terabytes it uploads them to. You install it on every computer you own, it keeps versions, it syncs between machines, and when the laptop is gone there is a web page you log into and a courier service that will ship you a drive. The thing nobody self-hosting can match on the invoice is that bundling, because the moment you separate the client from the storage you start paying two people instead of one.",
+  "plans": [
+    {
+      "name": "Basic",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "10 GB free, no credit card. The pricing page keeps it on every billing tab, and it is also the account you need if you only want the add-on services."
+    },
+    {
+      "name": "IDrive Mini · 500 GB",
+      "priceMonthly": 0.83,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Only offered on the yearly tab, one user, with 100 GB at $0.25 a month beside it. No strikethrough price is shown on either, so these read as standard rather than first-year rates."
+    },
+    {
+      "name": "IDrive Personal · 5 TB",
+      "priceMonthly": 9.99,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Billed annually, one user and multiple computers. The page prints it as $9.99 struck through and $6.99 in force, and the small print says the discount applies to the first year only. Monthly billing without the annual commitment is $11.99. The same ladder runs 10 TB at $14.99, 20 TB at $24.99, 50 TB at $49.99 and 100 TB at $99.99, all in standard money."
+    },
+    {
+      "name": "IDrive Team · 5 TB",
+      "priceMonthly": 9.99,
+      "unit": "flat",
+      "seatsIncluded": 5,
+      "note": "Five computers and five users at the same headline figure as Personal, discounted to $6.99 for the first year, and it scales in lockstep: 10 computers and 10 TB at $19.99, 25 at $49.99, on up to 500 computers and 500 TB at $999.99 a month."
+    },
+    {
+      "name": "IDrive Business · 500 GB",
+      "priceMonthly": 19.99,
+      "unit": "flat",
+      "seatsIncluded": null,
+      "note": "Unlimited users, and servers, Exchange, SQL and NAS devices are in scope rather than extra. $13.99 for the first year. The ladder is steep above that: 1.25 TB at $49.99, 5 TB at $149.99, 100 TB at $2,316.66 a month."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-12",
+    "source": "https://www.idrive.com/pricing",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "Read from the pricing page itself on the day stamped, including all three billing tabs. Every figure above is the standard price, which is the one you pay from the second year on. IDrive prints a discounted figure next to it in larger type and a line at the foot of the page that says so plainly: the discounted price applies to the first year of the selected plan, standard pricing applies from the second year onward. Comparing a self-hosted total against the first-year number is the mistake the page is designed to encourage."
+  },
+  "ranked": [
+    {
+      "project": "duplicati",
+      "rationale": "The closest answer to the shape IDrive sells, as long as you follow the money. Duplicati is a backup client with a web UI: schedules, versioned incremental backups, AES-256 encryption applied on your own machine before anything is uploaded, and a backend list at the pinned tag that runs from S3-compatible object storage, Backblaze B2, Azure, Google, OneDrive and Dropbox through to SFTP, FTP, WebDAV, SMB and rclone. IDrive's own e2 object storage is on that list too, which is one honest way to keep the vendor and change the product. What Duplicati does not include is the storage, so a single invoice becomes a subscription you stop paying and a per-gigabyte bill you start paying, or a second machine you run yourself. Below a few hundred gigabytes that usually comes out ahead of a 5 TB plan you are not filling; at several terabytes the arithmetic gets closer, and you should do it before you switch rather than after. The encryption passphrase is yours alone, which is the good news and the bad news."
+    },
+    {
+      "project": "backrest",
+      "rationale": "The same job with a different engine, and it keeps the top spot on its own page as the restic answer. Backrest is a web UI and a scheduler over restic rather than a backup program in its own right, which means restic's deduplication and its repository format, plus restic's command line underneath when something needs unpicking. Duplicati ranks first here because the IDrive shape is schedule-and-forget encrypted backups with a browser to configure them in, and Duplicati is that with a wider backend list and no second tool to learn. If you already trust restic, or you want the option of restoring from a laptop with no UI at all, the ranking flips."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Kopia",
+      "repo": "https://github.com/kopia/kopia",
+      "note": "The peer that is a single program rather than a UI over another tool: its own repository format, its own deduplication, a desktop app and a server mode, under Apache-2.0 and actively released, with v0.23.1 in June 2026 and commits landing in August 2026. Two reasons it is not the pick here. It is still on a 0.x version line, and its server mode brings its own user model and TLS story, so the install is a longer page than one container behind the Caddy you already run."
+    },
+    {
+      "name": "UrBackup",
+      "repo": "https://github.com/uroni/urbackup_backend",
+      "note": "The closest thing here to what IDrive actually does across a household: a server you run plus a client agent on every machine, doing whole-image and file backups over your own network, under AGPL-3.0 and still shipping, with server 2.5.37 in April 2026. That shape is also the cost. You install and update an agent on each computer, the backups land on hardware you own rather than offsite, and the two together are a bigger standing commitment than one container plus a bucket."
+    }
+  ]
+}

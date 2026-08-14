@@ -1,0 +1,26 @@
+# Outline · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.getoutline.com/s/hosting/doc/docker-7pfeLP5a8t and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, with <DOMAIN> replaced by the hostname
+# pointed at this box. That hostname is also URL in .env, and Outline builds
+# every mailed sign-in link and share link out of it, so the two must agree.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	# No X-Frame-Options or CSP here: Outline sets both itself, per route.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# 8185 is the loopback port compose publishes, never open in the firewall.
+	# The editor rides WebSockets on it, which Caddy upgrades unasked, and
+	# Caddy's X-Forwarded-Proto is what lets Outline's FORCE_HTTPS settle.
+	reverse_proxy 127.0.0.1:8185
+}

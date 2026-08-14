@@ -1,0 +1,93 @@
+# Twenty · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation and upstream's own compose file:
+#   docker compose ..... https://docs.twenty.com/developers/self-host/capabilities/docker-compose
+#   upstream compose ... https://github.com/twentyhq/twenty/blob/064bdd795a0bd78c65f024350cefed2c8f38a661/packages/twenty-docker/docker-compose.yml
+#
+# Four services, the same four upstream runs: the server, a worker on the same
+# image draining the job queue, PostgreSQL and Redis. Upstream writes postgres:16
+# and a bare redis; this file pins the patch and digest of each, and that bare
+# tag is the 8.10 line below. SERVER_URL and IS_MULTIWORKSPACE_ENABLED arrive
+# from .env, so both containers read one value. Digests read from the registries
+# on 2026-08-12; the application image publishes amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  db:
+    image: postgres:16.14-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
+    container_name: twenty-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: default
+      POSTGRES_USER: twenty
+      POSTGRES_PASSWORD: ${PG_DATABASE_PASSWORD}
+    volumes:
+      - /srv/twenty/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U twenty -d default"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other containers.
+
+  redis:
+    image: redis:8.10.0-alpine@sha256:978f0e01593e65eed801f2402944efcd936d43b5027e4908a7897baf88ed6241
+    container_name: twenty-redis
+    restart: unless-stopped
+    # Upstream's own flag: the job queue must not be evicted under pressure.
+    command: ["--maxmemory-policy", "noeviction"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  server:
+    image: twentycrm/twenty:v2.30.1@sha256:36049a73f0d2e25c059007ccb452cf183b02fd57cb107afee7d959879639fa97
+    container_name: twenty-server
+    restart: unless-stopped
+    env_file: /srv/twenty/.env
+    environment:
+      NODE_PORT: 3000
+      PG_DATABASE_URL: postgres://twenty:${PG_DATABASE_PASSWORD}@db:5432/default
+      REDIS_URL: redis://redis:6379
+      # Attachments land in the mount below, not in an S3 bucket.
+      STORAGE_TYPE: local
+    volumes:
+      - /srv/twenty/storage:/app/packages/twenty-server/.local-storage
+    healthcheck:
+      # Upstream's own. Many retries: the entrypoint runs the schema setup and
+      # every migration before this port answers anything.
+      test: ["CMD", "curl", "--fail", "http://localhost:3000/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8183.
+      - "127.0.0.1:8183:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  worker:
+    image: twentycrm/twenty:v2.30.1@sha256:36049a73f0d2e25c059007ccb452cf183b02fd57cb107afee7d959879639fa97
+    container_name: twenty-worker
+    restart: unless-stopped
+    command: ["yarn", "worker:prod"]
+    env_file: /srv/twenty/.env
+    environment:
+      PG_DATABASE_URL: postgres://twenty:${PG_DATABASE_PASSWORD}@db:5432/default
+      REDIS_URL: redis://redis:6379
+      STORAGE_TYPE: local
+      # Upstream's own values here: the server owns migrations and cron
+      # registration, and two processes racing one migration half-apply it.
+      DISABLE_DB_MIGRATIONS: "true"
+      DISABLE_CRON_JOBS_REGISTRATION: "true"
+    volumes:
+      - /srv/twenty/storage:/app/packages/twenty-server/.local-storage
+    depends_on:
+      db:
+        condition: service_healthy
+      server:
+        condition: service_healthy

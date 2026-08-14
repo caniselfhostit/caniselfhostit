@@ -1,0 +1,27 @@
+# Twenty · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.twenty.com/developers/self-host/capabilities/docker-compose and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed, with
+# <DOMAIN> replaced by the hostname pointed at this box. That hostname is also
+# SERVER_URL in .env: upstream says to set the server URL to your public URL,
+# because the server uses it for the links it generates and to work out that it
+# is being reached over HTTPS, which is what makes its session cookies secure.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		# Nothing here is meant to be framed by another site.
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# 8183 is the loopback port compose publishes; it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8183
+}

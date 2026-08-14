@@ -1,0 +1,31 @@
+# OpnForm · the Caddy site block for this service. Authored by caniselfhostit
+# from https://docs.opnform.com/deployment/docker and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile with <DOMAIN> replaced by the hostname
+# pointed at this box. That hostname is APP_URL, FRONT_URL and
+# NUXT_PUBLIC_APP_URL at once, and every form link is it plus /forms/ and a
+# slug, so it is the one value here you cannot change your mind about later.
+
+<DOMAIN> {
+	# No X-Frame-Options on purpose: OpnForm ships an embed script, so a form
+	# is meant to run inside somebody else's page.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	encode zstd gzip
+
+	# Matches the ingress and the api image's own 50M PHP upload ceiling.
+	request_body {
+		max_size 50MB
+	}
+
+	# 8186 is the loopback port compose publishes for the nginx ingress: not a
+	# container port, and not open in the firewall. TRUSTED_PROXIES is what
+	# lets Laravel believe the X-Forwarded-For and -Proto that Caddy sends.
+	reverse_proxy 127.0.0.1:8186
+}

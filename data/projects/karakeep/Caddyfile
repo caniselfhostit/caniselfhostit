@@ -1,0 +1,29 @@
+# Karakeep · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.karakeep.app/installation/docker and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also NEXTAUTH_URL in .env, https:// and no trailing slash: Caddy speaks plain
+# http to the container, so that variable is what tells Karakeep it is https.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		# One list can be public while the rest of the app sits behind a
+		# login on the same hostname. SAMEORIGIN protects the second half.
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8182 is the loopback port compose publishes on this host: not a container
+	# port, and not open in the firewall. Caddy sets no body limit, so an
+	# upload's ceiling is MAX_ASSET_SIZE_MB, default 50.
+	reverse_proxy 127.0.0.1:8182
+}

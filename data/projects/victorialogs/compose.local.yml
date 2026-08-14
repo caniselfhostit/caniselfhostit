@@ -1,0 +1,35 @@
+# VictoriaLogs · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker image ... https://docs.victoriametrics.com/victorialogs/quickstart/
+#   flags .......... https://docs.victoriametrics.com/victorialogs/
+#   log driver ..... https://docs.victoriametrics.com/victorialogs/data-ingestion/splunk/
+#
+# One service on the computer you are sitting at. The data path is relative to
+# ~/selfhost/victorialogs/, so one file works on macOS, Linux and Windows, and
+# stays a bind mount so the partition directories are visible in Finder or
+# Explorer. The `command:` list is the whole configuration: no config file, no
+# .env. No healthcheck, because the image is distroless. Plain v1.52.0 is the
+# open source build; step 9 covers the -enterprise tags. Digest read from
+# Docker Hub on 2026-08-14; amd64, arm64, arm/v7 and ppc64le.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  victorialogs:
+    image: victoriametrics/victoria-logs:v1.52.0@sha256:47b820890d64c4575a2a0a46415dcd8a4fd59a0f1fcd6a377693d7aea639442e
+    container_name: victorialogs
+    restart: unless-stopped
+    command:
+      # Absolute, so the mount below is the only place logs can land.
+      - "-storageDataPath=/vlogs"
+      # Upstream's default retention is 7 days. Thirty is the choice here.
+      - "-retentionPeriod=30d"
+      # The ceiling that protects the disk: past this the oldest per-day
+      # partitions drop. A laptop disk fills sooner than a server one.
+      - "-retention.maxDiskSpaceUsageBytes=5GiB"
+    volumes:
+      # Every ingested line lands here, in per-day partition directories.
+      - ./data:/vlogs
+    ports:
+      # Loopback only: no other device on the wifi reaches 8190.
+      - "127.0.0.1:8190:9428"

@@ -1,0 +1,69 @@
+# Karakeep · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker install ..... https://docs.karakeep.app/installation/docker
+#   configuration ...... https://docs.karakeep.app/configuration/environment-variables
+#   minimal install .... https://docs.karakeep.app/installation/minimal-install
+#   image build ........ https://github.com/karakeep-app/karakeep/blob/v0.33.2/docker/Dockerfile
+#
+# Three services. `web` is upstream's all-in-one image: app, workers and the
+# migration under s6, with SQLite in /data, so no Postgres appears here.
+# `chrome` renders and screenshots pages; upstream says that without it
+# javascript pages crawl badly. `meilisearch` is the search engine, without
+# which upstream says search is disabled completely; it is pinned to the
+# 1.41.0 Karakeep is built against, not the newer line on Meilisearch's own
+# page here. MEILI_MASTER_KEY comes from the .env beside this file, so run
+# compose from /srv/karakeep. Digests read 2026-08-14; all three ship arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  meilisearch:
+    image: getmeili/meilisearch:v1.41.0@sha256:860fa4baed04ae1c235de870edab0c8006227546dea1bbb6411fbfc5e27cf1db
+    container_name: karakeep-meilisearch
+    restart: unless-stopped
+    environment:
+      # Production mode refuses to start without a master key.
+      MEILI_ENV: production
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY}
+      MEILI_NO_ANALYTICS: "true"
+    volumes:
+      # The index. Rebuilt from the database, so step 8 leaves it out.
+      - /srv/karakeep/meili:/meili_data
+    # No `ports:`: 7700 is reachable only from the other containers.
+
+  chrome:
+    image: ghcr.io/karakeep-app/karakeep-chrome:151.0.7922.47-r1@sha256:5b19bbb160e9ff60681a3abd97e1c4ec9f64212301410de658c3900ab7ef31e7
+    container_name: karakeep-chrome
+    restart: unless-stopped
+    init: true
+    command:
+      - --disable-gpu
+      - --disable-dev-shm-usage
+      - --hide-scrollbars
+      - --disable-blink-features=AutomationControlled
+      - --window-size=1440,900
+    # No `ports:` and no volume: 9222 remote-controls a real browser with no
+    # credential, and only the web container shares this network.
+
+  web:
+    image: ghcr.io/karakeep-app/karakeep:0.33.2@sha256:b069e4307dec06ea06d16989c6861c30a1ff208568be44ed5fb5d422cd3e950c
+    container_name: karakeep
+    restart: unless-stopped
+    env_file: /srv/karakeep/.env
+    environment:
+      MEILI_ADDR: http://meilisearch:7700
+      BROWSER_WEB_URL: http://chrome:9222
+      # Upstream's compose says DON'T CHANGE THIS. The mount moves.
+      DATA_DIR: /data
+      # The image ships debug. `info` is the quietest level it defines.
+      LOG_LEVEL: info
+    volumes:
+      # The SQLite database and every archived asset: the product.
+      - /srv/karakeep/data:/data
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8182.
+      - "127.0.0.1:8182:3000"
+    # Start ordering only: web connects to both lazily and retries.
+    depends_on:
+      - meilisearch
+      - chrome

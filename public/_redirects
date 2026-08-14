@@ -2,7 +2,7 @@
 # Cloudflare Workers static assets honor this file (same as public/_headers).
 # GENERATED: node scripts/generate-redirects.mjs . > public/_redirects
 # The validator fails CI when this file drifts from what data/ implies.
-# 109 pairs, 3 rules each (slashed, bare, .md mirror), all 301.
+# 119 pairs, 3 rules each (slashed, bare, .md mirror), all 301.
 /self-host/vaultwarden/          /self-host/1password/  301
 /self-host/vaultwarden           /self-host/1password/  301
 /self-host/vaultwarden.md        /self-host/1password.md  301
@@ -72,6 +72,9 @@
 /self-host/trilium/              /self-host/evernote/  301
 /self-host/trilium               /self-host/evernote/  301
 /self-host/trilium.md            /self-host/evernote.md  301
+/self-host/stalwart/             /self-host/fastmail/  301
+/self-host/stalwart              /self-host/fastmail/  301
+/self-host/stalwart.md           /self-host/fastmail.md  301
 /self-host/freshrss/             /self-host/feedly/  301
 /self-host/freshrss              /self-host/feedly/  301
 /self-host/freshrss.md           /self-host/feedly.md  301
@@ -96,6 +99,9 @@
 /self-host/languagetool/         /self-host/grammarly/  301
 /self-host/languagetool          /self-host/grammarly/  301
 /self-host/languagetool.md       /self-host/grammarly.md  301
+/self-host/duplicati/            /self-host/idrive/  301
+/self-host/duplicati             /self-host/idrive/  301
+/self-host/duplicati.md          /self-host/idrive.md  301
 /self-host/chatwoot/             /self-host/intercom/  301
 /self-host/chatwoot              /self-host/intercom/  301
 /self-host/chatwoot.md           /self-host/intercom.md  301
@@ -150,9 +156,15 @@
 /self-host/gotify/               /self-host/pushover/  301
 /self-host/gotify                /self-host/pushover/  301
 /self-host/gotify.md             /self-host/pushover.md  301
+/self-host/budibase/             /self-host/quickbase/  301
+/self-host/budibase              /self-host/quickbase/  301
+/self-host/budibase.md           /self-host/quickbase.md  301
 /self-host/linkwarden/           /self-host/raindrop/  301
 /self-host/linkwarden            /self-host/raindrop/  301
 /self-host/linkwarden.md         /self-host/raindrop.md  301
+/self-host/karakeep/             /self-host/readwise/  301
+/self-host/karakeep              /self-host/readwise/  301
+/self-host/karakeep.md           /self-host/readwise.md  301
 /self-host/appsmith/             /self-host/retool/  301
 /self-host/appsmith              /self-host/retool/  301
 /self-host/appsmith.md           /self-host/retool.md  301
@@ -165,6 +177,9 @@
 /self-host/mattermost/           /self-host/slack/  301
 /self-host/mattermost            /self-host/slack/  301
 /self-host/mattermost.md         /self-host/slack.md  301
+/self-host/outline/              /self-host/slite/  301
+/self-host/outline               /self-host/slite/  301
+/self-host/outline.md            /self-host/slite.md  301
 /self-host/syncthing/            /self-host/sync-com/  301
 /self-host/syncthing             /self-host/sync-com/  301
 /self-host/syncthing.md          /self-host/sync-com.md  301
@@ -213,6 +228,12 @@
 /self-host/openproject/          /self-host/asana/  301
 /self-host/openproject           /self-host/asana/  301
 /self-host/openproject.md        /self-host/asana.md  301
+/self-host/twenty/               /self-host/attio/  301
+/self-host/twenty                /self-host/attio/  301
+/self-host/twenty.md             /self-host/attio.md  301
+/self-host/victorialogs/         /self-host/axiom/  301
+/self-host/victorialogs          /self-host/axiom/  301
+/self-host/victorialogs.md       /self-host/axiom.md  301
 /self-host/shlink/               /self-host/bitly/  301
 /self-host/shlink                /self-host/bitly/  301
 /self-host/shlink.md             /self-host/bitly.md  301
@@ -228,6 +249,9 @@
 /self-host/typebot/              /self-host/chatbase/  301
 /self-host/typebot               /self-host/chatbase/  301
 /self-host/typebot.md            /self-host/chatbase.md  301
+/self-host/solidtime/            /self-host/clockify/  301
+/self-host/solidtime             /self-host/clockify/  301
+/self-host/solidtime.md          /self-host/clockify.md  301
 /self-host/code-server/          /self-host/codesandbox/  301
 /self-host/code-server           /self-host/codesandbox/  301
 /self-host/code-server.md        /self-host/codesandbox.md  301
@@ -264,6 +288,9 @@
 /self-host/automatisch/          /self-host/make/  301
 /self-host/automatisch           /self-host/make/  301
 /self-host/automatisch.md        /self-host/make.md  301
+/self-host/ferretdb/             /self-host/mongodb-atlas/  301
+/self-host/ferretdb              /self-host/mongodb-atlas/  301
+/self-host/ferretdb.md           /self-host/mongodb-atlas.md  301
 /self-host/wger/                 /self-host/myfitnesspal-premium/  301
 /self-host/wger                  /self-host/myfitnesspal-premium/  301
 /self-host/wger.md               /self-host/myfitnesspal-premium.md  301
@@ -297,6 +324,9 @@
 /self-host/limesurvey/           /self-host/surveymonkey/  301
 /self-host/limesurvey            /self-host/surveymonkey/  301
 /self-host/limesurvey.md         /self-host/surveymonkey.md  301
+/self-host/opnform/              /self-host/tally/  301
+/self-host/opnform               /self-host/tally/  301
+/self-host/opnform.md            /self-host/tally.md  301
 /self-host/vikunja/              /self-host/todoist/  301
 /self-host/vikunja               /self-host/todoist/  301
 /self-host/vikunja.md            /self-host/todoist.md  301

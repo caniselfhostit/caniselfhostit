@@ -1,0 +1,107 @@
+{
+  "slug": "budibase",
+  "name": "Budibase",
+  "tagline": "Internal apps with a database already inside them, on one container, with no per-seat meter on the people who build them or the people who use them.",
+  "repo": "Budibase/budibase",
+  "site": "https://budibase.com",
+  "category": "automation-dev",
+  "replaces": [
+    {
+      "saas": "quickbase",
+      "plan": "Team",
+      "seatsAssumed": 5
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 4
+  },
+  "resources": {
+    "ramMinMB": 6144,
+    "ramMeasuredMB": null,
+    "diskGB": 20,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "GPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://docs.budibase.com/docs/docker",
+  "local": {
+    "fit": "caveat",
+    "note": "The builder, the tables and the automations all work, but they answer only at http://localhost:8187, so an automation that should fire at 6am does not fire while the laptop is asleep and the colleague you meant to hand a form to gets a connection error."
+  },
+  "quote": {
+    "text": "The number of processing cores and amount of RAM required by Budibase docker containers will depend greatly on expected usage, however for most use cases 2 core and 6GB of RAM should be enough.",
+    "source": "Budibase documentation, Docker deployment guide",
+    "url": "https://docs.budibase.com/docs/docker",
+    "checkedOn": "2026-08-12"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's own sizing note for a Budibase Docker deployment is 2 cores and 6 GB of RAM, and the same page lists JWT_SECRET, INTERNAL_API_KEY, COUCHDB_USER and COUCHDB_PASSWORD among the variables to set before putting the container into production.",
+      "url": "https://docs.budibase.com/docs/docker"
+    },
+    {
+      "claim": "The root LICENSE file is a pointer rather than a licence: it says each package carries its own, that Budibase can be considered GPLv3 overall, that paid features live in packages/pro under the Business Source License, and that the bundled Structured Query Server has a separate licence of its own.",
+      "url": "https://github.com/Budibase/budibase/blob/3.41.3/LICENSE"
+    },
+    {
+      "claim": "packages/pro carries the MariaDB Business Source License text, with a grant of production use that is void if the source is modified to circumvent licence key verification or feature gating, an exception for European public sector organisations, and GPLv3 as the change licence four years on.",
+      "url": "https://github.com/Budibase/budibase/blob/3.41.3/packages/pro/license.md"
+    },
+    {
+      "claim": "With no licence key on a self-hosted instance the server falls back to a free plan defined in code: unlimited users, creators, rows and automations, a static quota of one workspace, no user groups, and one day of automation log retention.",
+      "url": "https://github.com/Budibase/budibase/blob/3.41.3/packages/pro/src/constants/licenses.ts"
+    },
+    {
+      "claim": "BB_ADMIN_USER_EMAIL and BB_ADMIN_USER_PASSWORD make the server create the administrator account during start-up on a self-hosted, single-tenant instance, and it skips that work once the account exists.",
+      "url": "https://github.com/Budibase/budibase/blob/3.41.3/packages/server/src/startup/index.ts"
+    },
+    {
+      "claim": "The container's start-up script randomises only the secrets that arrive empty, so the CouchDB credential the base image bakes in as admin survives untouched unless a password is supplied from outside.",
+      "url": "https://github.com/Budibase/budibase/blob/3.41.3/hosting/single/runner.sh"
+    },
+    {
+      "claim": "Upstream documents CouchDB's own admin client, Fauxton, as reachable at the Budibase host's own /db/ path, which is why this install refuses that path at the reverse proxy.",
+      "url": "https://docs.budibase.com/docs/accessing-couchdb"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The licence is per package and the root LICENSE file is a pointer rather than a licence. packages/server and packages/worker each carry the GPLv3 text, the builder's package.json declares GPL-3.0, and upstream says to consider the project GPLv3 overall. packages/pro, which ships inside this same image, is under the Business Source License: source-available, not open source, its grant of production use void if you modify the code to defeat the licence checks, with a carve-out for European public sector bodies and GPLv3 as the change licence four years on. A third piece, the Structured Query Server that lets CouchDB answer SQL, arrives as a binary under a vendor licence that permits internal business use only and forbids resale and reverse engineering. You can read the server; you cannot legally remove the gate.",
+    "One workspace, and unlimited apps inside it. Self-hosted with no licence key, the instance runs on the free plan upstream defines in its own code: unlimited users, unlimited creators, unlimited rows and unlimited automations, and a static quota of exactly one workspace. Budibase's own pricing page states the same pair. Inside that workspace, apps and tables are uncapped, so a team replacing one Quickbase app, or five that share data, fits comfortably. What the cap costs is the ability to keep unrelated applications in separate workspaces, which is how a Quickbase realm usually keeps one department's data and roles away from another's.",
+    "Six gigabytes, for what looks like one container. The all-in-one image runs CouchDB, the Clouseau search indexer on a JVM, a Structured Query Server, Redis, MinIO, an internal PostgreSQL and a LiteLLM proxy alongside the Budibase server and worker, all under pm2 behind an nginx of its own. The pull is over a gigabyte, the first boot takes minutes rather than seconds, and the cheapest VPS tier will not run it. No model provider key is configured here, so nothing you build calls out to one.",
+    "That nginx also proxies /db/ straight into CouchDB, which upstream documents as the way to reach Fauxton. The database holding every table and app is therefore one path away from the hostname you point at this box, and the image ships a CouchDB password baked in as the literal word admin. This install generates a real one and has the reverse proxy refuse /db/ outright, then checks both, because the alternative is an admin database on the public internet with a guessable password.",
+    "Backing up means stopping the service, and the in-product backup is a paid feature. Several storage engines write into the same directory, so an archive taken while they run is a file that resembles a backup. Workspace backups and restore sit on the paid plans, which makes a stopped tar with a few minutes of downtime the real backup here. Custom branding, environment variables, enforced single sign-on, user groups, SCIM and audit logs are the rest of the licensed list, and on the free plan automation logs are kept for one day. There is no SMTP on this install either, so there are no invitations and no password resets: put the administrator password in a password manager on day one."
+  ],
+  "sources": {
+    "compose": "https://docs.budibase.com/docs/docker",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://github.com/Budibase/budibase/blob/3.41.3/hosting/single/runner.sh",
+    "variables": "https://github.com/Budibase/budibase/blob/3.41.3/hosting/hosting.properties",
+    "env": "https://github.com/Budibase/budibase/blob/3.41.3/packages/backend-core/src/environment.ts",
+    "license": "https://github.com/Budibase/budibase/blob/3.41.3/LICENSE",
+    "licenseServer": "https://github.com/Budibase/budibase/blob/3.41.3/packages/server/LICENSE",
+    "licensePro": "https://github.com/Budibase/budibase/blob/3.41.3/packages/pro/license.md",
+    "admin": "https://github.com/Budibase/budibase/blob/3.41.3/packages/server/src/startup/index.ts",
+    "plans": "https://github.com/Budibase/budibase/blob/3.41.3/packages/pro/src/constants/licenses.ts",
+    "proxy": "https://github.com/Budibase/budibase/blob/3.41.3/hosting/single/nginx/nginx-default-site.conf",
+    "couchdb": "https://docs.budibase.com/docs/accessing-couchdb",
+    "health": "https://github.com/Budibase/budibase/blob/3.41.3/packages/worker/src/api/index.ts",
+    "backup": "https://budibase.com/pricing/"
+  },
+  "related": [
+    "appsmith",
+    "tooljet",
+    "baserow",
+    "grist"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-14",
+  "contentHash": "859673753295c51c23e74f01973684057f322dd7d1d0865a06c364bcaf14a79a"
+}

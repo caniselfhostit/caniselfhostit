@@ -54,7 +54,7 @@
     {
       "name": "Outline",
       "repo": "https://github.com/outline/outline",
-      "note": "The closest thing to Slab in feel, and actively developed, but two things keep it off the tested list. It is under the Business Source License 1.1 with a change date in 2030, so it is source-available rather than open source, and its own hosting docs state it does not support email and password authentication natively: you must wire up an outside identity provider before anyone can sign in at all, which turns a wiki install into an SSO project."
+      "note": "The closest thing to Slab in feel, and actively developed. It is under the Business Source License 1.1 with a change date in 2030, so it is source-available rather than open source, and there is no email and password login anywhere in it: the first workspace is claimed on a form the server shows only while none exists, and everyone signs in afterwards through a link mailed to them, which makes an SMTP relay part of the install rather than a nicety. It has since earned its own page in this catalog as the Slite answer, where that install is written up in full. On this page BookStack keeps the top spot for the MIT licence and for the shelves, books and chapters structure a knowledge base grows into."
     },
     {
       "name": "Wiki.js",

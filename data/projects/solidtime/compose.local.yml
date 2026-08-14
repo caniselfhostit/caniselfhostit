@@ -1,0 +1,86 @@
+# solidtime · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream self-hosting documentation and the packaging
+# at the pinned tag:
+#   docker guide ... https://docs.solidtime.io/self-hosting/guides/docker
+#   configuration .. https://docs.solidtime.io/self-hosting/configuration
+#   image build .... https://github.com/solidtime-io/solidtime/blob/v0.19.1/docker/prod/Dockerfile
+#
+# Four services from ~/selfhost/solidtime/, three of them the same image:
+# CONTAINER_MODE picks HTTP, scheduler or queue worker. Gotenberg, upstream's
+# PDF renderer, is left out. The database is a named volume because PostgreSQL
+# chowns its data directory to a uid Docker Desktop cannot grant on a Windows
+# home bind mount; ./storage stays a bind mount. Digests read 2026-08-14.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+x-solidtime: &solidtime
+  image: solidtime/solidtime:0.19.1@sha256:419ae59a806bcd6b15e9b637b5cee4800f7eb8f4941e20f4c5416d71acd5f1dd
+  restart: unless-stopped
+  # The image copies the application in as uid 1000 and runs as it.
+  user: "1000:1000"
+  env_file: .env
+  volumes:
+    # framework cache, shared; then the half worth keeping: exports/imports.
+    - solidtime-storage:/var/www/html/storage
+    - ./storage:/var/www/html/storage/app
+  depends_on:
+    postgres:
+      condition: service_healthy
+
+services:
+  postgres:
+    image: postgres:17.11-alpine@sha256:5d61573b31c206ae538c85893edeb6e320e1a9ffd838c0f9dca927fb6f765fa4
+    container_name: solidtime-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: solidtime
+      POSTGRES_USER: solidtime
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - solidtime-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U solidtime -d solidtime"]
+      interval: 10s
+      retries: 12
+    # No `ports:`: 5432 is reachable only from the other containers.
+
+  solidtime:
+    <<: *solidtime
+    container_name: solidtime
+    environment:
+      CONTAINER_MODE: http
+    ports:
+      # Loopback only: no other device on the wifi can reach 8184.
+      - "127.0.0.1:8184:8000"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8000/health-check/up"]
+      start_period: 60s
+      interval: 15s
+      retries: 10
+
+  scheduler:
+    <<: *solidtime
+    environment:
+      CONTAINER_MODE: scheduler
+    healthcheck:
+      # Ships with the image: asks supervisord if its process runs.
+      test: ["CMD", "healthcheck"]
+      start_period: 60s
+      interval: 30s
+      retries: 5
+
+  queue:
+    <<: *solidtime
+    environment:
+      CONTAINER_MODE: worker
+      # Worker mode refuses to start without this.
+      WORKER_COMMAND: "php /var/www/html/artisan queue:work"
+    healthcheck:
+      test: ["CMD", "healthcheck"]
+      start_period: 60s
+      interval: 30s
+      retries: 5
+
+volumes:
+  solidtime-postgres:
+  solidtime-storage:

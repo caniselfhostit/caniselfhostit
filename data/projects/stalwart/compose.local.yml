@@ -1,0 +1,32 @@
+# Stalwart · the deterministic fallback for the local path. Authored by
+# caniselfhostit from https://stalw.art/docs/install/platform/docker and
+# https://stalw.art/docs/install/security
+#
+# One service, one published port: 8189, the plain HTTP listener, on loopback.
+# No mail port is published, and that is the shape of this path. Nothing on the
+# internet can open 25 on a laptop, no phone on the wifi can reach 993 on it,
+# and a machine that sleeps is not a mail exchanger. What runs is the server and
+# its admin interface, no domain at risk and no mail in flight.
+#
+# Paths are relative to ~/selfhost/stalwart/, so one file works on macOS, Linux
+# and Windows, and all three stay bind mounts so you can open them in Finder or
+# Explorer. The image runs as uid 2000, which step 3 chowns for on Linux. Same
+# tag and digest as the VPS compose file.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  stalwart:
+    image: stalwartlabs/stalwart:v0.16.17@sha256:a8108e19bd927e172d4d8c128907b8dfc93fd180ae8ee07dccdd42cb97eb9dfa
+    container_name: stalwart
+    restart: unless-stopped
+    # Public URL and the generated bootstrap credential. Mode 600.
+    env_file: ./.env
+    volumes:
+      # config.json, the RocksDB, the log path; all owned by uid 2000.
+      - ./etc:/etc/stalwart
+      - ./data:/var/lib/stalwart
+      - ./log:/var/log/stalwart
+    ports:
+      # Loopback only, and the same host port the VPS compose file publishes.
+      - "127.0.0.1:8189:8080"

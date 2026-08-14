@@ -50,7 +50,7 @@
     {
       "name": "Karakeep",
       "repo": "https://github.com/karakeep-app/karakeep",
-      "note": "AGPL-3.0, and the busiest project on this list, with v0.33.1 in August 2026. It was called Hoarder until the rename and its own README still says so. It bookmarks links, notes, images and PDFs, tags them with an AI model you point it at, and full-text searches the lot, which makes it a bigger and heavier thing than a reading list. Left off the ranked list because the install is a stack, not a container."
+      "note": "AGPL-3.0, and the busiest project on this list, with v0.33.1 in August 2026. It was called Hoarder until the rename and its own README still says so. It bookmarks links, notes, images and PDFs, tags them with an AI model you point it at, and full-text searches the lot, which makes it a bigger and heavier thing than a reading list. It has since earned its own page in this catalog as the Readwise answer, where that install is written up in full: three containers, including a headless browser that fetches whatever anyone with an account asks it to. On this page wallabag keeps the top spot for being built for reading later rather than filing links, and for the reader clients that come with it."
     }
   ]
 }

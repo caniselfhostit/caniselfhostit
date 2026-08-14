@@ -1,0 +1,102 @@
+{
+  "slug": "opnform",
+  "name": "OpnForm",
+  "tagline": "A no-code form builder on your own hostname, with unlimited forms, file uploads and every answer in a database you hold.",
+  "repo": "OpnForm/OpnForm",
+  "site": "https://opnform.com",
+  "category": "marketing-content",
+  "replaces": [
+    {
+      "saas": "tally",
+      "plan": "Pro",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 7,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 5
+  },
+  "resources": {
+    "ramMinMB": 4096,
+    "ramMeasuredMB": null,
+    "diskGB": 20,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 300,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/OpnForm/OpnForm/blob/v2.3.0/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Every form this publishes lives at http://localhost:8186/forms/ and a slug, which resolves on this computer and nowhere else, so the people you wanted answers from get a connection error instead of question one."
+  },
+  "quote": {
+    "text": "Free self-hosted instances are limited to 2 users total across the whole instance.",
+    "source": "OpnForm documentation, Self-hosted License",
+    "url": "https://docs.opnform.com/deployment/self-hosted-license",
+    "checkedOn": "2026-08-14"
+  },
+  "citations": [
+    {
+      "claim": "A self-hosted instance allows registration only while no user exists: once the first account is created, upstream's register controller answers anyone without a workspace invitation with 400 and the message Registration is not allowed.",
+      "url": "https://github.com/OpnForm/OpnForm/blob/v2.3.0/api/app/Http/Controllers/Auth/RegisterController.php"
+    },
+    {
+      "claim": "The public feature-flags endpoint reports setup_required, which is true only while the user table is empty, and a global middleware redirects every path to /setup while it is true, so the flip from true to false is the closure evidence.",
+      "url": "https://github.com/OpnForm/OpnForm/blob/v2.3.0/api/app/Http/Controllers/Content/FeatureFlagsController.php"
+    },
+    {
+      "claim": "The /healthcheck route is registered only when SELF_HOSTED is true, and it reports the database and Redis separately, answering 503 if either is unreachable.",
+      "url": "https://github.com/OpnForm/OpnForm/blob/v2.3.0/api/app/Http/Controllers/HealthCheckController.php"
+    },
+    {
+      "claim": "The API image runs php-fpm on port 9000 rather than an HTTP server, so upstream's own ingress speaks FastCGI to it, strips the /api prefix before Laravel sees the request and proxies everything else to the Nuxt client on port 3000.",
+      "url": "https://github.com/OpnForm/OpnForm/blob/v2.3.0/docker/nginx.conf"
+    },
+    {
+      "claim": "A submission to a form with no redirect URL, no editable submissions and no PDF download is dispatched to the queue rather than written during the request, which is why the queue worker is not an optional container.",
+      "url": "https://github.com/OpnForm/OpnForm/blob/v2.3.0/api/app/Service/Forms/FormSubmissionProcessor.php"
+    },
+    {
+      "claim": "APP_URL, FRONT_URL, NUXT_PUBLIC_APP_URL and NUXT_PUBLIC_API_BASE must all carry the real public origin, TRUSTED_PROXIES must name the proxy's address or CIDR and never *, and OPNFORM_ANONYMOUS_TELEMETRY_DISABLED turns off the anonymous usage ping.",
+      "url": "https://docs.opnform.com/configuration/environment-variables"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Seven containers, and that count is upstream's rather than ours. The API image is php-fpm on port 9000, not a web server, so an nginx ingress has to marry it to the Nuxt front end under one origin, and a queue worker and a scheduler run the same image beside it. That is one database to dump, one attachments volume to archive, and seven things that can be unhappy on a Tuesday morning.",
+    "Two people, then you are buying something. Upstream caps a licence-free self-hosted instance at two users in total, counting pending invitations, and the third is refused with a 403 naming the Enterprise licence. If the plan was a shared team inbox for form responses, price that in before you start.",
+    "Open source with a fenced-off room. The tree is AGPL-3.0 except for api/app/Enterprise/, which carries a separate proprietary Enterprise licence and needs an active subscription to use in production; that split is why GitHub reports the repository as unclassified rather than AGPL. The code ships in the image either way, so read the carve-out before you build on it.",
+    "No mail, by choice. This install configures no SMTP server, which is what keeps it to one evening's reading rather than two, and the core loop is fine: the account is made, the sign-in holds, submissions land. What you do not get is the email telling you a response arrived, the verification message and password reset. That first account is the whole way back in.",
+    "A self-hosted instance resolves to upstream's Pro feature tier, which is where a custom domain and form analytics live. Custom CSS, partial submissions and version history sit a tier above that, and upstream's own self-hosted licence page lists branding removal under the Enterprise white-label group, so do not assume every switch in the builder will move."
+  ],
+  "sources": {
+    "compose": "https://docs.opnform.com/deployment/docker",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://docs.opnform.com/configuration/environment-variables",
+    "upstreamCompose": "https://github.com/OpnForm/OpnForm/blob/v2.3.0/docker-compose.yml",
+    "ingress": "https://github.com/OpnForm/OpnForm/blob/v2.3.0/docker/nginx.conf",
+    "dockerfile": "https://github.com/OpnForm/OpnForm/blob/v2.3.0/docker/Dockerfile.api",
+    "entrypoint": "https://github.com/OpnForm/OpnForm/blob/v2.3.0/docker/php-fpm-entrypoint",
+    "health": "https://github.com/OpnForm/OpnForm/blob/v2.3.0/api/app/Http/Controllers/HealthCheckController.php",
+    "registration": "https://github.com/OpnForm/OpnForm/blob/v2.3.0/api/app/Http/Controllers/Auth/RegisterController.php",
+    "licence": "https://github.com/OpnForm/OpnForm/blob/v2.3.0/LICENSE",
+    "enterpriseLicence": "https://github.com/OpnForm/OpnForm/blob/v2.3.0/api/app/Enterprise/LICENSE",
+    "seats": "https://docs.opnform.com/deployment/self-hosted-license",
+    "plans": "https://github.com/OpnForm/OpnForm/blob/v2.3.0/api/config/plans.php",
+    "image": "https://hub.docker.com/r/jhumanj/opnform-api"
+  },
+  "related": [
+    "heyform",
+    "formbricks",
+    "limesurvey"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-14",
+  "contentHash": "54dfa8105d62165e3116ae8677c26dbfddad35e8e09c7ff432c3f62f8860eb71"
+}

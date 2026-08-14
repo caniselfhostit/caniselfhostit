@@ -1,0 +1,35 @@
+# Budibase · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.budibase.com/docs/docker and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile with <DOMAIN> replaced by the hostname
+# pointed at this box. That hostname is also PLATFORM_URL in .env, the address
+# Budibase builds app and invitation links against, so the two have to agree.
+
+<DOMAIN> {
+	# The nginx inside the container proxies /db/ straight into the CouchDB
+	# that holds every table, row and app here. Upstream documents that path
+	# as an operator's route to Fauxton, CouchDB's own admin client:
+	# https://docs.budibase.com/docs/accessing-couchdb . That is a tool for
+	# whoever runs this box, not a page for the internet, so this refuses it.
+	@couchdb path /db/*
+	respond @couchdb 403
+
+	# HSTS is the one the container cannot send for itself, because nothing
+	# inside it knows it is served over https. No `encode`: the inner nginx
+	# already gzips. No X-Frame-Options either, because the application sets
+	# frame-ancestors itself from the workspace embed allowlist.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# 8187 is the loopback port compose publishes on this host. It is not
+	# open in the firewall. The builder holds a WebSocket open to /socket/,
+	# and reverse_proxy carries that upgrade with no extra configuration.
+	reverse_proxy 127.0.0.1:8187
+}

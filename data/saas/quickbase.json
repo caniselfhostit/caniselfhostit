@@ -1,0 +1,65 @@
+{
+  "slug": "quickbase",
+  "name": "Quickbase",
+  "domain": "quickbase.com",
+  "whyPeoplePay": "Quickbase sells the distance between a spreadsheet everybody edits and an application the operations team actually runs on. You get a relational database you never administer, forms and reports over it, roles your auditor will accept, automations that fire on a schedule, and a mobile client, all without anyone on your side writing a line of code or patching a server. The price shape tells you who it is for: per user per month, quoted annually, on top of a platform minimum the pricing page mentions but never states, with a Contact us button where a checkout would be. That is not a self-serve tool with a sales team attached, it is a sales-led platform with a self-serve trial attached, and the seat count is the meter because on their side every seat is a person their infrastructure carries.",
+  "plans": [
+    {
+      "name": "Free trial",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "30 days, with every Business plan feature turned on. The page words it as 30-day access and Trial includes all Business Plan features."
+    },
+    {
+      "name": "Team",
+      "priceMonthly": 35,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Starts at $35 per user per month, priced annually. Dashboards and reports, workflow automation, user and data security controls, encryption and audit logs. The page footnotes it: cost shown does not include platform minimum, and the minimum is never given a number. The button is Contact us, not a checkout."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": 55,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Starts at $55 per user per month, priced annually. Adds single sign-on and SCIM provisioning, Gantt charts, a sandbox, and FDA and HIPAA compliance. Same platform-minimum footnote, same Contact us button."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The price line is the phrase Flexible and fully customizable. Advanced performance tools, advanced encryption, on-premises connectivity and data warehouse integrations sit here."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-12",
+    "source": "https://www.quickbase.com/plans-and-pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Read live from quickbase.com/plans-and-pricing on 2026-08-12; the figures are in the served HTML rather than behind JavaScript, so the numbers themselves are what the page says. The confidence is medium for a different reason: both paid tiers are worded Starts at, both carry the footnote that the cost shown does not include a platform minimum, and that minimum is never given a number anywhere on the page. Enterprise has no price at all. So $35 and $55 per user per month, priced annually, are floors on a quote rather than a bill you can compute. The older quickbase.com/pricing path returns 404 as of that date and this is the live page; the plan ladder above was read from the comparison table on the same page the same day."
+  },
+  "ranked": [
+    {
+      "project": "budibase",
+      "rationale": "The closest match to the shape Quickbase actually sells, which is a database with applications on top of it rather than a UI layer over a database you already run. Budibase brings its own tables, its own relationships and its own forms, so a team arriving from Quickbase with data and no Postgres does not have to find one first, and it still connects to outside databases and APIs when there is something to connect to. It installs as a single container, and every per-seat meter goes away: the free self-hosted licence upstream defines in code is unlimited users, unlimited creators, unlimited rows and unlimited automations. What you take on is real. That licence also caps you at one workspace. Apps and tables inside it are uncapped, so the cap is not a limit on how much you build; it is a limit on keeping unrelated applications in separate workspaces, which is how a Quickbase realm usually keeps one department away from another. The image is crowded, with CouchDB, a search indexer, Redis, MinIO, an internal PostgreSQL and an AI proxy inside it, so the floor is 6 GB and the first boot takes minutes. The licence is per package: the server is GPL-3.0, the paid features in packages/pro are Business Source License, and the CouchDB SQL layer is a vendor binary. Backups, enforced SSO, audit logs and user groups are on the paid list, so the backup on this page is a stopped tar you run yourself."
+    },
+    {
+      "project": "appsmith",
+      "rationale": "The better answer if you already have the database. Appsmith is a drag-and-drop editor over your own PostgreSQL, MySQL, MongoDB, REST APIs and forty other datasources, with JavaScript wherever a value goes, and its community edition is Apache-2.0 all the way through, which is a cleaner licence than anything else on this page. It is ranked second here only because the Quickbase shape is data-first: people arriving from Quickbase are usually carrying tables, not a database server, and Appsmith has no tables of its own to put them in. It also asks for 8 GB rather than 6, for the same reason Budibase asks for 6, and its own paid list covers SSO, audit logs, granular roles and workflows. Appsmith holds the top spot on the Retool page, where the premise is a UI over a database you already operate, and that is the honest division between the two."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "NocoDB",
+      "repo": "https://github.com/nocodb/nocodb",
+      "note": "The best-known no-code database in this space and, on features, a genuine Quickbase-shaped answer. It is not ranked because of the licence, and the licence is not a technicality: LICENSE.md, read on 2026-08-12, places both the master and the develop branches under the Sustainable Use License 1.0, which permits use only for your own internal business purposes or non-commercial use and permits distribution only free of charge for non-commercial purposes. That is source-available, not open source, and it is not on this catalogue's allowlist, so we do not write an install for it. If your use really is internal-only, read the text yourself and decide; we are not going to decide it for you inside a prompt."
+    },
+    {
+      "name": "Saltcorn",
+      "repo": "https://github.com/saltcorn/saltcorn",
+      "note": "MIT, which is the cleanest licence anywhere on this page, actively developed, with the newest stable tag v1.6.2 and commits inside the last week when this was checked on 2026-08-12. It builds table-and-view applications the way Quickbase does, with a plugin system underneath. It is not ranked for two reasons that have nothing to do with the licence: it is a much smaller project, around two thousand stars against Budibase's twenty-eight thousand, so the answer to a strange question is more often that nobody has hit it yet; and its server install path expects a PostgreSQL alongside it, with SQLite kept for trying it out on your own machine, which makes a real deployment two containers rather than one. Worth a look if the licence is your first filter."
+    }
+  ]
+}

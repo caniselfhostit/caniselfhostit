@@ -63,7 +63,7 @@
     {
       "name": "Outline",
       "repo": "https://github.com/outline/outline",
-      "note": "The nicest editor of anything we looked at, and a genuinely fast search. Not ranked because of the licence rather than the software: it is Business Source License 1.1, which is source-available and not open source, and its additional use grant forbids running it as a commercial document service. Fine for your own team, a term you have to read before you build on it."
+      "note": "The nicest editor of anything we looked at, and a genuinely fast search. It is Business Source License 1.1, which is source-available rather than open source: the additional use grant forbids running it as a commercial document service, and the pinned 1.9.2 converts to Apache 2.0 on 2030-07-21. It has since earned its own page in this catalog as the Slite answer, where its install is written up in full and that licence is stated plainly rather than worked around. On this page XWiki keeps the top spot for being built to Confluence's shape rather than a lighter one: spaces, macros you write in the page itself, and rights set per space and per page."
     }
   ]
 }

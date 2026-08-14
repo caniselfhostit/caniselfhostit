@@ -1,0 +1,94 @@
+{
+  "slug": "twenty",
+  "name": "Twenty",
+  "tagline": "A CRM whose data model you define rather than inherit: your own objects, records and views, with a GraphQL and REST API over all of it and nobody counting seats.",
+  "repo": "twentyhq/twenty",
+  "site": "https://twenty.com",
+  "category": "work-pm",
+  "replaces": [
+    {
+      "saas": "attio",
+      "plan": "Pro",
+      "seatsAssumed": 3
+    }
+  ],
+  "tierFactors": {
+    "containers": 4,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 3
+  },
+  "resources": {
+    "ramMinMB": 4096,
+    "ramMeasuredMB": null,
+    "diskGB": 20,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 240,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/twentyhq/twenty/blob/064bdd795a0bd78c65f024350cefed2c8f38a661/packages/twenty-docker/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Only this computer can open the CRM, so a colleague or your own phone gets a connection error, and the worker that drains the job queue stops the moment the machine sleeps."
+  },
+  "quote": {
+    "text": "New signups are disabled after the first workspace is created",
+    "source": "Twenty documentation, Setup",
+    "url": "https://docs.twenty.com/developers/self-host/capabilities/setup",
+    "checkedOn": "2026-08-12"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's own compose file runs four services: the server, a worker on the same image, PostgreSQL and Redis, with only the server port published.",
+      "url": "https://github.com/twentyhq/twenty/blob/064bdd795a0bd78c65f024350cefed2c8f38a661/packages/twenty-docker/docker-compose.yml"
+    },
+    {
+      "claim": "In the default single-workspace mode the first user automatically becomes admin with full privileges, and new signups are disabled after the first workspace is created.",
+      "url": "https://docs.twenty.com/developers/self-host/capabilities/setup"
+    },
+    {
+      "claim": "The signup path refuses with a SIGNUP_DISABLED exception unless multi-workspace mode is enabled or no workspace exists yet, which is the check this install asserts after the first account is created.",
+      "url": "https://github.com/twentyhq/twenty/blob/064bdd795a0bd78c65f024350cefed2c8f38a661/packages/twenty-server/src/engine/core-modules/auth/services/sign-in-up.service.ts"
+    },
+    {
+      "claim": "Most of the tree is AGPLv3 with an added Section 7 application exception, some packages are MIT, and files carrying an @license Enterprise comment are under Twenty's separate commercial licence instead.",
+      "url": "https://github.com/twentyhq/twenty/blob/064bdd795a0bd78c65f024350cefed2c8f38a661/LICENSE"
+    },
+    {
+      "claim": "Upstream asks for at least 2 GB of RAM and states that insufficient memory can cause processes to crash, and that SERVER_URL must match how users reach the application in their browsers.",
+      "url": "https://docs.twenty.com/developers/self-host/capabilities/docker-compose"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The licence has a carve-out, and it is worth reading before you build on it. Most of the tree is AGPLv3, with an added Section 7 permission so an application you write against the published REST, GraphQL and SDK interfaces stays yours. Some packages, the SDK and the UI library among them, are MIT. Files carrying an @license Enterprise comment are under Twenty's own commercial licence and need a subscription in production, which is why GitHub reports no single licence for the repository. This install runs the published image as it ships.",
+    "This is a stack, not an app. Four containers: the server, a worker on the same image, PostgreSQL and Redis. The worker is the one nobody notices until it stops, because the CRM keeps answering pages while imports, workflow runs and every scheduled job quietly stop happening.",
+    "The first person to finish the signup form owns the instance. There is no wizard and no seeded administrator: the first user becomes the server administrator, and upstream then refuses every later signup on a single-workspace install. That is a good default and a real race, so both prompts claim it inside one step and then assert the door is shut.",
+    "No mail, which means no invitations and no password resets. The CRM works without SMTP, which is why this install skips it, but a second user has to be added after you configure a mail provider, and a forgotten administrator password has no reset link. Put that password in a password manager on day one.",
+    "The enrichment is the part that does not come with you. Attio's company and contact data, its call intelligence, its sequences and its two-way email and calendar sync are what the paid tiers and the credit allowance actually sell. Self-hosted Twenty gives you the data model, the records, the views and the API, and every provider integration is a separate account you register yourself."
+  ],
+  "sources": {
+    "compose": "https://docs.twenty.com/developers/self-host/capabilities/docker-compose",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://docs.twenty.com/developers/self-host/capabilities/setup",
+    "variables": "https://github.com/twentyhq/twenty/blob/064bdd795a0bd78c65f024350cefed2c8f38a661/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts",
+    "signup": "https://github.com/twentyhq/twenty/blob/064bdd795a0bd78c65f024350cefed2c8f38a661/packages/twenty-server/src/engine/core-modules/auth/services/sign-in-up.service.ts",
+    "health": "https://github.com/twentyhq/twenty/blob/064bdd795a0bd78c65f024350cefed2c8f38a661/packages/twenty-server/src/engine/core-modules/health/controllers/health.controller.ts",
+    "image": "https://github.com/twentyhq/twenty/blob/064bdd795a0bd78c65f024350cefed2c8f38a661/packages/twenty-docker/twenty/Dockerfile",
+    "envExample": "https://github.com/twentyhq/twenty/blob/064bdd795a0bd78c65f024350cefed2c8f38a661/packages/twenty-docker/.env.example",
+    "license": "https://github.com/twentyhq/twenty/blob/064bdd795a0bd78c65f024350cefed2c8f38a661/LICENSE",
+    "releases": "https://github.com/twentyhq/twenty/releases"
+  },
+  "related": [
+    "espocrm",
+    "chatwoot",
+    "mautic"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-14",
+  "contentHash": "33ceb19f4d02dec5619085884bf4dc1786098eaf9dd9095675bb96f256fc44b5"
+}

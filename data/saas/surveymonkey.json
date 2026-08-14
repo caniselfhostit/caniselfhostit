@@ -80,7 +80,7 @@
     {
       "name": "OpnForm",
       "repo": "https://github.com/OpnForm/OpnForm",
-      "note": "Actively developed form builder, AGPL-3.0 for the main tree with an Enterprise directory carved out under a separate licence, so read the LICENSE file before assuming the whole thing is open source. Good at forms with conditional fields and integrations; not a questionnaire engine, and no response-level statistics."
+      "note": "Actively developed form builder, AGPL-3.0 for the main tree with an Enterprise directory carved out under a separate licence, so read the LICENSE file before assuming the whole thing is open source. Good at forms with conditional fields and integrations; not a questionnaire engine, and no response-level statistics. It has since earned its own page in this catalog as the Tally answer, where its install is written up in full, seven containers and a two-user cap on the licence-free instance included. On this page LimeSurvey keeps the top spot for the survey machinery OpnForm does not have: branching on any earlier answer, quotas, randomisation and an SPSS export."
     },
     {
       "name": "OhMyForm",

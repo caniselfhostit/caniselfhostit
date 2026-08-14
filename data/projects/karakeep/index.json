@@ -1,0 +1,98 @@
+{
+  "slug": "karakeep",
+  "name": "Karakeep",
+  "tagline": "One inbox for every link, note, image and PDF you meant to come back to, archived against link rot and searchable years later.",
+  "repo": "karakeep-app/karakeep",
+  "site": "https://karakeep.app",
+  "category": "reading-bookmarks",
+  "replaces": [
+    {
+      "saas": "readwise",
+      "plan": "Full",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 3,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 4096,
+    "ramMeasuredMB": null,
+    "diskGB": 20,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 100,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/karakeep-app/karakeep/blob/v0.33.2/docker/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "The iOS and Android apps and the share-sheet capture that make this a read-later tool need to reach the server, and http://localhost:8182 answers on this computer only, so on this path capture is the browser extension and this keyboard; queued crawls also stop while the machine sleeps and resume when it wakes."
+  },
+  "quote": {
+    "text": "Any untrusted user can submit bookmarks to be crawled from your server and they'll be able to see the crawling result.",
+    "source": "Karakeep documentation, Security Considerations",
+    "url": "https://docs.karakeep.app/administration/security-considerations",
+    "checkedOn": "2026-08-14"
+  },
+  "citations": [
+    {
+      "claim": "DISABLE_SIGNUPS defaults to false, so a fresh instance accepts registrations from anyone who reaches it, and NEXTAUTH_SECRET is a required random string generated with openssl rand -base64 36.",
+      "url": "https://docs.karakeep.app/configuration/environment-variables"
+    },
+    {
+      "claim": "The account created when the users table is empty is given the admin role, so the first person to register on an open instance owns it.",
+      "url": "https://github.com/karakeep-app/karakeep/blob/v0.33.2/packages/trpc/models/users.ts"
+    },
+    {
+      "claim": "The crawler drives a real browser on your network, so upstream lists limiting access to trusted users as the first mitigation for the requests untrusted users can make it send.",
+      "url": "https://docs.karakeep.app/administration/security-considerations"
+    },
+    {
+      "claim": "Without Meilisearch, search is disabled completely; without the Chrome container, crawling still works but loses screenshots and javascript-rendered pages; without an OpenAI or Ollama endpoint, AI tagging is skipped.",
+      "url": "https://docs.karakeep.app/installation/minimal-install"
+    },
+    {
+      "claim": "Karakeep is built against Meilisearch 1.41.0 and upstream advises against upgrading that engine on its own, because a newer engine refuses an older index and the recovery is erasing data.ms and reindexing every bookmark.",
+      "url": "https://docs.karakeep.app/administration/troubleshooting"
+    },
+    {
+      "claim": "Automatic tagging bills to your own OpenAI key, and upstream's own estimate is tags for more than 6000 bookmarks for under a dollar on the default text model.",
+      "url": "https://docs.karakeep.app/administration/openai"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "You are running a browser that fetches whatever anyone with an account asks it to. Upstream says so plainly, and lists limiting access to trusted users as the first mitigation. That is why this install closes signups and asserts they are closed: an open instance is not only a squatter risk, it is a way for a stranger to make requests from inside your network.",
+    "The AI half of the pitch is a bill you own. Automatic tagging needs your own OpenAI key or your own Ollama box, and neither ships here. Upstream's own figure is tags for more than 6000 bookmarks for under a dollar, which is small but not zero and it lands on your card, every month, forever. Leave the key out and Karakeep still bookmarks, archives and full-text searches; it stops guessing tags.",
+    "Three containers, and search is a second engine you version-pin. Meilisearch holds the index, Karakeep is built against 1.41.0, and upstream tells you not to upgrade that engine on its own because a newer one refuses an older index. Meilisearch itself is MIT with a BUSL-1.1 enterprise carve-out, so the search engine inside this AGPL application is not all open source.",
+    "Archives grow, and faster than a bookmark list suggests. Every crawled link can leave a screenshot and a cached banner image behind by default, and full-page archives, PDF snapshots and video downloads are all switches you can turn on later. The disk floor here is about month three, not day one.",
+    "No daily review email, no Kindle or Apple Books highlight sync, no highlight export to Notion or Obsidian. Those are the specific things Readwise sells, and Karakeep does none of them. What you get instead is the capture-everything inbox and the archive underneath it."
+  ],
+  "sources": {
+    "compose": "https://docs.karakeep.app/installation/docker",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://docs.karakeep.app/configuration/environment-variables",
+    "minimal": "https://docs.karakeep.app/installation/minimal-install",
+    "security": "https://docs.karakeep.app/administration/security-considerations",
+    "search": "https://docs.karakeep.app/administration/troubleshooting",
+    "inference": "https://docs.karakeep.app/administration/openai",
+    "image": "https://github.com/karakeep-app/karakeep/blob/v0.33.2/docker/Dockerfile",
+    "upstreamCompose": "https://github.com/karakeep-app/karakeep/blob/v0.33.2/docker/docker-compose.yml",
+    "signup": "https://github.com/karakeep-app/karakeep/blob/v0.33.2/packages/trpc/models/users.ts"
+  },
+  "related": [
+    "linkwarden",
+    "wallabag",
+    "miniflux"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-14",
+  "contentHash": "fac741a9d9c309cff6c85156c49d891ee615029a647aeb1f213c499e0ef92b66"
+}

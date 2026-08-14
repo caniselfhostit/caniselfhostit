@@ -1,0 +1,52 @@
+{
+  "slug": "axiom",
+  "name": "Axiom",
+  "domain": "axiom.co",
+  "whyPeoplePay": "Axiom sells the part of log management nobody wants to operate: a columnar event store that swallows whatever your services emit without a schema, keeps it for as long as you configure, and answers questions over it in seconds. You are renting ingest capacity, query compute and durable storage as one meter, plus the alerting, dashboards and integrations wrapped around them, and the fact that none of it is your pager at 3am. The bill is usage-shaped rather than seat-shaped, which is honest about where the cost comes from and also means it tracks your traffic rather than your headcount, and the free allowance is large enough that most people meet the pricing page only after something they built started mattering.",
+  "plans": [
+    {
+      "name": "Personal",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": null,
+      "note": "The page describes it as permanent and needing no credit card, for individual developers and small projects. The allowances printed alongside it are 500 GB per month of data loading, 10 GB-hours of query compute, 25 GB of storage and a 30-day retention window, with full APL access, all integrations and community support. No enterprise add-ons at this level."
+    },
+    {
+      "name": "Axiom Cloud",
+      "priceMonthly": 25,
+      "unit": "usage",
+      "seatsIncluded": null,
+      "note": "The page prints '$25 / month platform fee + usage' with no minimum commitment. The fee includes an Always Free allowance of 1 TB of data loading, 100 GB-hours of query compute and 100 GB of storage; past that, pay-as-you-go starts automatically and the page says per-unit rates drop at higher volume tiers so the total grows sub-linearly. Retention is configurable. Governance features are separately priced self-serve add-ons: SSO (SAML) at $100/mo, Directory Sync (SCIM) at $100/mo, Role-Based Access Control at $50/mo and Audit Log at $50/mo. Spend alerts and hard caps are set in-console, and pre-purchased credits buy up to 30 percent off. The $25 is a floor, not a bill."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-14",
+    "source": "https://axiom.co/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Confidence is medium because of the shape of the product, not the source. The plan fees, the Always Free allowances and the four add-on prices are all printed in the page's own text and were read there on the checked date. The per-gigabyte and per-GB-hour rates that decide any real bill are not: they live in a client-side pricing calculator that the static page does not contain, and the machine-readable rate card the page advertises at /pricing.md returned 404 on the same read. So the recorded $25 is the platform fee, and what anyone with traffic actually pays past the free allowance could not be verified here."
+  },
+  "ranked": [
+    {
+      "project": "victorialogs",
+      "rationale": "One container, one port, one directory: it ingests over the same Splunk, Elasticsearch, Loki and OpenTelemetry protocols your collectors already speak, stores logs in a columnar format on your own disk, and ships a query interface and query API of its own so nothing else has to be installed to read them. Docker's built-in splunk log driver points at it with four lines of compose, which makes the core loop reachable in one sitting. What it does not replace is the rest of the meter: there are no traces, no metrics, no dashboards and no alerting in the box, and the retention promise becomes a number you chose and a disk you watch. That is the trade, and it is why this is a one-command install with an ongoing habit attached."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Grafana Loki",
+      "repo": "https://github.com/grafana/loki",
+      "note": "AGPL-3.0, very actively maintained, v3.7.6 in August 2026, and the best-known self-hosted log store there is. The honest row is what it is not: Loki has no user interface. It is a storage and query backend, and reading your logs means running Grafana beside it and configuring a datasource, so the smallest working install is two services rather than one plus a compose stanza. It also wants object storage or a carefully chosen filesystem layout to behave at volume. If you already run Grafana it is the natural pick; if you do not, it is a second product before you see a log line."
+    },
+    {
+      "name": "OpenObserve",
+      "repo": "https://github.com/openobserve/openobserve",
+      "note": "The LICENSE file at the v0.92.1 tag is AGPL-3.0, and GitHub reports the same, so the core is open source rather than source-available. It is worth knowing that the repository builds an OSS and an enterprise variant from separate manifests, the enterprise code is not in this tree, and the enterprise Docker image is a different tag; features can therefore move behind that boundary between releases. Releasing constantly, v0.92.1 on 14 August 2026. It is a wider product than the pick above, covering metrics, traces and front-end monitoring as well as logs, which is a fair reason to choose it and also the reason it is a heavier thing to operate."
+    },
+    {
+      "name": "Graylog",
+      "repo": "https://github.com/Graylog2/graylog2-server",
+      "note": "GitHub reports NOASSERTION, and reading the LICENSE file explains why: Graylog Open is under the Server Side Public License v1, MongoDB's licence, which the Open Source Initiative has not approved. Source-available, not open source, and that is the first thing to weigh. The second is the shape of the install: Graylog needs MongoDB for its own configuration and OpenSearch or Elasticsearch for the log data, so the minimum is three services and a JVM before anything is searchable. Actively developed, 7.1.7 tagged in 2026. Pick it for the alerting, the pipelines and the input handling, not for a small box."
+    }
+  ]
+}
