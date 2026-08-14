@@ -1,0 +1,51 @@
+{
+  "slug": "twist",
+  "name": "Twist",
+  "domain": "twist.com",
+  "whyPeoplePay": "Twist sells the opposite of Slack: threads that stay put, no green dots, and a promise that nobody has to be online at the same time as anyone else. The free plan is generous on people and stingy on memory, hiding the whole bill in one line: comments and messages older than a month stop being readable. Paying is how a team keeps its own archive.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "No per-user cost. Access is limited to the most recent month of comments and messages, plus 5 integrations, 5 GB of file storage, and up to 500 members and 500 guests. Nothing is deleted, it stops being readable."
+    },
+    {
+      "name": "Unlimited",
+      "priceMonthly": 8,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "Per user per month billed monthly; $6 per user per month billed annually. Full history, unlimited integrations, unlimited file storage, unlimited members and guests, priority support."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-14",
+    "source": "https://twist.com/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "What we read directly on twist.com/pricing on the stamped day: two plans, Free and Unlimited, a billing-cycle toggle defaulting to Yearly, and every feature and limit line recorded above, including the free plan's one-month history window and its 500-member and 500-guest ceilings. What we could not read: the dollar figures. The page geolocates its currency and served Canadian dollars from our location, C$0 and C$8 per user per month, and neither the currency selector nor a query parameter would make it render USD. The USD figures recorded here are the widely published US list prices for the same two plans, which is why this entity is medium confidence rather than high. Treat the annual rate as the one most Twist teams actually pay, since the page opens on it."
+  },
+  "ranked": [
+    {
+      "project": "zulip",
+      "rationale": "The like-for-like swap, because it is the same shape rather than a Slack clone wearing a different colour. Every Zulip message belongs to a named topic inside a channel, which is Twist's threads-that-stay-put model with a better search and an export you own. The archive Twist charges you to keep readable is rows in a PostgreSQL you run, guests and members are unlimited because nobody is counting seats, and the desktop and mobile apps are real apps. What you take on is five containers, a relay for the mail that async chat runs on, and a licence that holds nothing back: Zulip is Apache-2.0 including search, history, guests and exports, and the only thing behind a paid plan is the mobile push notification service above ten users."
+    },
+    {
+      "project": "mattermost",
+      "rationale": "The right answer if your team will not adopt topics. Mattermost is channel-shaped in the way Slack is channel-shaped, with threads as a reply affordance rather than the organising principle, and that is a real trade against Twist rather than a lesser version of it: you get the habit everyone already has, and you lose the thing Twist exists to sell. It is also two containers rather than five and needs no relay to work, so it is the lighter install by some distance. Against it here: Team Edition is amd64 only, and its free tier stops short of SSO, guest accounts and compliance export in a way Zulip's does not."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Rocket.Chat",
+      "repo": "https://github.com/RocketChat/Rocket.Chat",
+      "note": "Active and widely deployed, and the licence is a split one: at the current 8.7.0 release everything outside the ee/ and apps/meteor/ee/ directories is MIT, and those directories carry Rocket.Chat's own enterprise licence, which requires a paid subscription to use in production. That is why GitHub reports no single licence for the repository. Broader out of the box than either ranked answer, with more moving parts to operate and MongoDB rather than PostgreSQL underneath, and channel-shaped rather than thread-shaped, which is the wrong end of the trade for a Twist team."
+    },
+    {
+      "name": "Element with Matrix Synapse",
+      "repo": "https://github.com/element-hq/synapse",
+      "note": "AGPL-3.0 and actively maintained, but a different shape of answer. Matrix is a federated protocol, so what you run is a homeserver that talks to other people's servers rather than a private island for your team, and threads arrived late and are still an option rather than the organising principle. The federation is the point of it, and it is also why the install, the moderation surface and the failure modes are not comparable to Zulip's."
+    }
+  ]
+}

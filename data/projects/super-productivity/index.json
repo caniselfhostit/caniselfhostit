@@ -1,0 +1,103 @@
+{
+  "slug": "super-productivity",
+  "name": "Super Productivity",
+  "tagline": "A task list with timeboxing, a Pomodoro timer and per-task time tracking, served from one container that keeps none of your data.",
+  "repo": "super-productivity/super-productivity",
+  "site": "https://super-productivity.com",
+  "category": "work-pm",
+  "replaces": [
+    {
+      "saas": "ticktick",
+      "plan": "Premium",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 0
+  },
+  "resources": {
+    "ramMinMB": 256,
+    "ramMeasuredMB": null,
+    "diskGB": 2,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 8,
+  "license": "MIT",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/super-productivity/super-productivity/blob/v18.19.0/docker-compose.yaml",
+  "local": {
+    "fit": "caveat",
+    "note": "Everything you type lives in this computer's browser profile at http://localhost:8199, so clearing site data for that address deletes your tasks and no phone or second laptop can open the list at all."
+  },
+  "quote": {
+    "text": "Data is stored in the browser; the container does not provide persistent storage.",
+    "source": "Super Productivity wiki, Run with Docker",
+    "url": "https://github.com/super-productivity/super-productivity/blob/v18.19.0/docs/wiki/2.13-Run-with-Docker.md",
+    "checkedOn": "2026-08-14"
+  },
+  "citations": [
+    {
+      "claim": "Upstream states that data is stored in the browser and that the container provides no persistent storage, which is why this install mounts no volume and backs up no application directory.",
+      "url": "https://github.com/super-productivity/super-productivity/blob/v18.19.0/docs/wiki/2.13-Run-with-Docker.md"
+    },
+    {
+      "claim": "The production image stage is FROM nginx:1 with the built browser bundle copied to /usr/share/nginx/html, so the container is a static file server with no application process behind it.",
+      "url": "https://github.com/super-productivity/super-productivity/blob/v18.19.0/Dockerfile"
+    },
+    {
+      "claim": "The image entrypoint writes assets/sync-config-default-override.json from WEBDAV_BASE_URL, WEBDAV_USERNAME, WEBDAV_SYNC_FOLDER_PATH, SYNC_INTERVAL, IS_COMPRESSION_ENABLED and IS_ENCRYPTION_ENABLED, and has no variable for a password, so no credential can be baked into the served bundle.",
+      "url": "https://github.com/super-productivity/super-productivity/blob/v18.19.0/docker-entrypoint.sh"
+    },
+    {
+      "claim": "The image's nginx template proxies /webdav/ to the WEBDAV_BACKEND value and returns 404 when that value is empty, which is what makes an unconfigured install's only proxy route inert.",
+      "url": "https://github.com/super-productivity/super-productivity/blob/v18.19.0/nginx/default.conf.template"
+    },
+    {
+      "claim": "Upstream states that WebDAV sync and calendar integration are likely to fail in the browser because of CORS, and that the desktop and mobile builds issue those requests through a native HTTP layer instead.",
+      "url": "https://github.com/super-productivity/super-productivity/blob/v18.19.0/docs/wiki/3.05-Web-App-vs-Desktop.md"
+    },
+    {
+      "claim": "Export produces a plaintext JSON snapshot of the restorable application model and import replaces current state with it; on the web there is no automatic file-based backup.",
+      "url": "https://github.com/super-productivity/super-productivity/blob/v18.19.0/docs/wiki/4.23-Managing-Your-Data.md"
+    },
+    {
+      "claim": "The project is MIT licensed at the pinned tag.",
+      "url": "https://github.com/super-productivity/super-productivity/blob/v18.19.0/LICENSE"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The server you are about to set up holds none of your tasks. This is a local-first app and the container is a static file server, so everything you type lives in the browser profile that loaded the page. Clearing site data for the hostname deletes the lot, and the browser can also refuse the app's request for persistent storage, which the app warns about rather than fixes. Your backup is a file you export yourself, and the prompts make you do it before they finish.",
+    "Cross-device sync is the part that does not come across cleanly, and it is the whole reason people pay for TickTick. Upstream says browser WebDAV sync is likely to fail on CORS. The image ships its own same-origin workaround, a /webdav/ proxy driven by a WEBDAV_BACKEND variable, and this install leaves it off for two measured reasons: the nginx inside the image caps request bodies at its 1 MB default, and it sends no TLS server name to the upstream. If sync across devices is the requirement, the desktop app is the build upstream points at, and Vikunja is the one-container answer with a real server behind it.",
+    "The page is public by design and that is less alarming here than it sounds, because there is nothing on the server to read. Anyone who reaches the hostname gets an empty task list in their own browser, not a window into yours. What they do get is the use of your bandwidth and the knowledge that the hostname exists. Caddy basic_auth is the documented opt-in and this install does not enable it.",
+    "The web build is the smaller build. Calendar integration is likely to fail in a browser, local-file sync is desktop only, automatic file backups are desktop and mobile only, only one tab may hold the app at a time, and time tracking runs only while that tab is open. Nothing here reaches out to a closed laptop, so a due date is something you see when you look.",
+    "What a TickTick subscriber loses on day one: shared lists and anyone to share them with, reminders that arrive on a phone you are not looking at, and voice capture. The Android and iOS builds exist and are free, but they are separate installs that only agree with this one if you solve the sync question above first."
+  ],
+  "sources": {
+    "compose": "https://github.com/super-productivity/super-productivity/blob/v18.19.0/docs/wiki/2.13-Run-with-Docker.md",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://github.com/super-productivity/super-productivity/blob/v18.19.0/README.md",
+    "image": "https://github.com/super-productivity/super-productivity/blob/v18.19.0/Dockerfile",
+    "entrypoint": "https://github.com/super-productivity/super-productivity/blob/v18.19.0/docker-entrypoint.sh",
+    "nginx": "https://github.com/super-productivity/super-productivity/blob/v18.19.0/nginx/default.conf.template",
+    "sync": "https://github.com/super-productivity/super-productivity/blob/v18.19.0/docs/wiki/2.09-Configure-Sync-Backend.md",
+    "backup": "https://github.com/super-productivity/super-productivity/blob/v18.19.0/docs/wiki/4.23-Managing-Your-Data.md",
+    "webLimits": "https://github.com/super-productivity/super-productivity/blob/v18.19.0/docs/wiki/3.05-Web-App-vs-Desktop.md",
+    "license": "https://github.com/super-productivity/super-productivity/blob/v18.19.0/LICENSE",
+    "releases": "https://github.com/super-productivity/super-productivity/releases"
+  },
+  "related": [
+    "vikunja",
+    "nextcloud",
+    "wger"
+  ],
+  "pagePriority": 4,
+  "contentUpdatedAt": "2026-08-14",
+  "contentHash": "c74ea36ac2b4aff2c7a293613e379a6244639395c15b4be466f5c57aafe915ac"
+}

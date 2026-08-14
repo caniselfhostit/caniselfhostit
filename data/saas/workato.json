@@ -1,0 +1,69 @@
+{
+  "slug": "workato",
+  "name": "Workato",
+  "domain": "workato.com",
+  "whyPeoplePay": "Workato sells an integration platform to companies that have an audit, not a hobby. The recipes are the visible half; the half being rented is a connector library somebody else keeps current across a thousand vendor APIs, an OAuth client registered on your behalf for each of them, role-based access control and activity audit your compliance team will accept, dev, test and production environments with a promotion path between them, on-premises agents that reach the systems still living in a rack, and a support contract with a name on it. The price shape says the rest: there is no number anywhere on the pricing page. You pick a platform edition, you pick a usage plan sized to how many recipes you intend to run in one workspace, and a salesperson quotes it against your contract term. That is not a tool with a sales team attached, it is a sales-led platform, and the quote is the product boundary as much as any feature is.",
+  "plans": [
+    {
+      "name": "Standard",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. The entry platform edition, described on the pricing page as application integration and process automation, recipe lifecycle management, dev, test and production environments, 1 Standard Workbot, SAML SSO and MFA with custom OAuth profiles and role-based access control, encryption at rest and in transit, 30-day log retention and 1 Concurrency. No price is shown."
+    },
+    {
+      "name": "Business MCP",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. Worded as everything in Standard plus pre-built MCP servers, an AI and MCP gateway, the Enterprise Skill builder, data integration covering ETL, ELT and reverse ETL, the API platform, log service and dependency graph, 10 Enterprise Workbots and 3 on-premises agents. No price is shown."
+    },
+    {
+      "name": "Enterprise MCP",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. Worded as everything in Business MCP plus data pipelines, event streams, intelligent document processing, AI by Workato, Insights, unlimited Enterprise Workbots, data masking and activity audit, 90-day log retention, 10 on-premises agents and 15 Concurrency. No price is shown."
+    },
+    {
+      "name": "Workato ONE",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": null,
+      "note": "Quote only. Worded as everything in Enterprise MCP plus Agent Studio, the Workato Knowledge Base, Workato GO, 30 on-premises agents and 30 Concurrency. No price is shown."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-14",
+    "source": "https://www.workato.com/pricing",
+    "currency": "USD",
+    "confidence": "low",
+    "note": "Read live from workato.com/pricing on 2026-08-14, including the page's own hydration payload rather than only the rendered text, and there is no dollar figure anywhere on it. A search of the served HTML for a currency amount returns nothing. What the page does state, verbatim, is the billing shape: Meet our pricing, You pay for the one workspace and only as many recipes as you want to add on, and Platform plus Usage, Choose a platform edition and usage plan that meets your needs. Every button where a checkout would be reads Get a quote, Schedule a demo or Talk to sales, and a footnote adds that pricing and plan structures may vary based on your contract terms and when you joined. The four plan names and their feature ladders above are what the page says on that date. Nothing numeric is recorded because recording a remembered or third-party figure at any confidence would be a guess dressed as a price. Confidence is low for that reason and not because the ladder is uncertain."
+  },
+  "ranked": [
+    {
+      "project": "windmill",
+      "rationale": "The closest honest answer for the shape Workato actually is, which is a platform for people who will write the integration rather than click it. A step is a script in Python, TypeScript, Go, Bash or SQL, flows chain those steps with branching and retries, schedules and webhooks fire them, and an app builder puts a form in front of the ones a colleague has to run. The task meter goes away entirely: the community edition counts no runs, no steps and no users. What you take on is real and stated on its page. The image you install is not the AGPL binary, because upstream's own LICENSE says the Community Edition contains proprietary non-public code alongside the AGPL and Apache sources, free to run but not to resell or wrap. Job isolation ships off, so a script can read the worker's environment and that environment holds the database URL. Workspaces cap at two outside the built-in admins workspace on the free licence. Three containers, one evening, a PostgreSQL you back up, and no quote to negotiate."
+    },
+    {
+      "project": "activepieces",
+      "rationale": "The better landing for somebody arriving from Workato who was never going to write the step. It keeps the visual builder with triggers, actions and branching plus a large catalogue of prebuilt pieces, it is MIT outside its packages/ee tree, and the community edition is uncapped on runs, users and flows. It holds the top spot on the Zapier page in this catalogue, and it ranks second here for one reason: the Workato buyer is usually the person who wanted a real language in the step, an environment promotion path and a runtime they can reason about, and a connector-first canvas answers a different question. If your recipes are mostly glue between SaaS apps with OAuth already registered, start here instead."
+    },
+    {
+      "project": "automatisch",
+      "rationale": "The lightest of the three and the closest in look to a recipe list. AGPL-3.0 with a .ee carve-out, one image plus PostgreSQL and Redis, and a small enough surface that a person who wanted an automation tool rather than a platform can hold all of it in their head. It holds the top spot on the Make page in this catalogue. It ranks third here because the connector list is short next to Workato's, and because its release cadence is the slowest of the three, which its own page states rather than hides. Worth it when the honest requirement is a handful of triggers you will maintain yourself."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "n8n",
+      "repo": "https://github.com/n8n-io/n8n",
+      "note": "The best-known option and, on capability, the nearest thing to a Workato-shaped answer you can self-host: a node editor with a very large integration list, code nodes where you need one, and a release almost every day. It is not on this catalogue's licence allowlist and that is the whole reason there is no install here. LICENSE.md at tag n8n@2.34.6, read on 2026-08-14, places everything outside the .ee files under the Sustainable Use License 1.0, which permits use only for internal business purposes or non-commercial use, and the files with .ee in the name or directory need a paid n8n Enterprise License on top. That is source-available, not open source. If your use really is internal-only, read the text yourself; we are not going to make that call for you inside a root shell."
+    },
+    {
+      "name": "Kestra",
+      "repo": "https://github.com/kestra-io/kestra",
+      "note": "Apache-2.0, verified by reading the single LICENSE file at tag v1.3.30 on 2026-08-14, which is a cleaner licence than anything ranked on this page, with 27k stars and commits the same day it was checked. Its paid edition lives in a separate private repository rather than as a carve-out inside this one. It is not ranked because it answers a different question: Kestra is a data orchestrator where the flow is declared in YAML and the work is done by plugins on the JVM, aimed at pipelines and backfills, with a heavier deployment story once you add its optional Elasticsearch. Somebody leaving Workato to schedule dbt and Spark should look at it before Windmill. Somebody leaving Workato to keep two SaaS systems in step should not."
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "slug": "crawl4ai",
+  "name": "Crawl4AI",
+  "tagline": "A crawling API that turns a URL into LLM-ready markdown, on hardware you own.",
+  "repo": "unclecode/crawl4ai",
+  "site": "https://docs.crawl4ai.com",
+  "category": "automation-dev",
+  "replaces": [
+    {
+      "saas": "apify",
+      "plan": "Starter",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 1,
+    "externalDb": false,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 4096,
+    "ramMeasuredMB": null,
+    "diskGB": 15,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 10,
+  "license": "Apache-2.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/unclecode/crawl4ai/blob/v0.9.2/docker-compose.yml",
+  "local": {
+    "fit": "good",
+    "note": "It answers only on this computer's localhost port, which suits a crawler you call from your own scripts, and crawls leave from your own address rather than a datacenter range, which a lot of the web treats more kindly."
+  },
+  "quote": {
+    "text": "All distributions, publications, or public uses of this software, or derivative works based on this software, must include the following attribution",
+    "source": "Crawl4AI LICENSE at tag v0.9.2, Attribution Requirement",
+    "url": "https://github.com/unclecode/crawl4ai/blob/v0.9.2/LICENSE",
+    "checkedOn": "2026-08-14"
+  },
+  "citations": [
+    {
+      "claim": "The LICENSE at v0.9.2 is the Apache License 2.0 with an Attribution Requirement appended after END OF TERMS AND CONDITIONS, requiring a named credit in any distribution, publication or public use.",
+      "url": "https://github.com/unclecode/crawl4ai/blob/v0.9.2/LICENSE"
+    },
+    {
+      "claim": "The container entrypoint binds gunicorn to container loopback unless CRAWL4AI_API_TOKEN is set or JWT is enabled, so a published port reaches nothing without a credential; GUNICORN_BIND overrides the bind once a credential is present.",
+      "url": "https://github.com/unclecode/crawl4ai/blob/v0.9.2/deploy/docker/entrypoint.sh"
+    },
+    {
+      "claim": "Authentication is an outermost ASGI middleware that rejects every route without a valid Bearer credential; only the health endpoint, /token and the static UI prefixes /playground, /dashboard and /static are public.",
+      "url": "https://github.com/unclecode/crawl4ai/blob/v0.9.2/deploy/docker/auth_gate.py"
+    },
+    {
+      "claim": "One image carries the whole stack: it installs Playwright with its Chromium and runs Redis inside the container on loopback with a password, so there is no second service to operate.",
+      "url": "https://github.com/unclecode/crawl4ai/blob/v0.9.2/Dockerfile"
+    },
+    {
+      "claim": "Upstream asks for at least 4GB of RAM available for the container, documents the server on port 11235 and the playground at /playground.",
+      "url": "https://github.com/unclecode/crawl4ai/blob/v0.9.2/deploy/docker/README.md"
+    },
+    {
+      "claim": "check_robots_txt is a CrawlerRunConfig option that defaults to False, so robots.txt is consulted only when a request asks for it.",
+      "url": "https://github.com/unclecode/crawl4ai/blob/v0.9.2/crawl4ai/async_configs.py"
+    },
+    {
+      "claim": "Caddy obtains and renews TLS certificates automatically for any public hostname named in the Caddyfile.",
+      "url": "https://caddyserver.com/docs/automatic-https"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Apify sells a factory; this is one machine in it. You get the crawl-to-markdown slice: a URL goes in, clean markdown or structured JSON comes out. There is no Actor marketplace, no dataset service, no scheduler, and no proxy pool. If you want a crawl every morning, that is your own cron entry calling this API.",
+    "Your server's address is a datacenter address, and a large share of the web treats those as hostile. Sites behind a bot challenge will serve this crawler a block page, and the crawl will report success at fetching it, so read what comes back before you build on it. Budget the RAM too: upstream asks for 4 GB available because the image runs a real Chromium.",
+    "robots.txt is not consulted unless your request asks for it. check_robots_txt defaults to false at this tag. What you crawl, how hard, and whether a site's terms permit it are your decisions and nobody else's once the container is running.",
+    "One credential gates everything, and it is admin-scoped. Without CRAWL4AI_API_TOKEN the server refuses to bind anything but container loopback, so the token is part of the install rather than an option. Anyone holding it can make your server fetch any URL it can reach, including addresses inside your own network.",
+    "The licence is Apache-2.0 with a non-standard addition: the LICENSE file at the pinned tag appends an Attribution Requirement after the Apache terms end, obliging a named credit to the author and the project in any distribution, publication or public use. Running it for yourself is unaffected; shipping a product or publishing a paper built on it is not."
+  ],
+  "sources": {
+    "compose": "https://github.com/unclecode/crawl4ai/blob/v0.9.2/docker-compose.yml",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://github.com/unclecode/crawl4ai/blob/v0.9.2/deploy/docker/README.md",
+    "config": "https://github.com/unclecode/crawl4ai/blob/v0.9.2/deploy/docker/config.yml",
+    "bind": "https://github.com/unclecode/crawl4ai/blob/v0.9.2/deploy/docker/entrypoint.sh",
+    "auth": "https://github.com/unclecode/crawl4ai/blob/v0.9.2/deploy/docker/auth_gate.py",
+    "dockerfile": "https://github.com/unclecode/crawl4ai/blob/v0.9.2/Dockerfile",
+    "license": "https://github.com/unclecode/crawl4ai/blob/v0.9.2/LICENSE"
+  },
+  "related": [
+    "changedetection",
+    "meilisearch",
+    "perplexica"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-14",
+  "contentHash": "0180e127d32517373ec4ac9891f72ff8e334a89a0e4bb5ccf48aac593cc72dae"
+}

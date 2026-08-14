@@ -1,0 +1,54 @@
+{
+  "slug": "equals",
+  "name": "Equals",
+  "domain": "equals.com",
+  "whyPeoplePay": "Equals sells the spreadsheet a finance team already lives in, wired straight to the systems the numbers come from, plus a person who builds the first reports for you. The pitch is not the charts, it is that nobody has to export a CSV from Stripe on the first of the month again: connectors to accounting, billing, CRM, support and warehouse tools keep the sheet current on a schedule, formulas sit on top of live data instead of a stale paste, and a forward deployed analyst configures the syncs and hands back working dashboards inside a week. The bill is an annual contract with unlimited seats rather than a per-editor charge, which is honest about who the buyer is: a company that wants one set of numbers everybody trusts, and would rather pay for that than own it.",
+  "plans": [
+    {
+      "name": "Essential",
+      "priceMonthly": 2000,
+      "unit": "flat",
+      "seatsIncluded": null,
+      "note": "The page prices this as $24k per year; the figure here is that divided by twelve. Unlimited viewers and unlimited editors, your choice of 3 connectors, a six hour data sync, and $250 a month of included AI spend with usage billing above it. Two implementations by a forward deployed analyst are included. No writeback, no unlimited row sizes, no SSO. There is no self-serve signup: every plan on this page is a demo request."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": 3000,
+      "unit": "flat",
+      "seatsIncluded": null,
+      "note": "Printed as $36k per year. Unlimited seats, 5 connectors or a warehouse connection, hourly sync, $500 a month of included AI spend, writeback to your CRM, and no row limits. Extra connectors are priced separately on the same page: $199 a month each for databases and scripts, $699 a month each for everything else."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": 5000,
+      "unit": "flat",
+      "seatsIncluded": null,
+      "note": "Printed as $60k per year. Unlimited connectors or warehouse, a fifteen minute sync, $1,000 a month of included AI spend, writeback, no row limits, and SSO through Okta or Azure AD. Additional implementation work beyond the two included is $5k per ten hours."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-14",
+    "source": "https://equals.com/pricing",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "The three annual figures, the connector add-on rates and the included AI spend are printed on the pricing page as plain text and were read there on the checkedOn date. Two things the numbers do not capture. Every plan is gated behind a demo request rather than a signup form, so these are list prices for a negotiated annual contract. And AI usage above the included monthly allowance is billed on top, with no unit rate published, so the annual figure is a floor rather than a total."
+  },
+  "ranked": [
+    {
+      "project": "metabase",
+      "rationale": "The half of Equals that is dashboards, saved questions and SQL over your live data, running on your own box for the price of a VPS with no seat count and no annual contract. Point it at the same Postgres, MySQL, BigQuery, Snowflake or Redshift the connectors were feeding and the reports come back. What it does not do is the spreadsheet: there is no grid of cells, no formulas over the result set, and nobody assigned to build your first five reports. Two containers, one setup wizard you must close within minutes of first boot, and a JVM that wants 4 GB. Honest about the boundary too, because the boundary is the point: Metabase reads the databases, it does not replace the ETL that fills them."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Apache Superset",
+      "repo": "https://github.com/apache/superset",
+      "note": "Apache-2.0, and moving fast: commits were landing on the day this was checked, and 6.1.0 is the current tagged release from May 2026. It is the larger, more configurable answer to the same question, with a richer chart library and SQL Lab in place of Metabase's question builder. Two honest notes on packaging. Docker Hub's apache/superset repository is dominated by CI tags such as GHA-31788630598 and commit-sha -dev tags, so finding the pinnable one takes deliberate looking, though clean semver tags like 6.1.0 do exist and are what upstream's docker-compose-image-tag.yml consumes. And upstream's own compose files default to a latest-dev tag and are documented as a quick start rather than a deployment, with Helm on Kubernetes as the supported production path. That is a heavier install than the pick above, not a worse product."
+    },
+    {
+      "name": "Redash",
+      "repo": "https://github.com/getredash/redash",
+      "note": "BSD-2-Clause, and the maintenance picture is mixed rather than dead. Commits were still landing in August 2026, but tagged releases are rare: v26.3.0 in March 2026, v25.8.0 in August 2025 and v25.1.0 in January 2025 are the only three in the last nineteen months, and the latest tag on Docker Hub was last pushed in October 2019, which is the kind of detail worth knowing before you pin something. The product is a query-first tool: write SQL, save it, chart it, put it on a dashboard, schedule a refresh. If your team writes SQL and wants nothing else, it is a smaller thing to run than either option above. If they do not, the query builder in the pick above is most of why it wins here."
+    }
+  ]
+}

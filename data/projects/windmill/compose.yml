@@ -1,0 +1,84 @@
+# Windmill · the deterministic fallback. Authored by caniselfhostit from the
+# upstream sources at https://github.com/windmill-labs/windmill/tree/v1.789.0
+# (docker-compose.yml, Caddyfile, README.md, LICENSE, backend/Cargo.toml) and
+# https://www.windmill.dev/docs/advanced/security_isolation
+#
+# The API server, one worker, and the PostgreSQL that is the whole product.
+# Upstream's compose adds two more workers, an indexer at zero replicas and a
+# windmill-extra container; one worker already carries every language tag, the
+# indexer is Enterprise full-text search by upstream's own comment, and
+# windmill-extra is EE multiplayer plus debug and LSP aids, traded away. No
+# port 25 and no email trigger. No `privileged: true` either, which upstream's
+# own security page says removes the container boundary entirely.
+#
+# Digests read on 2026-08-14; both images publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+# json-file does not rotate on its own and a busy worker fills a small disk.
+x-logging: &wm-logging
+  driver: json-file
+  options:
+    max-size: 20m
+    max-file: "10"
+
+services:
+  db:
+    image: postgres:16.15-alpine@sha256:ab5c955e9e57ae9879d4411ab49a912be9d162455676f7bf56e951b11ac73785
+    container_name: windmill-db
+    restart: unless-stopped
+    shm_size: 1g
+    environment:
+      POSTGRES_DB: windmill
+      POSTGRES_USER: windmill
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - /srv/windmill/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U windmill -d windmill"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other containers.
+
+  windmill_server:
+    image: ghcr.io/windmill-labs/windmill:1.789.0@sha256:de85c0d6960e8f339a93e5d62c04fb3a77bd53699f1d3abc0081bdb32f97fe5b
+    container_name: windmill-server
+    restart: unless-stopped
+    environment:
+      MODE: server
+      DATABASE_URL: postgres://windmill:${DB_PASSWORD}@db:5432/windmill
+      # Every webhook URL and share link the UI prints is built from this.
+      BASE_URL: ${BASE_URL}
+    volumes:
+      # Long job logs spill here out of the database and the server serves
+      # them back, so this volume is shared with the worker.
+      - windmill_logs:/tmp/windmill/logs
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8193.
+      - "127.0.0.1:8193:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    logging: *wm-logging
+
+  windmill_worker:
+    image: ghcr.io/windmill-labs/windmill:1.789.0@sha256:de85c0d6960e8f339a93e5d62c04fb3a77bd53699f1d3abc0081bdb32f97fe5b
+    container_name: windmill-worker
+    restart: unless-stopped
+    environment:
+      MODE: worker
+      WORKER_GROUP: default
+      DATABASE_URL: postgres://windmill:${DB_PASSWORD}@db:5432/windmill
+    volumes:
+      # Named volume, never a bind mount: the image ships this directory
+      # filled with the Python runtime and the bun, go and hub caches.
+      - windmill_cache:/tmp/windmill/cache
+      - windmill_logs:/tmp/windmill/logs
+    depends_on:
+      db:
+        condition: service_healthy
+    logging: *wm-logging
+
+volumes:
+  windmill_cache:
+  windmill_logs:

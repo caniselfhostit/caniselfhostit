@@ -1,0 +1,73 @@
+{
+  "slug": "freshdesk",
+  "name": "Freshdesk",
+  "domain": "freshworks.com",
+  "whyPeoplePay": "Freshdesk turns a support address into a system with clocks on it: tickets get an owner, a priority and an SLA, dispatch rules decide who they land on, and automations chase the follow-ups nobody remembers. What you are renting is the routing, the SLA policies and the reporting that would otherwise be a spreadsheet and good intentions, metered per agent so the bill grows exactly when the team does.",
+  "plans": [
+    {
+      "name": "Growth",
+      "priceMonthly": 19,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "source": "https://www.freshworks.com/freshdesk/pricing/",
+      "checkedOn": "2026-08-14",
+      "note": "The entry plan: ticketing, shared inbox, customer portal and knowledge base, out-of-the-box reporting. $19 per agent per month billed annually is the figure the page prints. No multiple SLA policies at this level."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 55,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "source": "https://www.freshworks.com/freshdesk/pricing/",
+      "checkedOn": "2026-08-14",
+      "note": "Marked most popular, and the first plan with multiple SLA policies, intelligent routing, custom dashboards and a multilingual helpdesk. $55 per agent per month billed annually, so five agents is $3,300 a year."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": 89,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "source": "https://www.freshworks.com/freshdesk/pricing/",
+      "checkedOn": "2026-08-14",
+      "note": "Adds skill-based routing, a sandbox, audit logs, JWT authentication and IP allowlisting. $89 per agent per month billed annually."
+    },
+    {
+      "name": "Freddy AI Copilot add-on",
+      "priceMonthly": 29,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "source": "https://www.freshworks.com/freshdesk/pricing/",
+      "checkedOn": "2026-08-14",
+      "note": "An add-on rather than a plan, listed at $29 per agent per month billed annually on Pro and Enterprise. This is where a $55 seat quietly becomes an $84 seat."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-14",
+    "source": "https://www.freshworks.com/freshdesk/pricing/",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Every figure here is the per-agent-per-month rate the page prints under annual billing, which is the only set of numbers it renders without JavaScript. The page carries a Save 20% Annually toggle, so the month-to-month rate is higher and we did not read that number ourselves rather than infer it. Two more things we could not confirm: the page's own meta description advertises a free program for two users and a starting price of $15, and neither appears among the three plan cards it actually renders, so treat a free tier as unverified. Usage add-ons are metered separately: AI Agent sessions at $49 per 100 beyond the first 500, day passes at $2, $7 or $12, connector app tasks at $80 per 5,000."
+  },
+  "ranked": [
+    {
+      "project": "otobo",
+      "rationale": "The closest thing on this list to the shape Freshdesk sells: queues with owners and states, SLA policies with escalation clocks that actually fire, a generic agent for time-based automations, a customer portal, a knowledge base, and an ITSM extension with a CMDB behind it if you want one. It is also the heaviest thing here in admin surface: the configuration lives in a SysConfig screen with thousands of settings, and the interface is a decade older in feel than the one you are leaving. Four containers, an amd64-only image, and a web installer you have to reach before a stranger does. Everything is GPL-3.0 with nothing held back, and no meter on agents."
+    },
+    {
+      "project": "zammad",
+      "rationale": "The friendlier desk of the two, and the one to pick if the team's objection to the current tool is that it is fiddly rather than that it is expensive. Zammad's agent interface is modern, its setup wizard is gentler, and it has the same core of tickets, groups, triggers and escalation. It ranks second here because Freshdesk's centre of gravity is the SLA policy, the dispatch rule and the automation that runs on a clock, and OTOBO's ITSM lineage models that ground more directly. Zammad is also the heavier install of the two at seven containers and a six gigabyte floor, and it holds the top spot on the Zendesk page for the same reason it does not hold it here."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Znuny",
+      "repo": "https://github.com/znuny/Znuny",
+      "note": "The sibling fork. When OTRS AG stopped shipping a free Community Edition, two projects carried the code on: OTOBO from Rother OSS, and Znuny from the company of the same name. Znuny is GPL-3.0, actively maintained, and released rel-7_3_5 in this cycle, and it shares OTOBO's tag scheme because both inherit it. It is not in the tested list because there is no first-party container: the repository at rel-7_3_5 carries no Dockerfile and there is no znuny organisation on Docker Hub, so every compose path runs through somebody else's packaging that this catalogue cannot pin to a publisher it trusts."
+    },
+    {
+      "name": "FreeScout",
+      "repo": "https://github.com/freescout-help-desk/freescout",
+      "note": "The lightest shared-inbox answer on this shelf and by far the most active, AGPL-3.0, releasing several times a month. It reads like a team mailbox rather than a ticket system, which is the opposite trade from OTOBO. It is not in the tested list for a reason this catalogue has hit before and confirmed again at 1.8.234: upstream ships no first-party container image and the repository holds no Dockerfile, so every Docker path is a community build. Several of its helpdesk features are also paid modules from the vendor's own store."
+    }
+  ]
+}

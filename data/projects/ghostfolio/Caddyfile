@@ -1,0 +1,26 @@
+# Ghostfolio · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://github.com/ghostfolio/ghostfolio/blob/3.50.0/README.md and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy Prompt Zero installed, with
+# the placeholder replaced by the hostname pointed at this box. That hostname
+# is ROOT_URL in .env too, and the two have to agree.
+
+<DOMAIN> {
+	# The client is an Angular bundle of several hundred kilobytes.
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		# Nothing here is meant to be embedded anywhere.
+		X-Frame-Options "DENY"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8196 is the loopback port compose publishes. Not open in the firewall.
+	reverse_proxy 127.0.0.1:8196
+}

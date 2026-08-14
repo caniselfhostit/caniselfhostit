@@ -1,0 +1,59 @@
+{
+  "slug": "copilot-money",
+  "name": "Copilot Money",
+  "domain": "copilot.money",
+  "whyPeoplePay": "Copilot sells one thing above everything else: it logs into your banks, cards, loans and brokerages for you, pulls in yesterday's transactions overnight, categorises them with a model that learns your corrections, and puts spending, budgets, investments and net worth on one screen that is already correct when you open it. The apps are native to the Apple ecosystem, on iPhone, Mac and iPad as well as the web, and the polish is a real part of what people are paying for. Every project on this page can hold the numbers. The connection, the categorisation and the phone in your pocket are the parts you take back yourself, and they are the parts that cost you something.",
+  "plans": [
+    {
+      "name": "Annual",
+      "priceMonthly": 7.92,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "source": "https://copilot.money",
+      "checkedOn": "2026-08-14",
+      "note": "The page shows $7.92 /mo alongside $95, billed yearly, so this figure is the annual price divided out rather than a monthly charge. A one-month free trial is advertised. The page also states no ads and no hidden fees."
+    },
+    {
+      "name": "Monthly",
+      "priceMonthly": 13,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "source": "https://copilot.money",
+      "checkedOn": "2026-08-14",
+      "note": "$13 /mo, the figure shown behind the monthly side of the pricing toggle. Same product as the annual plan; the difference is billing period."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-14",
+    "source": "https://copilot.money",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Read from the vendor's own page on 2026-08-14, out of the page markup rather than a rendered view, because the monthly-versus-annual toggle is JavaScript and a plain fetch returns the site as one bundle. All three figures quoted here, $95 a year, $7.92 a month and $13 a month, are literal strings in that markup next to the labels Yearly and Monthly. Two things stay uncertain, which is why this is not marked high. The markup carries no plan ladder beyond that single toggle, so no claim is made about family, household or multi-user pricing. And a bundle read this way cannot show which figure the toggle presents first, so the pairing of $13 with monthly billing is inferred from its position beside the Monthly label rather than seen on screen. There is no /pricing page: that path serves the same single-page bundle as the root."
+  },
+  "ranked": [
+    {
+      "project": "ghostfolio",
+      "rationale": "The right answer if the screen you actually open Copilot for is the portfolio. Ghostfolio tracks holdings, allocation, performance, dividends and net worth across accounts, in three containers on your own domain, AGPL-3.0, and released most weeks. Say the scope out loud before you start, because it is the whole decision: Ghostfolio has no spending feed, no categories and no budgets, so Copilot's day-to-day money half does not come along, and it connects to no bank, so activities are typed in or imported from a CSV you export yourself. Market prices arrive from public sources, mainly Yahoo Finance, over an interface nobody promises you."
+    },
+    {
+      "project": "firefly-iii",
+      "rationale": "Second, and first if what you want back is the ledger rather than the portfolio. Firefly III is a full household transaction record: accounts with running balances, searchable transactions, rules that categorise on the way in, recurring entries, budgets and reports. It is the closest thing here to the shape of a whole personal-finance app, and it has the same missing piece as everything else on this page, because it logs into nothing. Transactions arrive as CSV files or through the separate Data Importer on a second hostname wired to a paid data provider."
+    },
+    {
+      "project": "actual-budget",
+      "rationale": "Third, and the one to pick if the reason you opened Copilot every week was the budget. Actual is envelope budgeting done properly, one container, a local-first file that syncs through a server you run, and an install that is over before your coffee cools. It gives up the investment tracking entirely and the reporting depth of Firefly III, and it has the same bank-feed gap, reached through GoCardless or SimpleFIN and paid for separately. Pick it when the method is the point."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Wealthfolio",
+      "repo": "https://github.com/wealthfolio/wealthfolio",
+      "note": "AGPL-3.0, actively developed, v3.6.3 in August 2026, and the closest thing to Copilot's shape that is not on the list above: investments, net worth, spending and simulations in one local-first app. It began as a desktop application for Windows, macOS and Linux and now also publishes a self-hosted server image on Docker Hub with real version tags, so it is genuinely pinnable. Two honest reasons it is not ranked here. The server build is the newer half of the project, with its first tagged images in May 2026, and we have not installed it. Note also that the repository moved from afadil/wealthfolio to the wealthfolio organisation, so older links redirect."
+    },
+    {
+      "name": "Maybe",
+      "repo": "https://github.com/maybe-finance/maybe",
+      "note": "AGPL-3.0, and on paper the nearest open-source copy of what Copilot does: accounts, holdings, spending, budgets and net worth in one modern app, which is why it collected more stars than everything else here combined. The company wound down commercially and the repository has been archived since July 2025, with v0.6.0 as the last release, so nothing in it has been patched in over a year. Archived upstream is disqualifying in this catalogue. Worth reading and worth forking. Not worth putting this year's money in."
+    }
+  ]
+}

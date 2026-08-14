@@ -1,0 +1,95 @@
+{
+  "slug": "mixpost",
+  "name": "Mixpost",
+  "tagline": "A posting calendar for Facebook Pages, X and Mastodon on your own box, with the developer apps registered in your name and no per-seat bill.",
+  "repo": "inovector/mixpost",
+  "site": "https://mixpost.app",
+  "category": "marketing-content",
+  "replaces": [
+    {
+      "saas": "hootsuite",
+      "plan": "Professional",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 3,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": true,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 4
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 240,
+  "license": "MIT",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://docs.mixpost.app/lite/installation/docker",
+  "local": {
+    "fit": "caveat",
+    "note": "Everything answers at http://localhost:8197, so a post scheduled for 9am goes out only if the computer is awake at 9am, and the callback URL Mixpost hands a developer portal is a localhost address that X and Meta refuse, which leaves Mastodon as the network this path can actually connect."
+  },
+  "quote": {
+    "text": "However, social networks like Facebook, LinkedIn, and TikTok may impose rate limits. If you reach a platform's limit, you can request a higher limit directly from them, though some may charge a fee for this.",
+    "source": "Mixpost pricing FAQ, on limits for self-hosted accounts",
+    "url": "https://mixpost.app/pricing",
+    "checkedOn": "2026-08-14"
+  },
+  "citations": [
+    {
+      "claim": "Upstream's pricing page states the edition split directly: Mixpost Lite publishes to Facebook Pages, X and Mastodon, while Instagram, LinkedIn, YouTube, TikTok, Pinterest, Threads, Bluesky and Google Business Profile are Pro and Enterprise, sold as one-time licences at $299 and $1,199.",
+      "url": "https://mixpost.app/pricing"
+    },
+    {
+      "claim": "The upstream Docker guide ends by printing the credentials the container seeds on first start, the address admin@example.com with the password changeme, and tells the reader to change it in the interface afterwards.",
+      "url": "https://docs.mixpost.app/lite/installation/docker"
+    },
+    {
+      "claim": "Every environment variable this install sets is on upstream's Lite reference: APP_KEY, APP_URL, DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD, REDIS_HOST, REDIS_PORT and MIXPOST_DISK.",
+      "url": "https://docs.mixpost.app/lite/configuration/environment-variables"
+    },
+    {
+      "claim": "Upstream advises against ever changing APP_KEY, because it encrypts the stored service credentials and social account tokens and altering it means re-entering every one of them. The same page notes the Admin Console status screen is available only with the Pro and Enterprise packages.",
+      "url": "https://docs.mixpost.app/troubleshooting"
+    },
+    {
+      "claim": "The licence file at tag 2.6.0 is the MIT licence, copyright Dima Botezatu and Inovector.",
+      "url": "https://github.com/inovector/mixpost/blob/2.6.0/LICENSE.md"
+    },
+    {
+      "claim": "The repository describes itself as the Lite version of Mixpost Pro, a commercial product, and asks contributors to keep Lite features distinct from those in Mixpost Pro.",
+      "url": "https://github.com/inovector/mixpost"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Lite is the free edge of a commercial product, and the gate is the networks. Upstream's own pricing page lists Mixpost Lite as Facebook Pages, X and Mastodon; Instagram, LinkedIn, TikTok, YouTube, Pinterest, Threads, Bluesky and Google Business Profile are Pro and Enterprise, one-time licences at $299 and $1,199. Workspaces, approval flows, the posting queue, post templates, hashtag groups, the API, the MCP server and webhooks are paid too. The GitHub README describes Mixpost the product rather than this edition, so read the pricing page first.",
+    "The free repository moves slowly. Release 2.6.0 is dated 2026-03-16, which is also the last commit on its main branch, five months quiet as of 2026-08-14. Nothing is archived, nothing has been relicensed, and the MIT licence at that tag is real. One footnote: the image builds that MIT package into inovector/MixpostApp, a Laravel skeleton whose repository carries no licence file of its own. This is a slow-moving free tier rather than an abandoned project, which is a different problem, though not a smaller one on the day a network changes an endpoint.",
+    "You become the developer at X and at Meta. Connecting a Facebook Page or an X profile means registering an app in that company's developer portal, accepting its terms, living inside its rate limits, and pasting the id and secret into Mixpost under Settings, Services. Upstream's own FAQ says networks may impose rate limits and that raising one is a conversation with them, occasionally a paid one. Mastodon is the exception: Mixpost registers that application itself against the instance you name, so it is the network you can connect this afternoon.",
+    "The container ships a standing default account. It creates admin@example.com with a password printed in upstream's install guide, and its start script recreates that account on any start where the address is missing from the users table. The install here signs in with it once over loopback within seconds of first boot, replaces the password with one generated on your server, and asserts that the published credential is refused. It also tells you never to rename that account, because renaming it is what brings the default back.",
+    "APP_KEY is the whole vault. Every stored provider secret and social token is encrypted with it, upstream advises against ever changing it, and a database restored without the .env that made it is a table of unreadable tokens. Back up the dump and the .env together or neither is worth having."
+  ],
+  "sources": {
+    "compose": "https://docs.mixpost.app/lite/installation/docker",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://docs.mixpost.app/lite/",
+    "variables": "https://docs.mixpost.app/lite/configuration/environment-variables",
+    "troubleshooting": "https://docs.mixpost.app/troubleshooting",
+    "editions": "https://mixpost.app/pricing",
+    "license": "https://github.com/inovector/mixpost/blob/2.6.0/LICENSE.md",
+    "mysql": "https://hub.docker.com/_/mysql"
+  },
+  "related": [
+    "postiz",
+    "listmonk"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-14",
+  "contentHash": "bef8d0918286cf4b4f99b56c3818c0426054b3d4aafc1413a0235a9df7cefdcd"
+}

@@ -1,0 +1,38 @@
+# Super Productivity · the deterministic fallback. Authored by caniselfhostit
+# from the upstream documentation, not copied from a repository:
+#   run with docker .... https://github.com/super-productivity/super-productivity/blob/v18.19.0/docs/wiki/2.13-Run-with-Docker.md
+#   entrypoint ......... https://github.com/super-productivity/super-productivity/blob/v18.19.0/docker-entrypoint.sh
+#   nginx template ..... https://github.com/super-productivity/super-productivity/blob/v18.19.0/nginx/default.conf.template
+#
+# One service: nginx serving the built web app as static files. No database, no
+# volume, no state on this box, because upstream states that data is stored in
+# the browser and the container provides no persistent storage. No env_file and
+# no environment block, on purpose: the entrypoint would write a world-readable
+# sync-config-default-override.json under assets/ from the WEBDAV_ and
+# SYNC_INTERVAL variables, and with WEBDAV_BACKEND unset the image's /webdav/
+# proxy answers 404. Block 8 of the prompts says why. No
+# `user:` line: nginx binds 80 in the container and the image names no
+# unprivileged user; the healthcheck uses the curl the image installs.
+#
+# Image identity, checked 2026-08-14: the wiki's docker run line names a Docker
+# Hub repository that does not resolve; the one that does, and that upstream's
+# own compose file names, is johannesjo/super-productivity. Tag v18.19.0 was
+# released 2026-08-07; digest read from registry-1.docker.io on 2026-08-14, an
+# OCI index covering linux/amd64 and linux/arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  super-productivity:
+    image: johannesjo/super-productivity:v18.19.0@sha256:ae91fe9ac19561e0f3669d15a2c4c71d7a75c43a29eb44ddc010ae50d1f63c82
+    container_name: super-productivity
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8199.
+      - "127.0.0.1:8199:80"

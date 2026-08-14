@@ -1,0 +1,105 @@
+{
+  "slug": "metabase",
+  "name": "Metabase",
+  "tagline": "Dashboards, saved questions and a SQL editor pointed at the databases you already run, from two containers and no per-seat bill.",
+  "repo": "metabase/metabase",
+  "site": "https://www.metabase.com",
+  "category": "analytics",
+  "replaces": [
+    {
+      "saas": "equals",
+      "plan": "Essential",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 4096,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-example",
+  "officialComposeUrl": "https://github.com/metabase/metabase/blob/v0.63.2/docs/installation-and-operation/running-metabase-on-docker.md",
+  "local": {
+    "fit": "caveat",
+    "note": "Metabase answers only at http://localhost:8210, so a dashboard nobody else can open is a dashboard you are reading alone, and every scheduled database sync stops while the computer sleeps."
+  },
+  "quote": {
+    "text": "Binaries located at hub.docker.com/metabase/metabase-enterprise and downloads.metabase.com/enterprise are released under the Metabase Commercial License. Binaries located at hub.docker.com/metabase/metabase and all non-enterprise paths at downloads.metabase.com are released under the AGPL.",
+    "source": "Metabase LICENSE.txt, v0.63.2",
+    "url": "https://github.com/metabase/metabase/blob/v0.63.2/LICENSE.txt",
+    "checkedOn": "2026-08-14"
+  },
+  "citations": [
+    {
+      "claim": "GitHub reports the license as NOASSERTION because the repository carries two: LICENSE.txt states that source outside the top-level enterprise directory is AGPL, and source inside it is under the Metabase Commercial License unless otherwise noted.",
+      "url": "https://github.com/metabase/metabase/blob/v0.63.2/LICENSE.txt"
+    },
+    {
+      "claim": "Upstream recommends PostgreSQL for the application database and calls the embedded H2 default the local-demo option to avoid in production, which is why this install sets MB_DB_TYPE and runs a second container.",
+      "url": "https://github.com/metabase/metabase/blob/v0.63.2/docs/installation-and-operation/configuring-application-database.md"
+    },
+    {
+      "claim": "GET /api/health answers 200 with {\"status\":\"ok\"} only once start-up is complete and the application database is reachable, and 503 with a status of initializing and a progress number while migrations are still running.",
+      "url": "https://github.com/metabase/metabase/blob/v0.63.2/src/metabase/server/routes.clj"
+    },
+    {
+      "claim": "The setup token is created on first launch and declared a public setting, so it is served to unauthenticated callers at /api/session/properties, and it is cleared the moment the first user is created.",
+      "url": "https://github.com/metabase/metabase/blob/v0.63.2/src/metabase/setup/settings.clj"
+    },
+    {
+      "claim": "POST /api/setup rejects a request whose token does not match, and refuses outright once a user exists, with the message that the route can only be used to create the first user.",
+      "url": "https://github.com/metabase/metabase/blob/v0.63.2/src/metabase/setup_rest/api.clj"
+    },
+    {
+      "claim": "MB_ENCRYPTION_SECRET_KEY encrypts stored database connection details, and upstream states plainly that connection details cannot be decrypted without it and would have to be reset in the admin panel.",
+      "url": "https://github.com/metabase/metabase/blob/v0.63.2/docs/databases/encrypting-details-at-rest.md"
+    },
+    {
+      "claim": "Metabase uses a single SQL database for all of its runtime application data, so backing that database up is the whole backup, and a bundled Sample Database is extracted to the plugins directory on every launch.",
+      "url": "https://github.com/metabase/metabase/blob/v0.63.2/docs/installation-and-operation/backing-up-metabase-application-data.md"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "One repository, two licenses, and the image here is the open one. Everything outside the top-level enterprise directory is AGPL-3.0; everything inside it is under the Metabase Commercial License and needs a subscription, which is where SSO, granular permissions, official support and the AI assistant live. The v0.x tags build the AGPL image this install pins, the v1.x tags build the commercial one, and they are the same release under different terms. GitHub reports the repository as NOASSERTION for exactly this reason.",
+    "The spreadsheet does not come along. Equals sells a spreadsheet wired to live data, formulas and all, plus a human analyst who builds your first reports; Metabase gives you dashboards, saved questions and a SQL editor over the same databases, and the cell-by-cell surface is not part of it. If a spreadsheet is the actual requirement, Grist and Baserow are this catalog's answers to that shape. Grafana is the neighbouring answer for metrics and machines rather than revenue and customers.",
+    "This is the window, not the warehouse. The PostgreSQL you run here holds accounts, questions, dashboards and encrypted connection details, and nothing else. The data you analyse stays in whatever databases you connect, is queried live on every dashboard load, and is neither copied into this install nor covered by its backup. If those databases are somebody else's managed service, this changes nothing about who backs them up.",
+    "It is a JVM application and the memory floor is real. The JVM takes about a quarter of the memory it can see as its heap ceiling, so a 2 GB box gives Metabase a 512 MB heap and the failure shows up weeks later as a container that dies mid-query. Upstream's own cloud guide asks for at least 3.5 GB; this install asks for 4 GB and a first boot of several minutes while it migrates an empty database.",
+    "No hosted refresh schedule, no managed connectors, no analyst on the account, no SSO, and no support contract. The connectors Equals bills for are the parts you replace with a hostname and a password; the analyst who builds your first five reports is the part you do not."
+  ],
+  "sources": {
+    "compose": "https://github.com/metabase/metabase/blob/v0.63.2/docs/installation-and-operation/running-metabase-on-docker.md",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://github.com/metabase/metabase/blob/v0.63.2/docs/installation-and-operation/installing-metabase.md",
+    "appdb": "https://github.com/metabase/metabase/blob/v0.63.2/docs/installation-and-operation/configuring-application-database.md",
+    "env": "https://github.com/metabase/metabase/blob/v0.63.2/docs/configuring-metabase/environment-variables.md",
+    "entrypoint": "https://github.com/metabase/metabase/blob/v0.63.2/bin/docker/run_metabase.sh",
+    "health": "https://github.com/metabase/metabase/blob/v0.63.2/src/metabase/server/routes.clj",
+    "setup": "https://github.com/metabase/metabase/blob/v0.63.2/src/metabase/setup/settings.clj",
+    "setupapi": "https://github.com/metabase/metabase/blob/v0.63.2/src/metabase/setup_rest/api.clj",
+    "encryption": "https://github.com/metabase/metabase/blob/v0.63.2/docs/databases/encrypting-details-at-rest.md",
+    "headers": "https://github.com/metabase/metabase/blob/v0.63.2/src/metabase/server/middleware/security.clj",
+    "backup": "https://github.com/metabase/metabase/blob/v0.63.2/docs/installation-and-operation/backing-up-metabase-application-data.md",
+    "license": "https://github.com/metabase/metabase/blob/v0.63.2/LICENSE.txt"
+  },
+  "related": [
+    "grafana",
+    "grist",
+    "baserow"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-14",
+  "contentHash": "653adc8ad8d431691a11ef90b2f1a7e9c1f8058f10bcae9a43f2533abef2b8bc"
+}

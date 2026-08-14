@@ -1,0 +1,101 @@
+{
+  "slug": "otobo",
+  "name": "OTOBO",
+  "tagline": "A classic service desk with queues, SLA clocks, escalations and a customer portal, on your own hostname, with no per-agent meter.",
+  "repo": "RotherOSS/otobo",
+  "site": "https://otobo.io",
+  "category": "comms-scheduling",
+  "replaces": [
+    {
+      "saas": "freshdesk",
+      "plan": "Pro",
+      "seatsAssumed": 5
+    }
+  ],
+  "tierFactors": {
+    "containers": 4,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 1
+  },
+  "resources": {
+    "ramMinMB": 4096,
+    "ramMeasuredMB": null,
+    "diskGB": 20,
+    "arm64": false,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 240,
+  "license": "GPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/RotherOSS/otobo-docker/blob/rel-11_0_17/docker-compose/otobo-base.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "A helpdesk is somewhere other people send you their problems, and this one answers only at http://localhost:8202, so no customer and no colleague can reach it; the escalation clocks also stop whenever the computer sleeps, and hours the machine spent asleep read as hours a ticket sat untouched."
+  },
+  "quote": {
+    "text": "OTOBO is a fork based on ((OTRS)) Community Edition, started in 2019 to go back to the roots and offer a 100 % free tool, rooted in a strong community, and backed up by professional business services.",
+    "source": "OTOBO README, rel-11_0_17",
+    "url": "https://github.com/RotherOSS/otobo/blob/rel-11_0_17/README.md",
+    "checkedOn": "2026-08-14"
+  },
+  "citations": [
+    {
+      "claim": "Upstream lists Elasticsearch and Redis under Optional in the software requirements, and gives 4 GB of RAM with 10 GB of storage as the figure for a machine to test on and 8 GB with 40 GB for real use.",
+      "url": "https://doc.otobo.org/manual/installation/11.0/en/content/requirements.html"
+    },
+    {
+      "claim": "The Docker deployment runs five services in the HTTP case, six when their Nginx terminates TLS, and the install finishes by running installer.pl in a browser at /otobo/installer.pl.",
+      "url": "https://doc.otobo.org/manual/installation/11.0/en/content/installation/installation-docker.html"
+    },
+    {
+      "claim": "The Kernel/Config.pm baked into the Docker image sets the cache backend to Kernel::System::Cache::Redis at redis:6379, which is why Redis is not optional under Docker even though upstream lists it as optional in general.",
+      "url": "https://github.com/RotherOSS/otobo/blob/rel-11_0_17/Kernel/Config.pm.docker.dist"
+    },
+    {
+      "claim": "Finishing installer.pl sets SecureMode, and the middleware in front of installer.pl and migration.pl then answers HTTP 403 with SecureMode active, which is how the setup door closes.",
+      "url": "https://github.com/RotherOSS/otobo/blob/rel-11_0_17/Kernel/cpan-lib/Plack/Middleware/OTOBO/SecureModeAccessFilter.pm"
+    },
+    {
+      "claim": "The installer's last step generates a random sixteen character password for the root@localhost account and prints it on that page once, and Elasticsearch::Active ships invalid so the installer only switches it on when the host answers.",
+      "url": "https://github.com/RotherOSS/otobo/blob/rel-11_0_17/Kernel/Modules/Installer.pm"
+    },
+    {
+      "claim": "CustomerPanelCreateAccount ships valid and set to 1, so the customer portal offers a Request Account form until an administrator turns it off, and the default article storage backend is ArticleStorageDB, which keeps attachments in the database.",
+      "url": "https://github.com/RotherOSS/otobo/blob/rel-11_0_17/Kernel/Config/Files/XML/Framework.xml"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The installer is the whole system, and it is open until you close it. OTOBO ships with no accounts and a web installer at /otobo/installer.pl that creates the database schema and sets the administrator password, so between the first container start and the moment you finish that wizard, whoever loads your hostname first can take the box. Finishing it flips SecureMode and the door answers 403 from then on. Plan to run the install and the wizard in one sitting.",
+    "One of the four containers is the product's clock, and nothing tells you when it stops. The daemon runs escalations, the generic agent and pending reminders; when it is unhealthy the desk still renders pages, still saves tickets and still looks completely fine, while no SLA in it ever fires. It is expected to be unhealthy until the installer is done. After that, an unhealthy daemon is an outage nobody has reported.",
+    "No search index, by upstream's own default. Their requirements page lists Elasticsearch under Optional, the setting ships invalid, and the installer only wires it up if a host answers, so this install leaves it out and saves a fifth container plus a JVM heap. What you lose is the live-preview fulltext search over articles and attachments. You can add it later, and you will pay for it in memory and a full reindex.",
+    "No mail, and mail is what most people came for. A support address that turns email into tickets is the centre of what Freshdesk sells, and this install configures no SMTP and no IMAP: no inbound mail channel, no notification mail, no password-reset link. The web form, the agent interface and the customer portal all work without it. Adding mail is a separate day with a provider whose deliverability you now own.",
+    "It looks its age, and it is amd64 only. This is OTRS lineage, forked in 2019 and maintained since by Rother OSS: a Perl application with a SysConfig screen holding thousands of settings, an admin surface far heavier than the tool you are leaving, and an agent interface a generation behind Freshdesk's. Upstream publishes the image for linux/amd64 alone, so an arm server or an Apple Silicon laptop cannot run it at all. What you get for that is GPL-3.0 with nothing held back and no meter on agents."
+  ],
+  "sources": {
+    "compose": "https://doc.otobo.org/manual/installation/11.0/en/content/installation/installation-docker.html",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "requirements": "https://doc.otobo.org/manual/installation/11.0/en/content/requirements.html",
+    "upstreamCompose": "https://github.com/RotherOSS/otobo-docker/blob/rel-11_0_17/docker-compose/otobo-base.yml",
+    "image": "https://github.com/RotherOSS/otobo/blob/rel-11_0_17/otobo.web.dockerfile",
+    "entrypoint": "https://github.com/RotherOSS/otobo/blob/rel-11_0_17/bin/docker/entrypoint.sh",
+    "routes": "https://github.com/RotherOSS/otobo/blob/rel-11_0_17/bin/psgi-bin/otobo.psgi",
+    "secureMode": "https://github.com/RotherOSS/otobo/blob/rel-11_0_17/Kernel/cpan-lib/Plack/Middleware/OTOBO/SecureModeAccessFilter.pm",
+    "installer": "https://github.com/RotherOSS/otobo/blob/rel-11_0_17/Kernel/Modules/Installer.pm",
+    "settings": "https://github.com/RotherOSS/otobo/blob/rel-11_0_17/Kernel/Config/Files/XML/Framework.xml",
+    "dockerConfig": "https://github.com/RotherOSS/otobo/blob/rel-11_0_17/Kernel/Config.pm.docker.dist",
+    "backup": "https://doc.otobo.org/manual/installation/11.0/en/content/backup-restore.html",
+    "tags": "https://github.com/RotherOSS/otobo/tags"
+  },
+  "related": [
+    "zammad",
+    "espocrm",
+    "chatwoot"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-14",
+  "contentHash": "625c51e27a78a660c5aef0a7986d19c5a29535ef9f30f8ac4e5438c57f60a905"
+}

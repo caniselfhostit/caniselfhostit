@@ -1,0 +1,82 @@
+# Lychee · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   docker guide ..... https://lycheeorg.dev/docs/getting-started/docker/
+#   compose template . https://github.com/LycheeOrg/Lychee/blob/v7.7.2/docker-compose.yaml
+#   entrypoint ....... https://github.com/LycheeOrg/Lychee/blob/v7.7.2/docker/scripts/entrypoint.sh
+#
+# Lychee plus the MariaDB holding albums, users, tags and photo metadata.
+# MariaDB because upstream's README compose and the DB_CONNECTION default both
+# say mysql; the image is the FrankenPHP build on the plain version tag, not a
+# -legacy one. Every ${...} comes from /srv/lychee/.env, mode 600, which
+# Compose reads and never mounts. Digests read from the registries on
+# 2026-08-14; both images publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  db:
+    image: mariadb:11.8.8@sha256:d9f7eb2637296652f24b484afd5d246f759f49f5babcadc6a9e344c9acb75fbf
+    container_name: lychee-db
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: lychee
+      MARIADB_USER: lychee
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_AUTO_UPGRADE: "1"
+    volumes:
+      - /srv/lychee/mariadb:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      retries: 20
+    # No `ports:` at all: 3306 is reachable only from the other container.
+
+  lychee:
+    image: lycheeorg/lychee:v7.7.2@sha256:daacbba4876b3b73e4d46be1f4858f43cb2256c9c506c0ab7f333a8d9c993c00
+    container_name: lychee
+    restart: unless-stopped
+    environment:
+      # No APP_KEY, no boot: the entrypoint checks it decodes to 32 bytes.
+      APP_KEY: ${APP_KEY}
+      # Every album link and image URL is built from APP_URL. Caddy terminates
+      # TLS and speaks plain http here, so the scheme is forced, not guessed.
+      APP_URL: ${APP_URL}
+      APP_FORCE_HTTPS: "true"
+      APP_ENV: production
+      APP_DEBUG: "false"
+      TIMEZONE: UTC
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      # The entrypoint waits on this port with nc, so it is never left unset.
+      DB_PORT: "3306"
+      DB_DATABASE: lychee
+      DB_USERNAME: lychee
+      DB_PASSWORD: ${DB_PASSWORD}
+      # sync: the request that uploads a photo also builds its thumbnails.
+      # database would queue that for a worker this file does not run, and
+      # Octane cuts a request at 30s by default, that upload's real ceiling.
+      QUEUE_CONNECTION: sync
+      LYCHEE_MAX_EXECUTION_TIME: "180"
+      # The entrypoint moves its www-data to these before dropping privileges,
+      # so the login user owns the photo files.
+      PUID: ${PUID}
+      PGID: ${PGID}
+    volumes:
+      # uploads is the half of the backup a database dump cannot rebuild.
+      - /srv/lychee/uploads:/app/public/uploads
+      - /srv/lychee/logs:/app/storage/logs
+      - /srv/lychee/tmp:/app/storage/tmp
+    healthcheck:
+      # /up answers 200 before any account exists, which the app root does not.
+      test: ["CMD-SHELL", "curl -fsS -o /dev/null http://127.0.0.1:8000/up || exit 1"]
+      start_period: 60s
+      interval: 15s
+      retries: 20
+    ports:
+      # Loopback only: Caddy on this host alone reaches 8195.
+      - "127.0.0.1:8195:8000"
+    depends_on:
+      db:
+        condition: service_healthy

@@ -1,0 +1,79 @@
+# Windmill · the deterministic fallback for the local path. Authored by
+# caniselfhostit from https://github.com/windmill-labs/windmill/tree/v1.789.0
+# and https://www.windmill.dev/docs/advanced/security_isolation
+#
+# BASE_URL is http://localhost:8193, so every link this instance prints
+# resolves here and nowhere else. PostgreSQL and the Windmill cache are named
+# volumes, not bind mounts: the database image chowns its data directory to a
+# uid Docker Desktop cannot grant on a Windows home folder, and the cache
+# arrives from the image already filled. One worker, no windmill-extra, no
+# indexer, no `privileged: true`, for the reasons in the server file. Digests
+# read on 2026-08-14; amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+# json-file does not rotate on its own; a busy worker fills a small disk.
+x-logging: &wm-logging
+  driver: json-file
+  options:
+    max-size: 20m
+    max-file: "10"
+
+services:
+  db:
+    image: postgres:16.15-alpine@sha256:ab5c955e9e57ae9879d4411ab49a912be9d162455676f7bf56e951b11ac73785
+    container_name: windmill-db
+    restart: unless-stopped
+    shm_size: 1g
+    environment:
+      POSTGRES_DB: windmill
+      POSTGRES_USER: windmill
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - windmill_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U windmill -d windmill"]
+      interval: 10s
+      retries: 12
+    # No `ports:`: 5432 is reachable only from the other containers.
+
+  windmill_server:
+    image: ghcr.io/windmill-labs/windmill:1.789.0@sha256:de85c0d6960e8f339a93e5d62c04fb3a77bd53699f1d3abc0081bdb32f97fe5b
+    container_name: windmill-server
+    restart: unless-stopped
+    environment:
+      MODE: server
+      DATABASE_URL: postgres://windmill:${DB_PASSWORD}@db:5432/windmill
+      # No TLS and no hostname, so every link says http://localhost:8193.
+      BASE_URL: http://localhost:8193
+    volumes:
+      # Job logs spill here, so this volume is shared with the worker.
+      - windmill_logs:/tmp/windmill/logs
+    ports:
+      # Loopback only: no other device on the wifi reaches 8193.
+      - "127.0.0.1:8193:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    logging: *wm-logging
+
+  windmill_worker:
+    image: ghcr.io/windmill-labs/windmill:1.789.0@sha256:de85c0d6960e8f339a93e5d62c04fb3a77bd53699f1d3abc0081bdb32f97fe5b
+    container_name: windmill-worker
+    restart: unless-stopped
+    environment:
+      MODE: worker
+      WORKER_GROUP: default
+      DATABASE_URL: postgres://windmill:${DB_PASSWORD}@db:5432/windmill
+    volumes:
+      - windmill_cache:/tmp/windmill/cache
+      - windmill_logs:/tmp/windmill/logs
+    depends_on:
+      db:
+        condition: service_healthy
+    logging: *wm-logging
+
+volumes:
+  windmill_pgdata:
+  windmill_cache:
+  windmill_logs:

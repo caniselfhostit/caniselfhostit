@@ -1,0 +1,25 @@
+# OrangeHRM Starter · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://caddyserver.com/docs/automatic-https and
+# https://github.com/orangehrm/orangehrm/blob/v5.9/src/plugins/orangehrmCorePlugin/config/CorePluginConfiguration.php
+#
+# Append to /etc/caddy/Caddyfile with <DOMAIN> replaced by this box's hostname.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	# HSTS earns its place: OrangeHRM reads the scheme off the server environment,
+	# which the compose file's Apache line sets, and this is the other half of it.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "same-origin"
+		-Server
+	}
+
+	# 8194 is the loopback port compose publishes here, not a container port and
+	# not open in the firewall.
+	reverse_proxy 127.0.0.1:8194
+}

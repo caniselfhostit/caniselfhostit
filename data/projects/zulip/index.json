@@ -1,0 +1,97 @@
+{
+  "slug": "zulip",
+  "name": "Zulip",
+  "tagline": "Threaded team chat where every message belongs to a named topic, so catching up after a week away is reading, not scrolling.",
+  "repo": "zulip/docker-zulip",
+  "site": "https://zulip.com",
+  "category": "comms-scheduling",
+  "replaces": [
+    {
+      "saas": "twist",
+      "plan": "Unlimited",
+      "seatsAssumed": 10
+    }
+  ],
+  "tierFactors": {
+    "containers": 5,
+    "externalDb": true,
+    "needsSmtp": true,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 5
+  },
+  "resources": {
+    "ramMinMB": 4096,
+    "ramMeasuredMB": null,
+    "diskGB": 20,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 300,
+  "license": "Apache-2.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/zulip/docker-zulip/blob/12.2-0/compose.yaml",
+  "local": {
+    "fit": "caveat",
+    "note": "A team chat server only this computer can open is not a team chat server: nobody you invite can reach http://localhost:8192, and neither can the Zulip app on your own phone."
+  },
+  "quote": {
+    "text": "With organized team chat that is designed for both synchronous and asynchronous communication, everyone can be included in decision-making without being online at the same time.",
+    "source": "Zulip, Why Zulip",
+    "url": "https://zulip.com/why-zulip/",
+    "checkedOn": "2026-08-14"
+  },
+  "citations": [
+    {
+      "claim": "Upstream publishes the 12.x image at ghcr.io/zulip/zulip-server and publishes no floating tags at all; the older zulip/docker-zulip packaging on Docker Hub stops at 11.6-0 and upstream's own versioning page calls it end-of-life.",
+      "url": "https://github.com/zulip/docker-zulip/blob/12.2-0/docs/reference/versioning.md"
+    },
+    {
+      "claim": "The container serves plain HTTP on port 80 when CERTIFICATES is unset and expects a TLS-terminating proxy in front, and it publishes port 25 only for the incoming email gateway.",
+      "url": "https://github.com/zulip/docker-zulip/blob/12.2-0/docs/reference/ports.md"
+    },
+    {
+      "claim": "OPEN_REALM_CREATION is false by default, so the public organization creation page answers with a page headed Organization creation link required, and the link generated on the command line is marked as presuming the email valid, which is why it works before outgoing mail does.",
+      "url": "https://github.com/zulip/zulip/blob/12.2/zerver/views/registration.py"
+    },
+    {
+      "claim": "New organizations are created with invite_required set, so nobody joins an existing organization without an invitation.",
+      "url": "https://github.com/zulip/zulip/blob/12.2/zerver/models/realms.py"
+    },
+    {
+      "claim": "With no EMAIL_HOST configured Zulip loads Django's dummy mail backend, which accepts every message and discards it rather than raising an error.",
+      "url": "https://github.com/zulip/zulip/blob/12.2/zproject/computed_settings.py"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The threading is the product, and it is a habit your team has to adopt. Every message in Zulip belongs to a named topic inside a channel, which is what makes a week away readable instead of a scroll, and it is also what makes the first fortnight feel like extra work. That model is the reason this page names Zulip rather than a Slack-shaped clone: Twist sells the same shape, so the swap is a like-for-like one, and a team that will not adopt topics should be reading the Mattermost page instead.",
+    "Apache-2.0 all the way down, with nothing held back. There is no community edition here: the server you run is the whole product, including search, unlimited history, guests, exports and the desktop and mobile apps. What Zulip sells self-hosters is support plans and the mobile push notification service, which is free without limit for open-source projects, research groups and small non-profits and free for up to ten users otherwise. Skip it and push notifications on phones are the one thing you do not get.",
+    "This is five containers, and that is the honest reason it sits in the ongoing-ops band. The application server, PostgreSQL, memcached, RabbitMQ and Redis all have to be up for the site to answer, and on any given morning one of them will be the unhappy one. The compensation is that Zulip publishes a /health endpoint that touches all four dependencies, so you get a single yes or no rather than four guesses.",
+    "Mail is not a nicety here. Invitations, password resets and the missed-message notifications that make async chat work all go out over SMTP, and with no relay configured Zulip does not fail loudly: it loads a backend that accepts each message and drops it. This install asks for relay credentials before it starts anything and sends a test message before it calls itself done.",
+    "Two things to back up and both matter. The PostgreSQL dump is every message and account, and the data volume holds every file anyone uploaded plus the generated secrets file. Restore the dump beside a fresh secrets file and you get a server that does not recognise its own sessions or its own queue workers."
+  ],
+  "sources": {
+    "compose": "https://zulip.readthedocs.io/projects/docker/en/latest/how-to/compose-getting-started.html",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://zulip.readthedocs.io/projects/docker/en/latest/reference/environment-vars.html",
+    "proxy": "https://zulip.readthedocs.io/projects/docker/en/latest/how-to/compose-ssl.html",
+    "entrypoint": "https://github.com/zulip/docker-zulip/blob/12.2-0/entrypoint.sh",
+    "image": "https://github.com/zulip/docker-zulip/blob/12.2-0/Dockerfile",
+    "health": "https://github.com/zulip/zulip/blob/12.2/zerver/views/health.py",
+    "registration": "https://github.com/zulip/zulip/blob/12.2/zerver/views/registration.py",
+    "backups": "https://zulip.readthedocs.io/projects/docker/en/latest/how-to/compose-backups.html",
+    "versioning": "https://github.com/zulip/docker-zulip/blob/12.2-0/docs/reference/versioning.md",
+    "requirements": "https://zulip.readthedocs.io/en/stable/production/requirements.html",
+    "license": "https://github.com/zulip/zulip/blob/12.2/LICENSE",
+    "plans": "https://zulip.com/plans/",
+    "registry": "https://github.com/zulip/docker-zulip/releases"
+  },
+  "related": [
+    "mattermost",
+    "jitsi"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-14",
+  "contentHash": "59ed6a9dfe657056628756de2f81867d3765b4cd98cd70afc1178da992b6fb16"
+}

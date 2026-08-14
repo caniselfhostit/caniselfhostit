@@ -1,0 +1,56 @@
+{
+  "slug": "ticktick",
+  "name": "TickTick",
+  "domain": "ticktick.com",
+  "whyPeoplePay": "TickTick sells the feeling that nothing is being dropped. A task goes in from a phone, a browser tab, a widget or a voice note, and it comes back out on every other device with a reminder attached, and that reflex is what people renew for. Premium then charges for the views that make a long list usable: the calendar, custom filters, higher folder and list ceilings, and the history that shows what changed.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Free. The upgrade page does not print the free tier's ceilings; it lists what Premium unlocks, which is the calendar views, the Filter feature, higher folder, list, task and checklist ceilings, task and list history, checklist-item reminders, calendar widgets, estimated Pomo, premium themes and white noises, and the Android Quick Ball."
+    },
+    {
+      "name": "Premium",
+      "priceMonthly": 3,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "Sold by the year. On 2026-08-14 the upgrade page read 'Limited-Time Offer: Annual plan for US$ 49.99 US$ 35.99 (28% off)', so US$35.99 for the year at the offer price and US$49.99 at list. The monthly figure recorded here is the offer price divided by twelve; at list price it works out to US$4.17 a month. No monthly billing option appears on that page."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-14",
+    "source": "https://ticktick.com/about/upgrade",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "Read live from TickTick's own upgrade page on 2026-08-14; both figures are in the served HTML, on one line: 'Limited-Time Offer: Annual plan for US$ 49.99 US$ 35.99 (28% off)'. Confidence is medium rather than high because the amount recorded is a promotional price shown against a struck-through list price, which is what a buyer pays today rather than a durable rate, and because that page shows no monthly billing option, no team or business tier and no regional variation. App Store and Play Store purchases may differ again."
+  },
+  "ranked": [
+    {
+      "project": "super-productivity",
+      "rationale": "The closest match to what a TickTick subscriber actually does all day: a personal list with timeboxing, a Pomodoro timer and per-task time tracking, MIT licensed, served from one container. The trade is worth understanding before you install rather than after. The web build is local-first in the strictest sense, so your tasks live in the browser profile you opened it in and not on the server you set up. That makes the install short and the backup a file you export yourself, and it makes cross-device sync the part you have to build. Reminders only reach you while a tab is open."
+    },
+    {
+      "project": "vikunja",
+      "rationale": "The one to pick if what you want back is a list with a server behind it: one container, an embedded database, real accounts, and the same tasks on every device without any browser trickery. It keeps the top spot on this catalogue's Todoist page, and it sits second here because TickTick's daily loop is a timer and a calendar as much as a list, and Vikunja has no Pomodoro timer and puts time tracking behind a paid key. Reminders still need a mail server or a webhook before anything chases you."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Nextcloud Tasks",
+      "repo": "https://github.com/nextcloud/tasks",
+      "note": "AGPL-3.0 and actively developed, with v0.18.1 tagged on 2026-06-29. It is the honest answer for the TickTick habit that is hardest to replace, which is one list that is the same on the phone and the laptop: it stores tasks as CalDAV VTODOs, so any CalDAV client on any device is a real client. It is an app inside Nextcloud rather than a thing you install on its own, and it has no timer, no time tracking and no timeboxing."
+    },
+    {
+      "name": "Donetick",
+      "repo": "https://github.com/donetick/donetick",
+      "note": "AGPL-3.0, committed to as recently as 2026-08-14, and built around recurring chores and whose turn it is rather than around one person's inbox. Still on 0.x version numbers, with v0.1.76 tagged on 2026-07-26, which is fine for a household board and early for the list your working week depends on."
+    },
+    {
+      "name": "Focalboard",
+      "repo": "https://github.com/mattermost-community/focalboard",
+      "note": "Now living under the mattermost-community organisation rather than the mattermost one, with the newest tagged release v8.0.0 from June 2024 and no SPDX licence identifier that GitHub recognises for the tree. It is also a Trello-shaped board rather than a personal task list with a timer, so it answers a different question than TickTick does."
+    }
+  ]
+}

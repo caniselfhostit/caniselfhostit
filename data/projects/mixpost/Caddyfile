@@ -1,0 +1,27 @@
+# Mixpost Lite · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://docs.mixpost.app/lite/installation/docker and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. It is also
+# MIXPOST_DOMAIN in .env and the host inside every OAuth callback URL you
+# register at X and at Meta.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		# Not no-referrer: connecting an account bounces out to a provider.
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# 8197 is the loopback port compose publishes here, not a container port,
+	# and not open in the firewall. Caddy sets X-Forwarded-Proto on the way
+	# through, and trustedproxy.php is what tells the app to believe it.
+	reverse_proxy 127.0.0.1:8197
+}

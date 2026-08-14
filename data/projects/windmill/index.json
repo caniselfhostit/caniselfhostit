@@ -1,0 +1,98 @@
+{
+  "slug": "windmill",
+  "name": "Windmill",
+  "tagline": "Turn scripts in Python, TypeScript, Go, Bash or SQL into scheduled jobs, webhooks and flows, on a box with no task meter.",
+  "repo": "windmill-labs/windmill",
+  "site": "https://windmill.dev",
+  "category": "automation-dev",
+  "replaces": [
+    {
+      "saas": "workato",
+      "plan": "Standard",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 3,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 4096,
+    "ramMeasuredMB": null,
+    "diskGB": 30,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 120,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/windmill-labs/windmill/blob/v1.789.0/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "Webhook triggers need a URL an outside service can reach, and on this path every URL Windmill prints begins with http://localhost:8193, so what you get is the scripts, flows and schedules half of the tool, running only while this computer is awake."
+  },
+  "quote": {
+    "text": "available in the docker images hosted under ghcr.io/windmill-labs/windmill and the github binary releases contains the files under the AGPLv3 and Apache 2 sources but also includes proprietary and non-public code and features which are not open source",
+    "source": "Windmill LICENSE, at tag v1.789.0",
+    "url": "https://github.com/windmill-labs/windmill/blob/v1.789.0/LICENSE",
+    "checkedOn": "2026-08-14"
+  },
+  "citations": [
+    {
+      "claim": "The repository LICENSE places backend/ and frontend/ under AGPLv3 and the language clients and OpenAPI files under Apache 2.0, and states that the Community Edition docker image also contains proprietary, non-public code that may be redistributed as is but not sold, resold, run as a managed service, modified or wrapped without an agreement.",
+      "url": "https://github.com/windmill-labs/windmill/blob/v1.789.0/LICENSE"
+    },
+    {
+      "claim": "The public image at ghcr.io/windmill-labs/windmill is built with the build argument features=ce after code from the private windmill-ee-private repository is copied into the tree, which is what puts non-public code in the Community Edition image.",
+      "url": "https://github.com/windmill-labs/windmill/blob/v1.789.0/.github/workflows/docker-image.yml"
+    },
+    {
+      "claim": "In backend/Cargo.toml the ce feature resolves through ce_rpi and ce_core to the private feature, while the fully open-source oss feature resolves to no_auth, the flag that makes every request arrive as the admin superadmin.",
+      "url": "https://github.com/windmill-labs/windmill/blob/v1.789.0/backend/Cargo.toml"
+    },
+    {
+      "claim": "Upstream's README tells a new self-hoster to open the instance and sign in with the default credentials admin@windmill.dev and changeme.",
+      "url": "https://github.com/windmill-labs/windmill/blob/v1.789.0/README.md"
+    },
+    {
+      "claim": "Upstream states that job isolation is disabled by default, that both NSJAIL and PID namespace isolation must be configured by hand, and that without isolation scripts can reach sensitive data in the worker process memory and environment variables.",
+      "url": "https://www.windmill.dev/docs/advanced/security_isolation"
+    },
+    {
+      "claim": "Workspace creation in a build without the enterprise feature stops at two workspaces outside the built-in admins workspace, and at one archived workspace, enforced in the community build's own code.",
+      "url": "https://github.com/windmill-labs/windmill/blob/v1.789.0/backend/windmill-api-workspaces/src/workspaces.rs"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "The repository is AGPLv3 with Apache-2.0 clients, and the image you install is not that binary. Upstream's own LICENSE says the Community Edition published at ghcr.io/windmill-labs/windmill carries the AGPL and Apache sources plus proprietary, non-public code: free to use, redistributable as is, but not to sell, resell, run as a managed service, modify or wrap without an agreement. The build flags agree, since the CE image compiles with features=ce and ce pulls in the private feature. Running it for your own work is squarely inside the grant. Selling it is not, and neither is shipping a patched fork.",
+    "Job isolation is off by default and this install leaves it off, which is the image default. Upstream's security page states the consequence: without isolation a script can read the worker process memory and its environment variables, and that environment holds DATABASE_URL, which is every secret in every workspace. The scripts you write and the hub scripts you paste are the security boundary. The prompt names the upgrade path, with the capabilities it needs.",
+    "You own a PostgreSQL and it is the entire product. Every script, flow, app, schedule, run and each workspace's own encryption key lives in it, so one dump is the whole restore and there is no separate key to lose alongside it. The two Windmill containers hold language caches and spilled logs; losing those costs a slow first job, not your work.",
+    "The free edition has counted limits, not only missing features. Creating workspaces stops at two outside the built-in admins workspace, and at one archived workspace, enforced in the community build itself. Full-text job and log search, multiplayer editing in the browser, SAML, audit logs, autoscaling and Git sync sit behind the paid licence.",
+    "This is not Workato with the price removed. There is no maintained catalogue of a thousand vendor connectors and nobody has registered an OAuth client on your behalf. You write the step in Python, TypeScript, Go, Bash or SQL, or you take one from the public hub and read it before you run it, and every app you connect is a developer registration you make yourself."
+  ],
+  "sources": {
+    "compose": "https://github.com/windmill-labs/windmill/blob/v1.789.0/docker-compose.yml",
+    "caddy": "https://github.com/windmill-labs/windmill/blob/v1.789.0/Caddyfile",
+    "install": "https://github.com/windmill-labs/windmill/blob/v1.789.0/README.md",
+    "license": "https://github.com/windmill-labs/windmill/blob/v1.789.0/LICENSE",
+    "build": "https://github.com/windmill-labs/windmill/blob/v1.789.0/.github/workflows/docker-image.yml",
+    "features": "https://github.com/windmill-labs/windmill/blob/v1.789.0/backend/Cargo.toml",
+    "isolation": "https://www.windmill.dev/docs/advanced/security_isolation",
+    "api": "https://github.com/windmill-labs/windmill/blob/v1.789.0/backend/windmill-api/openapi.yaml",
+    "workertags": "https://github.com/windmill-labs/windmill/blob/v1.789.0/backend/windmill-common/src/worker.rs",
+    "tls": "https://caddyserver.com/docs/automatic-https"
+  },
+  "related": [
+    "activepieces",
+    "automatisch",
+    "appsmith"
+  ],
+  "pagePriority": 2,
+  "contentUpdatedAt": "2026-08-14",
+  "contentHash": "e2dd7ea8a6305568f03dd88b9eab239a5e8c930d4906554772e976c21f9cd14c"
+}

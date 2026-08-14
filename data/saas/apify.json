@@ -1,0 +1,73 @@
+{
+  "slug": "apify",
+  "name": "Apify",
+  "domain": "apify.com",
+  "whyPeoplePay": "Apify sells the whole scraping factory on someone else's hardware: a store of ready-made Actors, a scheduler, dataset storage, and a residential proxy pool that keeps you looking like a person instead of a datacenter. You pay a monthly plan that prepays a pot of platform usage, and the meter runs against it.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "usage",
+      "seatsIncluded": 1,
+      "note": "$5 of prepaid platform usage, $0.2 per compute unit, 16 GB max Actor RAM, 25 concurrent runs, 5 datacenter proxy IPs. The page states no credit card is required, and that access is blocked until the next cycle once the allowance runs out."
+    },
+    {
+      "name": "Starter",
+      "priceMonthly": 29,
+      "unit": "usage",
+      "seatsIncluded": 1,
+      "note": "$29/month, which is $29 of prepaid platform usage plus pay as you go above it. $0.2 per compute unit, where a compute unit is 1 GB of RAM per hour. Residential proxies are $8/GB on top."
+    },
+    {
+      "name": "Scale",
+      "priceMonthly": 199,
+      "unit": "usage",
+      "seatsIncluded": 1,
+      "note": "$199/month of prepaid usage at $0.16 per compute unit, 128 concurrent runs, 200 datacenter proxy IPs included then $0.8 per IP."
+    },
+    {
+      "name": "Business",
+      "priceMonthly": 999,
+      "unit": "usage",
+      "seatsIncluded": 1,
+      "note": "$999/month of prepaid usage at $0.13 per compute unit, 256 concurrent runs, residential proxies at $7/GB."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": 1,
+      "note": "Quote only. The page lists custom scraping solutions, scalable pricing, SLAs and a dedicated team, with no number attached."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-14",
+    "source": "https://apify.com/pricing",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The plan prices were read from the served HTML on 2026-08-14 and are real, but they are a floor rather than a bill. Each plan prepays that same dollar amount of platform usage, metered in compute units (1 GB of RAM per hour), and the page states that excess usage is added to the next invoice and that unused credit is not rolled over. Proxies bill separately, from $7 to $8 per GB residential. Two things could not be read: the annual figures, which the page computes in the browser when you flip its 'Bill annually' toggle and which appear nowhere in the markup beyond the stated 10 percent discount, and any data-retention limit, which the comparison table does not carry. There are no per-seat prices on the page today; the words seat and per user do not appear on it at all."
+  },
+  "ranked": [
+    {
+      "project": "crawl4ai",
+      "rationale": "One container that turns a URL into LLM-ready markdown or structured JSON over an HTTP API you hold the token for. It answers the crawl-and-extract slice of Apify on hardware you own, with no per-compute-unit meter behind it. It does not answer the rest: there is no Actor store, no scheduler, no dataset service, and no proxy pool, so sites that block datacenter IP ranges will block your VPS too."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Firecrawl",
+      "repo": "https://github.com/firecrawl/firecrawl",
+      "note": "The closest rival on capability and by far the most popular: AGPL-3.0, 167k stars, pushed the day this was checked, and its hosted API is excellent. It is not ranked here for one mechanical reason: the self-hosted stack cannot be pinned. The API image publishes 239 semver tags at ghcr.io/firecrawl/firecrawl, but the two companion services Firecrawl itself publishes do not: ghcr.io/firecrawl/playwright-service carries five tags and ghcr.io/firecrawl/nuq-postgres carries three, all of them latest-class or per-architecture build caches, with no version identity between them (checked at the registry on 2026-08-14). The repository compose builds those two from source instead, and its own SELF_HOST.md warns that a checkout of main and floating image tags can change independently. This catalogue will not publish an install whose stack cannot be reproduced from a digest. Two further facts from their own self-host docs, quoted: the quickstart 'disables API authentication and is not a production architecture', and 'the root Compose file defines no persistent volumes' for PostgreSQL, Redis or RabbitMQ. Screenshots, page actions and the stronger scrape engine live in a separate closed service. Worth re-checking when the companion images start carrying version tags. Note the org rename: mendableai/firecrawl now resolves to firecrawl/firecrawl."
+    },
+    {
+      "name": "SingleFile CLI",
+      "repo": "https://github.com/gildas-lormeau/single-file-cli",
+      "note": "A different shape, and useful to know about: SingleFile drives a headless Chrome to flatten one page into a single self-contained HTML file with its assets inlined. AGPL-3.0, active (pushed 2026-08-06), 1.5k stars on the CLI and 22k on the browser extension. It is an archiver, not a crawl API: no link following, no markdown or structured output, no server mode. It also fails the pinnability gate, and worse than Firecrawl does. The release workflow hardcodes a single latest-class tag with no version in it, and the Docker Hub repository it publishes to last carried a version tag in 2023, so every release since has overwritten the same floating tag. Reach for it when you want the page exactly as it looked, not when you want the text an LLM can read."
+    },
+    {
+      "name": "Scrapy",
+      "repo": "https://github.com/scrapy/scrapy",
+      "note": "The long-standing answer if you are building a crawler rather than calling one: BSD-3-Clause, 63k stars, pushed the day this was checked, and the framework most of the Python scraping world was written against. It is a library, not a service. You write spider classes and item pipelines and run them in your own Python process; there is no HTTP API to call and no markdown output. There is also no official image to pin: the scrapy namespace on Docker Hub is empty and the repository ships no Dockerfile, so any container would be one a stranger built. Scrapyd (scrapy/scrapyd, BSD-3-Clause, active) puts a scheduling daemon in front of spiders you have already written, and has no official image either. Crawl4AI takes the top spot for shape, not for pedigree: it is the one that installs as a service you can curl."
+    }
+  ]
+}

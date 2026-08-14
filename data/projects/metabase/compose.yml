@@ -1,0 +1,61 @@
+# Metabase · the deterministic fallback. Authored by caniselfhostit from the
+# upstream docs and source at the pinned tag:
+#   docker + app db .... https://github.com/metabase/metabase/blob/v0.63.2/docs/installation-and-operation/running-metabase-on-docker.md
+#   variables .......... https://github.com/metabase/metabase/blob/v0.63.2/docs/configuring-metabase/environment-variables.md
+#
+# Two services: Metabase, and the PostgreSQL holding its own data, the
+# accounts, questions, dashboards and encrypted connection details. What you
+# analyse stays in the databases you connect later, read over the network.
+#
+# Digests read from Docker Hub on 2026-08-14; both publish amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: postgres:18.6-alpine@sha256:432b3b824c0769275ec9b0947736ef8b376d6997bcaa9de29818f613819c2feb
+    container_name: metabase-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: metabase
+      POSTGRES_USER: metabase
+      POSTGRES_PASSWORD: ${MB_DB_PASS}
+    volumes:
+      # The 18 image puts the cluster one level down, so mount the parent.
+      - /srv/metabase/postgres:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U metabase -d metabase"]
+      interval: 10s
+      retries: 12
+    # No `ports:` at all: 5432 is reachable only from the other container.
+
+  metabase:
+    image: metabase/metabase:v0.63.2@sha256:252f8c9bd56dd21158005675b55876cf9fb838e0a0e0541581af859eafe1f32e
+    container_name: metabase
+    restart: unless-stopped
+    # MB_SITE_URL, MB_DB_PASS and MB_ENCRYPTION_SECRET_KEY live here, mode 600.
+    env_file: /srv/metabase/.env
+    environment:
+      # Without this the image writes an H2 file no mount here catches.
+      MB_DB_TYPE: postgres
+      MB_DB_HOST: postgres
+      MB_DB_PORT: "5432"
+      MB_DB_DBNAME: metabase
+      MB_DB_USER: metabase
+      # Default is true; an env var outranks what the wizard writes.
+      MB_ANON_TRACKING_ENABLED: "false"
+      # Every report and every scheduled hour is read in this zone.
+      JAVA_TIMEZONE: UTC
+    healthcheck:
+      # Upstream's own: 503 with a progress number while migrations run.
+      test: ["CMD-SHELL", "curl -fsS -o /dev/null http://localhost:3000/api/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 120s
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8210.
+      - "127.0.0.1:8210:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy

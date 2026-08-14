@@ -1,0 +1,28 @@
+# Zulip · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://zulip.readthedocs.io/projects/docker/en/latest/how-to/compose-ssl.html and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile with <DOMAIN> replaced by the hostname
+# pointed at this box. That hostname is also SETTING_EXTERNAL_HOST in
+# compose.yml, and every invitation link is built from it.
+
+<DOMAIN> {
+	# Zulip sends its own CSP and X-Frame-Options; setting either here
+	# would overwrite the application's answer.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	encode zstd gzip
+
+	# 8192 is the loopback port compose publishes here: not a container
+	# port, not open in the firewall. Caddy adds X-Forwarded-For and
+	# X-Forwarded-Proto itself, which is what TRUST_GATEWAY_IP tells Zulip
+	# to believe, and it carries the long poll at /json/events unaided.
+	reverse_proxy 127.0.0.1:8192
+}

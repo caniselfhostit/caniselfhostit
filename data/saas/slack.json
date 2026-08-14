@@ -50,7 +50,7 @@
     {
       "name": "Zulip",
       "repo": "https://github.com/zulip/zulip",
-      "note": "Apache-2.0, actively developed, and the honest reason it is not first here is that it is not a Slack clone. Every message belongs to a named topic inside a channel, which is a better model for catching up after a week away and a worse one for a team that will not adopt a new habit on day one. Pick it deliberately, not as a substitute."
+      "note": "Apache-2.0, actively developed, and not a Slack clone. Every message belongs to a named topic inside a channel, which is a better model for catching up after a week away and a worse one for a team that will not adopt a new habit on day one. Pick it deliberately, not as a substitute. The licence holds nothing back either: search, history, guests and exports are all in the Apache-2.0 code, and the only thing behind a paid plan is the mobile push notification service above ten users. It has since earned its own page in this catalog as the Twist answer, where its install is written up in full, five containers and a mail relay included. On this page Mattermost keeps the top spot because channels, threads and search behave the way a Slack team already expects, so nobody has to learn a new way of writing on the first day."
     },
     {
       "name": "Rocket.Chat",

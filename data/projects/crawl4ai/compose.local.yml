@@ -1,0 +1,48 @@
+# Crawl4AI · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a repository:
+#   docker guide ........ https://github.com/unclecode/crawl4ai/blob/v0.9.2/deploy/docker/README.md
+#   server config ....... https://github.com/unclecode/crawl4ai/blob/v0.9.2/deploy/docker/config.yml
+#   bind and auth ....... https://github.com/unclecode/crawl4ai/blob/v0.9.2/deploy/docker/entrypoint.sh
+#   license ............. https://github.com/unclecode/crawl4ai/blob/v0.9.2/LICENSE
+#
+# One container on the computer you are sitting at. The image bakes Chromium in
+# through Playwright and runs its own Redis on container loopback, so there is
+# no second service and no database. CRAWL4AI_API_TOKEN comes from ./.env and is
+# not optional: entrypoint.sh binds gunicorn to container loopback when no
+# credential is set, and the published port would then reach nothing at all.
+# GUNICORN_BIND is written out so the bind does not depend on IPv6 existing
+# inside the container. Tag and digest are the 0.9.2 release read from Docker
+# Hub on 2026-08-14; the manifest list carries linux/amd64 and linux/arm64.
+#
+# Nothing is mounted on purpose: the crawl cache, the artifact store and the
+# Redis working directory live inside the container and are meant to be thrown
+# away, and a home-directory bind mount would land on a uid the image does not
+# run as anyway.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  crawl4ai:
+    image: unclecode/crawl4ai:0.9.2@sha256:bd36741e7bdd35ddc1a05d9183e1d6d8cefb61dd640d944a25d026b76e917690
+    container_name: crawl4ai
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      # entrypoint.sh honours GUNICORN_BIND only when a credential is present.
+      GUNICORN_BIND: "0.0.0.0:11235"
+    # Chromium wants shared memory. Without this it dies on heavy pages.
+    shm_size: "1gb"
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 512
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11235/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    ports:
+      # Loopback only: no other device on the wifi can reach 8198.
+      - "127.0.0.1:8198:11235"

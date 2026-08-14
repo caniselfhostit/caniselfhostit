@@ -1,0 +1,27 @@
+# OTOBO · the Caddy site block for this service. Authored by caniselfhostit
+# from https://github.com/RotherOSS/otobo/blob/rel-11_0_17/bin/psgi-bin/otobo.psgi
+# and https://caddyserver.com/docs/automatic-https. Append it to
+# /etc/caddy/Caddyfile with <DOMAIN> replaced by the hostname pointed here.
+# Upstream terminates TLS in a sixth Nginx container; this uses the Caddy
+# already on the box instead.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# 8202 is the loopback port compose publishes here, not open in the
+	# firewall. OTOBO's PSGI app enables its reverse-proxy middleware only
+	# when X-Forwarded-Host arrives; that middleware reads X-Forwarded-Proto
+	# for the https the session cookie is built from.
+	reverse_proxy 127.0.0.1:8202 {
+		header_up X-Forwarded-Host {host}
+		header_up X-Forwarded-Proto {scheme}
+	}
+}

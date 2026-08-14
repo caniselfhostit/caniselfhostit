@@ -1,0 +1,25 @@
+# Lychee · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://lycheeorg.dev/docs/getting-started/docker/ and
+# https://caddyserver.com/docs/caddyfile/directives/reverse_proxy
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed,
+# with <DOMAIN> replaced by the hostname pointed at this box. That hostname is
+# also APP_URL in .env, and every album link Lychee prints is built from it.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	# Lychee sends X-Content-Type-Options and Referrer-Policy itself. This
+	# block adds only what belongs to whatever terminates TLS: HSTS, which
+	# Lychee leaves off because it cannot know it is behind a certificate.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+	}
+
+	# 8195 is the loopback port compose publishes here, not a container port
+	# and not open in the firewall.
+	reverse_proxy 127.0.0.1:8195
+}

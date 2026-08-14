@@ -55,7 +55,7 @@
     {
       "name": "Windmill",
       "repo": "https://github.com/windmill-labs/windmill",
-      "note": "AGPL-3.0 and Apache-2.0 with a proprietary enterprise tier, released almost daily, and fast. It is a different product though: scripts in Python, TypeScript, Go or Bash turned into workflows and internal UIs, aimed at somebody who would rather write the integration than click it. A person leaving Zapier for the visual builder will not find it here."
+      "note": "AGPL-3.0 and Apache-2.0 sources with proprietary code mixed into the image you actually install: upstream's own LICENSE says the Community Edition contains non-public proprietary code alongside the open parts, free to run but not to resell or wrap. Released almost daily, and fast. It is a different product though: scripts in Python, TypeScript, Go, Bash or SQL turned into workflows and internal UIs, aimed at somebody who would rather write the integration than click it. A person leaving Zapier for the visual builder will not find it here. It has since earned its own page in this catalog as the Workato answer, where its install is written up in full and the licence mix, the job isolation that ships off and the two-workspace cap on the free licence are all stated. On this page Activepieces keeps the top spot for being the visual builder a Zapier user is replacing, with a prebuilt piece for the service rather than a script to write."
     },
     {
       "name": "Automatisch",

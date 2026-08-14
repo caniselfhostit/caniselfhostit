@@ -1,0 +1,35 @@
+# Crawl4AI · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://github.com/unclecode/crawl4ai/blob/v0.9.2/deploy/docker/README.md and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy that Prompt Zero installed, with
+# <DOMAIN> replaced by the hostname pointed at this box. Caddy runs under systemd
+# on the host. There is no Caddy container anywhere in this project. Auth is the
+# CRAWL4AI_API_TOKEN inside the container, not a browser login form: every API
+# route answers 401 without an Authorization: Bearer header, and the application
+# sets its own security headers, so this block adds only HSTS.
+#
+# Three prefixes stay public because the application serves them publicly:
+# /playground, /dashboard and /static are static shells holding no data that
+# cannot call the API without the token. /health is public because the
+# container's healthcheck calls it. To stop serving the shells, add these two
+# lines inside the site block, above reverse_proxy:
+#
+#	@ui path / /playground* /dashboard* /static*
+#	respond @ui 404
+
+<DOMAIN> {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+	}
+
+	# 8198 is the loopback port compose publishes; it is never in the firewall.
+	# A slow crawl holds the connection open for a minute. Caddy sets no read
+	# timeout on a reverse-proxied response by default, so that is fine.
+	reverse_proxy 127.0.0.1:8198
+}

@@ -1,0 +1,74 @@
+# Ghostfolio · the deterministic fallback. Authored by caniselfhostit from
+# upstream's own packaging at the pinned tag, read rather than copied:
+#   compose file ... https://github.com/ghostfolio/ghostfolio/blob/3.50.0/docker/docker-compose.yml
+#   variables ...... https://github.com/ghostfolio/ghostfolio/blob/3.50.0/README.md
+#
+# Ghostfolio, the PostgreSQL holding every account and cached price, and the
+# Redis it caches and queues in. Upstream ships floating tags on 3333; this
+# pins every image by digest and publishes 8196 on loopback, with 5432 and
+# 6379 published nowhere. Digests read 2026-08-14, amd64+arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  postgres:
+    image: postgres:15.19-alpine@sha256:5d23207f297fbb632e375dd80b4631282086d18f537d5e981dd0058501963a43
+    container_name: ghostfolio-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ghostfolio
+      POSTGRES_USER: ghostfolio
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - /srv/ghostfolio/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ghostfolio -d ghostfolio"]
+      interval: 10s
+      retries: 12
+
+  redis:
+    image: redis:8.10.0-alpine@sha256:978f0e01593e65eed801f2402944efcd936d43b5027e4908a7897baf88ed6241
+    container_name: ghostfolio-redis
+    restart: unless-stopped
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    # Upstream's own command and probe; $$ passes a literal $ to the shell.
+    command:
+      - /bin/sh
+      - -c
+      - redis-server --requirepass "$$REDIS_PASSWORD"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - redis-cli --pass "$$REDIS_PASSWORD" ping | grep -q PONG
+      interval: 10s
+      retries: 12
+
+  ghostfolio:
+    image: ghostfolio/ghostfolio:3.50.0@sha256:9b8cab0eddcaecdfe1611a218f09567d39a660677b612e12837d2084d97e21a4
+    container_name: ghostfolio
+    restart: unless-stopped
+    init: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    env_file: /srv/ghostfolio/.env
+    environment:
+      DATABASE_URL: postgresql://ghostfolio:${POSTGRES_PASSWORD}@postgres:5432/ghostfolio?connect_timeout=300
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      # Express reads the client address from the header Caddy sets.
+      TRUST_PROXY: "1"
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8196.
+      - "127.0.0.1:8196:3333"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3333/api/v1/health"]
+      interval: 10s
+      retries: 30
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy

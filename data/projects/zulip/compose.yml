@@ -1,0 +1,117 @@
+# Zulip · the deterministic fallback. Authored by caniselfhostit from the
+# upstream documentation, not copied from a repository:
+#   variables ... https://zulip.readthedocs.io/projects/docker/en/latest/reference/environment-vars.html
+#   entrypoint .. https://github.com/zulip/docker-zulip/blob/12.2-0/entrypoint.sh
+#
+# Five services, which is what Zulip is. Upstream's compose.yaml runs the
+# same five and publishes 25, 80 and 443; this publishes one loopback port
+# and never 25. Secrets ride SECRETS_* variables, which entrypoint.sh copies
+# into zulip-secrets.conf. The dependency images are pinned where upstream
+# floats memcached:alpine, rabbitmq:4.2 and redis:alpine, each to what those
+# resolved to when digests were read on 2026-08-14, all amd64+arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  database:
+    image: zulip/zulip-postgresql:14@sha256:e71ba8616fa42cdc1b248f51263d9290c29681cb8c1992eb9b498af0bb656b29
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: zulip
+      POSTGRES_USER: zulip
+      POSTGRES_PASSWORD: ${ZULIP_POSTGRES_PASSWORD}
+    volumes:
+      - /srv/zulip/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U zulip -d zulip"]
+      interval: 10s
+      retries: 12
+
+  memcached:
+    image: memcached:1.6.45-alpine@sha256:c29847751abb41f4c268c84fb3087fee05d4edcbda44409ccb5086e26148e8a7
+    restart: unless-stopped
+    # SASL: Zulip authenticates as zulip@localhost, as upstream sets up.
+    command:
+      - "sh"
+      - "-euc"
+      - |
+        echo 'mech_list: plain' > /home/memcache/memcached.conf
+        echo "zulip@$$HOSTNAME:$$MEMCACHED_PASSWORD" > "$$MEMCACHED_SASL_PWDB"
+        echo "zulip@localhost:$$MEMCACHED_PASSWORD" >> "$$MEMCACHED_SASL_PWDB"
+        exec memcached -S
+    environment:
+      SASL_CONF_PATH: /home/memcache/memcached.conf
+      MEMCACHED_SASL_PWDB: ${MEMCACHED_SASL_DB}
+      MEMCACHED_PASSWORD: ${ZULIP_MEMCACHED_PASSWORD}
+
+  rabbitmq:
+    image: rabbitmq:4.2.9@sha256:0104af7ef0d2bfff20b1e84a7177320d9b990531624d6b63f9dcf82d6de3b61b
+    hostname: rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: zulip
+      RABBITMQ_DEFAULT_PASS: ${ZULIP_RABBITMQ_PASSWORD}
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+
+  redis:
+    image: redis:8.10.0-alpine@sha256:978f0e01593e65eed801f2402944efcd936d43b5027e4908a7897baf88ed6241
+    restart: unless-stopped
+    command:
+      - "sh"
+      - "-euc"
+      - 'exec /usr/local/bin/docker-entrypoint.sh redis-server --requirepass "$$REDIS_PASSWORD"'
+    environment:
+      REDIS_PASSWORD: ${ZULIP_REDIS_PASSWORD}
+    volumes:
+      - redis:/data
+
+  zulip:
+    image: ghcr.io/zulip/zulip-server:12.2-0@sha256:765f0ab3caa49041989132ee1879d98dbab1df7695c27e713eac1f114d167755
+    container_name: zulip
+    restart: unless-stopped
+    environment:
+      # CERTIFICATES absent means plain HTTP on 80, behind a proxy.
+      TRUST_GATEWAY_IP: "True"
+      SETTING_EXTERNAL_HOST: ${DOMAIN}
+      SETTING_ZULIP_ADMINISTRATOR: ${ZULIP_ADMIN_EMAIL}
+      SETTING_REMOTE_POSTGRES_HOST: database
+      SETTING_MEMCACHED_LOCATION: memcached:11211
+      SETTING_RABBITMQ_HOST: rabbitmq
+      SETTING_REDIS_HOST: redis
+      SETTING_EMAIL_HOST: ${ZULIP_EMAIL_HOST}
+      SETTING_EMAIL_HOST_USER: ${ZULIP_EMAIL_USER}
+      SETTING_EMAIL_PORT: ${ZULIP_EMAIL_PORT}
+      SETTING_EMAIL_USE_TLS: ${ZULIP_EMAIL_USE_TLS}
+      SETTING_EMAIL_USE_SSL: ${ZULIP_EMAIL_USE_SSL}
+      ZULIP_AUTH_BACKENDS: EmailAuthBackend
+      # Upstream's small-deploy override; the default costs a gigabyte more.
+      CONFIG_application_server__queue_workers_multiprocess: "False"
+      SECRETS_postgres_password: ${ZULIP_POSTGRES_PASSWORD}
+      SECRETS_memcached_password: ${ZULIP_MEMCACHED_PASSWORD}
+      SECRETS_rabbitmq_password: ${ZULIP_RABBITMQ_PASSWORD}
+      SECRETS_redis_password: ${ZULIP_REDIS_PASSWORD}
+      SECRETS_secret_key: ${ZULIP_SECRET_KEY}
+      SECRETS_email_password: ${ZULIP_EMAIL_PASSWORD}
+    volumes:
+      - /srv/zulip/data:/data
+    ulimits:
+      nofile:
+        soft: 1000000
+        hard: 1048576
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8192.
+      - "127.0.0.1:8192:80"
+    depends_on:
+      database:
+        condition: service_healthy
+      memcached:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+      redis:
+        condition: service_started
+
+volumes:
+  rabbitmq:
+  redis:

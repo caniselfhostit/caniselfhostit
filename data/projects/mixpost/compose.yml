@@ -1,0 +1,83 @@
+# Mixpost Lite · the deterministic fallback. Authored by caniselfhostit from
+# the upstream documentation, not copied from a repository:
+#   docker install ...... https://docs.mixpost.app/lite/installation/docker
+#   variable reference .. https://docs.mixpost.app/lite/configuration/environment-variables
+#   troubleshooting ..... https://docs.mixpost.app/troubleshooting
+#
+# Three services. The Mixpost image is one Ubuntu container running nginx,
+# PHP-FPM, the Horizon queue worker and cron under supervisord; MySQL holds the
+# posts, accounts and encrypted provider credentials; Redis is what Horizon
+# queues on. Upstream's compose file names mysql/mysql-server, a Docker Hub
+# repository whose newest tag is 8.0.32 from January 2023, so this pins the
+# official mysql image on the 8.4 LTS line, and every image carries a tag and
+# a digest. Digests read 2026-08-14, all amd64 and arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+name: mixpost
+
+services:
+  mysql:
+    image: mysql:8.4.11@sha256:b3b90af2a6552ae30c266fdb7d5dd55f3afb72404bb78d37fe8a23eb857fd3fb
+    restart: unless-stopped
+    environment:
+      # The image will not initialise without a root variable; nothing here
+      # connects as root.
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: mixpost
+      MYSQL_USER: mixpost
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - /srv/mixpost/mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", 'mysqladmin ping -h 127.0.0.1 -u "$$MYSQL_USER" -p"$$MYSQL_PASSWORD" --silent']
+      interval: 10s
+      retries: 18
+    # No `ports:` at all: 3306 is reachable only from the other containers.
+
+  redis:
+    image: redis:8.10.0-alpine@sha256:978f0e01593e65eed801f2402944efcd936d43b5027e4908a7897baf88ed6241
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - /srv/mixpost/redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 12
+
+  mixpost:
+    image: inovector/mixpost:v2.6.0@sha256:90cf94cec73dcaf87989d30b0de7a84b0625ff06797ba61c8ecb54e8fe1e10c4
+    restart: unless-stopped
+    environment:
+      APP_NAME: Mixpost
+      # Every stored provider secret and social token is encrypted with this.
+      APP_KEY: ${APP_KEY}
+      APP_DEBUG: "false"
+      APP_URL: "https://${MIXPOST_DOMAIN}"
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_DATABASE: mixpost
+      DB_USERNAME: mixpost
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      MIXPOST_DISK: public
+    volumes:
+      # The media library, on the "public" disk, then the application log.
+      - /srv/mixpost/storage:/var/www/html/storage/app
+      - /srv/mixpost/logs:/var/www/html/storage/logs
+      # Why this third file exists is written inside it. It has to exist on the
+      # host first, or Docker creates a directory at that path.
+      - /srv/mixpost/trustedproxy.php:/var/www/html/config/trustedproxy.php
+    ports:
+      # Loopback only: the host's Caddy is the only thing that reaches 8197.
+      - "127.0.0.1:8197:80"
+    # If Facebook connections later time out, upstream's troubleshooting page
+    # says Meta refuses the container over IPv6: add a `sysctls:` entry here,
+    # net.ipv6.conf.all.disable_ipv6=1.
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy

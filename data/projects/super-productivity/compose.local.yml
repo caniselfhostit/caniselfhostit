@@ -1,0 +1,34 @@
+# Super Productivity · the deterministic fallback for the local path. Authored
+# by caniselfhostit from the upstream documentation, not copied from a
+# repository:
+#   run with docker .... https://github.com/super-productivity/super-productivity/blob/v18.19.0/docs/wiki/2.13-Run-with-Docker.md
+#   image build ........ https://github.com/super-productivity/super-productivity/blob/v18.19.0/Dockerfile
+#   entrypoint ......... https://github.com/super-productivity/super-productivity/blob/v18.19.0/docker-entrypoint.sh
+#
+# One service on the computer you are sitting at. No volumes and no bind mounts,
+# because there is nothing to mount: the image is nginx serving the built web
+# app as static files, and every task you type is stored by the browser under
+# http://localhost:8199, not by this container. That is also why there is no
+# .env and no environment block. Browsers treat http://localhost as a secure
+# context, so the parts of the app that need WebCrypto keep working without a
+# certificate.
+#
+# Tag v18.19.0 was released 2026-08-07; digest read from registry-1.docker.io on
+# 2026-08-14, an OCI index covering linux/amd64 and linux/arm64.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  super-productivity:
+    image: johannesjo/super-productivity:v18.19.0@sha256:ae91fe9ac19561e0f3669d15a2c4c71d7a75c43a29eb44ddc010ae50d1f63c82
+    container_name: super-productivity
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    ports:
+      # Loopback only: no other device on the wifi can reach 8199.
+      - "127.0.0.1:8199:80"

@@ -1,0 +1,53 @@
+# OrangeHRM Starter · the deterministic fallback for the local path. Authored
+# by caniselfhostit from the upstream packaging, not copied from a repository:
+#   image build ....... https://github.com/orangehrm/orangehrm/blob/v5.9/Dockerfile
+#   supported engines . https://github.com/orangehrm/orangehrm/blob/v5.9/installer/config/system_requirements.php
+#   mariadb image ..... https://hub.docker.com/_/mariadb
+#
+# Two services on the computer you are sitting at, and both mounts are named
+# volumes rather than relative bind mounts: the image declares /var/www/html a
+# VOLUME that Docker has to fill from the image, and MariaDB chowns its own data
+# directory to a uid Docker Desktop cannot grant on a Windows bind mount. So
+# nothing here shows up in Finder or Explorer. Digests read on 2026-08-14.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  mariadb:
+    image: mariadb:11.8.8@sha256:d9f7eb2637296652f24b484afd5d246f759f49f5babcadc6a9e344c9acb75fbf
+    container_name: orangehrm-db
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: orangehrm
+      MARIADB_USER: orangehrm
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_AUTO_UPGRADE: "1"
+    volumes:
+      - orangehrm-db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 15s
+      interval: 10s
+      retries: 30
+    # No `ports:` at all: 3306 is reachable only from the other container.
+
+  orangehrm:
+    image: orangehrm/orangehrm:5.9@sha256:d692780efbb118b1ede754cfb153057baecf4c4c5f84627621ed015cf837ac28
+    platform: linux/amd64
+    container_name: orangehrm
+    restart: unless-stopped
+    volumes:
+      # The application, lib/confs/Conf.php included. Losing it loses the
+      # install, not the data: the data is in MariaDB.
+      - orangehrm-app:/var/www/html
+    ports:
+      # Loopback only: no other device on the wifi can reach 8194.
+      - "127.0.0.1:8194:80"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+volumes:
+  orangehrm-app:
+  orangehrm-db-data:

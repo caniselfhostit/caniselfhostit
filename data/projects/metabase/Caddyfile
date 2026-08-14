@@ -1,0 +1,23 @@
+# Metabase · the Caddy site block for this service.
+#
+# Authored by caniselfhostit from
+# https://github.com/metabase/metabase/blob/v0.63.2/src/metabase/server/middleware/security.clj
+# and https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile with <DOMAIN> replaced by the hostname
+# pointed at this box. That hostname is also MB_SITE_URL in .env, which is
+# where Metabase builds its links from. No security headers here: Metabase
+# already sends HSTS, a CSP with frame-ancestors, X-Frame-Options DENY and
+# nosniff of its own.
+
+<DOMAIN> {
+	encode zstd gzip
+
+	header {
+		-Server
+	}
+
+	# 8210 is the loopback port compose publishes on this host. It is not a
+	# container port and it is not open in the firewall.
+	reverse_proxy 127.0.0.1:8210
+}

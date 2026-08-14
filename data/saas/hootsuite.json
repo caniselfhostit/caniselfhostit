@@ -1,0 +1,65 @@
+{
+  "slug": "hootsuite",
+  "name": "Hootsuite",
+  "domain": "hootsuite.com",
+  "whyPeoplePay": "Hootsuite is a standing relationship with a dozen social platforms, sold by the seat. One login publishes to Instagram, LinkedIn, TikTok and the rest, and when one of those companies deprecates an endpoint, changes its terms or suspends an app, Hootsuite is the party filing the paperwork. The calendar and the shared inbox are what you see; what you are renting is somebody else keeping API access alive on your behalf, and a support queue to shout into when it stops.",
+  "plans": [
+    {
+      "name": "Standard",
+      "priceMonthly": 99,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$99 per user per month, billed annually, for up to 10 connected social accounts. Month-to-month billing costs more and the page does not print that rate."
+    },
+    {
+      "name": "Professional",
+      "priceMonthly": 199,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$199 per user per month, billed annually. Lifts the account cap to unlimited and adds inbox automation and custom reports."
+    },
+    {
+      "name": "Advanced",
+      "priceMonthly": 399,
+      "unit": "per-seat",
+      "seatsIncluded": 1,
+      "note": "$399 per user per month, billed annually. Adds approval workflows, message routing and team performance reporting."
+    },
+    {
+      "name": "Enterprise",
+      "priceMonthly": null,
+      "unit": "custom",
+      "seatsIncluded": 1,
+      "note": "Quote only. Adds advanced analytics, social listening through Talkwalker, single sign-on and compliance controls."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-14",
+    "source": "https://www.hootsuite.com/plans",
+    "currency": "USD",
+    "confidence": "medium",
+    "note": "The price cards on the page are rendered by JavaScript and come through empty in the HTML. The figures here are the ones the page publishes in its own structured data and repeats in its FAQ: 99.00, 199.00 and 399.00 USD, each a per-user monthly rate described as billed annually, with Enterprise quote-only. Confidence is medium rather than high because the month-to-month rates are acknowledged on the page and never stated, so a reader who does not want an annual commitment cannot compute their bill from this page at all."
+  },
+  "ranked": [
+    {
+      "project": "mixpost",
+      "rationale": "The calmest self-hosted answer here, and the narrowest. Three containers, MIT at the pinned tag, and no external service in the core loop: a calendar, per-network post versions, a media library and basic analytics, running on a box you already pay for. The catch is stated on the vendor's own pricing page rather than hidden: the free Lite edition publishes to Facebook Pages, X and Mastodon only, and Instagram, LinkedIn, TikTok, YouTube and the rest are the paid Pro and Enterprise editions at $299 and $1,199 one-time. Two more things to know before you start. The free repository is quiet, with release 2.6.0 dated March 2026 and no commit on main since. And the container seeds a published default password on first boot, which our install rotates within seconds and proves refused. If your posting is Facebook Pages, X and Mastodon, this replaces a Professional seat outright. If it is Instagram-first, it does not, at any price you can reach for free."
+    },
+    {
+      "project": "postiz",
+      "rationale": "The broader network list and the busier project, and the heavier install. Postiz is AGPL-3.0 and covers far more of Hootsuite's surface than Mixpost Lite does, but the stack is five services since it made Temporal a requirement, which puts it in ongoing-ops territory and on a 4 GB box at minimum. It keeps the top spot on the Buffer page, where the comparison is with a channel-metered product rather than a per-seat one. Here it ranks second on the self-hosting story alone: Mixpost needs three containers and no workflow engine, and on a Hootsuite budget the thing you are buying back is your evenings. Choose Postiz if the network list is what decides it, and be honest that you are choosing more machinery."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "BrightBean Studio",
+      "repo": "https://github.com/brightbeanxyz/brightbean-studio",
+      "note": "AGPL-3.0, Django, and the fastest-moving option on this list: 2.1k stars and commits as recent as 2026-08-13, with multiple workspaces, client approval stages and direct first-party integrations rather than an aggregator in the middle. It is also brand new. The repository was created on 2026-03-25 and has no tagged release at all, so self-hosting it means pinning a commit and reading diffs, which is the opposite of what the install prompts on this site promise."
+    },
+    {
+      "name": "Socioboard",
+      "repo": "https://github.com/socioboard/Socioboard-5.0",
+      "note": "The oldest option here and the one to be careful with. GitHub reports the licence as Other, because the LICENSE file wraps GPL text in the project's own preamble, and the newest release tag is 4.1.0 with the last commit to the 5.0 repository dated 2025-09-01. A social scheduler that has not tracked a year of platform API changes is a maintenance project rather than an install."
+    }
+  ]
+}

@@ -43,7 +43,7 @@
     {
       "name": "Mixpost",
       "repo": "https://github.com/inovector/mixpost",
-      "note": "MIT-licensed and genuinely open: the repository is Mixpost Lite, a Laravel package you mount inside your own app, and the Pro and Enterprise editions with teams, workspaces and the richer analytics are paid products sold separately. Not relicensed and not abandoned, but slower moving than it looks: the newest tagged release is 2.6.0 from March 2026, which is also the date of the last commit on main."
+      "note": "MIT-licensed and genuinely open: the repository is Mixpost Lite, a Laravel package you mount inside your own app, and the Pro and Enterprise editions are paid products sold separately as one-time licences. The line between free and paid is sharper than teams and analytics, because it decides where you can post: Lite publishes to Facebook Pages, X and Mastodon only, and Instagram, LinkedIn, TikTok and YouTube are on the paid side. Not relicensed and not abandoned, but slower moving than it looks: the newest tagged release is 2.6.0 from March 2026, which is also the date of the last commit on main. It has since earned its own page in this catalog as the Hootsuite answer, where its install is written up in full and both the edition gates and that release date are stated up front. On this page Postiz keeps the top spot for reaching the networks a Buffer channel bill is counting without a paid edition standing between you and Instagram."
     },
     {
       "name": "BrightBean Studio",

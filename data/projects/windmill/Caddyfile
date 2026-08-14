@@ -1,0 +1,28 @@
+# Windmill · the Caddy site block for this service. Authored by caniselfhostit
+# from https://github.com/windmill-labs/windmill/blob/v1.789.0/Caddyfile and
+# https://caddyserver.com/docs/automatic-https
+#
+# Append this to /etc/caddy/Caddyfile, the Caddy Prompt Zero installed, with
+# <DOMAIN> replaced by the hostname pointed at this box. That hostname is also
+# BASE_URL in .env, so changing it later breaks every webhook already aimed at
+# it.
+
+<DOMAIN> {
+	# Caddy stops buffering text/event-stream itself, which the run view
+	# needs to stream a log while a job is running.
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		# Not no-referrer: connecting a resource walks out to a
+		# provider's OAuth screen and back.
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# Upstream sends /ws/*, /ws_mp/* and /ws_debug/* to a windmill-extra
+	# container this install does not run: those paths answer 404 and the
+	# editor loses in-browser type checking.
+	reverse_proxy 127.0.0.1:8193
+}

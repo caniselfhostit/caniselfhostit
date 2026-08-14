@@ -59,7 +59,7 @@
     {
       "name": "Lychee",
       "repo": "https://github.com/LycheeOrg/Lychee",
-      "note": "MIT, actively maintained, and the closest in spirit to a shared photo page: quick to install and built around albums you hand a link to. We put Piwigo first because permissions, an extension ecosystem and a documented upgrade path across major versions are what a gallery you intend to keep for a decade actually needs, and Piwigo has been answering that for twenty years."
+      "note": "MIT, actively maintained, and the closest in spirit to a shared photo page: quick to install and built around albums you hand a link to, with a password on the album when you want one. It has since earned its own page in this catalog as the Pixieset answer, where its install is written up in full and the webshop code that sits behind its paid Pro edition is disclosed route by route. On this page Piwigo keeps the top spot because per-album permissions for named users and groups, an extension ecosystem and a documented upgrade path across major versions are what a gallery you intend to keep for a decade actually needs, and Piwigo has been answering that for twenty years."
     }
   ]
 }

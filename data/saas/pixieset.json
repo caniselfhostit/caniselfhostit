@@ -1,0 +1,72 @@
+{
+  "slug": "pixieset",
+  "name": "Pixieset",
+  "domain": "pixieset.com",
+  "whyPeoplePay": "Pixieset is not photo hosting, it is the back half of a photographer's job sold as one subscription: a client gallery that proofs and delivers, a storefront that takes the money for prints and downloads, a branded mobile album the client keeps on their phone, and email campaigns that chase the sale. The line on the invoice is storage, from 3 GB free to unlimited, and the reason people stay is that the proofing, the checkout and the fulfilment are already wired to each other.",
+  "plans": [
+    {
+      "name": "Free",
+      "priceMonthly": 0,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "3 GB of photo storage, unlimited galleries, up to 3 mobile apps, and store sales carry a 15% commission fee."
+    },
+    {
+      "name": "Basic",
+      "priceMonthly": 8,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$8/mo billed annually, or $10/month. 10 GB of photo storage, 30 minutes of HD video, custom domain and branding, full-resolution download, 100 email campaigns a month, and commission-free sales."
+    },
+    {
+      "name": "Plus",
+      "priceMonthly": 16,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$16/mo billed annually, or $20/month. Everything in Basic plus 100 GB of photo storage and 500 email campaigns a month."
+    },
+    {
+      "name": "Pro",
+      "priceMonthly": 24,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$24/mo billed annually, or $30/month. Labelled RECOMMENDED on the pricing page. 1000 GB of photo storage, bulk share collections and RAW upload."
+    },
+    {
+      "name": "Ultimate",
+      "priceMonthly": 40,
+      "unit": "flat",
+      "seatsIncluded": 1,
+      "note": "$40/mo billed annually, or $50/month. Unlimited photo storage, with RAW capped at 1000 GB, and 10,000 email campaigns a month."
+    }
+  ],
+  "pricing": {
+    "checkedOn": "2026-08-14",
+    "source": "https://pixieset.com/pricing/",
+    "currency": "USD",
+    "confidence": "high",
+    "note": "These are the Client Gallery plans, the tab the pricing page opens on, read from the page itself on the stamped date; Store and the Mobile Gallery App are stated there to be included in all of them. The Website and Studio Manager tabs and the discounted Pixieset Suite bundle are rendered in the browser after the page loads and were not readable, so no figure for those is recorded here. The two add-ons on the same page are the Photo Editor at $12/month and video storage at $5/month per additional hour."
+  },
+  "ranked": [
+    {
+      "project": "lychee",
+      "rationale": "The honest half of the swap, and it is worth naming which half. Lychee gives you the gallery: albums you upload to, a link you send, a password on the album if you want one, EXIF and tags, zip download for the client, and a library that stops growing when your disk does rather than when your plan does. It gives you none of the workflow Pixieset wraps around that. There is no proofing, no selection to approve and hand back, no storefront a client can check out of, no card payment, no automatic print fulfilment, no email campaign, no branded mobile app with your name on it. Lychee does ship webshop code, and every route of it is gated behind the paid Pro edition, where prints still have no integration with a printing service. Take this if what you actually pay Pixieset for is a good-looking gallery on your own domain that nobody can meter."
+    },
+    {
+      "project": "piwigo",
+      "rationale": "The other serious answer, and the one to pick if a decade of archive matters more than the first impression. Piwigo has twenty years behind it, per-album permissions for named users and groups, an extension gallery and a documented upgrade path across major versions, and it keeps the top spot on its own Flickr Pro page for exactly those reasons. Here Lychee goes first because the thing a Pixieset customer is replacing is a gallery a client opens, and Lychee's is the closer one: quicker to stand up, and built around handing somebody a link rather than around cataloguing. Neither of them sells anything or proofs anything."
+    }
+  ],
+  "evaluatedNotTested": [
+    {
+      "name": "Damselfly",
+      "repo": "https://github.com/Webreaper/Damselfly",
+      "note": "GPL-3.0, actively maintained, last release 4.5.3 in January 2026 and commits through June 2026. It is a different tool wearing similar clothes: an indexer and search engine over a very large existing folder of images, with IPTC keyword search and object and face detection, aimed at finding a photo among hundreds of thousands. It is not built around handing a client a link to an album, which is the whole of what a Pixieset gallery does, so it is not ranked here."
+    },
+    {
+      "name": "Photoview",
+      "repo": "https://github.com/photoview/photoview",
+      "note": "AGPL-3.0, a self-hosted gallery that reads photos straight from a directory tree you already keep, with sharing links and face recognition. The repository is alive, with commits in August 2026, but the last tagged release is v2.4.0 from June 2024, so pinning it means pinning a two-year-old tag and running master for anything newer. This catalogue does not publish an install it cannot pin, which is why it sits here rather than above."
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "slug": "orangehrm",
+  "name": "OrangeHRM",
+  "tagline": "The employee record, the leave calendar and the timesheet on your own server, with no per-head bill attached to them.",
+  "repo": "orangehrm/orangehrm",
+  "site": "https://www.orangehrm.com",
+  "category": "work-pm",
+  "replaces": [
+    {
+      "saas": "bamboohr",
+      "plan": "Core",
+      "seatsAssumed": 25
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 2
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 5,
+    "arm64": false,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "GPL-3.0",
+  "officialCompose": "none",
+  "local": {
+    "fit": "caveat",
+    "note": "An HR system that answers only at http://localhost:8194 is a private database: nobody else can request leave, file a timesheet or look anyone up in it, and it is unreachable whenever this computer is asleep."
+  },
+  "quote": {
+    "text": "public const MAX_ATTACHMENT_SIZE = 1048576; // 1 MB",
+    "source": "OrangeHRM source, ConfigService.php at v5.9",
+    "url": "https://github.com/orangehrm/orangehrm/blob/v5.9/src/plugins/orangehrmCorePlugin/Service/ConfigService.php",
+    "checkedOn": "2026-08-14"
+  },
+  "citations": [
+    {
+      "claim": "OrangeHRM Starter is GPL-3.0 at the pinned tag, with the full licence text at the root of the tree and no separate premium directory carved out of it.",
+      "url": "https://github.com/orangehrm/orangehrm/blob/v5.9/LICENSE"
+    },
+    {
+      "claim": "The image carries no configuration environment variables at all: it downloads the release zip, serves it from /var/www/html under Apache, and declares that directory a VOLUME.",
+      "url": "https://github.com/orangehrm/orangehrm/blob/v5.9/Dockerfile"
+    },
+    {
+      "claim": "The command line installer refuses to run unattended, answering `Not supported non interactive mode.` and exiting, so the browser wizard is the only way to create the first administrator.",
+      "url": "https://github.com/orangehrm/orangehrm/blob/v5.9/installer/Command/InstallOnNewDatabaseCommand.php"
+    },
+    {
+      "claim": "Once the configuration file exists, every installer screen except the completion page answers HTTP 502, which is why a finished install cannot be re-run by a stranger.",
+      "url": "https://github.com/orangehrm/orangehrm/blob/v5.9/installer/Controller/AbstractInstallerController.php"
+    },
+    {
+      "claim": "The wizard's Database Configuration screen offers `New Database` or `Existing Empty Database`, and only the first asks for a privileged user that can create databases and database users.",
+      "url": "https://github.com/orangehrm/orangehrm/blob/v5.9/installer/client/src/pages/DatabaseConfigScreen.vue"
+    },
+    {
+      "claim": "OrangeHRM prices Starter as free and Advanced on a per-employee per-month quote, with Onboarding, Roster, Request Desk, Career Development, Training, Surveys, Employee Voice and Discipline listed only on the Advanced plan.",
+      "url": "https://www.orangehrm.com/pricing/"
+    },
+    {
+      "claim": "Employee attachments are stored in the database as blob columns rather than as files on disk, so the SQL dump is where uploaded documents live.",
+      "url": "https://github.com/orangehrm/orangehrm/blob/v5.9/src/plugins/orangehrmPimPlugin/entity/EmployeeAttachment.php"
+    },
+    {
+      "claim": "The session cookie's Secure flag is set from the request's own scheme, which the application reads from the server environment and never from X-Forwarded-Proto, so a reverse proxy has to say so on the Apache side.",
+      "url": "https://github.com/orangehrm/orangehrm/blob/v5.9/src/plugins/orangehrmCorePlugin/config/CorePluginConfiguration.php"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "You are installing the free rung of a commercial ladder, and the vendor is candid about where it stops. OrangeHRM's own pricing page gives Starter HR administration, employee records, leave, time tracking, recruitment, performance and reporting, and lists Onboarding, Roster, Request Desk, Career Development, Training, Surveys, Employee Voice and Discipline under Advanced, which is quote-only per employee per month. There is no payroll module in either: payroll appears only as an integration. The 5.9 source tree matches that split, so this is a boundary you can read rather than one you discover in month three.",
+    "Attachments have a 1 MB ceiling with nothing behind it. The limit is a constant in the source, the accepted file types are a fixed list beside it, and neither has an administration screen or an environment variable. If your reason for leaving a hosted HR product is its document store, this is not that.",
+    "amd64 only. The 5.9 tag on Docker Hub publishes a single image manifest, linux/amd64, so an arm64 VPS or an arm64 Linux desktop cannot run this at all, and an Apple Silicon Mac runs it under Docker Desktop's emulation rather than natively.",
+    "The first person to load the hostname owns the wizard. There is no admin seeded from a file, and the command line installer refuses unattended mode, so the install ends with a browser step you have to take yourself. The database password gates the wizard's third screen and a finished install refuses the installer for good, which narrows that window rather than removing it. The same wizard ticks a box by default that posts your name, email, telephone number and organisation name to OrangeHRM, and you untick it.",
+    "The release cadence is real but slow, and worth stating rather than smoothing over. 5.9 landed on 2026-06-28 and 5.8.1 in April 2026, but 5.7 sat from July 2024 until 5.8 arrived in November 2025. Upgrades are also not a tag bump: the application lives in a Docker volume and moving versions means dropping that volume and running upstream's upgrader against the database by hand."
+  ],
+  "sources": {
+    "compose": "https://github.com/orangehrm/orangehrm/blob/v5.9/Dockerfile",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://github.com/orangehrm/orangehrm/blob/v5.9/installer/config/routes.yaml",
+    "requirements": "https://github.com/orangehrm/orangehrm/blob/v5.9/installer/config/system_requirements.php",
+    "editions": "https://www.orangehrm.com/pricing/",
+    "releases": "https://github.com/orangehrm/orangehrm/releases"
+  },
+  "related": [
+    "kimai",
+    "leantime",
+    "espocrm"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-14",
+  "contentHash": "076ed3343b611bb0372b71f0c1d70d6dacd36aa5a388776d340c58ba5e219423"
+}

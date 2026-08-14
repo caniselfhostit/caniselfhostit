@@ -1,0 +1,97 @@
+{
+  "slug": "ghostfolio",
+  "name": "Ghostfolio",
+  "tagline": "Your investment portfolio on your own domain: holdings, allocation, performance and dividends, priced from public market data.",
+  "repo": "ghostfolio/ghostfolio",
+  "site": "https://ghostfol.io",
+  "category": "money-home",
+  "replaces": [
+    {
+      "saas": "copilot-money",
+      "plan": "Annual",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 3,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 4
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "AGPL-3.0",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/ghostfolio/ghostfolio/blob/3.50.0/docker/docker-compose.yml",
+  "local": {
+    "fit": "caveat",
+    "note": "On your own computer the portfolio answers at http://localhost:8196 and nowhere else, so no phone can check it, and the job that refreshes prices and dividends runs only on the days the machine is awake, which means a portfolio you have not opened in a week is showing last week's numbers."
+  },
+  "quote": {
+    "text": "The application empowers busy people to keep track of stocks, ETFs or cryptocurrencies and make solid, data-driven investment decisions. The software is designed for personal use in continuous operation.",
+    "source": "Ghostfolio README at tag 3.50.0",
+    "url": "https://github.com/ghostfolio/ghostfolio/blob/3.50.0/README.md",
+    "checkedOn": "2026-08-14"
+  },
+  "citations": [
+    {
+      "claim": "Account creation is an unauthenticated POST to /api/v1/user, and the account it creates is given the ADMIN role whenever no administrator exists yet, so on a fresh instance the first person to reach the hostname becomes its administrator.",
+      "url": "https://github.com/ghostfolio/ghostfolio/blob/3.50.0/apps/api/src/app/user/user.controller.ts"
+    },
+    {
+      "claim": "The IS_USER_SIGNUP_ENABLED property has no default row, and the service reads it as enabled when it is absent, which is why a new install accepts new accounts until an administrator turns the setting off.",
+      "url": "https://github.com/ghostfolio/ghostfolio/blob/3.50.0/apps/api/src/services/property/property.service.ts"
+    },
+    {
+      "claim": "A security token is validated by hashing it with ACCESS_TOKEN_SALT and matching the result against the stored hash, so the token and that salt are worth nothing apart and a database restored beside a different .env accepts nobody.",
+      "url": "https://github.com/ghostfolio/ghostfolio/blob/3.50.0/apps/api/src/app/auth/auth.service.ts"
+    },
+    {
+      "claim": "Market data comes from the yahoo-finance2 client talking to Yahoo Finance, and the provider carries explicit handling for an HTTP 429 rate-limit response, which it logs as a warning before returning nothing.",
+      "url": "https://github.com/ghostfolio/ghostfolio/blob/3.50.0/apps/api/src/services/data-provider/yahoo-finance/yahoo-finance.service.ts"
+    },
+    {
+      "claim": "The /api/v1/health endpoint answers 200 only when both the database and the Redis cache respond, and 503 otherwise, so one call covers all three containers.",
+      "url": "https://github.com/ghostfolio/ghostfolio/blob/3.50.0/apps/api/src/app/health/health.controller.ts"
+    },
+    {
+      "claim": "The container entrypoint applies the Prisma migrations and runs the seed before it starts the server, which is why the first boot is slow and why an upgrade needs no separate migration command.",
+      "url": "https://github.com/ghostfolio/ghostfolio/blob/3.50.0/docker/entrypoint.sh"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Investments only, and this is the whole decision. Ghostfolio tracks holdings, allocation, performance, dividends and net worth. There is no spending feed, no categories and no budgets in it, so the half of Copilot that watches where your money goes has no equivalent here. In this catalogue the budgeting answer is Actual Budget and the full household ledger is Firefly III, and running one of those beside this is a second install, not a setting.",
+    "No bank connection at all. Copilot's product is signing into your accounts overnight; Ghostfolio signs into nothing. Activities are typed in or imported from a CSV you export from your broker yourself, which means the record is only as current as the last time you sat down with it. That is the trade for leaving, and it is the one people underestimate.",
+    "Prices come from sources nobody promises you. The default providers are public ones, mainly Yahoo Finance through an unofficial client, plus CoinGecko for crypto, and the code has explicit handling for being rate-limited. A blank valuation for a day is normal rather than broken. Paid providers exist and take an API key and a subscription you arrange yourself.",
+    "The security token is the entire login. Accounts have no email address and no password, so there is no reset, no recovery email and no second factor unless you add a passkey from inside the app afterwards. That token is stored hashed with a salt in your .env, so the backup is two files that travel together: lose either and the portfolio is unopenable.",
+    "A web page instead of an app. Copilot ships native software for iPhone, Mac and iPad; Ghostfolio is a progressive web app you add to a home screen. It works on a phone and it is not the same thing, and on this install it is only reachable wherever your hostname is."
+  ],
+  "sources": {
+    "compose": "https://github.com/ghostfolio/ghostfolio/blob/3.50.0/docker/docker-compose.yml",
+    "caddy": "https://caddyserver.com/docs/automatic-https",
+    "install": "https://github.com/ghostfolio/ghostfolio/blob/3.50.0/README.md",
+    "env": "https://github.com/ghostfolio/ghostfolio/blob/3.50.0/apps/api/src/services/configuration/configuration.service.ts",
+    "entrypoint": "https://github.com/ghostfolio/ghostfolio/blob/3.50.0/docker/entrypoint.sh",
+    "health": "https://github.com/ghostfolio/ghostfolio/blob/3.50.0/apps/api/src/app/health/health.controller.ts",
+    "signup": "https://github.com/ghostfolio/ghostfolio/blob/3.50.0/apps/api/src/app/user/user.controller.ts",
+    "auth": "https://github.com/ghostfolio/ghostfolio/blob/3.50.0/apps/api/src/app/auth/auth.service.ts",
+    "dataProvider": "https://github.com/ghostfolio/ghostfolio/blob/3.50.0/apps/api/src/services/data-provider/yahoo-finance/yahoo-finance.service.ts",
+    "license": "https://github.com/ghostfolio/ghostfolio/blob/3.50.0/LICENSE"
+  },
+  "related": [
+    "firefly-iii",
+    "actual-budget"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-14",
+  "contentHash": "f990503fce5f9c7fd522130ab3fa0b83cfe4da349c6935d9cf2ebda33e90a0a8"
+}

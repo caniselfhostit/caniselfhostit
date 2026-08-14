@@ -1,0 +1,92 @@
+# OTOBO · the deterministic fallback for the local path. Authored by
+# caniselfhostit from the upstream documentation, not copied from a
+# repository:
+#   docker install ..... https://doc.otobo.org/manual/installation/11.0/en/content/installation/installation-docker.html
+#   upstream compose ... https://github.com/RotherOSS/otobo-docker/blob/rel-11_0_17/docker-compose/otobo-base.yml
+#
+# Four services on the computer you are sitting at; `web` and `daemon` are one
+# image dispatched on the command word, and no daemon means no SLA fires.
+# Attachments live in the database. Redis is required under Docker (the
+# image's Kernel/Config.pm points the cache at redis:6379); Elasticsearch is
+# optional upstream and left out.
+# ./otobo is a relative bind mount, written by uid 1000, hence step 3's
+# Linux-only chown; the database is a named volume because the MariaDB image
+# chowns its data directory itself. Digests read 2026-08-14; amd64 only.
+#
+# NOT YET VERIFIED: no harness run has been recorded against this file.
+
+services:
+  db:
+    image: mariadb:12.3.2-noble@sha256:759869cb6f003234a95c6384cdee245b4bce7de26913fe607a8110362c0c007d
+    container_name: otobo-db
+    restart: unless-stopped
+    command: --max-allowed-packet=136314880 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --innodb-log-file-size=268435456
+    environment:
+      MARIADB_ROOT_PASSWORD: ${OTOBO_DB_ROOT_PASSWORD}
+      MARIADB_AUTO_UPGRADE: "1"
+    volumes:
+      - otobo-mariadb-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 30s
+      interval: 10s
+      retries: 30
+
+  redis:
+    image: redis:8.4.0-bookworm@sha256:c22af04bb576503bf16b3e34a1fd2fd82de0f765afd866d2e380145e0af30d78
+    container_name: otobo-redis
+    restart: unless-stopped
+    user: redis:redis
+    cap_drop:
+      - ALL
+    command: ["redis-server", "--save", ""]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 10
+
+  web:
+    image: rotheross/otobo:rel-11_0_17@sha256:381ec32cc5c53bd468af917a888b295497336a73cbd3e1657ce02e474eba383d
+    container_name: otobo-web
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    command: web
+    volumes:
+      - ./otobo:/opt/otobo
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sS -f http://localhost:5000/robots.txt >/dev/null"]
+      start_period: 300s
+      interval: 15s
+      retries: 20
+    ports:
+      # Loopback only: no other device on the wifi reaches 8202.
+      - "127.0.0.1:8202:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  daemon:
+    image: rotheross/otobo:rel-11_0_17@sha256:381ec32cc5c53bd468af917a888b295497336a73cbd3e1657ce02e474eba383d
+    container_name: otobo-daemon
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    command: daemon
+    volumes:
+      - ./otobo:/opt/otobo
+    healthcheck:
+      # Unhealthy until the installer finishes: it exits while SecureMode
+      # is off, retried every two minutes.
+      test: ["CMD-SHELL", "./bin/otobo.Daemon.pl status | grep -q 'Daemon running'"]
+      start_period: 300s
+      interval: 30s
+      retries: 10
+    depends_on:
+      web:
+        condition: service_started
+
+volumes:
+  otobo-mariadb-data:

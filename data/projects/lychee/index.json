@@ -1,0 +1,96 @@
+{
+  "slug": "lychee",
+  "name": "Lychee",
+  "tagline": "A photo gallery you host and hand people a link to, with albums, tags, per-album passwords and no upload cap but your own disk.",
+  "repo": "LycheeOrg/Lychee",
+  "site": "https://lycheeorg.dev",
+  "category": "photos-media",
+  "replaces": [
+    {
+      "saas": "pixieset",
+      "plan": "Plus",
+      "seatsAssumed": 1
+    }
+  ],
+  "tierFactors": {
+    "containers": 2,
+    "externalDb": true,
+    "needsSmtp": false,
+    "needsOauth": false,
+    "needsDns": true,
+    "needsGpu": false,
+    "secretsToGenerate": 3
+  },
+  "resources": {
+    "ramMinMB": 2048,
+    "ramMeasuredMB": null,
+    "diskGB": 10,
+    "arm64": true,
+    "measuredOn": null
+  },
+  "timeToRunningMin": 90,
+  "license": "MIT",
+  "officialCompose": "upstream-maintained",
+  "officialComposeUrl": "https://github.com/LycheeOrg/Lychee/blob/v7.7.2/docker-compose.yaml",
+  "local": {
+    "fit": "caveat",
+    "note": "On your own computer the gallery answers only at http://localhost:8195, so the client you would have sent an album link to gets nothing and your own phone cannot reach it either: what you have is a private catalogue of a library that lives on one machine."
+  },
+  "quote": {
+    "text": "One click and every photo and album is ready for the public. You can also protect albums with passwords if you want. It's under your control.",
+    "source": "LycheeOrg, the Share panel on the project's home page",
+    "url": "https://lycheeorg.dev/",
+    "checkedOn": "2026-08-14"
+  },
+  "citations": [
+    {
+      "claim": "A new Lychee has no account at all, and the first visit creates one. Until an administrator exists, every page answers 307 to the admin setup form, and that form is unauthenticated because there is nothing yet to authenticate against: SetUpAdminRequest only starts refusing, with a 403 and the message Admin User has already been set, once a user with may_administrate exists.",
+      "url": "https://github.com/LycheeOrg/Lychee/blob/v7.7.2/app/Http/Requests/Install/SetUpAdminRequest.php"
+    },
+    {
+      "claim": "Self-registration is off in a fresh install and this entry does not turn it on. The migration that introduces user_registration_enabled seeds it at 0, and RegistrationRequest refuses every sign-up while that value is false.",
+      "url": "https://github.com/LycheeOrg/Lychee/blob/v7.7.2/database/migrations/2025_05_29_231404_user_registration_enabled.php"
+    },
+    {
+      "claim": "As of version 7 the default Docker image is FrankenPHP with Laravel Octane rather than nginx and php-fpm. Upstream's Docker guide lists the -legacy tags as the nginx and php-fpm build and marks them deprecated, which is why this install pins the plain version tag and says to ignore the -legacy line.",
+      "url": "https://lycheeorg.dev/docs/getting-started/docker/"
+    },
+    {
+      "claim": "The container's entrypoint validates APP_KEY decodes to 32 bytes, waits on DB_HOST and DB_PORT with nc, then runs php artisan migrate --force on every start. It sources five helper scripts and never sources create-admin-user.sh, so ADMIN_USER and ADMIN_PASSWORD do nothing at this tag and the browser form is the only way to make the first account.",
+      "url": "https://github.com/LycheeOrg/Lychee/blob/v7.7.2/docker/scripts/entrypoint.sh"
+    },
+    {
+      "claim": "Lychee's webshop exists in the codebase and is not available to a free install: every route under /Shop, including the basket, the checkout and the Mollie and PayPal integrations, sits behind the support:pro middleware, under a comment reading Only for SE sorry.",
+      "url": "https://github.com/LycheeOrg/Lychee/blob/v7.7.2/routes/api_v2_shop.php"
+    }
+  ],
+  "whatYouSignUpFor": [
+    "Pixieset sells a workflow and this is one part of it. There is no proofing here: no client favourite list to approve, no selection handed back, nothing named proof anywhere in the source. There is no store and no client payment. Lychee does carry a webshop, and every route of it sits behind the paid Pro edition, where upstream's own comparison still says prints come with no integration with printing services. There are no email campaigns and no per-client branded mobile app. What you keep is the gallery, the link, the password on the album, the download, and a library capped by your disk instead of by a plan.",
+    "Free covers the gallery; some of what looks standard is a paid tier. Lychee is MIT and the free edition has unlimited photos, albums and users. Watermarking, secured image links, per-user quotas, statistics and user groups are Supporter Edition, sold at five euros a month, and the webshop needs the Pro add-on above that. Nothing in this install is crippled without them, but a feature list read on the project site is not all free.",
+    "You own the disk, and a photo library is the one thing on this site that grows without asking. Originals and every resized variant Lychee derives from them share the uploads directory, so the number on your hosting invoice becomes the number that decides how many client galleries you keep. On Pixieset the equivalent decision is a plan change; here it is a bigger volume.",
+    "A backup is two artifacts and neither is optional. Albums, tags, users and access rights are rows in MariaDB; the photos are files. Lychee does not rebuild its resized copies on demand, so restore the database alone and you get albums full of broken thumbnails, restore the files alone and you get an index of nothing. Both go off the box together, and a pair you have never restored is not a backup.",
+    "No mail, so no password reset, and no worker, so uploads take their time. This install deliberately configures no SMTP, which means the administrator password you choose in the browser is the only copy that exists. It also runs no queue worker, so the request that uploads a photo also builds every variant before it answers: correct, and slower than a progress bar suggests."
+  ],
+  "sources": {
+    "compose": "https://lycheeorg.dev/docs/getting-started/docker/",
+    "caddy": "https://caddyserver.com/docs/caddyfile/directives/reverse_proxy",
+    "composeTemplate": "https://github.com/LycheeOrg/Lychee/blob/v7.7.2/docker-compose.yaml",
+    "entrypoint": "https://github.com/LycheeOrg/Lychee/blob/v7.7.2/docker/scripts/entrypoint.sh",
+    "envValidation": "https://github.com/LycheeOrg/Lychee/blob/v7.7.2/docker/scripts/01-validate-env.sh",
+    "adminSetup": "https://github.com/LycheeOrg/Lychee/blob/v7.7.2/app/Http/Requests/Install/SetUpAdminRequest.php",
+    "routes": "https://github.com/LycheeOrg/Lychee/blob/v7.7.2/routes/web_v2.php",
+    "registration": "https://github.com/LycheeOrg/Lychee/blob/v7.7.2/database/migrations/2025_05_29_231404_user_registration_enabled.php",
+    "queue": "https://github.com/LycheeOrg/Lychee/blob/v7.7.2/config/queue.php",
+    "octane": "https://github.com/LycheeOrg/Lychee/blob/v7.7.2/config/octane.php",
+    "supporterEdition": "https://lycheeorg.dev/get-supporter-edition",
+    "license": "https://github.com/LycheeOrg/Lychee/blob/v7.7.2/LICENSE"
+  },
+  "related": [
+    "piwigo",
+    "immich",
+    "photoprism"
+  ],
+  "pagePriority": 3,
+  "contentUpdatedAt": "2026-08-14",
+  "contentHash": "84970cce29871b7b6d59274c53b63f4f07d6ab82559f5591d68760c9775bcfd4"
+}
