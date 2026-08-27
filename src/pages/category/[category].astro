@@ -1,0 +1,300 @@
+---
+/* /category/<slug>/ — a shelf (PRD §5.1 "Hubs").
+ *
+ * The middle of the trail. A product page answers one question; this page
+ * answers "what else is on this shelf", which is the only question the product
+ * page cannot answer about itself. It exists mostly so the breadcrumb has a real
+ * middle step: Google requires `item` on every crumb except the last, so a
+ * category with no URL meant the whole BreadcrumbList had to be flattened to two
+ * steps (Home › product) and the shelf was invisible to a crawler.
+ *
+ * Keyed by the closed category enum in src/lib/rubric.js — the same fourteen
+ * slugs the validator enforces and /methodology publishes. This route mints no
+ * vocabulary of its own: a shelf exists here if and only if rubric.js says the
+ * slug exists AND at least one live SaaS page sits on it. An empty shelf gets no
+ * URL, because a hub with nothing under it is a doorway page with extra steps.
+ *
+ * Rows are the Rack's own <DirectoryRow>, unmodified. The shelf is a filtered
+ * view of the directory, not a second directory with its own grammar — if the
+ * row changes on the home page it changes here, which is the whole reason the
+ * row is a component.
+ */
+import Base from '../../layouts/Base.astro';
+import DirectoryRow from '../../components/DirectoryRow.astro';
+import { SITE } from '../../lib/site.js';
+import { getAllSaasPages, saasShelves, TIERS, TIER_ORDER } from '../../lib/projects.js';
+
+export function getStaticPaths() {
+  const pages = getAllSaasPages() ?? [];
+
+  /* The rank shown in the "#" column is the GLOBAL one — a row's position in
+   * getAllSaasPages(), which is editorial `pagePriority` and is disclosed on
+   * /methodology. Renumbering 1..N per shelf would print a different number
+   * beside the same app depending on which page you arrived from, and invent a
+   * per-category ranking that exists in no data file. The shelf filters the
+   * directory; it does not re-rank it.
+   */
+  const rank = Object.fromEntries(pages.map((s, i) => [s.slug, i + 1]));
+
+  // saasShelves() is the one place that decides which shelves exist; the
+  // sitemap reads the same function, so it cannot list a hub this route skipped.
+  const shelves = saasShelves();
+
+  // Every shelf's count, for the hub-to-hub nav. Computed once here rather than
+  // per page: fourteen pages recomputing the same fourteen numbers is fourteen
+  // chances for one of them to disagree.
+  const counts = shelves.map(({ slug, label, items }) => ({
+    slug,
+    label,
+    count: items.length,
+  }));
+
+  return shelves.map((shelf) => ({
+    params: { category: shelf.slug },
+    props: { label: shelf.label, items: shelf.items, rank, counts },
+  }));
+}
+
+const { label, items, rank, counts } = Astro.props;
+
+const count = items.length;
+const hubUrl = `${SITE.origin}/category/${Astro.params.category}/`;
+
+/* ------------------------------------------------------------------ *
+ * The intro — derived, never authored
+ * ------------------------------------------------------------------ */
+
+/**
+ * "A, B and C" under the cap; "A, B and 14 more" over it. Three names is the
+ * most a sentence carries before a reader starts skimming, and the table below
+ * is the complete list anyway — this is an orientation, not an index.
+ */
+function listNames(names, max = 3) {
+  if (names.length > max) return `${names.slice(0, max).join(', ')} and ${names.length - max} more`;
+  if (names.length === 1) return names[0];
+  return `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`;
+}
+
+/* Generated from JSON on every build (PRD §10.2 — direct answers are derived,
+ * never hand-written), so a shelf that gains an app gains a sentence that says
+ * so. Two countable facts and nothing else: how many paid apps sit here and
+ * which ones open the list. The names are taken in the rows' own order, so the
+ * sentence and the table below cannot drift apart.
+ *
+ * Deliberately absent: a summed price. The Rack's receipt refuses to total
+ * itself for a reason — you replace these one at a time, and "your Analytics
+ * stack costs $X/mo" is exactly the invented number this site exists to argue
+ * with. A shelf is a worse place to invent it than the home page, not a better
+ * one.
+ */
+const nameList = listNames(items.map((s) => s.name));
+const intro =
+  `${count} paid ${count === 1 ? 'app' : 'apps'} in ${label} — ${nameList} — ` +
+  `each with a ranked open-source replacement and the prompt that installs it.`;
+
+/* The setup spread: the one fact a shelf can state that none of its product
+ * pages can, because it is a property of the shelf. Machine content, so it wears
+ * the mono face and the site's badge vocabulary verbatim (rubric.js TIERS),
+ * ordered easiest-first by TIER_ORDER rather than by count — the order is the
+ * rubric's, and re-sorting it by popularity would imply a ranking the tiers do
+ * not have.
+ */
+const spread = TIER_ORDER.map((tier) => ({
+  tier,
+  label: TIERS[tier],
+  n: items.filter((s) => s.tier === tier).length,
+})).filter((t) => t.n > 0);
+
+/* ------------------------------------------------------------------ *
+ * Hub-to-hub — the other shelves (PRD §5.3 "internal linking as data")
+ * ------------------------------------------------------------------ */
+
+const others = counts.filter((c) => c.slug !== Astro.params.category);
+
+/* ------------------------------------------------------------------ *
+ * Head
+ * ------------------------------------------------------------------ */
+
+const title = `${label} — ${count} paid ${count === 1 ? 'app' : 'apps'} you can self-host · ${SITE.name}`;
+const description =
+  `Every ${label} app in the directory with a self-hostable replacement: ${nameList}. ` +
+  `Setup verdict, what you'd stop paying, and one install prompt each.`;
+
+/* ------------------------------------------------------------------ *
+ * Structured data
+ * ------------------------------------------------------------------ */
+
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    // Two steps, both carrying `item`. The last crumb keeps its URL too: it is
+    // this page's own canonical, it resolves, and matching the site's other
+    // trails matters more than shaving one property.
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.origin}/` },
+      { '@type': 'ListItem', position: 2, name: label, item: hubUrl },
+    ],
+  },
+  {
+    // Mirrors the home page's ItemList: the list is the PAID apps, and each URL
+    // is that app's answer page. Every ListItem carries `url` — an itemless
+    // entry is a name a crawler can do nothing with.
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: label,
+    description: `Paid ${label} apps, and the self-hostable open-source replacement for each one.`,
+    numberOfItems: count,
+    itemListElement: items.map((s, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: s.name,
+      url: `${SITE.origin}/self-host/${s.slug}/`,
+    })),
+  },
+];
+---
+
+<Base {title} {description} {jsonld} ogImage="/og/home.png">
+  <article class="hub">
+    <!-- ── head ─────────────────────────────────────────────────────── -->
+    <header class="ph blueprint">
+      <div class="wrap">
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <ol>
+            <li><a href="/">Home</a></li>
+            <li><span aria-current="page">{label}</span></li>
+          </ol>
+        </nav>
+
+        <h1>{label}</h1>
+        <p class="ph-answer">{intro}</p>
+
+        {
+          spread.length > 0 && (
+            <p class="provenance hub-spread">
+              Setup spread:{' '}
+              {spread.map((t, i) => (
+                <>
+                  {i > 0 && <span aria-hidden="true"> · </span>}
+                  <span class={`hub-spread-n tier-${t.tier}`}>{t.n}</span> {t.label}
+                </>
+              ))}
+            </p>
+          )
+        }
+      </div>
+    </header>
+
+    <!-- ── the shelf ────────────────────────────────────────────────── -->
+    <section class="section" aria-labelledby="shelf-h">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2 id="shelf-h">On this shelf</h2>
+            <p class="section-note">
+              Same rows as the Rack, filtered to {label}. The number is the directory's own
+              editorial rank, not a ranking within this shelf.
+            </p>
+          </div>
+        </div>
+
+        <div class="rack">
+          <div class="rack-head" aria-hidden="true">
+            <span class="c-rank microlabel">#</span>
+            <span class="c-project microlabel">App</span>
+            <span class="c-replaces microlabel">Replaced by</span>
+            <span class="c-price microlabel">You'd stop paying</span>
+            <span class="c-tier microlabel">Setup</span>
+          </div>
+
+          {items.map((s) => <DirectoryRow page={s} rank={rank[s.slug]} />)}
+        </div>
+
+        <div class="rack-foot">
+          <p class="provenance">
+            Rank is editorial, and the basis is written down on{' '}
+            <a href="/methodology/">/methodology</a>. Prices are vendor list prices in USD; the plan
+            and the seat assumption behind each figure are on the app's own page.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── the other shelves ────────────────────────────────────────── -->
+    {
+      others.length > 0 && (
+        <section class="section hub-others" aria-labelledby="others-h">
+          <div class="wrap">
+            <h2 id="others-h">Other shelves</h2>
+            <ul class="chips" aria-label="Other categories">
+              {others.map((c) => (
+                <li>
+                  <a class="chip" href={`/category/${c.slug}/`}>
+                    {c.label} <span class="hub-count mono">{c.count}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <p class="section-note">
+              Or start at <a href="/">the full Rack</a> — all {counts.reduce((n, c) => n + c.count, 0)}{' '}
+              paid apps in editorial order.
+            </p>
+          </div>
+        </section>
+      )
+    }
+  </article>
+</Base>
+
+<style>
+  /* The shelf borrows the product page's header (.ph.blueprint) and the Rack's
+     rows wholesale — both live in global.css. What is left is small: the h1 has
+     no verdict badge beside it, so it needs its own size rule, and the two
+     derived lines under it need spacing. */
+
+  .hub .ph h1 {
+    font-size: clamp(30px, 5vw, 46px);
+    letter-spacing: -0.02em;
+  }
+
+  .hub .ph-answer {
+    margin-top: 12px;
+  }
+
+  /* The setup spread reads as machine content: mono via .provenance, with the
+     count in each tier's own colour so the line carries the same two channels
+     the badges do. */
+  .hub-spread {
+    margin-top: 14px;
+  }
+
+  .hub-spread-n {
+    font-weight: 600;
+    color: var(--tier, var(--fg));
+  }
+
+  /* The other shelves close the page rather than open it, so the section sheds
+     the top padding the Rack above already provided. */
+  .hub .hub-others {
+    padding-top: 0;
+  }
+
+  .hub-others .chips {
+    margin-top: 18px;
+  }
+
+  /* The count rides inside the chip as a second channel, dimmer than the label
+     it belongs to — a shelf's size is context, not its name. */
+  .hub-count {
+    font-size: 11.5px;
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+  }
+
+  @media (max-width: 760px) {
+    .hub .ph-answer {
+      margin-top: 10px;
+    }
+  }
+</style>
