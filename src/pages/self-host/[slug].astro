@@ -243,12 +243,21 @@ const jsonld = [
   {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
+    // Home › shelf › product, and every step carries `item`. Google requires a
+    // URL on every ListItem except the last, and a middle crumb without one
+    // invalidates the entire trail rather than dropping that step — which is the
+    // error Search Console reported while /category/ was still unbuilt. The
+    // shelf has a real page now (src/pages/category/[category].astro), so the
+    // middle step points at it. The last step keeps its `item` too: it is this
+    // page's own canonical and it resolves.
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.origin}/` },
-      // The category shelf has no page yet, so this item carries a name and no
-      // `item` — the trail matches the visible breadcrumb, and nothing points a
-      // crawler at a URL that would 404. It gains `item` when /category/ ships.
-      { '@type': 'ListItem', position: 2, name: page.categoryLabel },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: page.categoryLabel,
+        item: `${SITE.origin}/category/${page.category}/`,
+      },
       { '@type': 'ListItem', position: 3, name: page.name, item: pageUrl },
     ],
   },
@@ -331,7 +340,7 @@ const mirrorHref = `/self-host/${page.slug}.md`;
         <nav class="crumbs" aria-label="Breadcrumb">
           <ol>
             <li><a href="/">Home</a></li>
-            <li><span>{page.categoryLabel}</span></li>
+            <li><a href={`/category/${page.category}/`}>{page.categoryLabel}</a></li>
             <li><span aria-current="page">{page.name}</span></li>
           </ol>
         </nav>
@@ -353,7 +362,9 @@ const mirrorHref = `/self-host/${page.slug}.md`;
               </li>
             )
           }
-          <li class="chip">{page.categoryLabel}</li>
+          <li>
+            <a class="chip" href={`/category/${page.category}/`}>{page.categoryLabel}</a>
+          </li>
           {pricing.checkedOn && <li class="chip mono">prices checked {pricing.checkedOn}</li>}
         </ul>
       </div>

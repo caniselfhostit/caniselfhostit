@@ -386,6 +386,29 @@ export function getSaasPage(slug) {
   return getAllSaasPages().find((s) => s.slug === slug) ?? null;
 }
 
+/**
+ * The shelves that have a page: [{ slug, label, items }] in canonical category
+ * order, each with its SaaS pages in getAllSaasPages() order. A category with no
+ * live page is omitted — a hub with nothing under it is a doorway page with
+ * extra steps.
+ *
+ * Not the same thing as categoriesInUse(), which counts PROJECTS. Hubs are keyed
+ * by the paid app like every other page on this site, so they have to be built
+ * from the SaaS pages or a shelf could advertise a count nobody can click.
+ *
+ * Two callers — the /category/ route and sitemap-core.xml — and that is exactly
+ * why it lives here: a sitemap that lists a hub the route did not emit is a 404
+ * submitted to Google on purpose.
+ */
+export function saasShelves() {
+  const pages = getAllSaasPages();
+  return CATEGORY_LIST.map(({ slug, label }) => ({
+    slug,
+    label,
+    items: pages.filter((s) => s.category === slug),
+  })).filter((shelf) => shelf.items.length > 0);
+}
+
 /** Sibling SaaS pages: same category first, then priority order. */
 export function relatedSaasPages(page, limit = 3) {
   const rest = getAllSaasPages().filter((s) => s.slug !== page.slug);

@@ -5,9 +5,23 @@
   "compatibility_date": "2026-08-01",
   // nodejs_compat is required by @astrojs/cloudflare and for node:crypto in
   // the outcome-report API (Phase 1).
-  // No "main"/"assets" here: @astrojs/cloudflare v14 generates the worker
-  // entry and asset config itself via the Cloudflare vite plugin.
+  // No "main" here, and no "assets.directory": @astrojs/cloudflare v14
+  // generates the worker entry and points the asset directory at dist/client
+  // itself, via the Cloudflare vite plugin.
   "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    // The one asset setting the adapter does NOT generate. Workers static
+    // assets default to not_found_handling: "none", which answers every
+    // unmatched path with a bodyless 404 — src/pages/404.astro builds to
+    // dist/client/404.html and nothing would ever serve it. "404-page" serves
+    // that file WITH a 404 status, which is the pair we want: a branded page
+    // for a reader, and a status code that keeps it out of every index.
+    //
+    // Deliberately not "single-page-application": that variant answers 200 and
+    // is for client-routed apps. This site is prerendered, and a soft 404 is
+    // the specific thing Search Console files as an error.
+    "not_found_handling": "404-page"
+  },
   // The zone lives in this same Cloudflare account, so custom domains
   // auto-create their DNS records on deploy.
   "routes": [

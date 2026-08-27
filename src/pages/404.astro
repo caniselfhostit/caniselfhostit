@@ -1,0 +1,141 @@
+---
+/* The 404. Astro emits this as dist/client/404.html, and Cloudflare's static
+ * asset server returns it — with a real 404 status — for any path that matches
+ * no asset and no rule in public/_redirects. That last part matters: everything
+ * this site retires gets a 301 from the generator (scripts/generate-redirects.mjs),
+ * so a URL that reaches this page is one nothing has ever been published at. The
+ * copy says exactly that rather than apologising for a move that did not happen.
+ *
+ * noindex is belt-and-braces. A 404 status already keeps the page out of every
+ * index; the meta tag covers the case where something fetches the body without
+ * the status — a preview card, a scraper, a proxy that rewrites the code.
+ *
+ * No ogImage: scripts/generate-og.mjs renders a card for the home page and one
+ * per project, and nothing else. Base treats a null ogImage as "emit no og:image
+ * tags at all", which is the honest result — a 404 has no business claiming a
+ * social card, and pointing at /og/home.png would preview this page as the
+ * directory it is not.
+ */
+import Base from '../layouts/Base.astro';
+import { SITE } from '../lib/site.js';
+import { saasShelves } from '../lib/projects.js';
+
+const title = `Page not found · ${SITE.name}`;
+const description =
+  'No page exists at this URL. The directory of paid apps and their self-hostable replacements starts at the home page.';
+
+// The same shelves, from the same call, as the home page and every hub — a
+// reader who mistyped one URL is usually one click from the shelf they wanted.
+// Chips, not a link dump: the full list already has a page, and it is linked
+// above this one.
+const shelves = saasShelves();
+---
+
+<Base {title} {description} noindex={true}>
+  <article class="nf">
+    <header class="ph blueprint">
+      <div class="wrap">
+        <p class="nf-code">404</p>
+        <p class="microlabel nf-eyebrow">Page not found</p>
+
+        <h1>There is nothing at this URL</h1>
+
+        <p class="ph-answer">
+          Every URL this site retires gets a permanent redirect, so a dead link here is almost
+          always a typo rather than something that moved. The directory is one click away.
+        </p>
+
+        <div class="nf-cta">
+          <a class="btn btn-primary" href="/">Browse the Rack</a>
+          <a class="btn" href="/prompt-zero/">Start with prompt zero</a>
+        </div>
+      </div>
+    </header>
+
+    {
+      shelves.length > 0 && (
+        <section class="section nf-shelves" aria-labelledby="nf-shelves-h">
+          <div class="wrap">
+            <h2 id="nf-shelves-h">Or pick a shelf</h2>
+            <ul class="chips" aria-label="Categories">
+              {shelves.map((s) => (
+                <li>
+                  <a class="chip" href={`/category/${s.slug}/`}>
+                    {s.label} <span class="nf-count mono">{s.items.length}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )
+    }
+  </article>
+</Base>
+
+<style>
+  /* The header borrows .ph.blueprint from the product and hub pages, so the
+     page lands in the same frame as everything else on the site. What is left
+     is the eyebrow, the button row, and the shelf list's spacing. */
+
+  /* The status code IS the headline exhibit — the one number the reader came
+     here to learn, set in the site's serif at poster scale. Lining figures on
+     purpose: Newsreader's default oldstyle numerals would drop the 4s below
+     the baseline. */
+  .nf-code {
+    font-family: var(--font-serif);
+    font-size: clamp(88px, 20vw, 168px);
+    font-weight: 640;
+    font-variant-numeric: lining-nums;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    color: var(--fg);
+  }
+
+  .nf-eyebrow {
+    color: var(--muted);
+    margin-top: 14px;
+  }
+
+  .nf .ph h1 {
+    font-size: clamp(30px, 5vw, 46px);
+    letter-spacing: -0.02em;
+    margin-top: 10px;
+  }
+
+  .nf .ph-answer {
+    margin-top: 12px;
+    max-width: 58ch;
+  }
+
+  .nf-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 22px;
+  }
+
+  /* The shelves close the page; the header above already supplies the top
+     rule and its padding. */
+  .nf .nf-shelves {
+    padding: 40px 0 72px;
+  }
+
+  .nf-shelves .chips {
+    margin-top: 18px;
+  }
+
+  /* Same second channel the shelf chips carry on the home page: how many apps
+     a shelf holds is context, dimmer than the name it belongs to. */
+  .nf-count {
+    font-size: 11.5px;
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+  }
+
+  @media (max-width: 760px) {
+    .nf .nf-shelves {
+      padding: 32px 0 56px;
+    }
+  }
+</style>
